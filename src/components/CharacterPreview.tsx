@@ -81,25 +81,45 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
               <img 
                 src={pingImage} 
                 alt="Base character" 
-                className="absolute w-full h-full object-contain"
+                className="absolute w-full h-full object-contain z-[1]"
               />
           
-              {/* Render selected traits in the correct order */}
-              {Object.entries(selectedTraits).map(([category, trait]) => {
-                if (!trait) return null;
-            
-                // Get placeholder image for this trait
-                const placeholderImage = placeholderTraits[category as keyof typeof placeholderTraits]?.[trait.id];
-            
-                return (
-                  <img 
-                    key={trait.id}
-                    src={placeholderImage || trait.imageSrc}
-                    alt={trait.name}
-                    className="absolute w-full h-full object-contain"
-                  />
-                );
-              })}
+              {/* Render traits in specific order with proper z-index */}
+              {/* Body layer */}
+              {selectedTraits.body && (
+                <img 
+                  src={placeholderTraits.body?.[selectedTraits.body.id] || selectedTraits.body.imageSrc}
+                  alt={selectedTraits.body.name}
+                  className="absolute w-full h-full object-contain z-[2]"
+                />
+              )}
+              
+              {/* Face layer */}
+              {selectedTraits.face && (
+                <img 
+                  src={placeholderTraits.face?.[selectedTraits.face.id] || selectedTraits.face.imageSrc}
+                  alt={selectedTraits.face.name}
+                  className="absolute w-full h-full object-contain z-[3]"
+                />
+              )}
+              
+              {/* Head layer */}
+              {selectedTraits.head && (
+                <img 
+                  src={placeholderTraits.head?.[selectedTraits.head.id] || selectedTraits.head.imageSrc}
+                  alt={selectedTraits.head.name}
+                  className="absolute w-full h-full object-contain z-[4]"
+                />
+              )}
+              
+              {/* Accessory layer (top-most) */}
+              {selectedTraits.accessory && (
+                <img 
+                  src={placeholderTraits.accessory?.[selectedTraits.accessory.id] || selectedTraits.accessory.imageSrc}
+                  alt={selectedTraits.accessory.name}
+                  className="absolute w-full h-full object-contain z-[5]"
+                />
+              )}
             </div>
           </CardContent>
         </Card>
