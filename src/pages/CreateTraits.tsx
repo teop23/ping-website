@@ -1,9 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card } from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import { HexColorPicker } from 'react-colorful';
-import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save } from 'lucide-react';
+import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save, Image, X } from 'lucide-react';
 import pingImage from '../assets/images/ping.png'; 
+import { ScrollArea } from '../components/ui/scroll-area';
+
+interface SavedTrait {
+  name: string;
+  data: string;
+  timestamp: number;
+}
 
 const CreateTraits: React.FC = () => {
   const baseCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,21 +26,14 @@ const CreateTraits: React.FC = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [traitName, setTraitName] = useState('');
   const lastPos = useRef<{ x: number; y: number } | null>(null);
+  const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
+  const [selectedTrait, setSelectedTrait] = useState<SavedTrait | null>(null);
 
   // Load saved traits on mount
   useEffect(() => {
     const savedTraits = localStorage.getItem('savedTraits');
     if (savedTraits) {
-      const traits = JSON.parse(savedTraits);
-      // Load the most recent trait if it exists
-      if (traits.length > 0 && drawCanvasRef.current && ctx) {
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-          saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height));
-        };
-        img.src = traits[traits.length - 1].data;
-      }
+      setSavedTraits(JSON.parse(savedTraits));
     }
   }, [ctx]);
 
@@ -177,21 +177,84 @@ const CreateTraits: React.FC = () => {
     const drawCanvas = drawCanvasRef.current;
     if (!drawCanvas || !traitName) return;
 
+    // Clear the canvas after saving
+    ctx?.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+    saveToHistory(ctx!.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+
     const traitImage = drawCanvas.toDataURL();
-    const savedTraits = JSON.parse(localStorage.getItem('savedTraits') || '[]');
-    
-    savedTraits.push({
+    const newTrait = {
       name: traitName,
       data: traitImage,
       timestamp: Date.now()
-    });
-
-    localStorage.setItem('savedTraits', JSON.stringify(savedTraits));
+    };
+    
+    const updatedTraits = [...savedTraits, newTrait];
+    setSavedTraits(updatedTraits);
+    localStorage.setItem('savedTraits', JSON.stringify(updatedTraits));
     setTraitName('');
   };
 
+  const loadTrait = (trait: SavedTrait) => {
+    if (!ctx || !drawCanvasRef.current) return;
+    
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height);
+      ctx.drawImage(img, 0, 0);
+      saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height));
+      setSelectedTrait(trait);
+    };
+    img.src = trait.data;
+  };
+
+  const deleteTrait = (timestamp: number) => {
+    const updatedTraits = savedTraits.filter(trait => trait.timestamp !== timestamp);
+    setSavedTraits(updatedTraits);
+    localStorage.setItem('savedTraits', JSON.stringify(updatedTraits));
+    setTraitName('');
+    if (selectedTrait?.timestamp === timestamp) {
+      setSelectedTrait(null);
+    }
+  };
+
   return (
-    <div className="flex-1 flex items-center justify-center gap-8 p-8">
+    <div className="flex-1 flex items-start justify-center gap-8 p-8">
+        {/* Saved Traits Panel */}
+        <Card className="w-64 flex flex-col">
+          <div className="p-4 border-b">
+            <h3 className="font-semibold">Saved Traits</h3>
+          </div>
+          <ScrollArea className="flex-grow h-[600px]">
+            <CardContent className="p-4 space-y-2">
+              {savedTraits.map((trait) => (
+                <motion.div
+                  key={trait.timestamp}
+                  className={`relative group rounded-lg border p-2 cursor-pointer ${
+                    selectedTrait?.timestamp === trait.timestamp 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                  onClick={() => loadTrait(trait)}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image size={16} className="text-muted-foreground" />
+                    <span className="text-sm truncate flex-grow">{trait.name}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteTrait(trait.timestamp);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 hover:text-destructive"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </CardContent>
+          </ScrollArea>
+        </Card>
+
         {/* Tools Panel - Fixed width sidebar */}
         <Card className="w-80 p-6 flex flex-col gap-4">
             {/* Color picker */}
