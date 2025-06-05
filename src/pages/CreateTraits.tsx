@@ -190,8 +190,6 @@ const CreateTraits: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <h1 className="text-3xl font-bold p-8 text-center">Create PING Traits</h1>
-      
       <div className="flex flex-1">
         {/* Tools Panel - Fixed width sidebar */}
         <div className="w-80 bg-white border-r border-gray-200 p-6 flex flex-col gap-4 overflow-y-auto">

@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="bg-card/50 backdrop-blur-sm border-b border-border py-4 px-6 md:px-12">
+    <nav className="bg-card/50 backdrop-blur-sm border-b border-border py-4 px-6 md:px-12 relative">
       <div className="container mx-auto flex justify-between items-center">
         <motion.div 
           className="flex items-center space-x-2"
@@ -16,6 +16,12 @@ const Navbar: React.FC = () => {
           <Rocket className="text-primary" size={32} />
           <span className="font-bold text-2xl tracking-tighter">PING</span>
         </motion.div>
+        
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          {location.pathname === '/create-traits' && (
+            <h1 className="text-xl font-semibold">Create PING Traits</h1>
+          )}
+        </div>
         
         <div className="flex items-center space-x-8">
           <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
