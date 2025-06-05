@@ -59,7 +59,7 @@ const CreateTraits: React.FC = () => {
 
     // Load and draw base image
     const baseImage = new Image();
-    baseImage.src = '/images/ping.png';
+    baseImage.src = './assets/images/ping.png';
     baseImage.onload = () => {
       const scale = Math.min(
         baseCanvas.width / baseImage.width,
