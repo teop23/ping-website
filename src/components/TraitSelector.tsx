@@ -44,7 +44,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
       </Tabs>
       
       {/* Traits grid */}
-      <ScrollArea className="h-[400px]">
+      <ScrollArea className="h-[350px]">
         <CardContent className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {filteredTraits.map((trait) => {
             // Get placeholder image for this trait
