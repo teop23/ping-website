@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Card } from '../components/ui/card';
 import { HexColorPicker } from 'react-colorful';
 import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save } from 'lucide-react';
+import pingImage from '../assets/images/ping.png'; 
 
 const CreateTraits: React.FC = () => {
   const baseCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -59,7 +60,7 @@ const CreateTraits: React.FC = () => {
 
     // Load and draw base image
     const baseImage = new Image();
-    baseImage.src = '../assets/images/ping.png';
+    baseImage.src = pingImage;
     baseImage.onload = () => {
       const scale = Math.min(
         baseCanvas.width / baseImage.width,
