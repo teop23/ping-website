@@ -168,14 +168,20 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
         <img
           src={imageSrc}
           alt={trait.name}
-          className="w-full h-full object-contain p-2"
+          className={`w-full h-full object-contain p-2 transition-transform duration-200 ${
+            isSelected ? 'scale-95' : ''
+          }`}
         />
       </div>
       
       {isSelected && (
-        <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center">
-          ✓
-        </div>
+        <motion.div
+          className="absolute inset-0 bg-primary/10 border-2 border-primary"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        />
       )}
       
       <motion.div 
