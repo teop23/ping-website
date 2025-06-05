@@ -9,7 +9,7 @@ export const categories: CategoryOption[] = [
 ];
 
 // Base character
-export const baseCharacterImage = '~/images/ping.png';
+export const baseCharacterImage = './assets/images/ping.png';
 
 // Trait data
 export const traits: Trait[] = [
