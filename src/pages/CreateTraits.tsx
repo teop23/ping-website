@@ -189,14 +189,13 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex flex-1">
+    <div className="flex-1 flex items-center justify-center gap-8 p-8">
         {/* Tools Panel - Fixed width sidebar */}
-        <div className="w-80 bg-white border-r border-gray-200 p-6 flex flex-col gap-4 overflow-y-auto">
+        <Card className="w-80 p-6 flex flex-col gap-4">
             {/* Color picker */}
             <div className="relative">
               <button
-                className="w-10 h-10 rounded-lg shadow-inner"
+                className="w-10 h-10 rounded-lg border"
                 style={{ backgroundColor: color }}
                 onClick={() => setShowColorPicker(!showColorPicker)}
               />
@@ -284,11 +283,10 @@ const CreateTraits: React.FC = () => {
                 className="bg-indigo-600 text-white hover:bg-indigo-700 w-full"
               />
             </div>
-          </div>
+          </Card>
 
         {/* Drawing Area - Takes remaining width */}
-        <div className="flex-1 bg-gray-50 p-8 flex items-center justify-center">
-          <div className="relative">
+        <div className="relative">
             <canvas
               ref={baseCanvasRef}
               className="absolute border border-gray-200 rounded-lg bg-white"
@@ -303,8 +301,6 @@ const CreateTraits: React.FC = () => {
               className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent"
             />
           </div>
-        </div>
-      </div>
     </div>
   );
 };
@@ -328,10 +324,10 @@ const ToolButton: React.FC<ToolButtonProps> = ({
 }) => {
   return (
     <motion.button
-      className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+      className={`flex items-center gap-2 px-4 py-2 rounded-md ${
         active 
-          ? 'bg-indigo-100 text-indigo-600' 
-          : 'hover:bg-gray-100'
+          ? 'bg-secondary text-secondary-foreground' 
+          : 'hover:bg-accent hover:text-accent-foreground'
       } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       onClick={onClick}
       whileHover={!disabled ? { scale: 1.02 } : undefined}
