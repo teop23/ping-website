@@ -8,40 +8,13 @@ import { Trait } from '../types';
 import { placeholderTraits, baseCharacterImage } from '../data/traits';
 import pingImage from '../assets/images/ping.png';
 
-interface SavedTrait {
-  name: string;
-  data: string;
-  timestamp: number;
-}
-
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;
-  selectedSavedTraits: SavedTrait[];
   onReset: () => void;
 }
 
-const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, selectedSavedTraits, onReset }) => {
+const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onReset }) => {
   const characterRef = useRef<HTMLDivElement>(null);
-
-  // Load and display saved traits
-  React.useEffect(() => {
-    const container = characterRef.current;
-    if (!container) return;
-
-    // Remove any existing saved trait images
-    const existingSavedTraits = container.querySelectorAll('.saved-trait-overlay');
-    existingSavedTraits.forEach(el => el.remove());
-
-    // Add new saved trait images
-    selectedSavedTraits.forEach((trait, index) => {
-      const img = document.createElement('img');
-      img.src = trait.data;
-      img.alt = trait.name;
-      img.className = 'absolute w-full h-full object-contain saved-trait-overlay';
-      img.style.zIndex = `${10 + index}`; // Stack saved traits above base layers
-      container.appendChild(img);
-    });
-  }, [selectedSavedTraits]);
 
   const handleDownload = async () => {
     if (!characterRef.current) return;
