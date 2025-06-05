@@ -41,14 +41,14 @@ const CreateTraits: React.FC = () => {
     if (!baseCanvas || !drawCanvas) return;
 
     // Set up base canvas
-    baseCanvas.width = 500;
-    baseCanvas.height = 500;
+    baseCanvas.width = 800;
+    baseCanvas.height = 800;
     const baseCtx = baseCanvas.getContext('2d');
     if (!baseCtx) return;
 
     // Set up drawing canvas
-    drawCanvas.width = 500;
-    drawCanvas.height = 500;
+    drawCanvas.width = 800;
+    drawCanvas.height = 800;
     const drawCtx = drawCanvas.getContext('2d');
     if (!drawCtx) return;
 
@@ -290,24 +290,20 @@ const CreateTraits: React.FC = () => {
           </div>
 
           {/* Canvas Container */}
-          <div className="flex-grow relative bg-white rounded-xl shadow-lg p-4">
-            {/* Base Layer Canvas */}
-            <canvas
-              ref={baseCanvasRef}
-              className="absolute top-4 left-4 border border-gray-200 rounded-lg"
-              style={{ opacity: showBaseLayer ? 1 : 0.5 }}
-            />
-            {/* Drawing Layer Canvas */}
-            <canvas
-              ref={drawCanvasRef}
-              onMouseDown={startDrawing}
-              onMouseMove={draw}
-              onMouseUp={stopDrawing}
-              onMouseLeave={stopDrawing}
-              className="absolute top-4 left-4 border border-gray-200 rounded-lg cursor-crosshair"
-              style={{ background: 'transparent' }}
-            />
-          </div>
+          <canvas
+            ref={baseCanvasRef}
+            className="absolute border border-gray-200 rounded-lg"
+            style={{ opacity: showBaseLayer ? 1 : 0.5 }}
+          />
+          <canvas
+            ref={drawCanvasRef}
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onMouseLeave={stopDrawing}
+            className="absolute border border-gray-200 rounded-lg cursor-crosshair"
+            style={{ background: 'transparent' }}
+          />
         </div>
       </div>
     </div>
