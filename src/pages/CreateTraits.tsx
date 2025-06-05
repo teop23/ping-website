@@ -290,25 +290,23 @@ const CreateTraits: React.FC = () => {
           </div>
 
           {/* Canvas Container */}
-          <div className="flex-grow">
-            <div className="relative bg-white rounded-xl shadow-lg p-4">
-              {/* Base Layer Canvas */}
-              <canvas
-                ref={baseCanvasRef}
-                className="absolute top-4 left-4 border border-gray-200 rounded-lg"
-                style={{ opacity: showBaseLayer ? 1 : 0.5 }}
-              />
-              {/* Drawing Layer Canvas */}
-              <canvas
-                ref={drawCanvasRef}
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
-                className="absolute top-4 left-4 border border-gray-200 rounded-lg cursor-crosshair"
-                style={{ background: 'transparent' }}
-              />
-            </div>
+          <div className="flex-grow relative bg-white rounded-xl shadow-lg p-4">
+            {/* Base Layer Canvas */}
+            <canvas
+              ref={baseCanvasRef}
+              className="absolute top-4 left-4 border border-gray-200 rounded-lg"
+              style={{ opacity: showBaseLayer ? 1 : 0.5 }}
+            />
+            {/* Drawing Layer Canvas */}
+            <canvas
+              ref={drawCanvasRef}
+              onMouseDown={startDrawing}
+              onMouseMove={draw}
+              onMouseUp={stopDrawing}
+              onMouseLeave={stopDrawing}
+              className="absolute top-4 left-4 border border-gray-200 rounded-lg cursor-crosshair"
+              style={{ background: 'transparent' }}
+            />
           </div>
         </div>
       </div>
