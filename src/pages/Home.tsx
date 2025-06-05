@@ -49,13 +49,13 @@ const Home: React.FC = () => {
             <FeatureCard 
               icon={<Palette size={24} className="text-purple-500" />}
               title="Customizable Characters"
-              description="Create your unique Bonji by mixing and matching different traits, accessories, and styles."
+              description="Create your unique Ping by mixing and matching different traits, accessories, and styles."
             />
             
             <FeatureCard 
               icon={<Users size={24} className="text-indigo-500" />}
               title="Vibrant Community"
-              description="Join thousands of Bonji enthusiasts sharing their creations and trading the token."
+              description="Join thousands of Ping enthusiasts sharing their creations and trading the token."
             />
             
             <FeatureCard 

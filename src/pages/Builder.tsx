@@ -53,10 +53,10 @@ const Builder: React.FC = () => {
       transition={{ duration: 0.5 }}
     >
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-2">
-        Create Your Bonji
+        Create Your Ping
       </h1>
       <p className="text-gray-600 text-center mb-8 max-w-2xl mx-auto">
-        Mix and match different traits to create your unique Bonji character. Click on the traits to add them to your character!
+        Mix and match different traits to create your unique Ping character. Click on the traits to add them to your character!
       </p>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
