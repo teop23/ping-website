@@ -46,12 +46,7 @@ const Builder: React.FC = () => {
   };
   
   return (
-    <motion.div
-      className="flex-1 flex flex-col"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="container mx-auto flex-1 flex flex-col">
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
         <div className="p-8">
           <TraitSelector
@@ -71,7 +66,7 @@ const Builder: React.FC = () => {
           />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

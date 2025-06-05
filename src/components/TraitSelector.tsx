@@ -31,12 +31,11 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
     <Card className="flex flex-col overflow-hidden">
       {/* Category tabs */}
       <Tabs value={selectedCategory} onValueChange={onCategoryChange}>
-        <TabsList className="w-full justify-start border-b rounded-none px-4">
+        <TabsList className="w-full justify-start">
           {categories.map((category) => (
             <TabsTrigger
               key={category.id}
               value={category.id}
-              className="data-[state=active]:bg-secondary"
             >
               {category.label}
             </TabsTrigger>
