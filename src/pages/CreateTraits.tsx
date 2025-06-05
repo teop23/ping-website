@@ -58,18 +58,14 @@ const CreateTraits: React.FC = () => {
 
     // Load and draw base image
     const baseImage = new Image();
-    baseImage.src = '/public/images/ping.png';
+    baseImage.src = '/images/ping.png';
     baseImage.onload = () => {
       const scale = Math.min(
         baseCanvas.width / baseImage.width,
         baseCanvas.height / baseImage.height
       );
-      // Center the image
       const x = (baseCanvas.width - baseImage.width * scale) / 2;
       const y = (baseCanvas.height - baseImage.height * scale) / 2;
-      
-      // Clear the canvas before drawing
-      baseCtx.clearRect(0, 0, baseCanvas.width, baseCanvas.height);
       
       baseCtx.drawImage(
         baseImage,
