@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Copy, RotateCcw } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
 import { Trait } from '../types';
 import { placeholderTraits, baseCharacterImage } from '../data/traits';
 import pingImage from '../assets/images/ping.png';
@@ -73,55 +75,57 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="bg-white rounded-xl shadow-2xl p-6 mb-6 relative overflow-hidden w-full aspect-square flex items-center justify-center"
+        className="w-full aspect-square"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-indigo-50 opacity-50"></div>
-        
-        <div ref={characterRef} className="relative w-4/5 h-4/5 flex items-center justify-center">
-          {/* Base character */}
-          <img 
-            src={pingImage} 
-            alt="Base character" 
-            className="absolute w-full h-full object-contain"
-          />
-          
-          {/* Render selected traits in the correct order */}
-          {Object.entries(selectedTraits).map(([category, trait]) => {
-            if (!trait) return null;
-            
-            // Get placeholder image for this trait
-            const placeholderImage = placeholderTraits[category as keyof typeof placeholderTraits]?.[trait.id];
-            
-            return (
+        <Card className="h-full relative overflow-hidden">
+          <CardContent className="h-full p-6 flex items-center justify-center">
+            <div ref={characterRef} className="relative w-4/5 h-4/5 flex items-center justify-center">
+              {/* Base character */}
               <img 
-                key={trait.id}
-                src={placeholderImage || trait.imageSrc}
-                alt={trait.name}
+                src={pingImage} 
+                alt="Base character" 
                 className="absolute w-full h-full object-contain"
               />
-            );
-          })}
-        </div>
+          
+              {/* Render selected traits in the correct order */}
+              {Object.entries(selectedTraits).map(([category, trait]) => {
+                if (!trait) return null;
+            
+                // Get placeholder image for this trait
+                const placeholderImage = placeholderTraits[category as keyof typeof placeholderTraits]?.[trait.id];
+            
+                return (
+                  <img 
+                    key={trait.id}
+                    src={placeholderImage || trait.imageSrc}
+                    alt={trait.name}
+                    className="absolute w-full h-full object-contain"
+                  />
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
       </motion.div>
       
-      <div className="flex space-x-4">
+      <div className="flex space-x-4 mt-6">
         <ActionButton 
           icon={<Download size={20} />} 
           label="Download" 
           onClick={handleDownload} 
-          color="blue"
+          variant="default"
         />
         <ActionButton 
           icon={<Copy size={20} />} 
           label="Copy" 
           onClick={handleCopy} 
-          color="purple"
+          variant="secondary"
         />
         <ActionButton 
           icon={<RotateCcw size={20} />} 
           label="Reset" 
           onClick={onReset} 
-          color="gray"
+          variant="outline"
         />
       </div>
     </div>
@@ -132,26 +136,19 @@ interface ActionButtonProps {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
-  color: 'blue' | 'purple' | 'gray';
+  variant: 'default' | 'secondary' | 'outline';
 }
 
-const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, color }) => {
-  const colorClasses = {
-    blue: "bg-blue-600 hover:bg-blue-700",
-    purple: "bg-purple-600 hover:bg-purple-700",
-    gray: "bg-gray-600 hover:bg-gray-700",
-  };
-  
+const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, variant }) => {
   return (
-    <motion.button
-      className={`${colorClasses[color]} text-white px-4 py-2 rounded-lg flex items-center space-x-2 shadow-md`}
+    <Button
+      variant={variant}
       onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      className="flex items-center gap-2"
     >
       {icon}
       <span>{label}</span>
-    </motion.button>
+    </Button>
   );
 };
 

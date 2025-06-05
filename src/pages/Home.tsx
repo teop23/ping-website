@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Palette, Users, Coins } from 'lucide-react';
 import TokenInfo from '../components/TokenInfo';
 import Builder from './Builder';
 
@@ -16,7 +15,7 @@ const Home: React.FC = () => {
         <div className="flex-1 flex flex-col">
           <div className="text-center mb-8">
             <motion.h1 
-              className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600"
+              className="text-4xl md:text-6xl font-bold mb-6 text-primary"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
@@ -25,7 +24,7 @@ const Home: React.FC = () => {
             </motion.h1>
             
             <motion.p 
-              className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto"
+              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}

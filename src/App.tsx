@@ -8,7 +8,7 @@ function App() {
   const path = window.location.pathname;
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <ParticleBackground />
       <Navbar />
       <main className="flex-grow">

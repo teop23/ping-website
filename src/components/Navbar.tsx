@@ -1,10 +1,11 @@
 import React from 'react';
 import { Rocket, Palette } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Button } from './ui/button';
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="bg-gradient-to-r from-purple-900 to-indigo-900 text-white py-4 px-6 md:px-12 shadow-lg">
+    <nav className="bg-card/50 backdrop-blur-sm border-b border-border py-4 px-6 md:px-12">
       <div className="container mx-auto flex justify-between items-center">
         <motion.div 
           className="flex items-center space-x-2"
@@ -12,7 +13,7 @@ const Navbar: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Rocket className="text-yellow-400" size={32} />
+          <Rocket className="text-primary" size={32} />
           <span className="font-bold text-2xl tracking-tighter">PING</span>
         </motion.div>
         
@@ -39,16 +40,20 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({ label, href, isActive = false, icon }) => {
   return (
-    <motion.a
+    <Button
+      asChild
+      variant={isActive ? "secondary" : "ghost"}
       href={href}
-      className={`${isActive ? 'text-yellow-400 font-medium' : 'text-white hover:text-yellow-200'} 
-                 transition-colors duration-200 flex items-center gap-2`}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
     >
-      {icon}
-      {label}
-    </motion.a>
+      <motion.a
+        className="flex items-center gap-2"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        {icon}
+        {label}
+      </motion.a>
+    </Button>
   );
 };
 

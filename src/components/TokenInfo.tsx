@@ -1,55 +1,62 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Coins, TrendingUp, Users, Globe } from 'lucide-react';
+import { Card, CardHeader, CardContent } from './ui/card';
+import { Button } from './ui/button';
 
 const TokenInfo: React.FC = () => {
   return (
     <motion.div 
-      className="bg-white rounded-xl shadow-lg overflow-hidden"
+      className="overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 text-white">
-        <h2 className="text-xl font-bold flex items-center">
-          <Coins className="mr-2" size={24} />
-          PING Token
-        </h2>
-        <p className="text-purple-100 mt-1">The official token of the Ping community</p>
-      </div>
-      
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <StatCard
-            icon={<TrendingUp size={20} className="text-green-500" />}
-            label="Current Price"
-            value="$0.00042"
-          />
-          <StatCard
-            icon={<Coins size={20} className="text-yellow-500" />}
-            label="Market Cap"
-            value="$420,000"
-          />
-          <StatCard
-            icon={<Users size={20} className="text-blue-500" />}
-            label="Holders"
-            value="2,345"
-          />
-        </div>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Coins className="text-primary" size={24} />
+            <div>
+              <h2 className="text-xl font-bold">PING Token</h2>
+              <p className="text-muted-foreground">The official token of the Ping community</p>
+            </div>
+          </div>
+        </CardHeader>
         
-        <div className="space-y-4">
-          <LinkButton 
-            icon={<Globe size={18} />}
-            label="View on Explorer"
-            href="#"
-          />
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <StatCard
+              icon={<TrendingUp size={20} className="text-green-500" />}
+              label="Current Price"
+              value="$0.00042"
+            />
+            <StatCard
+              icon={<Coins size={20} className="text-yellow-500" />}
+              label="Market Cap"
+              value="$420,000"
+            />
+            <StatCard
+              icon={<Users size={20} className="text-blue-500" />}
+              label="Holders"
+              value="2,345"
+            />
+          </div>
           
-          <p className="text-sm text-gray-600 mt-4">
-            $PING is a Solana-based memetoken inspired by our customizable character.
-            Join our community and collect your unique Ping NFT by customizing your character!
-          </p>
-        </div>
-      </div>
+          <div className="space-y-4">
+            <Button className="w-full" asChild>
+              <a href="#" className="flex items-center justify-center gap-2">
+                <Globe size={18} />
+                View on Explorer
+              </a>
+            </Button>
+            
+            <p className="text-sm text-muted-foreground mt-4">
+              $PING is a Solana-based memetoken inspired by our customizable character.
+              Join our community and collect your unique Ping NFT by customizing your character!
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 };
@@ -62,15 +69,15 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value }) => {
   return (
-    <div className="bg-gray-50 rounded-lg p-4 flex flex-col items-center justify-center">
+    <Card className="p-4 flex flex-col items-center justify-center">
       <div className="flex items-center justify-center mb-2">
         {icon}
       </div>
       <div className="text-center">
-        <p className="text-gray-500 text-sm">{label}</p>
+        <p className="text-muted-foreground text-sm">{label}</p>
         <p className="font-bold text-lg">{value}</p>
       </div>
-    </div>
+    </Card>
   );
 };
 
