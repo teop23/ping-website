@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { ScrollArea } from './ui/scroll-area';
+import { ScrollArea } from '../components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 import { Trait, CategoryOption } from '../types';
 import { placeholderTraits } from '../data/traits';
