@@ -4,7 +4,7 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
-import { Upload } from 'lucide-react';
+import { Upload, Check } from 'lucide-react';
 import { Trait, CategoryOption } from '../types';
 import { placeholderTraits } from '../data/traits';
 
@@ -176,12 +176,14 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
       
       {isSelected && (
         <motion.div
-          className="absolute inset-0 bg-primary/10 border-2 border-primary"
+          className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-        />
+        >
+          <Check size={16} />
+        </motion.div>
       )}
       
       <motion.div 
