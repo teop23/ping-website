@@ -25,9 +25,19 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   onCategoryChange,
   onTraitSelect
 }) => {
-  // Filter traits by the selected category
-  const filteredTraits = traits.filter(trait => trait.category === selectedCategory);
+  const [uploadedTraits, setUploadedTraits] = React.useState<Record<string, Trait[]>>({
+    head: [],
+    face: [],
+    body: [],
+    accessory: []
+  });
   
+  // Filter traits by the selected category, including uploaded traits
+  const filteredTraits = [
+    ...uploadedTraits[selectedCategory as keyof typeof uploadedTraits],
+    ...traits.filter(trait => trait.category === selectedCategory)
+  ];
+
   const handleUpload = (category: string) => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -44,6 +54,12 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
             category: category as any,
             imageSrc
           };
+          // Add the uploaded trait to our state
+          setUploadedTraits(prev => ({
+            ...prev,
+            [category]: [...prev[category as keyof typeof prev], uploadedTrait]
+          }));
+          // Select the newly uploaded trait
           onTraitSelect(uploadedTrait);
         };
         reader.readAsDataURL(file);
