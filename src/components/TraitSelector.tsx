@@ -162,6 +162,7 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.97 }}
+      initial={{ overflow: 'hidden' }}
     >
       <div className="aspect-square bg-card flex items-center justify-center">
         <img
@@ -177,9 +178,14 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
         </div>
       )}
       
-      <div className="p-2 bg-secondary text-secondary-foreground text-xs text-center truncate">
+      <motion.div 
+        className="absolute inset-x-0 bottom-0 p-2 bg-secondary/90 text-secondary-foreground text-xs text-center truncate"
+        initial={{ y: '100%' }}
+        whileHover={{ y: 0 }}
+        transition={{ duration: 0.2 }}
+      >
         {trait.name}
-      </div>
+      </motion.div>
     </motion.div>
   );
 };
