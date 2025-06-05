@@ -59,7 +59,7 @@ const CreateTraits: React.FC = () => {
     drawCtx.lineJoin = 'round';
 
     // Load and draw base image
-    const baseImage = new Image();
+    const baseImage = document.createElement('img');
     baseImage.src = pingImage;
     baseImage.onload = () => {
       const scale = Math.min(
@@ -131,7 +131,7 @@ const CreateTraits: React.FC = () => {
     if (!isDrawing || !ctx || !drawCanvasRef.current || !lastPos.current) return;
     
     const point = getCanvasPoint(e);
-    if (!point) return;
+    if (!point || !lastPos.current) return;
     
     // Set drawing properties
     ctx.strokeStyle = tool === 'eraser' ? 'rgba(0,0,0,1)' : color;
@@ -197,7 +197,7 @@ const CreateTraits: React.FC = () => {
   const loadTrait = (trait: SavedTrait) => {
     if (!ctx || !drawCanvasRef.current) return;
     
-    const img = new Image();
+    const img = document.createElement('img');
     img.onload = () => {
       ctx.clearRect(0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height);
       ctx.drawImage(img, 0, 0);
