@@ -1,43 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import TokenInfo from '../components/TokenInfo';
 import Builder from './Builder';
 
 const Home: React.FC = () => {
   return (
-    <>
-      <motion.section 
-        className="min-h-[calc(100vh-64px)] relative overflow-hidden flex flex-col"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex-1 flex flex-col">
-          <div className="text-center mb-8">
-            <motion.h1 
-              className="text-4xl md:text-6xl font-bold mb-6 text-primary"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-            >
-              Ping Character
-            </motion.h1>
-            
-            <motion.p 
-              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              Mix and match traits to create your own custom Ping. 
-              Join the community and become part of the next big Solana memetoken!
-            </motion.p>
-          </div>
-
-          <Builder />
-        </div>
-      </motion.section>
-    </>
+    <motion.div 
+      className="min-h-[calc(100vh-64px)] flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Builder />
+    </motion.div>
   );
 };
 

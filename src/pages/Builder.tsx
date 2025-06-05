@@ -46,9 +46,16 @@ const Builder: React.FC = () => {
   };
   
   return (
-    <div className="container mx-auto flex-1 flex flex-col">
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
-        <div className="p-8">
+    <div className="container mx-auto px-4">
+      <div className="flex gap-8 items-center justify-center">
+        <div className="w-[600px]">
+          <CharacterPreview
+            selectedTraits={selectedTraits}
+            onReset={handleReset}
+          />
+        </div>
+        
+        <div className="w-[500px]">
           <TraitSelector
             categories={categories}
             traits={traits}
@@ -56,13 +63,6 @@ const Builder: React.FC = () => {
             selectedTraits={selectedTraits}
             onCategoryChange={handleCategoryChange}
             onTraitSelect={handleTraitSelect}
-          />
-        </div>
-        
-        <div className="p-8 flex items-center justify-center">
-          <CharacterPreview
-            selectedTraits={selectedTraits}
-            onReset={handleReset}
           />
         </div>
       </div>
