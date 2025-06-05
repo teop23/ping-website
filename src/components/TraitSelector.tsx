@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { ScrollArea } from '../components/ui/scroll-area';
-import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
+import { Upload } from 'lucide-react';
 import { Trait, CategoryOption } from '../types';
 import { placeholderTraits } from '../data/traits';
 
@@ -26,6 +27,30 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 }) => {
   // Filter traits by the selected category
   const filteredTraits = traits.filter(trait => trait.category === selectedCategory);
+  
+  const handleUpload = (category: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageSrc = e.target?.result as string;
+          const uploadedTrait: Trait = {
+            id: `uploaded-${Date.now()}`,
+            name: 'Uploaded Trait',
+            category: category as any,
+            imageSrc
+          };
+          onTraitSelect(uploadedTrait);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
 
   return (
     <Card className="flex flex-col overflow-hidden">
@@ -46,6 +71,19 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
       {/* Traits grid */}
       <ScrollArea className="h-[350px]">
         <CardContent className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {/* Upload button */}
+          <motion.div
+            className="relative cursor-pointer rounded-lg overflow-hidden border border-dashed border-primary/50 hover:border-primary"
+            onClick={() => handleUpload(selectedCategory)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <div className="aspect-square bg-card flex flex-col items-center justify-center gap-2 text-muted-foreground">
+              <Upload size={24} />
+              <span className="text-xs">Upload</span>
+            </div>
+          </motion.div>
+          
           {filteredTraits.map((trait) => {
             // Get placeholder image for this trait
             const placeholderImage = placeholderTraits[trait.category as keyof typeof placeholderTraits]?.[trait.id];
