@@ -189,13 +189,12 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">Create PING Traits</h1>
-        
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Tools Panel */}
-          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col gap-4">
+    <div className="min-h-screen flex flex-col">
+      <h1 className="text-3xl font-bold p-8 text-center">Create PING Traits</h1>
+      
+      <div className="flex flex-1">
+        {/* Tools Panel - Fixed width sidebar */}
+        <div className="w-80 bg-white border-r border-gray-200 p-6 flex flex-col gap-4 overflow-y-auto">
             {/* Color picker */}
             <div className="relative">
               <button
@@ -289,21 +288,23 @@ const CreateTraits: React.FC = () => {
             </div>
           </div>
 
-          {/* Canvas Container */}
-          <canvas
-            ref={baseCanvasRef}
-            className="absolute border border-gray-200 rounded-lg"
-            style={{ opacity: showBaseLayer ? 1 : 0.5 }}
-          />
-          <canvas
-            ref={drawCanvasRef}
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            className="absolute border border-gray-200 rounded-lg cursor-crosshair"
-            style={{ background: 'transparent' }}
-          />
+        {/* Drawing Area - Takes remaining width */}
+        <div className="flex-1 bg-gray-50 p-8 flex items-center justify-center">
+          <div className="relative">
+            <canvas
+              ref={baseCanvasRef}
+              className="absolute border border-gray-200 rounded-lg bg-white"
+              style={{ opacity: showBaseLayer ? 1 : 0.5 }}
+            />
+            <canvas
+              ref={drawCanvasRef}
+              onMouseDown={startDrawing}
+              onMouseMove={draw}
+              onMouseUp={stopDrawing}
+              onMouseLeave={stopDrawing}
+              className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent"
+            />
+          </div>
         </div>
       </div>
     </div>
