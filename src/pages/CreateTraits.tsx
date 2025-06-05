@@ -198,30 +198,34 @@ const CreateTraits: React.FC = () => {
   const updateCompositeCanvas = () => {
     if (!ctx || !drawCanvasRef.current) return;
     
-    // Clear the drawing canvas
     ctx.clearRect(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height);
     
-    // Draw each selected trait in order
-    selectedTraits.forEach(trait => {
+    // Create a promise for each trait to load
+    const loadTraitPromises = selectedTraits.map(trait => new Promise<void>((resolve) => {
       const img = document.createElement('img');
       img.src = trait.data;
-      ctx.drawImage(img, 0, 0);
-    });
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height);
+        resolve();
+      };
+    }));
     
-    saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height));
+    // Wait for all images to load and draw
+    Promise.all(loadTraitPromises).then(() => {
+      saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height));
+    });
   };
 
   const loadTrait = (trait: SavedTrait) => {
     if (!ctx || !drawCanvasRef.current) return;
     
-    // Toggle trait selection
     setSelectedTraits(prev => {
       const isSelected = prev.some(t => t.timestamp === trait.timestamp);
-      const newTraits = isSelected
-        ? prev.filter(t => t.timestamp !== trait.timestamp)
-        : [...prev, trait];
-      
-      return newTraits;
+      if (isSelected) {
+        return prev.filter(t => t.timestamp !== trait.timestamp);
+      } else {
+        return [...prev, trait];
+      }
     });
   };
 
