@@ -19,7 +19,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
     try {
       const dataUrl = await toPng(characterRef.current, { cacheBust: true });
       const link = document.createElement('a');
-      link.download = 'my-bonji-character.png';
+      link.download = 'my-ping-character.png';
       link.href = dataUrl;
       link.click();
     } catch (error) {

@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-xl font-bold mb-4">BONJI</h3>
+            <h3 className="text-xl font-bold mb-4">PING</h3>
             <p className="text-gray-400 mb-4">
               The fun, customizable Solana memetoken that lets you create unique characters and join a vibrant community.
             </p>
@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} BONJI. All rights reserved.
+            &copy; {new Date().getFullYear()} PING. All rights reserved.
           </p>
           <p className="text-gray-400 text-sm flex items-center">
             Made with <Heart size={14} className="mx-1 text-red-500" /> on Solana

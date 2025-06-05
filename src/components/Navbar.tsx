@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <Rocket className="text-yellow-400" size={32} />
-          <span className="font-bold text-2xl tracking-tighter">BONJI</span>
+          <span className="font-bold text-2xl tracking-tighter">PING</span>
         </motion.div>
         
         <div className="flex items-center space-x-8">

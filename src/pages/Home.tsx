@@ -22,7 +22,7 @@ const Home: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              Create Your Unique <br />Bonji Character
+              Ping Character
             </motion.h1>
             
             <motion.p 
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              Mix and match traits to create your own custom Bonji. 
+              Mix and match traits to create your own custom Ping. 
               Join the community and become part of the next big Solana memetoken!
             </motion.p>
           </div>
@@ -43,7 +43,7 @@ const Home: React.FC = () => {
       {/* Features Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Bonji?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Ping?</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <FeatureCard 

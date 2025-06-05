@@ -13,9 +13,9 @@ const TokenInfo: React.FC = () => {
       <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 text-white">
         <h2 className="text-xl font-bold flex items-center">
           <Coins className="mr-2" size={24} />
-          BONJI Token
+          PING Token
         </h2>
-        <p className="text-purple-100 mt-1">The official token of the Bonji community</p>
+        <p className="text-purple-100 mt-1">The official token of the Ping community</p>
       </div>
       
       <div className="p-6">
@@ -45,8 +45,8 @@ const TokenInfo: React.FC = () => {
           />
           
           <p className="text-sm text-gray-600 mt-4">
-            $BONJI is a Solana-based memetoken inspired by our customizable character.
-            Join our community and collect your unique Bonji NFT by customizing your character!
+            $PING is a Solana-based memetoken inspired by our customizable character.
+            Join our community and collect your unique Ping NFT by customizing your character!
           </p>
         </div>
       </div>
