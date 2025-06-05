@@ -73,16 +73,16 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="bg-white rounded-xl shadow-2xl p-6 mb-6 relative overflow-hidden"
+        className="bg-white rounded-xl shadow-2xl p-6 mb-6 relative overflow-hidden h-[calc(100vh-300px)] flex items-center justify-center"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-indigo-50 opacity-50"></div>
         
-        <div ref={characterRef} className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
+        <div ref={characterRef} className="relative w-full h-full flex items-center justify-center">
           {/* Base character */}
           <img 
             src={pingImage} 
             alt="Base character" 
-            className="absolute w-full h-full object-contain"
+            className="absolute max-w-full max-h-full object-contain"
           />
           
           {/* Render selected traits in the correct order */}
@@ -97,7 +97,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
                 key={trait.id}
                 src={placeholderImage || trait.imageSrc}
                 alt={trait.name}
-                className="absolute w-full h-full object-contain"
+                className="absolute max-w-full max-h-full object-contain"
               />
             );
           })}
