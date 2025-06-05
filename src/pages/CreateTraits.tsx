@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Card } from '../components/ui/card';
 import { HexColorPicker } from 'react-colorful';
 import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save } from 'lucide-react';
 
