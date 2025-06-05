@@ -83,21 +83,24 @@ const CreateTraits: React.FC = () => {
   }, []);
 
   const saveToHistory = (imageData: ImageData) => {
-    setHistory(prev => [...prev.slice(0, historyIndex + 1), imageData]);
-    setHistoryIndex(prev => prev + 1);
+    const newHistory = [...history.slice(0, historyIndex + 1), imageData];
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
   };
 
   const undo = () => {
     if (historyIndex > 0 && ctx && drawCanvasRef.current) {
-      setHistoryIndex(prev => prev - 1);
-      ctx.putImageData(history[historyIndex - 1], 0, 0);
+      const newIndex = historyIndex - 1;
+      ctx.putImageData(history[newIndex], 0, 0);
+      setHistoryIndex(newIndex);
     }
   };
 
   const redo = () => {
     if (historyIndex < history.length - 1 && ctx && drawCanvasRef.current) {
-      setHistoryIndex(prev => prev + 1);
-      ctx.putImageData(history[historyIndex + 1], 0, 0);
+      const newIndex = historyIndex + 1;
+      ctx.putImageData(history[newIndex], 0, 0);
+      setHistoryIndex(newIndex);
     }
   };
 
