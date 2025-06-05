@@ -47,20 +47,13 @@ const Builder: React.FC = () => {
   
   return (
     <motion.div
-      className="container mx-auto px-4 py-8"
+      className="flex-1 flex flex-col"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-2">
-        Create Your Ping
-      </h1>
-      <p className="text-gray-600 text-center mb-8 max-w-2xl mx-auto">
-        Mix and match different traits to create your unique Ping character. Click on the traits to add them to your character!
-      </p>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="order-2 lg:order-1">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
+        <div className="p-8">
           <TraitSelector
             categories={categories}
             traits={traits}
@@ -71,7 +64,7 @@ const Builder: React.FC = () => {
           />
         </div>
         
-        <div className="order-1 lg:order-2 flex items-center justify-center">
+        <div className="p-8 flex items-center justify-center">
           <CharacterPreview
             selectedTraits={selectedTraits}
             onReset={handleReset}

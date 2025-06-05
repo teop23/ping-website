@@ -8,12 +8,12 @@ const Home: React.FC = () => {
   return (
     <>
       <motion.section 
-        className="h-[calc(100vh-64px)] px-4 relative overflow-hidden flex flex-col"
+        className="min-h-[calc(100vh-64px)] relative overflow-hidden flex flex-col"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="container mx-auto max-w-6xl flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col">
           <div className="text-center mb-8">
             <motion.h1 
               className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600"
