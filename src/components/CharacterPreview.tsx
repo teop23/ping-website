@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { Download, Copy, RotateCcw } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { Trait } from '../types';
-import { placeholderTraits } from '../data/traits';
+import { placeholderTraits, baseCharacterImage } from '../data/traits';
+import pingImage from '../assets/images/ping.png';
 
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;
@@ -79,7 +80,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
         <div ref={characterRef} className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
           {/* Base character */}
           <img 
-            src={placeholderTraits.baseCharacter} 
+            src={pingImage} 
             alt="Base character" 
             className="absolute w-full h-full object-contain"
           />
