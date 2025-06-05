@@ -3,9 +3,11 @@ import { Rocket, Palette } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 
-const Navbar: React.FC = () => {
+interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
+
+const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   return (
-    <nav className="bg-card/50 backdrop-blur-sm border-b border-border py-4 px-6 md:px-12 relative">
+    <nav className={cn("bg-card/50 backdrop-blur-sm border-b border-border px-6 md:px-12 relative flex items-center", className)} {...props}>
       <div className="container mx-auto flex justify-between items-center">
         <motion.div 
           className="flex items-center space-x-2"

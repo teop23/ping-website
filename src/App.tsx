@@ -8,9 +8,9 @@ function App() {
   const path = window.location.pathname;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="h-screen bg-background text-foreground flex flex-col">
       <ParticleBackground />
-      <Navbar />
+      <Navbar className="h-16" />
       <main className="flex-grow">
         {path === '/' && <Home />}
         {path === '/create-traits' && <CreateTraits />}
