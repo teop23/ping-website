@@ -27,7 +27,8 @@ const CreateTraits: React.FC = () => {
   const [traitName, setTraitName] = useState('');
   const lastPos = useRef<{ x: number; y: number } | null>(null);
   const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
-  const [selectedTrait, setSelectedTrait] = useState<SavedTrait | null>(null);
+  const [selectedTraits, setSelectedTraits] = useState<SavedTrait[]>([]);
+  const [compositeCanvas, setCompositeCanvas] = useState<HTMLCanvasElement | null>(null);
 
   // Load saved traits on mount
   useEffect(() => {
@@ -194,27 +195,47 @@ const CreateTraits: React.FC = () => {
     setTraitName('');
   };
 
+  const updateCompositeCanvas = () => {
+    if (!ctx || !drawCanvasRef.current) return;
+    
+    // Clear the drawing canvas
+    ctx.clearRect(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height);
+    
+    // Draw each selected trait in order
+    selectedTraits.forEach(trait => {
+      const img = document.createElement('img');
+      img.src = trait.data;
+      ctx.drawImage(img, 0, 0);
+    });
+    
+    saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height));
+  };
+
   const loadTrait = (trait: SavedTrait) => {
     if (!ctx || !drawCanvasRef.current) return;
     
-    const img = document.createElement('img');
-    img.onload = () => {
-      ctx.clearRect(0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height);
-      ctx.drawImage(img, 0, 0);
-      saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current!.width, drawCanvasRef.current!.height));
-      setSelectedTrait(trait);
-    };
-    img.src = trait.data;
+    // Toggle trait selection
+    setSelectedTraits(prev => {
+      const isSelected = prev.some(t => t.timestamp === trait.timestamp);
+      const newTraits = isSelected
+        ? prev.filter(t => t.timestamp !== trait.timestamp)
+        : [...prev, trait];
+      
+      return newTraits;
+    });
   };
+
+  // Update composite canvas whenever selected traits change
+  useEffect(() => {
+    updateCompositeCanvas();
+  }, [selectedTraits]);
 
   const deleteTrait = (timestamp: number) => {
     const updatedTraits = savedTraits.filter(trait => trait.timestamp !== timestamp);
     setSavedTraits(updatedTraits);
     localStorage.setItem('savedTraits', JSON.stringify(updatedTraits));
     setTraitName('');
-    if (selectedTrait?.timestamp === timestamp) {
-      setSelectedTrait(null);
-    }
+    setSelectedTraits(prev => prev.filter(t => t.timestamp !== timestamp));
   };
 
   return (
@@ -230,7 +251,7 @@ const CreateTraits: React.FC = () => {
                 <motion.div
                   key={trait.timestamp}
                   className={`relative group rounded-lg border p-2 cursor-pointer ${
-                    selectedTrait?.timestamp === trait.timestamp 
+                    selectedTraits.some(t => t.timestamp === trait.timestamp)
                       ? 'border-primary bg-primary/5' 
                       : 'border-border hover:border-primary/50'
                   }`}
