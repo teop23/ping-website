@@ -1,9 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Card, CardContent } from '../components/ui/card';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
 import { HexColorPicker } from 'react-colorful';
 import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save, Image, X } from 'lucide-react';
 import pingImage from '../assets/images/ping.png'; 
@@ -16,29 +13,6 @@ interface SavedTrait {
 }
 
 const CreateTraits: React.FC = () => {
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const navigate = useNavigate();
-
-  if (!isDesktop) {
-    return (
-      <AlertDialog open={true}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Desktop Only Feature</AlertDialogTitle>
-            <AlertDialogDescription>
-              The trait creation tool is only available on desktop devices due to the precision required for drawing.
-              Please switch to a desktop or laptop computer to use this feature.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <Button onClick={() => navigate('/')}>
-              Return to Home
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
-  }
   const baseCanvasRef = useRef<HTMLCanvasElement>(null);
   const drawCanvasRef = useRef<HTMLCanvasElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
