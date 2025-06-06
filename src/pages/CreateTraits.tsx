@@ -15,7 +15,6 @@ interface SavedTrait {
 const CreateTraits: React.FC = () => {
   const baseCanvasRef = useRef<HTMLCanvasElement>(null);
   const drawCanvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState("#000000");
@@ -33,33 +32,6 @@ const CreateTraits: React.FC = () => {
   const [drawDistance, setDrawDistance] = useState(0);
   const minDrawDistance = 50; // Minimum distance before saving to history
 
-  const updateCanvasSize = () => {
-    if (!containerRef.current || !baseCanvasRef.current || !drawCanvasRef.current) return;
-    
-    // Get container dimensions
-    const container = containerRef.current;
-    const { width, height } = container.getBoundingClientRect();
-    
-    // Set canvas dimensions
-    baseCanvasRef.current.width = width;
-    baseCanvasRef.current.height = height;
-    drawCanvasRef.current.width = width;
-    drawCanvasRef.current.height = height;
-    
-    // Draw base image
-    const baseCtx = baseCanvasRef.current.getContext('2d');
-    if (baseCtx) {
-      const img = new Image();
-      img.src = pingImage;
-      img.onload = () => {
-        const scale = Math.min(width / img.width, height / img.height);
-        const x = (width - img.width * scale) / 2;
-        const y = (height - img.height * scale) / 2;
-        baseCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
-      };
-    }
-  };
-
   // Load saved traits on mount
   useEffect(() => {
     const savedTraits = localStorage.getItem('savedTraits');
@@ -69,20 +41,46 @@ const CreateTraits: React.FC = () => {
   }, [ctx]);
 
   useEffect(() => {
-    const drawCtx = drawCanvasRef.current?.getContext('2d');
+    const baseCanvas = baseCanvasRef.current;
+    const drawCanvas = drawCanvasRef.current;
+    if (!baseCanvas || !drawCanvas) return;
+
+    // Set up base canvas
+    baseCanvas.width = 800;
+    baseCanvas.height = 800;
+    const baseCtx = baseCanvas.getContext('2d');
+    if (!baseCtx) return;
+
+    // Set up drawing canvas
+    drawCanvas.width = 800;
+    drawCanvas.height = 800;
+    const drawCtx = drawCanvas.getContext('2d');
     if (!drawCtx) return;
-    
+
     setCtx(drawCtx);
-    updateCanvasSize();
-    
-    // Add resize listener
-    const resizeObserver = new ResizeObserver(updateCanvasSize);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-    
-    return () => {
-      resizeObserver.disconnect();
+    drawCtx.lineCap = 'round';
+    drawCtx.lineJoin = 'round';
+
+    // Load and draw base image
+    const baseImage = document.createElement('img');
+    baseImage.src = pingImage;
+    baseImage.onload = () => {
+      const scale = Math.min(
+        baseCanvas.width / baseImage.width,
+        baseCanvas.height / baseImage.height
+      );
+      const x = (baseCanvas.width - baseImage.width * scale) / 2;
+      const y = (baseCanvas.height - baseImage.height * scale) / 2;
+      
+      baseCtx.drawImage(
+        baseImage,
+        x, y,
+        baseImage.width * scale,
+        baseImage.height * scale
+      );
+      
+      // Save initial state of drawing canvas
+      saveToHistory(drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
     };
   }, []);
 
@@ -111,15 +109,10 @@ const CreateTraits: React.FC = () => {
   const getCanvasPoint = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = drawCanvasRef.current?.getBoundingClientRect();
     if (!rect) return null;
-    const canvas = drawCanvasRef.current;
-    if (!canvas) return null;
     
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-
     return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
     };
   };
 
@@ -432,12 +425,11 @@ const CreateTraits: React.FC = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.7, duration: 0.7 }}
-          className="w-full xl:flex-1 max-w-3xl mx-auto aspect-square"
-          ref={containerRef}
+          className="w-full xl:flex-1 max-w-3xl mx-auto"
         >
             <canvas
               ref={baseCanvasRef}
-              className="absolute inset-0 border border-gray-200 rounded-lg bg-white w-full h-full"
+              className="absolute border border-gray-200 rounded-lg bg-white w-full h-full"
               style={{ opacity: showBaseLayer ? 1 : 0.5 }}
             />
             <canvas
@@ -446,7 +438,7 @@ const CreateTraits: React.FC = () => {
               onMouseMove={draw}
               onMouseUp={stopDrawing}
               onMouseLeave={stopDrawing}
-              className="absolute inset-0 border border-gray-200 rounded-lg cursor-crosshair bg-transparent w-full h-full"
+              className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent w-full h-full"
             />
         </motion.div>
     </motion.div>
