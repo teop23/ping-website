@@ -78,12 +78,12 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       >
         <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
           <CardContent className="h-full p-6 flex items-center justify-center">
-            <div ref={characterRef} className="relative w-4/5 h-4/5 flex items-center justify-center">
+            <div ref={characterRef} className="relative w-full h-full flex items-center justify-center">
               {/* Base character */}
               <img 
                 src={pingImage} 
                 alt="Base character" 
-                className="absolute w-full h-full object-contain z-[1] transition-transform duration-300 hover:scale-105"
+                className="absolute inset-0 w-full h-full object-contain z-[1] transition-transform duration-300 hover:scale-105"
               />
           
               {/* Render traits in specific order with proper z-index */}
@@ -92,7 +92,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
                 <img 
                   src={placeholderTraits.body?.[selectedTraits.body.id] || selectedTraits.body.imageSrc}
                   alt={selectedTraits.body.name}
-                  className="absolute w-full h-full object-contain z-[2]"
+                  className="absolute inset-0 w-full h-full object-contain z-[2]"
                 />
               )}
               
@@ -101,7 +101,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
                 <img 
                   src={placeholderTraits.face?.[selectedTraits.face.id] || selectedTraits.face.imageSrc}
                   alt={selectedTraits.face.name}
-                  className="absolute w-full h-full object-contain z-[3]"
+                  className="absolute inset-0 w-full h-full object-contain z-[3]"
                 />
               )}
               
@@ -110,7 +110,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
                 <img 
                   src={placeholderTraits.head?.[selectedTraits.head.id] || selectedTraits.head.imageSrc}
                   alt={selectedTraits.head.name}
-                  className="absolute w-full h-full object-contain z-[4]"
+                  className="absolute inset-0 w-full h-full object-contain z-[4]"
                 />
               )}
               
@@ -119,7 +119,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
                 <img 
                   src={placeholderTraits.accessory?.[selectedTraits.accessory.id] || selectedTraits.accessory.imageSrc}
                   alt={selectedTraits.accessory.name}
-                  className="absolute w-full h-full object-contain z-[5]"
+                  className="absolute inset-0 w-full h-full object-contain z-[5]"
                 />
               )}
             </div>
