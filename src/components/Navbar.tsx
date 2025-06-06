@@ -1,12 +1,16 @@
 import React from 'react';
 import { Rocket, Palette } from 'lucide-react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 
 const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+
   return (
     <nav className={cn("bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-6 md:px-12 relative flex items-center shadow-sm", className)} {...props}>
       <div className="container mx-auto flex justify-between items-center">
@@ -28,13 +32,37 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
         </div>
         
         <div className="flex items-center space-x-8">
-          <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
           <NavItem 
-            label="Create Traits" 
-            href="/create-traits" 
-            isActive={location.pathname === '/create-traits'}
-            icon={<Palette size={16} />} 
+            label="Home" 
+            href="/" 
+            isActive={location.pathname === '/'} 
           />
+          {isDesktop ? (
+            <NavItem 
+              label="Create Traits" 
+              href="/create-traits" 
+              isActive={location.pathname === '/create-traits'}
+              icon={<Palette size={16} />} 
+            />
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    variant="ghost"
+                    className="opacity-50 cursor-not-allowed"
+                    disabled
+                  >
+                    <Palette size={16} className="mr-2" />
+                    Create Traits
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Please use a desktop device to create traits</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
     </nav>
