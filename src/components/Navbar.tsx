@@ -17,7 +17,6 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
           transition={{ duration: 0.7 }}
           whileHover={{ scale: 1.05 }}
         >
-          <Rocket className="text-primary animate-pulse" size={32} />
           <span className="font-bold text-2xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">PING</span>
         </motion.div>
         
