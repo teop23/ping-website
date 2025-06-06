@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '../components/ui/card';
 import { HexColorPicker } from 'react-colorful';
 import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save, Image, X } from 'lucide-react';
-import { motion } from 'framer-motion';
 import pingImage from '../assets/images/ping.png'; 
 import { ScrollArea } from '../components/ui/scroll-area';
 
