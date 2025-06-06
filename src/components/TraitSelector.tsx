@@ -69,10 +69,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95">
+    <Card className="flex flex-col overflow-hidden shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
       {/* Category tabs */}
       <Tabs value={selectedCategory} onValueChange={onCategoryChange}>
-        <TabsList className="w-full justify-start bg-gradient-to-r from-muted to-muted/80">
+        <TabsList className="w-full justify-start bg-gradient-to-r from-muted to-muted/80 overflow-x-auto">
           {categories.map((category) => (
             <TabsTrigger
               key={category.id}
