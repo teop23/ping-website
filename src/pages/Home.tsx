@@ -6,7 +6,7 @@ import TokenInfo from '../components/TokenInfo';
 const Home: React.FC = () => {
   return (
     <motion.div 
-      className="min-h-full flex flex-col items-center gap-8 md:gap-12 py-6 md:py-12 px-4 md:px-6 overflow-y-auto"
+      className="min-h-full flex flex-col items-center justify-center gap-8 md:gap-12 py-6 md:py-12 px-4 md:px-6"
       initial={{ opacity: 0, filter: "blur(10px)" }}
       animate={{ opacity: 1, filter: "blur(0px)" }}
       transition={{ duration: 1, ease: "easeOut" }}

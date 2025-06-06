@@ -269,7 +269,7 @@ const CreateTraits: React.FC = () => {
 
   return (
     <motion.div 
-      className="min-h-full flex flex-col xl:flex-row items-start justify-center gap-4 md:gap-6 xl:gap-8 p-4 md:p-6 xl:p-8 overflow-y-auto"
+      className="flex-1 flex flex-col xl:flex-row items-start justify-center gap-4 md:gap-6 xl:gap-8 p-4 md:p-6 xl:p-8"
       initial={{ opacity: 0, filter: "blur(10px)" }}
       animate={{ opacity: 1, filter: "blur(0px)" }}
       transition={{ duration: 1, ease: "easeOut" }}
