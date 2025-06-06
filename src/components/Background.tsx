@@ -28,42 +28,40 @@ const Background: React.FC = () => {
     handleResize();
 
     // Create animated blobs
-    const blobs: Blob[] = Array.from({ length: 5 }, () => ({
+    const blobs: Blob[] = Array.from({ length: 3 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      radius: Math.random() * 300 + 200,
+      radius: Math.random() * 400 + 300,
       angle: Math.random() * Math.PI * 2,
-      velocity: 0.0003,
-      opacity: Math.random() * 0.04 + 0.02
+      velocity: 0.0002,
+      opacity: Math.random() * 0.03 + 0.01
     }));
 
     const animate = () => {
       requestAnimationFrame(animate);
       
-      // Clear with gradient background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, '#f8fafc');
-      gradient.addColorStop(1, '#f1f5f9');
-      ctx.fillStyle = gradient;
+      // Clear with solid background
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Update and draw blobs
       blobs.forEach(blob => {
         // Orbital movement
         blob.angle += blob.velocity;
-        blob.x = canvas.width/2 + Math.cos(blob.angle) * 100;
-        blob.y = canvas.height/2 + Math.sin(blob.angle) * 100;
+        const orbitRadius = Math.min(canvas.width, canvas.height) * 0.2;
+        blob.x = canvas.width/2 + Math.cos(blob.angle) * orbitRadius;
+        blob.y = canvas.height/2 + Math.sin(blob.angle) * orbitRadius;
 
         // Draw with extreme blur
         ctx.save();
-        ctx.filter = 'blur(100px)';
+        ctx.filter = 'blur(150px)';
         
         const blobGradient = ctx.createRadialGradient(
           blob.x, blob.y, 0,
           blob.x, blob.y, blob.radius
         );
         blobGradient.addColorStop(0, `rgba(0, 0, 0, ${blob.opacity})`);
-        blobGradient.addColorStop(0.5, `rgba(0, 0, 0, ${blob.opacity * 0.5})`);
+        blobGradient.addColorStop(0.6, `rgba(0, 0, 0, ${blob.opacity * 0.3})`);
         blobGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = blobGradient;
@@ -86,7 +84,7 @@ const Background: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full -z-10 pointer-events-none"
-      style={{ opacity: 0.7 }}
+      style={{ opacity: 0.5 }}
     />
   );
 };
