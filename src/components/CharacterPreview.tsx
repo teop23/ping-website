@@ -70,9 +70,9 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <motion.div
-        className="w-full aspect-square relative"
+        className="w-full max-w-xl aspect-square relative"
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.3 }}
       >
@@ -127,7 +127,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
         </Card>
       </motion.div>
       
-      <div className="flex space-x-4 mt-6">
+      <div className="flex flex-wrap justify-center gap-4 mt-4 md:mt-6">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <ActionButton 
             icon={<Download size={20} />} 
