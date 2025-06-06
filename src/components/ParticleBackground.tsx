@@ -30,21 +30,20 @@ const ParticleBackground: React.FC = () => {
     
     // Create particles
     const particles: Particle[] = [];
-    const particleCount = Math.min(70, Math.floor(window.innerWidth / 25));
+    const particleCount = Math.min(40, Math.floor(window.innerWidth / 35));
     const colors = [
-      'rgba(99, 102, 241, 0.15)',   // Indigo
-      'rgba(139, 92, 246, 0.15)',   // Purple
-      'rgba(79, 70, 229, 0.15)',    // Blue
-      'rgba(147, 51, 234, 0.15)'    // Violet
+      'rgba(0, 0, 0, 0.03)',
+      'rgba(0, 0, 0, 0.05)',
+      'rgba(0, 0, 0, 0.07)'
     ];
     
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 6 + 2,
-        speedX: (Math.random() - 0.5) * 0.3,
-        speedY: (Math.random() - 0.5) * 0.3,
+        size: Math.random() * 80 + 40, // Larger particles
+        speedX: (Math.random() - 0.5) * 0.1, // Slower movement
+        speedY: (Math.random() - 0.5) * 0.1,
         color: colors[Math.floor(Math.random() * colors.length)]
       });
     }
@@ -66,29 +65,22 @@ const ParticleBackground: React.FC = () => {
         if (particle.y < 0) particle.y = canvas.height;
         
         // Draw particle
+        // Draw rounded rectangle instead of circle
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        const radius = particle.size / 4;
+        ctx.moveTo(particle.x + radius, particle.y);
+        ctx.lineTo(particle.x + particle.size - radius, particle.y);
+        ctx.quadraticCurveTo(particle.x + particle.size, particle.y, particle.x + particle.size, particle.y + radius);
+        ctx.lineTo(particle.x + particle.size, particle.y + particle.size - radius);
+        ctx.quadraticCurveTo(particle.x + particle.size, particle.y + particle.size, particle.x + particle.size - radius, particle.y + particle.size);
+        ctx.lineTo(particle.x + radius, particle.y + particle.size);
+        ctx.quadraticCurveTo(particle.x, particle.y + particle.size, particle.x, particle.y + particle.size - radius);
+        ctx.lineTo(particle.x, particle.y + radius);
+        ctx.quadraticCurveTo(particle.x, particle.y, particle.x + radius, particle.y);
+        ctx.closePath();
         ctx.fillStyle = particle.color;
         ctx.fill();
       });
-      
-      // Connect particles with lines if they're close enough
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 120) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(99, 102, 241, ${0.15 - distance / 120 * 0.15})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
     };
     
     const animationId = requestAnimationFrame(animate);

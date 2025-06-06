@@ -7,9 +7,9 @@ const Home: React.FC = () => {
   return (
     <motion.div
       className="min-h-full flex flex-col items-center justify-center gap-12 py-12 px-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
+      initial={{ opacity: 0, filter: "blur(10px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      transition={{ duration: 1, ease: "easeOut" }}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -25,21 +25,13 @@ const Home: React.FC = () => {
         </p>
       </motion.div>
       
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-8">
+      <div className="w-full max-w-6xl">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.7 }}
         >
           <Builder />
-        </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.7, duration: 0.7 }}
-        >
-          <TokenInfo />
         </motion.div>
       </div>
     </motion.div>
