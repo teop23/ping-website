@@ -269,7 +269,7 @@ const CreateTraits: React.FC = () => {
 
   return (
     <motion.div 
-      className="flex-1 flex flex-col xl:flex-row items-start justify-center gap-4 md:gap-6 xl:gap-8 p-4 md:p-6 xl:p-8"
+      className="flex-1 flex items-start justify-center gap-8 p-8"
       initial={{ opacity: 0, filter: "blur(10px)" }}
       animate={{ opacity: 1, filter: "blur(0px)" }}
       transition={{ duration: 1, ease: "easeOut" }}
@@ -279,13 +279,12 @@ const CreateTraits: React.FC = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3, duration: 0.7 }}
-          className="w-full xl:w-64"
         >
-          <Card className="w-full flex flex-col">
+          <Card className="w-64 flex flex-col">
           <div className="p-4 border-b">
             <h3 className="font-semibold">Saved Traits</h3>
           </div>
-          <ScrollArea className="flex-grow h-[300px] xl:h-[600px]">
+          <ScrollArea className="flex-grow h-[600px]">
             <CardContent className="p-4 space-y-2">
               {savedTraits.map((trait) => (
                 <motion.div
@@ -322,9 +321,8 @@ const CreateTraits: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.7 }}
-          className="w-full xl:w-80"
         >
-          <Card className="w-full p-4 md:p-6 flex flex-col gap-4">
+          <Card className="w-80 p-6 flex flex-col gap-4">
             {/* Color picker */}
             <div className="relative">
               <button
@@ -425,11 +423,10 @@ const CreateTraits: React.FC = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.7, duration: 0.7 }}
-          className="w-full xl:flex-1 max-w-3xl mx-auto"
         >
             <canvas
               ref={baseCanvasRef}
-              className="absolute border border-gray-200 rounded-lg bg-white w-full h-full"
+              className="absolute border border-gray-200 rounded-lg bg-white"
               style={{ opacity: showBaseLayer ? 1 : 0.5 }}
             />
             <canvas
@@ -438,7 +435,7 @@ const CreateTraits: React.FC = () => {
               onMouseMove={draw}
               onMouseUp={stopDrawing}
               onMouseLeave={stopDrawing}
-              className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent w-full h-full"
+              className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent"
             />
         </motion.div>
     </motion.div>

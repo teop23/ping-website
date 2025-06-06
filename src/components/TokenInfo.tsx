@@ -7,14 +7,14 @@ import { Button } from './ui/button';
 const TokenInfo: React.FC = () => {
   return (
     <motion.div 
-      className="overflow-hidden w-full"
+      className="overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+          <div className="flex items-center gap-2">
             <Coins className="text-primary" size={24} />
             <div>
               <h2 className="text-xl font-bold">PING Token</h2>
@@ -24,7 +24,7 @@ const TokenInfo: React.FC = () => {
         </CardHeader>
         
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <StatCard
               icon={<TrendingUp size={20} className="text-green-500" />}
               label="Current Price"

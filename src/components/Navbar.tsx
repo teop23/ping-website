@@ -8,7 +8,7 @@ interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 
 const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   return (
-    <nav className={cn("bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-4 sm:px-6 md:px-12 relative flex items-center shadow-sm", className)} {...props}>
+    <nav className={cn("bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-6 md:px-12 relative flex items-center shadow-sm", className)} {...props}>
       <div className="container mx-auto flex justify-between items-center">
         <motion.div 
           className="flex items-center space-x-2"
@@ -22,14 +22,12 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
         </motion.div>
         
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <div className="hidden md:block">
-            {location.pathname === '/create-traits' && (
-              <h1 className="text-xl font-semibold">Create PING Traits</h1>
-            )}
-          </div>
+          {location.pathname === '/create-traits' && (
+            <h1 className="text-xl font-semibold">Create PING Traits</h1>
+          )}
         </div>
         
-        <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-8">
+        <div className="flex items-center space-x-8">
           <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
           <NavItem 
             label="Create Traits" 
