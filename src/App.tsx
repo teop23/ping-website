@@ -8,7 +8,7 @@ function App() {
   const path = window.location.pathname;
 
   return (
-    <div className="h-screen bg-gradient-to-br from-white to-red-50/30 backdrop-blur-xl text-foreground flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-white to-white text-foreground flex flex-col">
       <ParticleBackground />
       <Navbar className="h-16" />
       <main className="flex-grow">

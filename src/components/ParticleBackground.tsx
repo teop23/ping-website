@@ -30,20 +30,16 @@ const ParticleBackground: React.FC = () => {
     
     // Create particles
     const particles: Particle[] = [];
-    const particleCount = Math.min(40, Math.floor(window.innerWidth / 35));
-    const colors = [
-      'rgba(255, 0, 0, 0.015)',
-      'rgba(255, 0, 0, 0.02)',
-      'rgba(255, 0, 0, 0.03)'
-    ];
+    const particleCount = Math.min(15, Math.floor(window.innerWidth / 100));
+    const colors = ['rgba(0, 0, 0, 0.015)', 'rgba(0, 0, 0, 0.02)'];
     
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 200 + 100,
-        speedX: (Math.random() - 0.5) * 0.1,
-        speedY: (Math.random() - 0.5) * 0.1,
+        size: Math.random() * 400 + 200,
+        speedX: (Math.random() - 0.5) * 0.05,
+        speedY: (Math.random() - 0.5) * 0.05,
         color: colors[Math.floor(Math.random() * colors.length)]
       });
     }
@@ -64,22 +60,13 @@ const ParticleBackground: React.FC = () => {
         if (particle.y > canvas.height) particle.y = 0;
         if (particle.y < 0) particle.y = canvas.height;
         
-        // Draw particle
-        // Draw rounded rectangle instead of circle
+        // Draw blurred circle
         ctx.beginPath();
-        const radius = particle.size / 4;
-        ctx.moveTo(particle.x + radius, particle.y);
-        ctx.lineTo(particle.x + particle.size - radius, particle.y);
-        ctx.quadraticCurveTo(particle.x + particle.size, particle.y, particle.x + particle.size, particle.y + radius);
-        ctx.lineTo(particle.x + particle.size, particle.y + particle.size - radius);
-        ctx.quadraticCurveTo(particle.x + particle.size, particle.y + particle.size, particle.x + particle.size - radius, particle.y + particle.size);
-        ctx.lineTo(particle.x + radius, particle.y + particle.size);
-        ctx.quadraticCurveTo(particle.x, particle.y + particle.size, particle.x, particle.y + particle.size - radius);
-        ctx.lineTo(particle.x, particle.y + radius);
-        ctx.quadraticCurveTo(particle.x, particle.y, particle.x + radius, particle.y);
-        ctx.closePath();
+        ctx.filter = 'blur(100px)';
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = particle.color;
         ctx.fill();
+        ctx.filter = 'none';
       });
     };
     
