@@ -32,17 +32,17 @@ const ParticleBackground: React.FC = () => {
     const particles: Particle[] = [];
     const particleCount = Math.min(40, Math.floor(window.innerWidth / 35));
     const colors = [
-      'rgba(0, 0, 0, 0.03)',
-      'rgba(0, 0, 0, 0.05)',
-      'rgba(0, 0, 0, 0.07)'
+      'rgba(255, 0, 0, 0.015)',
+      'rgba(255, 0, 0, 0.02)',
+      'rgba(255, 0, 0, 0.03)'
     ];
     
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 80 + 40, // Larger particles
-        speedX: (Math.random() - 0.5) * 0.1, // Slower movement
+        size: Math.random() * 200 + 100,
+        speedX: (Math.random() - 0.5) * 0.1,
         speedY: (Math.random() - 0.5) * 0.1,
         color: colors[Math.floor(Math.random() * colors.length)]
       });
