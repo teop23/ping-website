@@ -46,16 +46,16 @@ const Builder: React.FC = () => {
   };
   
   return (
-    <div className="h-full flex items-center justify-center px-4 overflow-hidden">
-      <div className="flex gap-8">
-        <div className="w-[500px]">
+    <div className="h-full flex items-center justify-center overflow-hidden">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 w-full">
+        <div className="w-full lg:w-[500px]">
           <CharacterPreview
             selectedTraits={selectedTraits}
             onReset={handleReset}
           />
         </div>
         
-        <div className="w-[400px]">
+        <div className="w-full lg:w-[400px]">
           <TraitSelector
             categories={categories}
             traits={traits}

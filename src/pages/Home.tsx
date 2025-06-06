@@ -6,7 +6,7 @@ import TokenInfo from '../components/TokenInfo';
 const Home: React.FC = () => {
   return (
     <motion.div
-      className="min-h-full flex flex-col items-center justify-center gap-12 py-12 px-6"
+      className="min-h-full flex flex-col items-center justify-center gap-6 sm:gap-8 md:gap-12 p-4 sm:py-8 md:py-12 sm:px-6"
       initial={{ opacity: 0, filter: "blur(10px)" }}
       animate={{ opacity: 1, filter: "blur(0px)" }}
       transition={{ duration: 1, ease: "easeOut" }}
@@ -15,17 +15,17 @@ const Home: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.7 }}
-        className="text-center space-y-4 max-w-2xl"
+        className="text-center space-y-3 sm:space-y-4 w-full max-w-sm sm:max-w-xl md:max-w-2xl px-2"
       >
-        <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
           Create Your PING Character
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-base sm:text-lg text-muted-foreground">
           Customize your unique PING character with different traits and join the vibrant Solana memetoken community.
         </p>
       </motion.div>
       
-      <div className="w-full max-w-6xl">
+      <div className="w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-6xl">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
