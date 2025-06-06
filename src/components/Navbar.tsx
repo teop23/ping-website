@@ -16,8 +16,9 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
           whileHover={{ scale: 1.05 }}
+          asChild
         >
-          <span className="font-bold text-2xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">PING</span>
+          <a href="/" className="font-bold text-2xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">PING</a>
         </motion.div>
         
         <div className="absolute left-1/2 transform -translate-x-1/2">
