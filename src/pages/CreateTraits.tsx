@@ -425,11 +425,11 @@ const CreateTraits: React.FC = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.7, duration: 0.7 }}
-          className="w-full xl:flex-1 max-w-3xl mx-auto aspect-square"
+          className="w-full xl:flex-1 max-w-3xl mx-auto"
         >
             <canvas
               ref={baseCanvasRef}
-              className="absolute inset-0 border border-gray-200 rounded-lg bg-white w-full h-full object-contain"
+              className="absolute border border-gray-200 rounded-lg bg-white w-full h-full"
               style={{ opacity: showBaseLayer ? 1 : 0.5 }}
             />
             <canvas
@@ -438,7 +438,7 @@ const CreateTraits: React.FC = () => {
               onMouseMove={draw}
               onMouseUp={stopDrawing}
               onMouseLeave={stopDrawing}
-              className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent w-full h-full object-contain"
+              className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent w-full h-full"
             />
         </motion.div>
     </motion.div>
