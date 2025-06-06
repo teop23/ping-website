@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '../components/ui/card';
 import { HexColorPicker } from 'react-colorful';
 import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save, Image, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 import pingImage from '../assets/images/ping.png'; 
 import { ScrollArea } from '../components/ui/scroll-area';
 
@@ -246,9 +247,19 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex items-start justify-center gap-8 p-8">
+    <motion.div 
+      className="flex-1 flex items-start justify-center gap-8 p-8"
+      initial={{ opacity: 0, filter: "blur(10px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      transition={{ duration: 1, ease: "easeOut" }}
+    >
         {/* Saved Traits Panel */}
-        <Card className="w-64 flex flex-col">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3, duration: 0.7 }}
+        >
+          <Card className="w-64 flex flex-col">
           <div className="p-4 border-b">
             <h3 className="font-semibold">Saved Traits</h3>
           </div>
@@ -281,10 +292,16 @@ const CreateTraits: React.FC = () => {
               ))}
             </CardContent>
           </ScrollArea>
-        </Card>
+          </Card>
+        </motion.div>
 
         {/* Tools Panel - Fixed width sidebar */}
-        <Card className="w-80 p-6 flex flex-col gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.7 }}
+        >
+          <Card className="w-80 p-6 flex flex-col gap-4">
             {/* Color picker */}
             <div className="relative">
               <button
@@ -377,9 +394,15 @@ const CreateTraits: React.FC = () => {
               />
             </div>
           </Card>
+        </motion.div>
 
         {/* Drawing Area - Takes remaining width */}
-        <div className="relative">
+        <motion.div 
+          className="relative"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7, duration: 0.7 }}
+        >
             <canvas
               ref={baseCanvasRef}
               className="absolute border border-gray-200 rounded-lg bg-white"
@@ -393,7 +416,8 @@ const CreateTraits: React.FC = () => {
               onMouseLeave={stopDrawing}
               className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent"
             />
-          </div>
+        </motion.div>
+    </motion.div>
     </div>
   );
 };
