@@ -33,6 +33,33 @@ const CreateTraits: React.FC = () => {
   const [drawDistance, setDrawDistance] = useState(0);
   const minDrawDistance = 50; // Minimum distance before saving to history
 
+  const updateCanvasSize = () => {
+    if (!containerRef.current || !baseCanvasRef.current || !drawCanvasRef.current) return;
+    
+    // Get container dimensions
+    const container = containerRef.current;
+    const { width, height } = container.getBoundingClientRect();
+    
+    // Set canvas dimensions
+    baseCanvasRef.current.width = width;
+    baseCanvasRef.current.height = height;
+    drawCanvasRef.current.width = width;
+    drawCanvasRef.current.height = height;
+    
+    // Draw base image
+    const baseCtx = baseCanvasRef.current.getContext('2d');
+    if (baseCtx) {
+      const img = new Image();
+      img.src = pingImage;
+      img.onload = () => {
+        const scale = Math.min(width / img.width, height / img.height);
+        const x = (width - img.width * scale) / 2;
+        const y = (height - img.height * scale) / 2;
+        baseCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
+      };
+    }
+  };
+
   // Load saved traits on mount
   useEffect(() => {
     const savedTraits = localStorage.getItem('savedTraits');
