@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
-import ParticleBackground from './components/ParticleBackground';
+import Background from './components/Background';
 import Home from './pages/Home';
 import CreateTraits from './pages/CreateTraits';
 
@@ -9,7 +9,7 @@ function App() {
 
   return (
     <div className="h-screen bg-gradient-to-br from-white to-white text-foreground flex flex-col">
-      <ParticleBackground />
+      <Background />
       <Navbar className="h-16" />
       <main className="flex-grow">
         {path === '/' && <Home />}
