@@ -417,7 +417,6 @@ const CreateTraits: React.FC = () => {
             />
         </motion.div>
     </motion.div>
-    </div>
   );
 };
 
