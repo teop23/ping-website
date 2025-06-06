@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '../components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
@@ -30,4 +30,6 @@ const CreateTraits: React.FC = () => {
       </AlertDialog>
     );
   }
+  return null;
 }
+export default CreateTraits;
