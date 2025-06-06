@@ -29,6 +29,8 @@ const CreateTraits: React.FC = () => {
   const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
   const [selectedTraits, setSelectedTraits] = useState<SavedTrait[]>([]);
   const [compositeCanvas, setCompositeCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [drawDistance, setDrawDistance] = useState(0);
+  const minDrawDistance = 50; // Minimum distance before saving to history
 
   // Load saved traits on mount
   useEffect(() => {
@@ -137,6 +139,12 @@ const CreateTraits: React.FC = () => {
     const point = getCanvasPoint(e);
     if (!point || !lastPos.current) return;
     
+    // Calculate distance drawn
+    const dx = point.x - lastPos.current.x;
+    const dy = point.y - lastPos.current.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    setDrawDistance(prev => prev + distance);
+    
     // Set drawing properties
     ctx.strokeStyle = tool === 'eraser' ? 'rgba(0,0,0,1)' : color;
     ctx.lineWidth = brushSize;
@@ -154,14 +162,17 @@ const CreateTraits: React.FC = () => {
   const stopDrawing = () => {
     if (!ctx || !drawCanvasRef.current) return;
     
+    // Only save to history if we've drawn enough
+    if (drawDistance > minDrawDistance) {
+      saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height));
+    }
+    
+    // Reset drawing state
     setIsDrawing(false);
+    setDrawDistance(0);
     lastPos.current = null;
     
     // Reset composite operation to default
-    ctx.globalCompositeOperation = 'source-over';
-    
-    // Save the current state to history
-    saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height));
   };
 
   const downloadImage = () => {
