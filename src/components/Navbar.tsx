@@ -34,6 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             href="/create-traits" 
             isActive={location.pathname === '/create-traits'}
             icon={<Palette size={16} />} 
+            className="hidden md:flex"
           />
         </div>
       </div>
@@ -46,14 +47,16 @@ interface NavItemProps {
   href: string;
   isActive?: boolean;
   icon?: React.ReactNode;
+  className?: string;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ label, href, isActive = false, icon }) => {
+const NavItem: React.FC<NavItemProps> = ({ label, href, isActive = false, icon, className }) => {
   return (
     <Button
       asChild
       variant={isActive ? "secondary" : "ghost"}
       href={href}
+      className={className}
     >
       <motion.a
         className="flex items-center gap-2"
