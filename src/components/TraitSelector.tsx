@@ -86,7 +86,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
       </Tabs>
       
       {/* Traits grid */}
-      <ScrollArea className="h-[350px]">
+      <ScrollArea className="h-[350px] sm:h-[400px] lg:h-[500px]">
         <CardContent className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {/* Upload button */}
           <motion.button
