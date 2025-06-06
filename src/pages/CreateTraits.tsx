@@ -128,9 +128,20 @@ const CreateTraits: React.FC = () => {
     // Set composite operation based on tool
     ctx.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over';
     
-    // Start a new path and move to the starting point
+    // Draw a circle at the click point
+    ctx.fillStyle = tool === 'eraser' ? 'rgba(0,0,0,1)' : color;
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, brushSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Start path for potential dragging
     ctx.beginPath();
     ctx.moveTo(point.x, point.y);
+    
+    // Save state to history if not dragging
+    if (!isDrawing && drawCanvasRef.current) {
+      saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height));
+    }
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
