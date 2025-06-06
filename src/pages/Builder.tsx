@@ -46,7 +46,7 @@ const Builder: React.FC = () => {
   };
   
   return (
-    <div className="h-full flex items-center justify-center overflow-hidden">
+    <div className="h-full flex items-center justify-center overflow-hidden max-w-[1400px] mx-auto px-4">
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 w-full">
         <div className="w-full lg:w-[500px]">
           <CharacterPreview
