@@ -69,7 +69,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
+    <Card className="flex flex-col h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
       {/* Category tabs */}
       <Tabs value={selectedCategory} onValueChange={onCategoryChange}>
         <TabsList className="w-full justify-start bg-gradient-to-r from-muted to-muted/80 overflow-x-auto">
@@ -86,7 +86,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
       </Tabs>
       
       {/* Traits grid */}
-      <ScrollArea className="h-[350px] sm:h-[400px] lg:h-[500px]">
+      <ScrollArea className="flex-1">
         <CardContent className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {/* Upload button */}
           <motion.button

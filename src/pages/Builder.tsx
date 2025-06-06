@@ -46,7 +46,7 @@ const Builder: React.FC = () => {
   };
   
   return (
-    <div className="min-h-full flex items-start sm:items-center justify-center overflow-x-hidden overflow-y-auto max-w-[1400px] mx-auto px-2 sm:px-4 py-4 sm:py-0">
+    <div className="flex items-start justify-center max-w-[1400px] mx-auto px-2 sm:px-4 py-4">
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 w-full">
         <div className="w-full lg:w-[500px] lg:ml-auto lg:flex-shrink-0">
           <CharacterPreview
@@ -55,7 +55,7 @@ const Builder: React.FC = () => {
           />
         </div>
         
-        <div className="w-full lg:w-[400px] lg:mr-auto lg:flex-shrink-0 mb-20 sm:mb-0">
+        <div className="w-full lg:w-[400px] lg:mr-auto lg:flex-shrink-0 pb-24 sm:pb-8">
           <TraitSelector
             categories={categories}
             traits={traits}
