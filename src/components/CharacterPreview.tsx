@@ -72,16 +72,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
   return (
     <div className="flex flex-col items-center">
       <motion.div
-        className="w-full aspect-square"
+        className="w-full aspect-square relative"
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.3 }}
       >
-        <Card className="h-full relative overflow-hidden">
+        <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
           <CardContent className="h-full p-6 flex items-center justify-center">
             <div ref={characterRef} className="relative w-4/5 h-4/5 flex items-center justify-center">
               {/* Base character */}
               <img 
                 src={pingImage} 
                 alt="Base character" 
-                className="absolute w-full h-full object-contain z-[1]"
+                className="absolute w-full h-full object-contain z-[1] transition-transform duration-300 hover:scale-105"
               />
           
               {/* Render traits in specific order with proper z-index */}
@@ -126,24 +128,30 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       </motion.div>
       
       <div className="flex space-x-4 mt-6">
-        <ActionButton 
-          icon={<Download size={20} />} 
-          label="Download" 
-          onClick={handleDownload} 
-          variant="default"
-        />
-        <ActionButton 
-          icon={<Copy size={20} />} 
-          label="Copy" 
-          onClick={handleCopy} 
-          variant="secondary"
-        />
-        <ActionButton 
-          icon={<RotateCcw size={20} />} 
-          label="Reset" 
-          onClick={onReset} 
-          variant="outline"
-        />
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ActionButton 
+            icon={<Download size={20} />} 
+            label="Download" 
+            onClick={handleDownload} 
+            variant="default"
+          />
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ActionButton 
+            icon={<Copy size={20} />} 
+            label="Copy" 
+            onClick={handleCopy} 
+            variant="secondary"
+          />
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ActionButton 
+            icon={<RotateCcw size={20} />} 
+            label="Reset" 
+            onClick={onReset} 
+            variant="outline"
+          />
+        </motion.div>
       </div>
     </div>
   );

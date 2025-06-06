@@ -69,14 +69,15 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden">
+    <Card className="flex flex-col overflow-hidden shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95">
       {/* Category tabs */}
       <Tabs value={selectedCategory} onValueChange={onCategoryChange}>
-        <TabsList className="w-full justify-start">
+        <TabsList className="w-full justify-start bg-gradient-to-r from-muted to-muted/80">
           {categories.map((category) => (
             <TabsTrigger
               key={category.id}
               value={category.id}
+              className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary/10 data-[state=active]:to-primary/5"
             >
               {category.label}
             </TabsTrigger>
@@ -88,17 +89,17 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
       <ScrollArea className="h-[350px]">
         <CardContent className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {/* Upload button */}
-          <motion.div
-            className="relative cursor-pointer rounded-lg overflow-hidden border border-dashed border-primary/50 hover:border-primary"
+          <motion.button
+            className="relative cursor-pointer rounded-lg overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background to-muted/50"
             onClick={() => handleUpload(selectedCategory)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
             <div className="aspect-square bg-card flex flex-col items-center justify-center gap-2 text-muted-foreground">
-              <Upload size={24} />
+              <Upload size={24} className="text-primary/60" />
               <span className="text-xs">Upload</span>
             </div>
-          </motion.div>
+          </motion.button>
           
           {filteredTraits.map((trait) => {
             // Get placeholder image for this trait

@@ -8,16 +8,17 @@ interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 
 const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   return (
-    <nav className={cn("bg-card/50 backdrop-blur-sm border-b border-border px-6 md:px-12 relative flex items-center", className)} {...props}>
+    <nav className={cn("bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-6 md:px-12 relative flex items-center shadow-sm", className)} {...props}>
       <div className="container mx-auto flex justify-between items-center">
         <motion.div 
           className="flex items-center space-x-2"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.7 }}
+          whileHover={{ scale: 1.05 }}
         >
-          <Rocket className="text-primary" size={32} />
-          <span className="font-bold text-2xl tracking-tighter">PING</span>
+          <Rocket className="text-primary animate-pulse" size={32} />
+          <span className="font-bold text-2xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">PING</span>
         </motion.div>
         
         <div className="absolute left-1/2 transform -translate-x-1/2">
