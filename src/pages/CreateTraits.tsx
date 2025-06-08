@@ -398,30 +398,38 @@ const CreateTraits: React.FC = () => {
       }
     });
     
-    canvas.renderAll();
-    const dataURL = canvas.toDataURL({
-      format: 'png',
-      quality: 1,
-      withoutTransform: false,
-      backgroundColor: 'transparent'
-    });
+    // Temporarily set canvas background to transparent
+    const originalBackground = canvas.backgroundColor;
+    canvas.setBackgroundColor('transparent', () => {
+      canvas.renderAll();
+      
+      const dataURL = canvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        withoutTransform: false,
+        backgroundColor: 'transparent'
+      });
 
-    // Restore base image
-    if (baseImage && originalOpacity !== undefined) {
-      baseImage.set({ opacity: originalOpacity });
-    }
-    
-    // Restore saved traits visibility
-    hiddenTraits.forEach(({ object, originalVisibility }) => {
-      object.set({ visible: originalVisibility });
-    });
-    
-    canvas.renderAll();
+      // Restore canvas background
+      canvas.setBackgroundColor(originalBackground, () => {
+        // Restore base image
+        if (baseImage && originalOpacity !== undefined) {
+          baseImage.set({ opacity: originalOpacity });
+        }
+        
+        // Restore saved traits visibility
+        hiddenTraits.forEach(({ object, originalVisibility }) => {
+          object.set({ visible: originalVisibility });
+        });
+        
+        canvas.renderAll();
+      });
 
-    const link = document.createElement('a');
-    link.download = `${traitName || 'ping-trait'}.png`;
-    link.href = dataURL;
-    link.click();
+      const link = document.createElement('a');
+      link.download = `${traitName || 'ping-trait'}.png`;
+      link.href = dataURL;
+      link.click();
+    });
   };
 
   const saveTrait = () => {
