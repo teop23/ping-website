@@ -565,6 +565,13 @@ const CreateTraits: React.FC = () => {
     setTraitToDelete(id);
   };
 
+  const downloadIndividualTrait = (trait: SavedTrait) => {
+    const link = document.createElement('a');
+    link.download = `${trait.name}.png`;
+    link.href = trait.data;
+    link.click();
+  };
+
   const toggleTrait = (trait: SavedTrait) => {
     if (!canvas) return;
     
@@ -698,6 +705,17 @@ const CreateTraits: React.FC = () => {
                       </div>
                       <div className="flex items-center space-x-1">
                         <div className={`w-2 h-2 rounded-full ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            downloadIndividualTrait(trait);
+                          }}
+                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Download size={16} />
+                        </Button>
                         <Dialog open={traitToDelete === trait.id} onOpenChange={(open) => !open && setTraitToDelete(null)}>
                           <DialogTrigger asChild>
                             <Button
