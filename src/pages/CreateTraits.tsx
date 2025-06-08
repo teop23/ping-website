@@ -1,32 +1,29 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '../components/ui/card';
+import { Card, CardContent, CardHeader } from '../components/ui/card';
+import { Button } from '../components/ui/button';
 import { HexColorPicker } from 'react-colorful';
 import { 
   Download, 
   Eye, 
   EyeOff, 
   Undo, 
-  Redo, 
   Save, 
-  Image, 
-  X, 
   Type, 
   Circle,
   Square,
-  Triangle,
   Minus,
   Upload,
   Trash2,
-  RotateCw,
-  Copy,
-  Layers
+  RotateCcw,
+  Palette,
+  MousePointer
 } from 'lucide-react';
 import { fabric } from 'fabric';
-import pingImage from '../assets/images/ping.png'; 
-import { ScrollArea } from '../components/ui/scroll-area';
+import pingImage from '../assets/images/ping.png';
 
 interface SavedTrait {
+  id: string;
   name: string;
   data: string;
   timestamp: number;
@@ -36,51 +33,50 @@ const CreateTraits: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [baseImage, setBaseImage] = useState<fabric.Image | null>(null);
-  const [color, setColor] = useState("#000000");
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [brushSize, setBrushSize] = useState(5);
   const [showBaseLayer, setShowBaseLayer] = useState(true);
-  const [tool, setTool] = useState<'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'triangle' | 'line'>('select');
+  const [tool, setTool] = useState<'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line'>('select');
   const [traitName, setTraitName] = useState('');
   const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
-  const [selectedTraits, setSelectedTraits] = useState<SavedTrait[]>([]);
+  
+  // Drawing properties
+  const [color, setColor] = useState('#000000');
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [brushSize, setBrushSize] = useState(5);
   
   // Text properties
   const [textSize, setTextSize] = useState(24);
   const [textColor, setTextColor] = useState('#000000');
   const [showTextColorPicker, setShowTextColorPicker] = useState(false);
-  const [textFont, setTextFont] = useState('Arial');
 
-  // Load saved traits on mount
+  // Load saved traits from localStorage
   useEffect(() => {
-    const savedTraits = localStorage.getItem('savedTraits');
-    if (savedTraits) {
-      setSavedTraits(JSON.parse(savedTraits));
+    const saved = localStorage.getItem('pingTraits');
+    if (saved) {
+      try {
+        setSavedTraits(JSON.parse(saved));
+      } catch (error) {
+        console.error('Error loading saved traits:', error);
+      }
     }
   }, []);
 
+  // Initialize canvas
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Initialize Fabric.js canvas
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: 800,
-      height: 800,
-      backgroundColor: 'transparent',
-      selection: tool === 'select',
-      isDrawingMode: tool === 'brush'
+      width: 600,
+      height: 600,
+      backgroundColor: 'white',
+      selection: tool === 'select'
     });
 
-    // Configure drawing brush
-    fabricCanvas.freeDrawingBrush.width = brushSize;
-    fabricCanvas.freeDrawingBrush.color = color;
-
-    // Load base image
+    // Load base character image
     fabric.Image.fromURL(pingImage, (img) => {
       const scale = Math.min(
         fabricCanvas.width! / img.width!,
         fabricCanvas.height! / img.height!
-      ) * 0.8;
+      ) * 0.7;
       
       img.set({
         left: fabricCanvas.width! / 2,
@@ -91,7 +87,7 @@ const CreateTraits: React.FC = () => {
         scaleY: scale,
         selectable: false,
         evented: false,
-        excludeFromExport: false
+        name: 'baseImage'
       });
       
       setBaseImage(img);
@@ -100,11 +96,8 @@ const CreateTraits: React.FC = () => {
       fabricCanvas.renderAll();
     });
 
-    // Handle canvas events
-    fabricCanvas.on('mouse:down', handleCanvasMouseDown);
-    fabricCanvas.on('selection:created', handleSelection);
-    fabricCanvas.on('selection:updated', handleSelection);
-    fabricCanvas.on('selection:cleared', handleSelectionCleared);
+    // Canvas event handlers
+    fabricCanvas.on('mouse:down', handleCanvasClick);
 
     setCanvas(fabricCanvas);
 
@@ -113,7 +106,7 @@ const CreateTraits: React.FC = () => {
     };
   }, []);
 
-  // Update canvas properties when tool changes
+  // Update canvas when tool changes
   useEffect(() => {
     if (!canvas) return;
 
@@ -126,17 +119,16 @@ const CreateTraits: React.FC = () => {
     }
 
     canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
-    canvas.renderAll();
   }, [tool, canvas, brushSize, color]);
 
   // Update base image visibility
   useEffect(() => {
-    if (!baseImage) return;
-    baseImage.set({ opacity: showBaseLayer ? 1 : 0.3 });
-    canvas?.renderAll();
+    if (!baseImage || !canvas) return;
+    baseImage.set({ opacity: showBaseLayer ? 1 : 0.2 });
+    canvas.renderAll();
   }, [showBaseLayer, baseImage, canvas]);
 
-  const handleCanvasMouseDown = (e: fabric.IEvent) => {
+  const handleCanvasClick = (e: fabric.IEvent) => {
     if (!canvas || tool === 'select' || tool === 'brush') return;
 
     const pointer = canvas.getPointer(e.e);
@@ -151,9 +143,6 @@ const CreateTraits: React.FC = () => {
       case 'circle':
         addCircle(pointer.x, pointer.y);
         break;
-      case 'triangle':
-        addTriangle(pointer.x, pointer.y);
-        break;
       case 'line':
         addLine(pointer.x, pointer.y);
         break;
@@ -161,21 +150,26 @@ const CreateTraits: React.FC = () => {
   };
 
   const addText = (x: number, y: number) => {
-    const text = new fabric.IText('Click to edit', {
+    if (!canvas) return;
+    
+    const text = new fabric.IText('Edit me', {
       left: x,
       top: y,
       fontSize: textSize,
       fill: textColor,
-      fontFamily: textFont,
+      fontFamily: 'Arial',
       editable: true
     });
     
-    canvas?.add(text);
-    canvas?.setActiveObject(text);
-    canvas?.renderAll();
+    canvas.add(text);
+    canvas.setActiveObject(text);
+    canvas.renderAll();
+    setTool('select');
   };
 
   const addRectangle = (x: number, y: number) => {
+    if (!canvas) return;
+    
     const rect = new fabric.Rect({
       left: x - 50,
       top: y - 25,
@@ -186,12 +180,15 @@ const CreateTraits: React.FC = () => {
       strokeWidth: 2
     });
     
-    canvas?.add(rect);
-    canvas?.setActiveObject(rect);
-    canvas?.renderAll();
+    canvas.add(rect);
+    canvas.setActiveObject(rect);
+    canvas.renderAll();
+    setTool('select');
   };
 
   const addCircle = (x: number, y: number) => {
+    if (!canvas) return;
+    
     const circle = new fabric.Circle({
       left: x - 25,
       top: y - 25,
@@ -201,114 +198,61 @@ const CreateTraits: React.FC = () => {
       strokeWidth: 2
     });
     
-    canvas?.add(circle);
-    canvas?.setActiveObject(circle);
-    canvas?.renderAll();
-  };
-
-  const addTriangle = (x: number, y: number) => {
-    const triangle = new fabric.Triangle({
-      left: x - 25,
-      top: y - 25,
-      width: 50,
-      height: 50,
-      fill: color,
-      stroke: color,
-      strokeWidth: 2
-    });
-    
-    canvas?.add(triangle);
-    canvas?.setActiveObject(triangle);
-    canvas?.renderAll();
+    canvas.add(circle);
+    canvas.setActiveObject(circle);
+    canvas.renderAll();
+    setTool('select');
   };
 
   const addLine = (x: number, y: number) => {
+    if (!canvas) return;
+    
     const line = new fabric.Line([x, y, x + 100, y], {
       stroke: color,
       strokeWidth: brushSize,
       selectable: true
     });
     
-    canvas?.add(line);
-    canvas?.setActiveObject(line);
-    canvas?.renderAll();
-  };
-
-  const handleSelection = () => {
-    // Handle object selection
-  };
-
-  const handleSelectionCleared = () => {
-    // Handle selection cleared
+    canvas.add(line);
+    canvas.setActiveObject(line);
+    canvas.renderAll();
+    setTool('select');
   };
 
   const deleteSelected = () => {
-    const activeObjects = canvas?.getActiveObjects();
-    if (activeObjects && activeObjects.length > 0) {
-      activeObjects.forEach(obj => {
-        if (obj !== baseImage) {
-          canvas?.remove(obj);
-        }
-      });
-      canvas?.discardActiveObject();
-      canvas?.renderAll();
-    }
-  };
-
-  const duplicateSelected = () => {
-    const activeObject = canvas?.getActiveObject();
-    if (activeObject && activeObject !== baseImage) {
-      activeObject.clone((cloned: fabric.Object) => {
-        cloned.set({
-          left: cloned.left! + 10,
-          top: cloned.top! + 10,
-        });
-        canvas?.add(cloned);
-        canvas?.setActiveObject(cloned);
-        canvas?.renderAll();
-      });
-    }
-  };
-
-  const bringToFront = () => {
-    const activeObject = canvas?.getActiveObject();
-    if (activeObject && activeObject !== baseImage) {
-      canvas?.bringToFront(activeObject);
-      canvas?.renderAll();
-    }
-  };
-
-  const sendToBack = () => {
-    const activeObject = canvas?.getActiveObject();
-    if (activeObject && activeObject !== baseImage) {
-      canvas?.sendToBack(activeObject);
-      if (baseImage) {
-        canvas?.sendToBack(baseImage);
+    if (!canvas) return;
+    
+    const activeObjects = canvas.getActiveObjects();
+    activeObjects.forEach(obj => {
+      if (obj.name !== 'baseImage') {
+        canvas.remove(obj);
       }
-      canvas?.renderAll();
-    }
-  };
-
-  const undo = () => {
-    // Fabric.js doesn't have built-in undo/redo, but we can implement it
-    // For now, we'll use a simple approach
-    const objects = canvas?.getObjects();
-    if (objects && objects.length > 1) {
-      const lastObject = objects[objects.length - 1];
-      if (lastObject !== baseImage) {
-        canvas?.remove(lastObject);
-        canvas?.renderAll();
-      }
-    }
+    });
+    canvas.discardActiveObject();
+    canvas.renderAll();
   };
 
   const clearCanvas = () => {
-    canvas?.clear();
-    if (baseImage) {
-      canvas?.add(baseImage);
-      canvas?.sendToBack(baseImage);
+    if (!canvas) return;
+    
+    const objects = canvas.getObjects();
+    objects.forEach(obj => {
+      if (obj.name !== 'baseImage') {
+        canvas.remove(obj);
+      }
+    });
+    canvas.renderAll();
+  };
+
+  const undo = () => {
+    if (!canvas) return;
+    
+    const objects = canvas.getObjects();
+    const lastObject = objects[objects.length - 1];
+    if (lastObject && lastObject.name !== 'baseImage') {
+      canvas.remove(lastObject);
+      canvas.renderAll();
     }
-    canvas?.renderAll();
   };
 
   const uploadImage = () => {
@@ -317,22 +261,22 @@ const CreateTraits: React.FC = () => {
     input.accept = 'image/*';
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
+      if (file && canvas) {
         const reader = new FileReader();
         reader.onload = (e) => {
           const imgSrc = e.target?.result as string;
           fabric.Image.fromURL(imgSrc, (img) => {
             img.set({
-              left: canvas!.width! / 2,
-              top: canvas!.height! / 2,
+              left: canvas.width! / 2,
+              top: canvas.height! / 2,
               originX: 'center',
               originY: 'center',
-              scaleX: 0.5,
-              scaleY: 0.5
+              scaleX: 0.3,
+              scaleY: 0.3
             });
-            canvas?.add(img);
-            canvas?.setActiveObject(img);
-            canvas?.renderAll();
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.renderAll();
           });
         };
         reader.readAsDataURL(file);
@@ -341,38 +285,10 @@ const CreateTraits: React.FC = () => {
     input.click();
   };
 
-  const downloadImage = () => {
+  const downloadTrait = () => {
     if (!canvas) return;
 
-    // Temporarily hide base image if needed
-    const originalOpacity = baseImage?.opacity;
-    if (baseImage && !showBaseLayer) {
-      baseImage.set({ opacity: 0 });
-      canvas.renderAll();
-    }
-
-    const dataURL = canvas.toDataURL({
-      format: 'png',
-      quality: 1,
-      multiplier: 1
-    });
-
-    // Restore base image opacity
-    if (baseImage && originalOpacity !== undefined) {
-      baseImage.set({ opacity: originalOpacity });
-      canvas.renderAll();
-    }
-
-    const link = document.createElement('a');
-    link.download = 'ping-trait.png';
-    link.href = dataURL;
-    link.click();
-  };
-
-  const saveTrait = () => {
-    if (!canvas || !traitName) return;
-
-    // Temporarily hide base image for saving
+    // Temporarily hide base image
     const originalOpacity = baseImage?.opacity;
     if (baseImage) {
       baseImage.set({ opacity: 0 });
@@ -382,7 +298,7 @@ const CreateTraits: React.FC = () => {
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 1
+      multiplier: 2
     });
 
     // Restore base image
@@ -391,368 +307,368 @@ const CreateTraits: React.FC = () => {
       canvas.renderAll();
     }
 
-    const newTrait = {
-      name: traitName,
+    const link = document.createElement('a');
+    link.download = `${traitName || 'ping-trait'}.png`;
+    link.href = dataURL;
+    link.click();
+  };
+
+  const saveTrait = () => {
+    if (!canvas || !traitName.trim()) return;
+
+    // Hide base image for saving
+    const originalOpacity = baseImage?.opacity;
+    if (baseImage) {
+      baseImage.set({ opacity: 0 });
+      canvas.renderAll();
+    }
+
+    const dataURL = canvas.toDataURL({
+      format: 'png',
+      quality: 1,
+      multiplier: 2
+    });
+
+    // Restore base image
+    if (baseImage && originalOpacity !== undefined) {
+      baseImage.set({ opacity: originalOpacity });
+      canvas.renderAll();
+    }
+
+    const newTrait: SavedTrait = {
+      id: Date.now().toString(),
+      name: traitName.trim(),
       data: dataURL,
       timestamp: Date.now()
     };
-    
+
     const updatedTraits = [...savedTraits, newTrait];
     setSavedTraits(updatedTraits);
-    localStorage.setItem('savedTraits', JSON.stringify(updatedTraits));
+    localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
     setTraitName('');
     
-    // Clear canvas except base image
+    // Clear canvas
     clearCanvas();
   };
 
+  const deleteTrait = (id: string) => {
+    const updatedTraits = savedTraits.filter(trait => trait.id !== id);
+    setSavedTraits(updatedTraits);
+    localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
+  };
+
   const loadTrait = (trait: SavedTrait) => {
-    setSelectedTraits(prev => {
-      const isSelected = prev.some(t => t.timestamp === trait.timestamp);
-      if (isSelected) {
-        return prev.filter(t => t.timestamp !== trait.timestamp);
-      } else {
-        // Load trait as image on canvas
-        fabric.Image.fromURL(trait.data, (img) => {
-          img.set({
-            left: canvas!.width! / 2,
-            top: canvas!.height! / 2,
-            originX: 'center',
-            originY: 'center'
-          });
-          canvas?.add(img);
-          canvas?.renderAll();
-        });
-        return [...prev, trait];
-      }
+    if (!canvas) return;
+    
+    fabric.Image.fromURL(trait.data, (img) => {
+      img.set({
+        left: canvas.width! / 2,
+        top: canvas.height! / 2,
+        originX: 'center',
+        originY: 'center'
+      });
+      canvas.add(img);
+      canvas.renderAll();
     });
   };
 
-  const deleteTrait = (timestamp: number) => {
-    const updatedTraits = savedTraits.filter(trait => trait.timestamp !== timestamp);
-    setSavedTraits(updatedTraits);
-    localStorage.setItem('savedTraits', JSON.stringify(updatedTraits));
-    setSelectedTraits(prev => prev.filter(t => t.timestamp !== timestamp));
-  };
-
   return (
-    <motion.div 
-      className="flex-1 flex items-start justify-center gap-8 p-8"
-      initial={{ opacity: 0, filter: "blur(10px)" }}
-      animate={{ opacity: 1, filter: "blur(0px)" }}
-      transition={{ duration: 1, ease: "easeOut" }}
-    >
-      {/* Saved Traits Panel */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3, duration: 0.7 }}
-      >
-        <Card className="w-64 flex flex-col">
-          <div className="p-4 border-b">
-            <h3 className="font-semibold">Saved Traits</h3>
-          </div>
-          <ScrollArea className="flex-grow h-[600px]">
-            <CardContent className="p-4 space-y-2">
-              {savedTraits.map((trait) => (
-                <motion.div
-                  key={trait.timestamp}
-                  className={`relative group rounded-lg border p-2 cursor-pointer ${
-                    selectedTraits.some(t => t.timestamp === trait.timestamp)
-                      ? 'border-primary bg-primary/5' 
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                  onClick={() => loadTrait(trait)}
-                >
-                  <div className="flex items-center gap-2">
-                    <Image size={16} className="text-muted-foreground" />
-                    <span className="text-sm truncate flex-grow">{trait.name}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteTrait(trait.timestamp);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 hover:text-destructive"
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create PING Traits</h1>
+          <p className="text-gray-600">Design custom traits for your PING character</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Saved Traits Panel */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+          >
+            <Card className="h-[600px]">
+              <CardHeader>
+                <h3 className="text-lg font-semibold">Saved Traits</h3>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="max-h-[500px] overflow-y-auto p-4 space-y-2">
+                  {savedTraits.map((trait) => (
+                    <div
+                      key={trait.id}
+                      className="group flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <X size={16} />
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </CardContent>
-          </ScrollArea>
-        </Card>
-      </motion.div>
-
-      {/* Tools Panel */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.7 }}
-      >
-        <Card className="w-80 p-6 flex flex-col gap-4">
-          {/* Tools */}
-          <div className="grid grid-cols-2 gap-2">
-            <ToolButton
-              icon={<Circle size={20} />}
-              label="Select"
-              active={tool === 'select'}
-              onClick={() => setTool('select')}
-            />
-            <ToolButton
-              icon={<Circle size={20} />}
-              label="Brush"
-              active={tool === 'brush'}
-              onClick={() => setTool('brush')}
-            />
-            <ToolButton
-              icon={<Type size={20} />}
-              label="Text"
-              active={tool === 'text'}
-              onClick={() => setTool('text')}
-            />
-            <ToolButton
-              icon={<Square size={20} />}
-              label="Rectangle"
-              active={tool === 'rectangle'}
-              onClick={() => setTool('rectangle')}
-            />
-            <ToolButton
-              icon={<Circle size={20} />}
-              label="Circle"
-              active={tool === 'circle'}
-              onClick={() => setTool('circle')}
-            />
-            <ToolButton
-              icon={<Triangle size={20} />}
-              label="Triangle"
-              active={tool === 'triangle'}
-              onClick={() => setTool('triangle')}
-            />
-            <ToolButton
-              icon={<Minus size={20} />}
-              label="Line"
-              active={tool === 'line'}
-              onClick={() => setTool('line')}
-            />
-            <ToolButton
-              icon={<Upload size={20} />}
-              label="Upload"
-              onClick={uploadImage}
-            />
-          </div>
-
-          {/* Color picker */}
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Color</label>
-            <div className="relative">
-              <button
-                className="w-10 h-10 rounded-lg border"
-                style={{ backgroundColor: color }}
-                onClick={() => setShowColorPicker(!showColorPicker)}
-              />
-              {showColorPicker && (
-                <div className="absolute z-10 mt-2">
-                  <HexColorPicker color={color} onChange={setColor} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Brush size */}
-          {(tool === 'brush' || tool === 'line') && (
-            <div className="space-y-2">
-              <label className="text-sm text-gray-600">Brush Size</label>
-              <input
-                type="range"
-                min="1"
-                max="50"
-                value={brushSize}
-                onChange={(e) => setBrushSize(Number(e.target.value))}
-                className="w-full"
-              />
-              <span className="text-xs text-gray-500">{brushSize}px</span>
-            </div>
-          )}
-
-          {/* Text controls */}
-          {tool === 'text' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Font Size</label>
-                <input
-                  type="range"
-                  min="12"
-                  max="72"
-                  value={textSize}
-                  onChange={(e) => setTextSize(Number(e.target.value))}
-                  className="w-full"
-                />
-                <span className="text-xs text-gray-500">{textSize}px</span>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Text Color</label>
-                <div className="relative">
-                  <button
-                    className="w-10 h-10 rounded-lg border"
-                    style={{ backgroundColor: textColor }}
-                    onClick={() => setShowTextColorPicker(!showTextColorPicker)}
-                  />
-                  {showTextColorPicker && (
-                    <div className="absolute z-10 mt-2">
-                      <HexColorPicker color={textColor} onChange={setTextColor} />
+                      <div className="flex items-center space-x-3">
+                        <img
+                          src={trait.data}
+                          alt={trait.name}
+                          className="w-8 h-8 object-cover rounded cursor-pointer"
+                          onClick={() => loadTrait(trait)}
+                        />
+                        <span className="text-sm font-medium truncate">{trait.name}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteTrait(trait.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
+                  ))}
+                  {savedTraits.length === 0 && (
+                    <div className="text-center text-gray-500 py-8">
+                      <p>No saved traits yet</p>
+                      <p className="text-sm">Create and save your first trait!</p>
                     </div>
                   )}
                 </div>
-              </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Font</label>
-                <select
-                  value={textFont}
-                  onChange={(e) => setTextFont(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg"
+          {/* Tools Panel */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <Card className="h-[600px]">
+              <CardHeader>
+                <h3 className="text-lg font-semibold">Tools</h3>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Tool Selection */}
+                <div className="grid grid-cols-2 gap-2">
+                  <ToolButton
+                    icon={<MousePointer size={18} />}
+                    label="Select"
+                    active={tool === 'select'}
+                    onClick={() => setTool('select')}
+                  />
+                  <ToolButton
+                    icon={<Palette size={18} />}
+                    label="Brush"
+                    active={tool === 'brush'}
+                    onClick={() => setTool('brush')}
+                  />
+                  <ToolButton
+                    icon={<Type size={18} />}
+                    label="Text"
+                    active={tool === 'text'}
+                    onClick={() => setTool('text')}
+                  />
+                  <ToolButton
+                    icon={<Square size={18} />}
+                    label="Rectangle"
+                    active={tool === 'rectangle'}
+                    onClick={() => setTool('rectangle')}
+                  />
+                  <ToolButton
+                    icon={<Circle size={18} />}
+                    label="Circle"
+                    active={tool === 'circle'}
+                    onClick={() => setTool('circle')}
+                  />
+                  <ToolButton
+                    icon={<Minus size={18} />}
+                    label="Line"
+                    active={tool === 'line'}
+                    onClick={() => setTool('line')}
+                  />
+                </div>
+
+                {/* Color Picker */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Color</label>
+                  <div className="relative">
+                    <button
+                      className="w-full h-10 rounded-md border-2 border-gray-200"
+                      style={{ backgroundColor: color }}
+                      onClick={() => setShowColorPicker(!showColorPicker)}
+                    />
+                    {showColorPicker && (
+                      <div className="absolute z-10 mt-2">
+                        <div className="p-3 bg-white rounded-lg shadow-lg border">
+                          <HexColorPicker color={color} onChange={setColor} />
+                          <button
+                            className="mt-2 w-full px-3 py-1 text-sm bg-gray-100 rounded"
+                            onClick={() => setShowColorPicker(false)}
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Brush Size */}
+                {tool === 'brush' && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Brush Size: {brushSize}px</label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="50"
+                      value={brushSize}
+                      onChange={(e) => setBrushSize(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                )}
+
+                {/* Text Controls */}
+                {tool === 'text' && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Text Size: {textSize}px</label>
+                      <input
+                        type="range"
+                        min="12"
+                        max="72"
+                        value={textSize}
+                        onChange={(e) => setTextSize(Number(e.target.value))}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Text Color</label>
+                      <div className="relative">
+                        <button
+                          className="w-full h-8 rounded border-2 border-gray-200"
+                          style={{ backgroundColor: textColor }}
+                          onClick={() => setShowTextColorPicker(!showTextColorPicker)}
+                        />
+                        {showTextColorPicker && (
+                          <div className="absolute z-10 mt-2">
+                            <div className="p-3 bg-white rounded-lg shadow-lg border">
+                              <HexColorPicker color={textColor} onChange={setTextColor} />
+                              <button
+                                className="mt-2 w-full px-3 py-1 text-sm bg-gray-100 rounded"
+                                onClick={() => setShowTextColorPicker(false)}
+                              >
+                                Close
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="space-y-2 pt-4 border-t">
+                  <Button onClick={uploadImage} variant="outline" className="w-full">
+                    <Upload size={16} className="mr-2" />
+                    Upload Image
+                  </Button>
+                  <Button onClick={deleteSelected} variant="outline" className="w-full">
+                    <Trash2 size={16} className="mr-2" />
+                    Delete Selected
+                  </Button>
+                  <Button onClick={undo} variant="outline" className="w-full">
+                    <Undo size={16} className="mr-2" />
+                    Undo
+                  </Button>
+                  <Button onClick={clearCanvas} variant="outline" className="w-full">
+                    <RotateCcw size={16} className="mr-2" />
+                    Clear All
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Canvas */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="lg:col-span-2"
+          >
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Canvas</h3>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowBaseLayer(!showBaseLayer)}
                 >
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Courier New">Courier New</option>
-                  <option value="Georgia">Georgia</option>
-                  <option value="Verdana">Verdana</option>
-                </select>
+                  {showBaseLayer ? <EyeOff size={16} /> : <Eye size={16} />}
+                  <span className="ml-2">{showBaseLayer ? 'Hide' : 'Show'} Base</span>
+                </Button>
               </div>
-            </div>
-          )}
+              
+              <div className="flex justify-center">
+                <canvas
+                  ref={canvasRef}
+                  className="border-2 border-gray-200 rounded-lg shadow-sm"
+                />
+              </div>
 
-          {/* Object controls */}
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-gray-700">Object Controls</h4>
-            <div className="grid grid-cols-2 gap-2">
-              <ToolButton
-                icon={<Trash2 size={16} />}
-                label="Delete"
-                onClick={deleteSelected}
-                className="text-xs"
-              />
-              <ToolButton
-                icon={<Copy size={16} />}
-                label="Duplicate"
-                onClick={duplicateSelected}
-                className="text-xs"
-              />
-              <ToolButton
-                icon={<Layers size={16} />}
-                label="To Front"
-                onClick={bringToFront}
-                className="text-xs"
-              />
-              <ToolButton
-                icon={<Layers size={16} />}
-                label="To Back"
-                onClick={sendToBack}
-                className="text-xs"
-              />
-            </div>
-          </div>
-
-          {/* Canvas controls */}
-          <div className="flex gap-2">
-            <ToolButton
-              icon={<Undo size={20} />}
-              label="Undo"
-              onClick={undo}
-            />
-            <ToolButton
-              icon={<RotateCw size={20} />}
-              label="Clear"
-              onClick={clearCanvas}
-            />
-          </div>
-
-          {/* Base layer toggle */}
-          <ToolButton
-            icon={showBaseLayer ? <EyeOff size={20} /> : <Eye size={20} />}
-            label={showBaseLayer ? "Hide Base" : "Show Base"}
-            onClick={() => setShowBaseLayer(!showBaseLayer)}
-          />
-
-          {/* Download button */}
-          <ToolButton
-            icon={<Download size={20} />}
-            label="Download"
-            onClick={downloadImage}
-            className="bg-blue-600 text-white hover:bg-blue-700"
-          />
-          
-          {/* Save trait */}
-          <div className="space-y-2">
-            <input
-              type="text"
-              value={traitName}
-              onChange={(e) => setTraitName(e.target.value)}
-              placeholder="Enter trait name"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-            <ToolButton
-              icon={<Save size={20} />}
-              label="Save Trait"
-              onClick={saveTrait}
-              disabled={!traitName}
-              className="bg-indigo-600 text-white hover:bg-indigo-700 w-full"
-            />
-          </div>
-        </Card>
-      </motion.div>
-
-      {/* Canvas Area */}
-      <motion.div 
-        className="relative"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.7, duration: 0.7 }}
-      >
-        <canvas
-          ref={canvasRef}
-          className="border border-gray-200 rounded-lg bg-white shadow-lg"
-        />
-      </motion.div>
-    </motion.div>
+              {/* Save Controls */}
+              <div className="mt-6 space-y-3">
+                <input
+                  type="text"
+                  value={traitName}
+                  onChange={(e) => setTraitName(e.target.value)}
+                  placeholder="Enter trait name..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={saveTrait}
+                    disabled={!traitName.trim()}
+                    className="flex-1"
+                  >
+                    <Save size={16} className="mr-2" />
+                    Save Trait
+                  </Button>
+                  <Button
+                    onClick={downloadTrait}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    <Download size={16} className="mr-2" />
+                    Download
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 interface ToolButtonProps {
   icon: React.ReactNode;
   label: string;
-  onClick: () => void;
   active?: boolean;
-  disabled?: boolean;
-  className?: string;
+  onClick: () => void;
 }
 
-const ToolButton: React.FC<ToolButtonProps> = ({
-  icon,
-  label,
-  onClick,
-  active = false,
-  disabled = false,
-  className = ""
-}) => {
+const ToolButton: React.FC<ToolButtonProps> = ({ icon, label, active, onClick }) => {
   return (
-    <motion.button
-      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm ${
-        active 
-          ? 'bg-primary text-primary-foreground' 
-          : 'hover:bg-accent hover:text-accent-foreground'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+    <button
       onClick={onClick}
-      whileHover={!disabled ? { scale: 1.02 } : undefined}
-      whileTap={!disabled ? { scale: 0.98 } : undefined}
-      disabled={disabled}
+      className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
+        active
+          ? 'border-blue-500 bg-blue-50 text-blue-700'
+          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+      }`}
     >
       {icon}
-      <span>{label}</span>
-    </motion.button>
+      <span className="text-xs mt-1 font-medium">{label}</span>
+    </button>
   );
 };
 
