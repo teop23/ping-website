@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '../components/ui/card';
 import { HexColorPicker } from 'react-colorful';
-import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save, Image, X } from 'lucide-react';
+import { Download, Eraser, Eye, EyeOff, Undo, Redo, Circle, Save, Image, X, Type, Move } from 'lucide-react';
 import pingImage from '../assets/images/ping.png'; 
 import { ScrollArea } from '../components/ui/scroll-area';
 
@@ -10,6 +10,16 @@ interface SavedTrait {
   name: string;
   data: string;
   timestamp: number;
+}
+
+interface TextElement {
+  id: string;
+  text: string;
+  x: number;
+  y: number;
+  fontSize: number;
+  color: string;
+  fontFamily: string;
 }
 
 const CreateTraits: React.FC = () => {
@@ -21,7 +31,7 @@ const CreateTraits: React.FC = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [brushSize, setBrushSize] = useState(5);
   const [showBaseLayer, setShowBaseLayer] = useState(true);
-  const [tool, setTool] = useState<'brush' | 'eraser'>('brush');
+  const [tool, setTool] = useState<'brush' | 'eraser' | 'text'>('brush');
   const [history, setHistory] = useState<ImageData[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [traitName, setTraitName] = useState('');
@@ -30,7 +40,17 @@ const CreateTraits: React.FC = () => {
   const [selectedTraits, setSelectedTraits] = useState<SavedTrait[]>([]);
   const [compositeCanvas, setCompositeCanvas] = useState<HTMLCanvasElement | null>(null);
   const [drawDistance, setDrawDistance] = useState(0);
-  const minDrawDistance = 50; // Minimum distance before saving to history
+  const minDrawDistance = 50;
+
+  // Text-related state
+  const [textElements, setTextElements] = useState<TextElement[]>([]);
+  const [currentText, setCurrentText] = useState('');
+  const [textFontSize, setTextFontSize] = useState(24);
+  const [textColor, setTextColor] = useState('#000000');
+  const [showTextColorPicker, setShowTextColorPicker] = useState(false);
+  const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
+  const [isDraggingText, setIsDraggingText] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   // Load saved traits on mount
   useEffect(() => {
@@ -84,6 +104,29 @@ const CreateTraits: React.FC = () => {
     };
   }, []);
 
+  // Redraw canvas with text elements
+  const redrawCanvas = () => {
+    if (!ctx || !drawCanvasRef.current) return;
+    
+    // Restore the current drawing state
+    if (history[historyIndex]) {
+      ctx.putImageData(history[historyIndex], 0, 0);
+    }
+    
+    // Draw all text elements
+    textElements.forEach(textElement => {
+      ctx.font = `${textElement.fontSize}px ${textElement.fontFamily}`;
+      ctx.fillStyle = textElement.color;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(textElement.text, textElement.x, textElement.y);
+    });
+  };
+
+  useEffect(() => {
+    redrawCanvas();
+  }, [textElements, historyIndex]);
+
   const saveToHistory = (imageData: ImageData) => {
     const newHistory = [...history.slice(0, historyIndex + 1), imageData];
     setHistory(newHistory);
@@ -110,10 +153,62 @@ const CreateTraits: React.FC = () => {
     const rect = drawCanvasRef.current?.getBoundingClientRect();
     if (!rect) return null;
     
+    const scaleX = drawCanvasRef.current!.width / rect.width;
+    const scaleY = drawCanvasRef.current!.height / rect.height;
+    
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
     };
+  };
+
+  const getTextElementAt = (x: number, y: number): TextElement | null => {
+    if (!ctx) return null;
+    
+    // Check text elements in reverse order (top to bottom)
+    for (let i = textElements.length - 1; i >= 0; i--) {
+      const textElement = textElements[i];
+      ctx.font = `${textElement.fontSize}px ${textElement.fontFamily}`;
+      const metrics = ctx.measureText(textElement.text);
+      const textWidth = metrics.width;
+      const textHeight = textElement.fontSize;
+      
+      if (x >= textElement.x && x <= textElement.x + textWidth &&
+          y >= textElement.y && y <= textElement.y + textHeight) {
+        return textElement;
+      }
+    }
+    return null;
+  };
+
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const point = getCanvasPoint(e);
+    if (!point) return;
+
+    if (tool === 'text') {
+      if (currentText.trim()) {
+        // Add new text element
+        const newTextElement: TextElement = {
+          id: Date.now().toString(),
+          text: currentText,
+          x: point.x,
+          y: point.y,
+          fontSize: textFontSize,
+          color: textColor,
+          fontFamily: 'Arial'
+        };
+        
+        setTextElements(prev => [...prev, newTextElement]);
+        setCurrentText('');
+        
+        // Save to history after adding text
+        setTimeout(() => {
+          if (ctx && drawCanvasRef.current) {
+            saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height));
+          }
+        }, 10);
+      }
+    }
   };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -121,6 +216,23 @@ const CreateTraits: React.FC = () => {
     
     const point = getCanvasPoint(e);
     if (!point) return;
+
+    if (tool === 'text') {
+      // Check if clicking on existing text
+      const textElement = getTextElementAt(point.x, point.y);
+      if (textElement) {
+        setSelectedTextId(textElement.id);
+        setIsDraggingText(true);
+        setDragOffset({
+          x: point.x - textElement.x,
+          y: point.y - textElement.y
+        });
+        return;
+      } else {
+        handleCanvasClick(e);
+        return;
+      }
+    }
     
     setIsDrawing(true);
     lastPos.current = point;
@@ -145,10 +257,20 @@ const CreateTraits: React.FC = () => {
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing || !ctx || !drawCanvasRef.current || !lastPos.current) return;
-    
     const point = getCanvasPoint(e);
-    if (!point || !lastPos.current) return;
+    if (!point) return;
+
+    if (isDraggingText && selectedTextId) {
+      // Update text position
+      setTextElements(prev => prev.map(textElement => 
+        textElement.id === selectedTextId 
+          ? { ...textElement, x: point.x - dragOffset.x, y: point.y - dragOffset.y }
+          : textElement
+      ));
+      return;
+    }
+
+    if (!isDrawing || !ctx || !drawCanvasRef.current || !lastPos.current || tool === 'text') return;
     
     // Calculate distance drawn
     const dx = point.x - lastPos.current.x;
@@ -171,6 +293,16 @@ const CreateTraits: React.FC = () => {
   };
 
   const stopDrawing = () => {
+    if (isDraggingText) {
+      setIsDraggingText(false);
+      setSelectedTextId(null);
+      // Save to history after moving text
+      if (ctx && drawCanvasRef.current) {
+        saveToHistory(ctx.getImageData(0, 0, drawCanvasRef.current.width, drawCanvasRef.current.height));
+      }
+      return;
+    }
+
     if (!ctx || !drawCanvasRef.current) return;
     
     // Only save to history if we've drawn enough
@@ -182,8 +314,6 @@ const CreateTraits: React.FC = () => {
     setIsDrawing(false);
     setDrawDistance(0);
     lastPos.current = null;
-    
-    // Reset composite operation to default
   };
 
   const downloadImage = () => {
@@ -203,10 +333,6 @@ const CreateTraits: React.FC = () => {
     const drawCanvas = drawCanvasRef.current;
     if (!drawCanvas || !traitName) return;
 
-    // Clear the canvas after saving
-    ctx?.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-    saveToHistory(ctx!.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
-
     const traitImage = drawCanvas.toDataURL();
     const newTrait = {
       name: traitName,
@@ -218,6 +344,11 @@ const CreateTraits: React.FC = () => {
     setSavedTraits(updatedTraits);
     localStorage.setItem('savedTraits', JSON.stringify(updatedTraits));
     setTraitName('');
+    
+    // Clear the canvas and text elements after saving
+    ctx?.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+    setTextElements([]);
+    saveToHistory(ctx!.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
   };
 
   const updateCompositeCanvas = () => {
@@ -265,6 +396,19 @@ const CreateTraits: React.FC = () => {
     localStorage.setItem('savedTraits', JSON.stringify(updatedTraits));
     setTraitName('');
     setSelectedTraits(prev => prev.filter(t => t.timestamp !== timestamp));
+  };
+
+  const deleteSelectedText = () => {
+    if (selectedTextId) {
+      setTextElements(prev => prev.filter(t => t.id !== selectedTextId));
+      setSelectedTextId(null);
+    }
+  };
+
+  const getCursorStyle = () => {
+    if (tool === 'text') return 'text';
+    if (tool === 'eraser') return 'crosshair';
+    return 'crosshair';
   };
 
   return (
@@ -323,19 +467,21 @@ const CreateTraits: React.FC = () => {
           transition={{ delay: 0.5, duration: 0.7 }}
         >
           <Card className="w-80 p-6 flex flex-col gap-4">
-            {/* Color picker */}
-            <div className="relative">
-              <button
-                className="w-10 h-10 rounded-lg border"
-                style={{ backgroundColor: color }}
-                onClick={() => setShowColorPicker(!showColorPicker)}
-              />
-              {showColorPicker && (
-                <div className="absolute z-10 mt-2">
-                  <HexColorPicker color={color} onChange={setColor} />
-                </div>
-              )}
-            </div>
+            {/* Color picker for brush/eraser */}
+            {tool !== 'text' && (
+              <div className="relative">
+                <button
+                  className="w-10 h-10 rounded-lg border"
+                  style={{ backgroundColor: color }}
+                  onClick={() => setShowColorPicker(!showColorPicker)}
+                />
+                {showColorPicker && (
+                  <div className="absolute z-10 mt-2">
+                    <HexColorPicker color={color} onChange={setColor} />
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Tools */}
             <div className="flex flex-col gap-2">
@@ -351,20 +497,82 @@ const CreateTraits: React.FC = () => {
                 active={tool === 'eraser'}
                 onClick={() => setTool('eraser')}
               />
-            </div>
-
-            {/* Brush size */}
-            <div className="space-y-2">
-              <label className="text-sm text-gray-600">Brush Size</label>
-              <input
-                type="range"
-                min="1"
-                max="50"
-                value={brushSize}
-                onChange={(e) => setBrushSize(Number(e.target.value))}
-                className="w-full"
+              <ToolButton
+                icon={<Type size={20} />}
+                label="Text"
+                active={tool === 'text'}
+                onClick={() => setTool('text')}
               />
             </div>
+
+            {/* Brush size (for brush and eraser) */}
+            {tool !== 'text' && (
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Brush Size</label>
+                <input
+                  type="range"
+                  min="1"
+                  max="50"
+                  value={brushSize}
+                  onChange={(e) => setBrushSize(Number(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+            )}
+
+            {/* Text controls */}
+            {tool === 'text' && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm text-gray-600">Text</label>
+                  <input
+                    type="text"
+                    value={currentText}
+                    onChange={(e) => setCurrentText(e.target.value)}
+                    placeholder="Enter text..."
+                    className="w-full px-3 py-2 border rounded-lg"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm text-gray-600">Font Size</label>
+                  <input
+                    type="range"
+                    min="12"
+                    max="72"
+                    value={textFontSize}
+                    onChange={(e) => setTextFontSize(Number(e.target.value))}
+                    className="w-full"
+                  />
+                  <span className="text-xs text-gray-500">{textFontSize}px</span>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm text-gray-600">Text Color</label>
+                  <div className="relative">
+                    <button
+                      className="w-10 h-10 rounded-lg border"
+                      style={{ backgroundColor: textColor }}
+                      onClick={() => setShowTextColorPicker(!showTextColorPicker)}
+                    />
+                    {showTextColorPicker && (
+                      <div className="absolute z-10 mt-2">
+                        <HexColorPicker color={textColor} onChange={setTextColor} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedTextId && (
+                  <ToolButton
+                    icon={<X size={20} />}
+                    label="Delete Selected Text"
+                    onClick={deleteSelectedText}
+                    className="bg-red-600 text-white hover:bg-red-700"
+                  />
+                )}
+              </div>
+            )}
 
             {/* History controls */}
             <div className="flex gap-2">
@@ -435,7 +643,8 @@ const CreateTraits: React.FC = () => {
               onMouseMove={draw}
               onMouseUp={stopDrawing}
               onMouseLeave={stopDrawing}
-              className="relative border border-gray-200 rounded-lg cursor-crosshair bg-transparent"
+              className="relative border border-gray-200 rounded-lg bg-transparent"
+              style={{ cursor: getCursorStyle() }}
             />
         </motion.div>
     </motion.div>
