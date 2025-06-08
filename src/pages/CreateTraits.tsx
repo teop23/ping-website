@@ -692,12 +692,13 @@ const CreateTraits: React.FC = () => {
           <p className="text-gray-600">Design custom traits for your PING character</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Saved Traits Panel */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
+            className="w-full lg:w-1/4 lg:flex-shrink-0"
           >
             <Card className="h-[600px]">
               <CardHeader>
@@ -801,6 +802,7 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
+            className="w-full lg:w-1/4 lg:flex-shrink-0"
           >
             <Card className="h-[600px] overflow-hidden">
               <CardHeader>
@@ -972,7 +974,7 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="lg:col-span-2"
+            className="w-full lg:w-1/2 lg:flex-shrink-0"
           >
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
