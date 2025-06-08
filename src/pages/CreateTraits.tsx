@@ -15,7 +15,7 @@ import {
   Minus,
   Upload,
   Trash2,
-  RotateCcw,
+  RotateCw,
   Palette,
   MousePointer
 } from 'lucide-react';
@@ -683,11 +683,11 @@ const CreateTraits: React.FC = () => {
                     className="w-full"
                     disabled={historyIndex >= canvasHistory.length - 1}
                   >
-                    <RotateCcw size={16} className="mr-2" />
+                    <RotateCw size={16} className="mr-2" />
                     Redo
                   </Button>
                   <Button onClick={clearCanvas} variant="outline" size="sm" className="w-full">
-                    <RotateCcw size={16} className="mr-2" />
+                    <RotateCw size={16} className="mr-2" />
                     Clear All
                   </Button>
                 </div>
