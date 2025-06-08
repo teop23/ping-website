@@ -411,25 +411,17 @@ const CreateTraits: React.FC = () => {
   const saveTrait = () => {
     if (!canvas || !traitName.trim()) return;
 
-    // Hide base image for saving
-    const originalOpacity = baseImage?.opacity;
-    if (baseImage) {
-      baseImage.set({ opacity: 0 });
-      canvas.renderAll();
-    }
-
+    // Save the entire canvas including base image positioning
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
       multiplier: 2,
-      withoutTransform: false
+      withoutTransform: false,
+      left: 0,
+      top: 0,
+      width: canvas.width,
+      height: canvas.height
     });
-
-    // Restore base image
-    if (baseImage && originalOpacity !== undefined) {
-      baseImage.set({ opacity: originalOpacity });
-      canvas.renderAll();
-    }
 
     const newTrait: SavedTrait = {
       id: Date.now().toString(),
@@ -443,9 +435,6 @@ const CreateTraits: React.FC = () => {
     setSavedTraits(updatedTraits);
     localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
     setTraitName('');
-    
-    // Clear canvas
-    clearCanvas();
   };
 
   const deleteTrait = (id: string) => {
@@ -488,13 +477,14 @@ const CreateTraits: React.FC = () => {
     } else {
       // Load trait for the first time
       fabric.Image.fromURL(trait.data, (img) => {
-        // Make the trait semi-transparent but keep base image at full opacity
+        // Position the trait to match the canvas exactly
         img.set({
-          left: canvas.width! / 2,
-          top: canvas.height! / 2,
-          originX: 'center',
-          originY: 'center',
-          opacity: 0.9, // Make trait semi-transparent for layering effect
+          left: 0,
+          top: 0,
+          originX: 'left',
+          originY: 'top',
+          scaleX: 1,
+          scaleY: 1,
           selectable: true,
           evented: true,
           name: `trait-${trait.id}`,
@@ -503,10 +493,9 @@ const CreateTraits: React.FC = () => {
         
         canvas.add(img);
         
-        // Ensure base image stays at the back and maintains its opacity
+        // Ensure base image stays at the back
         if (baseImage) {
           canvas.sendToBack(baseImage);
-          // Don't change base image opacity when adding traits
         }
         
         // Store reference to the fabric object
