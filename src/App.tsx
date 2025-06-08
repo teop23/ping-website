@@ -7,7 +7,7 @@ import CreateTraits from './pages/CreateTraits';
 
 function App() {
   return (
-    <div className="relative h-screen text-foreground flex flex-col overflow-hidden">
+    <div className="relative h-screen text-foreground flex flex-col">
       <Background />
       <Navbar className="h-16" />
       <main className="flex-grow">
