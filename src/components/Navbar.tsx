@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { Rocket, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -7,6 +8,8 @@ import { Button } from './ui/button';
 interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 
 const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
+  const location = useLocation();
+
   return (
     <nav className={cn("bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-6 md:px-12 relative flex items-center shadow-sm", className)} {...props}>
       <div className="container mx-auto flex justify-between items-center">

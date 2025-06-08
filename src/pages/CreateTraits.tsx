@@ -664,7 +664,7 @@ const CreateTraits: React.FC = () => {
               onClick={undo}
             />
             <ToolButton
-              icon={<RotateCcw size={20} />}
+              icon={<RotateCw size={20} />}
               label="Clear"
               onClick={clearCanvas}
             />
