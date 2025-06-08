@@ -495,19 +495,6 @@ const CreateTraits: React.FC = () => {
     });
   };
 
-    const newTrait: SavedTrait = {
-      id: Date.now().toString(),
-      name: traitName.trim(),
-      data: dataURL,
-      timestamp: Date.now(),
-      isVisible: false
-    };
-
-    const updatedTraits = [...savedTraits, newTrait];
-    setSavedTraits(updatedTraits);
-    localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
-    setTraitName('');
-  };
 
   const deleteTrait = (id: string) => {
     // Remove from canvas if loaded
