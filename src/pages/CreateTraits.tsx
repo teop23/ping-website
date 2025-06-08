@@ -995,50 +995,63 @@ const CreateTraits: React.FC = () => {
 
               {/* Save Controls */}
               <div className="mt-6 space-y-3">
-                {/* Download Mode Toggle */}
-                <div className="flex items-center justify-center space-x-1 p-1 bg-gray-100 rounded-lg">
-                  <button
-                    onClick={() => setDownloadMode('trait')}
-                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      downloadMode === 'trait'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Trait Only
-                  </button>
-                  <button
-                    onClick={() => setDownloadMode('character')}
-                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      downloadMode === 'character'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Full Character
-                  </button>
+                {/* Section 1: Trait Name Input */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Trait Name</label>
+                  <input
+                    type="text"
+                    value={traitName}
+                    onChange={(e) => setTraitName(e.target.value)}
+                    placeholder="Enter trait name..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
-                
-                <input
-                  type="text"
-                  value={traitName}
-                  onChange={(e) => setTraitName(e.target.value)}
-                  placeholder="Enter trait name..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <div className="flex space-x-3">
+
+                {/* Section 2: Save Trait */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Save</label>
                   <Button
                     onClick={saveTrait}
                     disabled={!traitName.trim()}
-                    className="flex-1"
+                    className="w-full"
                   >
                     <Save size={16} className="mr-2" />
                     Save Trait
                   </Button>
+                </div>
+
+                {/* Section 3: Download with Toggle */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Download</label>
+                  
+                  {/* Download Mode Toggle */}
+                  <div className="flex items-center justify-center space-x-1 p-1 bg-gray-100 rounded-lg">
+                    <button
+                      onClick={() => setDownloadMode('trait')}
+                      className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        downloadMode === 'trait'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      Trait Only
+                    </button>
+                    <button
+                      onClick={() => setDownloadMode('character')}
+                      className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        downloadMode === 'character'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      Full Character
+                    </button>
+                  </div>
+                  
                   <Button
                     onClick={downloadTrait}
                     variant="outline"
-                    className="flex-1"
+                    className="w-full"
                   >
                     <Download size={16} className="mr-2" />
                     {getDownloadButtonText()}
