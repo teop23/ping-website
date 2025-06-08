@@ -585,8 +585,7 @@ const CreateTraits: React.FC = () => {
           selectable: false,
           evented: false,
           name: `trait-${trait.id}`,
-          visible: true,
-          absolutePositioned: true
+          visible: true
         });
         
         canvas.add(img);
