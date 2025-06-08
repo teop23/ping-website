@@ -253,9 +253,13 @@ const CreateTraits: React.FC = () => {
       
       // Update base image scaling when canvas resizes
       if (baseImage) {
+        // Get the original image dimensions (not the current scaled dimensions)
+        const originalWidth = baseImage.getOriginalSize().width;
+        const originalHeight = baseImage.getOriginalSize().height;
+        
         const scale = Math.min(
-          canvas.width! / baseImage.width!,
-          canvas.height! / baseImage.height!
+          canvas.width! / originalWidth,
+          canvas.height! / originalHeight
         ) * 0.7;
         
         baseImage.set({
@@ -270,10 +274,16 @@ const CreateTraits: React.FC = () => {
       loadedTraits.forEach((traitObject) => {
         const canvasWidth = canvas.width!;
         const canvasHeight = canvas.height!;
-        const scaleX = canvasWidth / traitObject.width!;
-        const scaleY = canvasHeight / traitObject.height!;
+        
+        // Get the original image dimensions for saved traits
+        const originalWidth = traitObject.getOriginalSize().width;
+        const originalHeight = traitObject.getOriginalSize().height;
+        const scaleX = canvasWidth / originalWidth;
+        const scaleY = canvasHeight / originalHeight;
         
         traitObject.set({
+          left: 0,
+          top: 0,
           scaleX: scaleX,
           scaleY: scaleY
         });
