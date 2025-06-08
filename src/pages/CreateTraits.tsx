@@ -680,36 +680,36 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-4 w-full min-h-0">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8"
+          className="text-center mb-4 sm:mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create PING Traits</h1>
-          <p className="text-gray-600">Design custom traits for your PING character</p>
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">Create PING Traits</h1>
+          <p className="text-sm sm:text-base text-gray-600">Design custom traits for your PING character</p>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full">
           {/* Saved Traits Panel */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="w-full lg:w-1/4 lg:flex-shrink-0"
+            className="w-full lg:w-1/4 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="h-[600px]">
+            <Card className="h-[400px] sm:h-[600px]">
               <CardHeader>
-                <h3 className="text-lg font-semibold">Saved Traits</h3>
+                <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="max-h-[500px] overflow-y-auto p-4 space-y-2">
+                <div className="max-h-[300px] sm:max-h-[500px] overflow-y-auto p-2 sm:p-4 space-y-2">
                   {savedTraits.map((trait) => (
                     <div
                       key={trait.id}
-                      className={`flex items-center p-3 rounded-lg transition-colors cursor-pointer ${
+                      className={`flex items-center p-2 sm:p-3 rounded-lg transition-colors cursor-pointer ${
                         trait.isVisible 
                           ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
                           : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
@@ -727,7 +727,7 @@ const CreateTraits: React.FC = () => {
                           }`}
                         />
                         <div className="flex flex-col min-w-0 flex-1">
-                          <span className="text-sm font-medium truncate">{trait.name}</span>
+                          <span className="text-xs sm:text-sm font-medium truncate">{trait.name}</span>
                           <span className={`text-xs ${trait.isVisible ? 'text-blue-600' : 'text-gray-500'}`}>
                             {trait.isVisible ? 'Visible' : 'Hidden'}
                           </span>
@@ -742,9 +742,9 @@ const CreateTraits: React.FC = () => {
                             e.stopPropagation();
                             downloadIndividualTrait(trait);
                           }}
-                          className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                          className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
                         >
-                          <Download size={16} />
+                          <Download size={12} className="sm:w-4 sm:h-4" />
                         </Button>
                         <Dialog open={traitToDelete === trait.id} onOpenChange={(open) => !open && setTraitToDelete(null)}>
                           <DialogTrigger asChild>
@@ -755,9 +755,9 @@ const CreateTraits: React.FC = () => {
                                 e.stopPropagation();
                                 confirmDeleteTrait(trait.id);
                               }}
-                              className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                              className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={12} className="sm:w-4 sm:h-4" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
@@ -789,7 +789,7 @@ const CreateTraits: React.FC = () => {
                   {savedTraits.length === 0 && (
                     <div className="text-center text-gray-500 py-8">
                       <p>No saved traits yet</p>
-                      <p className="text-sm">Create and save your first trait! Click on saved traits to toggle visibility.</p>
+                      <p className="text-xs sm:text-sm">Create and save your first trait! Click on saved traits to toggle visibility.</p>
                     </div>
                   )}
                 </div>
@@ -802,47 +802,47 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-full lg:w-1/4 lg:flex-shrink-0"
+            className="w-full lg:w-1/4 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="h-[600px] overflow-hidden">
+            <Card className="h-[400px] sm:h-[600px] overflow-hidden">
               <CardHeader>
-                <h3 className="text-lg font-semibold">Tools</h3>
+                <h3 className="text-base sm:text-lg font-semibold">Tools</h3>
               </CardHeader>
-              <CardContent className="space-y-3 h-[520px] overflow-y-auto">
+              <CardContent className="space-y-2 sm:space-y-3 h-[320px] sm:h-[520px] overflow-y-auto">
                 {/* Tool Selection */}
-                <div className="grid grid-cols-3 gap-1">
+                <div className="grid grid-cols-3 gap-1 sm:gap-2">
                   <ToolButton
-                    icon={<MousePointer size={18} />}
+                    icon={<MousePointer size={14} className="sm:w-[18px] sm:h-[18px]" />}
                     label="Select"
                     active={tool === 'select'}
                     onClick={() => setTool('select')}
                   />
                   <ToolButton
-                    icon={<Palette size={18} />}
+                    icon={<Palette size={14} className="sm:w-[18px] sm:h-[18px]" />}
                     label="Brush"
                     active={tool === 'brush'}
                     onClick={() => setTool('brush')}
                   />
                   <ToolButton
-                    icon={<Type size={18} />}
+                    icon={<Type size={14} className="sm:w-[18px] sm:h-[18px]" />}
                     label="Text"
                     active={tool === 'text'}
                     onClick={() => setTool('text')}
                   />
                   <ToolButton
-                    icon={<Square size={18} />}
+                    icon={<Square size={14} className="sm:w-[18px] sm:h-[18px]" />}
                     label="Rectangle"
                     active={tool === 'rectangle'}
                     onClick={() => setTool('rectangle')}
                   />
                   <ToolButton
-                    icon={<Circle size={18} />}
+                    icon={<Circle size={14} className="sm:w-[18px] sm:h-[18px]" />}
                     label="Circle"
                     active={tool === 'circle'}
                     onClick={() => setTool('circle')}
                   />
                   <ToolButton
-                    icon={<Minus size={18} />}
+                    icon={<Minus size={14} className="sm:w-[18px] sm:h-[18px]" />}
                     label="Line"
                     active={tool === 'line'}
                     onClick={() => setTool('line')}
@@ -851,10 +851,10 @@ const CreateTraits: React.FC = () => {
 
                 {/* Color Picker */}
                 <div className="space-y-1">
-                  <label className="text-sm font-medium">Color</label>
+                  <label className="text-xs sm:text-sm font-medium">Color</label>
                   <div className="relative">
                     <button
-                      className="w-full h-8 rounded-md border-2 border-gray-200"
+                      className="w-full h-6 sm:h-8 rounded-md border-2 border-gray-200"
                       style={{ backgroundColor: color }}
                       onClick={() => setShowColorPicker(!showColorPicker)}
                     />
@@ -877,7 +877,7 @@ const CreateTraits: React.FC = () => {
                 {/* Brush Size */}
                 {tool === 'brush' && (
                   <div className="space-y-1">
-                    <label className="text-sm font-medium">Brush Size: {brushSize}px</label>
+                    <label className="text-xs sm:text-sm font-medium">Brush Size: {brushSize}px</label>
                     <input
                       type="range"
                       min="1"
@@ -893,7 +893,7 @@ const CreateTraits: React.FC = () => {
                 {tool === 'text' && (
                   <div className="space-y-2">
                     <div className="space-y-1">
-                      <label className="text-sm font-medium">Text Size: {textSize}px</label>
+                      <label className="text-xs sm:text-sm font-medium">Text Size: {textSize}px</label>
                       <input
                         type="range"
                         min="12"
@@ -904,10 +904,10 @@ const CreateTraits: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-sm font-medium">Text Color</label>
+                      <label className="text-xs sm:text-sm font-medium">Text Color</label>
                       <div className="relative">
                         <button
-                          className="w-full h-8 rounded border-2 border-gray-200"
+                          className="w-full h-6 sm:h-8 rounded border-2 border-gray-200"
                           style={{ backgroundColor: textColor }}
                           onClick={() => setShowTextColorPicker(!showTextColorPicker)}
                         />
@@ -932,12 +932,12 @@ const CreateTraits: React.FC = () => {
                 {/* Action Buttons */}
                 <div className="space-y-1 pt-2 border-t">
                   <Button onClick={uploadImage} variant="outline" size="sm" className="w-full">
-                    <Upload size={16} className="mr-2" />
+                    <Upload size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                     Upload Image
                   </Button>
                   <div className="grid grid-cols-2 gap-1">
                     <Button onClick={deleteSelected} variant="outline" size="sm">
-                    <Trash2 size={16} className="mr-2" />
+                    <Trash2 size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                     Delete
                   </Button>
                     <Button 
@@ -946,7 +946,7 @@ const CreateTraits: React.FC = () => {
                       size="sm"
                       disabled={historyIndex <= 0}
                     >
-                    <Undo size={16} className="mr-2" />
+                    <Undo size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                     Undo
                   </Button>
                   </div>
@@ -957,11 +957,11 @@ const CreateTraits: React.FC = () => {
                     className="w-full"
                     disabled={historyIndex >= canvasHistory.length - 1}
                   >
-                    <RotateCw size={16} className="mr-2" />
+                    <RotateCw size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                     Redo
                   </Button>
                   <Button onClick={clearCanvas} variant="outline" size="sm" className="w-full">
-                    <RotateCw size={16} className="mr-2" />
+                    <RotateCw size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                     Clear All
                   </Button>
                 </div>
@@ -974,59 +974,62 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="w-full lg:w-1/2 lg:flex-shrink-0"
+            className="w-full lg:w-1/2 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="p-6">
+            <Card className="p-3 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Canvas</h3>
+                <h3 className="text-base sm:text-lg font-semibold">Canvas</h3>
                 <Button
                   variant="outline"
                   onClick={() => setShowBaseLayer(!showBaseLayer)}
+                  size="sm"
                 >
-                  {showBaseLayer ? <EyeOff size={16} /> : <Eye size={16} />}
-                  <span className="ml-2">{showBaseLayer ? 'Hide' : 'Show'} Base</span>
+                  {showBaseLayer ? <EyeOff size={14} className="sm:w-4 sm:h-4" /> : <Eye size={14} className="sm:w-4 sm:h-4" />}
+                  <span className="ml-1 sm:ml-2 text-xs sm:text-sm">{showBaseLayer ? 'Hide' : 'Show'} Base</span>
                 </Button>
               </div>
               
-              <div className="flex justify-center items-center">
+              <div className="flex justify-center items-center overflow-hidden">
                 <canvas
                   ref={canvasRef}
-                  className="border-2 border-gray-200 rounded-lg shadow-sm"
+                  className="border-2 border-gray-200 rounded-lg shadow-sm max-w-full max-h-[50vh] sm:max-h-none"
                 />
               </div>
 
               {/* Save Controls */}
-              <div className="mt-6 space-y-3">
+              <div className="mt-3 sm:mt-6 space-y-2 sm:space-y-3">
                 <input
                   type="text"
                   value={traitName}
                   onChange={(e) => setTraitName(e.target.value)}
                   placeholder="Enter trait name..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-2 sm:px-3 py-1 sm:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <div className="flex space-x-3">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                   <Button
                     onClick={saveTrait}
                     disabled={!traitName.trim()}
                     className="flex-1"
+                    size="sm"
                   >
-                    <Save size={16} className="mr-2" />
+                    <Save size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                     Save Trait
                   </Button>
-                  <div className="flex-1 flex space-x-2">
+                  <div className="flex-1 flex space-x-1 sm:space-x-2">
                     <Button
                       onClick={downloadTrait}
                       variant="outline"
                       className="flex-1"
+                      size="sm"
                     >
-                      <Download size={16} className="mr-2" />
+                      <Download size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                       {getDownloadButtonText()}
                     </Button>
                     {/* Download Mode Toggle */}
-                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[100px]">
+                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[80px] sm:min-w-[100px]">
                       <button
                         onClick={() => setDownloadMode('trait')}
-                        className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                        className={`px-2 sm:px-3 py-1 sm:py-2 text-xs font-medium rounded-md transition-colors ${
                           downloadMode === 'trait'
                             ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
@@ -1036,7 +1039,7 @@ const CreateTraits: React.FC = () => {
                       </button>
                       <button
                         onClick={() => setDownloadMode('character')}
-                        className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                        className={`px-2 sm:px-3 py-1 sm:py-2 text-xs font-medium rounded-md transition-colors ${
                           downloadMode === 'character'
                             ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
@@ -1067,14 +1070,14 @@ const ToolButton: React.FC<ToolButtonProps> = ({ icon, label, active, onClick })
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all ${
+      className={`flex flex-col items-center justify-center p-1 sm:p-2 rounded-lg border-2 transition-all ${
         active
           ? 'border-blue-500 bg-blue-50 text-blue-700'
           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
       }`}
     >
       {icon}
-      <span className="text-[10px] mt-0.5 font-medium leading-tight">{label}</span>
+      <span className="text-[8px] sm:text-[10px] mt-0.5 font-medium leading-tight">{label}</span>
     </button>
   );
 };
