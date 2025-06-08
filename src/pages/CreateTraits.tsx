@@ -1032,7 +1032,7 @@ const CreateTraits: React.FC = () => {
                   <Button
                     onClick={saveTrait}
                     disabled={!traitName.trim()}
-                    className="flex-1"
+                    className="flex-1 h-10 sm:h-9"
                     size="sm"
                   >
                     <Save size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
