@@ -65,6 +65,9 @@ const CreateTraits: React.FC = () => {
   
   // Delete confirmation state
   const [traitToDelete, setTraitToDelete] = useState<string | null>(null);
+  
+  // Download mode toggle
+  const [downloadMode, setDownloadMode] = useState<'trait' | 'character'>('trait');
 
   // Load saved traits from localStorage
   useEffect(() => {
@@ -425,55 +428,81 @@ const CreateTraits: React.FC = () => {
   const downloadTrait = () => {
     if (!canvas) return;
 
-    // Temporarily hide base image
-    const originalOpacity = baseImage?.opacity;
-    if (baseImage) {
-      baseImage.set({ opacity: 0 });
-      canvas.renderAll();
-    }
-
-    // Also temporarily hide any loaded saved traits to only export current work
-    const hiddenTraits: { object: fabric.Image; originalVisibility: boolean }[] = [];
-    loadedTraits.forEach((traitObject) => {
-      if (traitObject.visible) {
-        hiddenTraits.push({ object: traitObject, originalVisibility: true });
-        traitObject.set({ visible: false });
+    if (downloadMode === 'trait') {
+      // Download only the current drawings/objects (trait mode)
+      const originalOpacity = baseImage?.opacity;
+      if (baseImage) {
+        baseImage.set({ opacity: 0 });
+        canvas.renderAll();
       }
-    });
-    
-    // Temporarily set canvas background to transparent
-    const originalBackground = canvas.backgroundColor;
-    canvas.setBackgroundColor('transparent', () => {
-      canvas.renderAll();
+
+      // Hide any loaded saved traits to only export current work
+      const hiddenTraits: { object: fabric.Image; originalVisibility: boolean }[] = [];
+      loadedTraits.forEach((traitObject) => {
+        if (traitObject.visible) {
+          hiddenTraits.push({ object: traitObject, originalVisibility: true });
+          traitObject.set({ visible: false });
+        }
+      });
       
+      // Set canvas background to transparent
+      const originalBackground = canvas.backgroundColor;
+      canvas.setBackgroundColor('transparent', () => {
+        canvas.renderAll();
+        
+        const dataURL = canvas.toDataURL({
+          format: 'png',
+          quality: 1,
+          withoutTransform: false,
+          backgroundColor: 'transparent'
+        });
+
+        // Restore everything
+        canvas.setBackgroundColor(originalBackground, () => {
+          if (baseImage && originalOpacity !== undefined) {
+            baseImage.set({ opacity: originalOpacity });
+          }
+          
+          hiddenTraits.forEach(({ object, originalVisibility }) => {
+            object.set({ visible: originalVisibility });
+          });
+          
+          canvas.renderAll();
+        });
+
+        const link = document.createElement('a');
+        link.download = `${traitName || 'ping-trait'}.png`;
+        link.href = dataURL;
+        link.click();
+      });
+    } else {
+      // Download full character (character mode)
       const dataURL = canvas.toDataURL({
         format: 'png',
         quality: 1,
         withoutTransform: false,
-        backgroundColor: 'transparent'
-      });
-
-      // Restore canvas background
-      canvas.setBackgroundColor(originalBackground, () => {
-        // Restore base image
-        if (baseImage && originalOpacity !== undefined) {
-          baseImage.set({ opacity: originalOpacity });
-        }
-        
-        // Restore saved traits visibility
-        hiddenTraits.forEach(({ object, originalVisibility }) => {
-          object.set({ visible: originalVisibility });
-        });
-        
-        canvas.renderAll();
+        backgroundColor: 'white'
       });
 
       const link = document.createElement('a');
-      link.download = `${traitName || 'ping-trait'}.png`;
+      link.download = `${traitName || 'ping-character'}.png`;
       link.href = dataURL;
       link.click();
-    });
+    }
   };
+
+  const getDownloadButtonText = () => {
+    return downloadMode === 'trait' ? 'Download Trait' : 'Download Character';
+  };
+
+  const getDownloadFileName = () => {
+    if (downloadMode === 'trait') {
+      return traitName || 'ping-trait';
+    } else {
+      return traitName ? `${traitName}-character` : 'ping-character';
+    }
+  };
+        
 
   const saveTrait = () => {
     if (!canvas || !traitName.trim()) return;
@@ -966,6 +995,30 @@ const CreateTraits: React.FC = () => {
 
               {/* Save Controls */}
               <div className="mt-6 space-y-3">
+                {/* Download Mode Toggle */}
+                <div className="flex items-center justify-center space-x-1 p-1 bg-gray-100 rounded-lg">
+                  <button
+                    onClick={() => setDownloadMode('trait')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      downloadMode === 'trait'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Trait Only
+                  </button>
+                  <button
+                    onClick={() => setDownloadMode('character')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      downloadMode === 'character'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Full Character
+                  </button>
+                </div>
+                
                 <input
                   type="text"
                   value={traitName}
@@ -988,7 +1041,7 @@ const CreateTraits: React.FC = () => {
                     className="flex-1"
                   >
                     <Download size={16} className="mr-2" />
-                    Download
+                    {getDownloadButtonText()}
                   </Button>
                 </div>
               </div>
