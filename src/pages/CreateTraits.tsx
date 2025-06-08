@@ -174,6 +174,16 @@ const CreateTraits: React.FC = () => {
     // Canvas event handlers for saving state
     fabricCanvas.on('mouse:down', handleCanvasClick);
     fabricCanvas.on('object:added', () => {
+      // Maintain proper layering when objects are added
+      setTimeout(() => {
+        const allObjects = fabricCanvas.getObjects();
+        allObjects.forEach(obj => {
+          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-')) {
+            fabricCanvas.bringToFront(obj);
+          }
+        });
+        fabricCanvas.renderAll();
+      }, 50);
       setTimeout(saveCanvasState, 100);
     });
     fabricCanvas.on('object:removed', () => {
@@ -183,6 +193,15 @@ const CreateTraits: React.FC = () => {
       setTimeout(saveCanvasState, 100);
     });
     fabricCanvas.on('path:created', () => {
+      // Ensure brush strokes are above saved traits
+      setTimeout(() => {
+        const allObjects = fabricCanvas.getObjects();
+        const lastObject = allObjects[allObjects.length - 1];
+        if (lastObject && lastObject.name !== 'baseImage' && !lastObject.name?.startsWith('trait-')) {
+          fabricCanvas.bringToFront(lastObject);
+        }
+        fabricCanvas.renderAll();
+      }, 50);
       setTimeout(saveCanvasState, 100);
     });
 
@@ -249,6 +268,10 @@ const CreateTraits: React.FC = () => {
     });
     
     canvas.add(text);
+    
+    // Ensure new objects are above saved traits
+    canvas.bringToFront(text);
+    
     canvas.setActiveObject(text);
     canvas.renderAll();
     setTool('select');
@@ -268,6 +291,10 @@ const CreateTraits: React.FC = () => {
     });
     
     canvas.add(rect);
+    
+    // Ensure new objects are above saved traits
+    canvas.bringToFront(rect);
+    
     canvas.setActiveObject(rect);
     canvas.renderAll();
     setTool('select');
@@ -286,6 +313,10 @@ const CreateTraits: React.FC = () => {
     });
     
     canvas.add(circle);
+    
+    // Ensure new objects are above saved traits
+    canvas.bringToFront(circle);
+    
     canvas.setActiveObject(circle);
     canvas.renderAll();
     setTool('select');
@@ -301,6 +332,10 @@ const CreateTraits: React.FC = () => {
     });
     
     canvas.add(line);
+    
+    // Ensure new objects are above saved traits
+    canvas.bringToFront(line);
+    
     canvas.setActiveObject(line);
     canvas.renderAll();
     setTool('select');
@@ -369,6 +404,10 @@ const CreateTraits: React.FC = () => {
               scaleY: 0.3
             });
             canvas.add(img);
+            
+            // Ensure uploaded images are above saved traits
+            canvas.bringToFront(img);
+            
             canvas.setActiveObject(img);
             canvas.renderAll();
           });
@@ -536,31 +575,39 @@ const CreateTraits: React.FC = () => {
     } else {
       // Load trait for the first time
       fabric.Image.fromURL(trait.data, (img) => {
-        // Calculate the scale to match canvas dimensions exactly
-        const canvasWidth = canvas.width!;
-        const canvasHeight = canvas.height!;
-        const scaleX = canvasWidth / img.width!;
-        const scaleY = canvasHeight / img.height!;
-        
         img.set({
-          left: 0,
-          top: 0,
-          originX: 'left',
-          originY: 'top',
-          scaleX: scaleX,
-          scaleY: scaleY,
-          selectable: true,
-          evented: true,
+          left: canvas.width! / 2,
+          top: canvas.height! / 2,
+          originX: 'center',
+          originY: 'center',
+          scaleX: 1,
+          scaleY: 1,
+          selectable: false,
+          evented: false,
           name: `trait-${trait.id}`,
           visible: true
         });
         
         canvas.add(img);
         
-        // Ensure base image stays at the back
+        // Ensure proper layering: base image at back, then saved traits, then drawings
         if (baseImage) {
           canvas.sendToBack(baseImage);
         }
+        
+        // Move all saved traits above base image but below drawings
+        loadedTraits.forEach((traitObj) => {
+          canvas.bringForward(traitObj, false);
+        });
+        canvas.bringForward(img, false);
+        
+        // Ensure any drawing objects stay on top
+        const allObjects = canvas.getObjects();
+        allObjects.forEach(obj => {
+          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-')) {
+            canvas.bringToFront(obj);
+          }
+        });
         
         // Store reference to the fabric object
         const newLoadedTraits = new Map(loadedTraits);
