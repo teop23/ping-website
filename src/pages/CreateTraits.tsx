@@ -1090,7 +1090,7 @@ const CreateTraits: React.FC = () => {
                   <Button
                     onClick={saveTrait}
                     disabled={!traitName.trim()}
-                    className="flex-1 h-12 sm:h-9"
+                    className="flex-1 h-10"
                     size="sm"
                   >
                     <Save size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
@@ -1100,17 +1100,17 @@ const CreateTraits: React.FC = () => {
                     <Button
                       onClick={downloadTrait}
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 h-10"
                       size="sm"
                     >
                       <Download size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                       {getDownloadButtonText()}
                     </Button>
                     {/* Download Mode Toggle */}
-                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[80px] sm:min-w-[100px]">
+                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[80px] sm:min-w-[100px] h-10">
                       <button
                         onClick={() => setDownloadMode('trait')}
-                        className={`px-2 sm:px-3 py-1 sm:py-2 text-xs font-medium rounded-md transition-colors ${
+                        className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
                           downloadMode === 'trait'
                             ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
@@ -1120,7 +1120,7 @@ const CreateTraits: React.FC = () => {
                       </button>
                       <button
                         onClick={() => setDownloadMode('character')}
-                        className={`px-2 sm:px-3 py-1 sm:py-2 text-xs font-medium rounded-md transition-colors ${
+                        className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
                           downloadMode === 'character'
                             ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
