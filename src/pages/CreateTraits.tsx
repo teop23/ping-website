@@ -576,16 +576,17 @@ const CreateTraits: React.FC = () => {
       // Load trait for the first time
       fabric.Image.fromURL(trait.data, (img) => {
         img.set({
-          left: canvas.width! / 2,
-          top: canvas.height! / 2,
-          originX: 'center',
-          originY: 'center',
+          left: 0,
+          top: 0,
+          originX: 'left',
+          originY: 'top',
           scaleX: 1,
           scaleY: 1,
           selectable: false,
           evented: false,
           name: `trait-${trait.id}`,
-          visible: true
+          visible: true,
+          absolutePositioned: true
         });
         
         canvas.add(img);
