@@ -10,7 +10,7 @@ function App() {
     <div className="relative h-screen text-foreground flex flex-col">
       <Background />
       <Navbar className="h-16" />
-      <main className="flex-grow">
+      <main className="flex flex-col flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create-traits" element={<CreateTraits />} />
