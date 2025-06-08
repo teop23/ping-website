@@ -723,12 +723,14 @@ const CreateTraits: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="w-full lg:w-1/4 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="h-[400px] sm:h-[600px]">
+            <Card className="h-fit">
               <CardHeader>
                 <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="max-h-[300px] sm:max-h-[500px] overflow-y-auto p-2 sm:p-4 space-y-2">
+                <div className={`p-2 sm:p-4 space-y-2 ${
+                  savedTraits.length > 3 ? 'max-h-[300px] sm:max-h-[400px] overflow-y-auto' : ''
+                }`}>
                   {savedTraits.map((trait) => (
                     <div
                       key={trait.id}
