@@ -29,6 +29,11 @@ interface SavedTrait {
   timestamp: number;
 }
 
+interface CanvasState {
+  objects: any[];
+  timestamp: number;
+}
+
 const CreateTraits: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
@@ -37,6 +42,12 @@ const CreateTraits: React.FC = () => {
   const [tool, setTool] = useState<'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line'>('select');
   const [traitName, setTraitName] = useState('');
   const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
+  
+  // Undo/Redo state
+  const [canvasHistory, setCanvasHistory] = useState<CanvasState[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isRedoing, setIsRedoing] = useState(false);
+  const [isUndoing, setIsUndoing] = useState(false);
   
   // Drawing properties
   const [color, setColor] = useState('#000000');
@@ -59,6 +70,57 @@ const CreateTraits: React.FC = () => {
       }
     }
   }, []);
+
+  // Save canvas state to history
+  const saveCanvasState = () => {
+    if (!canvas || isUndoing || isRedoing) return;
+    
+    const objects = canvas.getObjects().filter(obj => obj.name !== 'baseImage');
+    const state: CanvasState = {
+      objects: objects.map(obj => obj.toObject()),
+      timestamp: Date.now()
+    };
+    
+    // Remove any states after current index (when we're in the middle of history)
+    const newHistory = canvasHistory.slice(0, historyIndex + 1);
+    newHistory.push(state);
+    
+    // Limit history to 50 states
+    if (newHistory.length > 50) {
+      newHistory.shift();
+    } else {
+      setHistoryIndex(prev => prev + 1);
+    }
+    
+    setCanvasHistory(newHistory);
+  };
+
+  // Restore canvas state from history
+  const restoreCanvasState = (state: CanvasState) => {
+    if (!canvas) return;
+    
+    setIsUndoing(true);
+    
+    // Clear all objects except base image
+    const objects = canvas.getObjects();
+    objects.forEach(obj => {
+      if (obj.name !== 'baseImage') {
+        canvas.remove(obj);
+      }
+    });
+    
+    // Restore objects from state
+    state.objects.forEach(objData => {
+      fabric.util.enlivenObjects([objData], (objects: fabric.Object[]) => {
+        objects.forEach(obj => {
+          canvas.add(obj);
+        });
+        canvas.renderAll();
+      });
+    });
+    
+    setTimeout(() => setIsUndoing(false), 100);
+  };
 
   // Initialize canvas
   useEffect(() => {
@@ -94,10 +156,32 @@ const CreateTraits: React.FC = () => {
       fabricCanvas.add(img);
       fabricCanvas.sendToBack(img);
       fabricCanvas.renderAll();
+      
+      // Save initial state
+      setTimeout(() => {
+        const initialState: CanvasState = {
+          objects: [],
+          timestamp: Date.now()
+        };
+        setCanvasHistory([initialState]);
+        setHistoryIndex(0);
+      }, 100);
     });
 
-    // Canvas event handlers
+    // Canvas event handlers for saving state
     fabricCanvas.on('mouse:down', handleCanvasClick);
+    fabricCanvas.on('object:added', () => {
+      setTimeout(saveCanvasState, 100);
+    });
+    fabricCanvas.on('object:removed', () => {
+      setTimeout(saveCanvasState, 100);
+    });
+    fabricCanvas.on('object:modified', () => {
+      setTimeout(saveCanvasState, 100);
+    });
+    fabricCanvas.on('path:created', () => {
+      setTimeout(saveCanvasState, 100);
+    });
 
     setCanvas(fabricCanvas);
 
@@ -245,13 +329,20 @@ const CreateTraits: React.FC = () => {
   };
 
   const undo = () => {
-    if (!canvas) return;
-    
-    const objects = canvas.getObjects();
-    const lastObject = objects[objects.length - 1];
-    if (lastObject && lastObject.name !== 'baseImage') {
-      canvas.remove(lastObject);
-      canvas.renderAll();
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      restoreCanvasState(canvasHistory[newIndex]);
+    }
+  };
+
+  const redo = () => {
+    if (historyIndex < canvasHistory.length - 1) {
+      setIsRedoing(true);
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      restoreCanvasState(canvasHistory[newIndex]);
+      setTimeout(() => setIsRedoing(false), 100);
     }
   };
 
@@ -575,11 +666,26 @@ const CreateTraits: React.FC = () => {
                     <Trash2 size={16} className="mr-2" />
                     Delete
                   </Button>
-                    <Button onClick={undo} variant="outline" size="sm">
+                    <Button 
+                      onClick={undo} 
+                      variant="outline" 
+                      size="sm"
+                      disabled={historyIndex <= 0}
+                    >
                     <Undo size={16} className="mr-2" />
                     Undo
                   </Button>
                   </div>
+                  <Button 
+                    onClick={redo} 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    disabled={historyIndex >= canvasHistory.length - 1}
+                  >
+                    <RotateCcw size={16} className="mr-2" />
+                    Redo
+                  </Button>
                   <Button onClick={clearCanvas} variant="outline" size="sm" className="w-full">
                     <RotateCcw size={16} className="mr-2" />
                     Clear All
