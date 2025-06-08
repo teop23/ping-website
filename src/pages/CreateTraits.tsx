@@ -435,17 +435,65 @@ const CreateTraits: React.FC = () => {
   const saveTrait = () => {
     if (!canvas || !traitName.trim()) return;
 
-    // Save the entire canvas including base image positioning
-    const dataURL = canvas.toDataURL({
-      format: 'png',
-      quality: 1,
-      multiplier: 2,
-      withoutTransform: false,
-      left: 0,
-      top: 0,
-      width: canvas.width,
-      height: canvas.height
+    // Temporarily hide base image for saving (just like download)
+    const originalOpacity = baseImage?.opacity;
+    if (baseImage) {
+      baseImage.set({ opacity: 0 });
+      canvas.renderAll();
+    }
+
+    // Also temporarily hide any loaded saved traits to only save current work
+    const hiddenTraits: { object: fabric.Image; originalVisibility: boolean }[] = [];
+    loadedTraits.forEach((traitObject) => {
+      if (traitObject.visible) {
+        hiddenTraits.push({ object: traitObject, originalVisibility: true });
+        traitObject.set({ visible: false });
+      }
     });
+    
+    // Temporarily set canvas background to transparent
+    const originalBackground = canvas.backgroundColor;
+    canvas.setBackgroundColor('transparent', () => {
+      canvas.renderAll();
+      
+      const dataURL = canvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        multiplier: 2,
+        withoutTransform: false,
+        backgroundColor: 'transparent'
+      });
+
+      // Restore canvas background
+      canvas.setBackgroundColor(originalBackground, () => {
+        // Restore base image
+        if (baseImage && originalOpacity !== undefined) {
+          baseImage.set({ opacity: originalOpacity });
+        }
+        
+        // Restore saved traits visibility
+        hiddenTraits.forEach(({ object, originalVisibility }) => {
+          object.set({ visible: originalVisibility });
+        });
+        
+        canvas.renderAll();
+      });
+
+      // Save the trait with transparent background
+      const newTrait: SavedTrait = {
+        id: Date.now().toString(),
+        name: traitName.trim(),
+        data: dataURL,
+        timestamp: Date.now(),
+        isVisible: false
+      };
+
+      const updatedTraits = [...savedTraits, newTrait];
+      setSavedTraits(updatedTraits);
+      localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
+      setTraitName('');
+    });
+  };
 
     const newTrait: SavedTrait = {
       id: Date.now().toString(),
