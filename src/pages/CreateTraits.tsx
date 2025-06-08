@@ -231,6 +231,35 @@ const CreateTraits: React.FC = () => {
     const handleResize = () => {
       const newSize = calculateCanvasSize();
       fabricCanvas.setDimensions({ width: newSize, height: newSize });
+      
+      // Update base image scaling when canvas resizes
+      if (baseImage) {
+        const scale = Math.min(
+          fabricCanvas.width! / baseImage.width!,
+          fabricCanvas.height! / baseImage.height!
+        ) * 0.7;
+        
+        baseImage.set({
+          left: fabricCanvas.width! / 2,
+          top: fabricCanvas.height! / 2,
+          scaleX: scale,
+          scaleY: scale
+        });
+      }
+      
+      // Update any loaded saved traits scaling
+      loadedTraits.forEach((traitObject) => {
+        const canvasWidth = fabricCanvas.width!;
+        const canvasHeight = fabricCanvas.height!;
+        const scaleX = canvasWidth / traitObject.width!;
+        const scaleY = canvasHeight / traitObject.height!;
+        
+        traitObject.set({
+          scaleX: scaleX,
+          scaleY: scaleY
+        });
+      });
+      
       fabricCanvas.renderAll();
     };
 
