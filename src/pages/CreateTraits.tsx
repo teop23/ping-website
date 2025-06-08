@@ -679,14 +679,14 @@ const CreateTraits: React.FC = () => {
                   {savedTraits.map((trait) => (
                     <div
                       key={trait.id}
-                      className={`flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer ${
+                      className={`flex items-center p-3 rounded-lg transition-colors cursor-pointer ${
                         trait.isVisible 
                           ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
                           : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
                       }`}
                     >
                       <div 
-                        className="flex items-center space-x-3 flex-1 cursor-pointer"
+                        className="flex items-center space-x-3 flex-1 min-w-0 cursor-pointer"
                         onClick={() => toggleTrait(trait)}
                       >
                         <img
@@ -696,23 +696,23 @@ const CreateTraits: React.FC = () => {
                             trait.isVisible ? 'ring-2 ring-blue-400' : ''
                           }`}
                         />
-                        <div className="flex flex-col">
+                        <div className="flex flex-col min-w-0 flex-1">
                           <span className="text-sm font-medium truncate">{trait.name}</span>
                           <span className={`text-xs ${trait.isVisible ? 'text-blue-600' : 'text-gray-500'}`}>
                             {trait.isVisible ? 'Visible' : 'Hidden'}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-2 flex-shrink-0">
                         <div className={`w-2 h-2 rounded-full ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
                           onClick={(e) => {
                             e.stopPropagation();
                             downloadIndividualTrait(trait);
                           }}
-                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                          className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
                         >
                           <Download size={16} />
                         </Button>
@@ -720,12 +720,12 @@ const CreateTraits: React.FC = () => {
                           <DialogTrigger asChild>
                             <Button
                               variant="ghost"
-                              size="sm"
+                              size="icon"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 confirmDeleteTrait(trait.id);
                               }}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                             >
                               <Trash2 size={16} />
                             </Button>
