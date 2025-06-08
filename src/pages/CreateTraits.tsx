@@ -995,101 +995,30 @@ const CreateTraits: React.FC = () => {
 
               {/* Save Controls */}
               <div className="mt-6 space-y-3">
-                {/* Section 1: Trait Name Input */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Trait Name</label>
-                  <input
-                    type="text"
-                    value={traitName}
-                    onChange={(e) => setTraitName(e.target.value)}
-                    placeholder="Enter trait name..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Section 2: Save Trait */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Save</label>
-                  <Button
-                    onClick={saveTrait}
-                    disabled={!traitName.trim()}
-                    className="w-full"
+                {/* Download Mode Toggle */}
+                <div className="flex items-center justify-center space-x-1 p-1 bg-gray-100 rounded-lg">
+                  <button
+                    onClick={() => setDownloadMode('trait')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      downloadMode === 'trait'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
                   >
-                    <Save size={16} className="mr-2" />
-                    Save Trait
-                  </Button>
-                </div>
-
-                {/* Section 3: Download with Toggle */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Download</label>
-                  
-                  {/* Download Mode Toggle */}
-                  <div className="flex items-center justify-center space-x-1 p-1 bg-gray-100 rounded-lg">
-                    <button
-                      onClick={() => setDownloadMode('trait')}
-                      className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                        downloadMode === 'trait'
-                          ? 'bg-white text-gray-900 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      Trait Only
-                    </button>
-                    <button
-                      onClick={() => setDownloadMode('character')}
-                      className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                        downloadMode === 'character'
-                          ? 'bg-white text-gray-900 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      Full Character
-                    </button>
-                  </div>
-                  
-                  <Button
-                    onClick={downloadTrait}
-                    variant="outline"
-                    className="w-full"
+                    Trait Only
+                  </button>
+                  <button
+                    onClick={() => setDownloadMode('character')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      downloadMode === 'character'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
                   >
-                    <Download size={16} className="mr-2" />
-                    {getDownloadButtonText()}
-                  </Button>
+                    Full Character
+                  </button>
                 </div>
-              </div>
-            </Card>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-interface ToolButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  onClick: () => void;
-}
-
-const ToolButton: React.FC<ToolButtonProps> = ({ icon, label, active, onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all ${
-        active
-          ? 'border-blue-500 bg-blue-50 text-blue-700'
-          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-      }`}
-    >
-      {icon}
-      <span className="text-[10px] mt-0.5 font-medium leading-tight">{label}</span>
-    </button>
-  );
-};
-
-export default CreateTraits;
+                
                 <input
                   type="text"
                   value={traitName}
