@@ -227,21 +227,40 @@ const CreateTraits: React.FC = () => {
 
     setCanvas(fabricCanvas);
 
-    // Handle window resize to maintain square aspect ratio
+
+    return () => {
+      fabricCanvas.dispose();
+    };
+  }, []);
+
+  // Separate useEffect for handling window resize with proper dependencies
+  useEffect(() => {
+    if (!canvas) return;
+
+    const calculateCanvasSize = () => {
+      const container = canvasRef.current?.parentElement;
+      if (!container) return 400;
+      
+      const containerWidth = container.clientWidth - 32; // Account for padding
+      const containerHeight = window.innerHeight * 0.6; // Max 60% of viewport height
+      const maxSize = Math.min(containerWidth, containerHeight, 600); // Cap at 600px
+      return Math.max(300, maxSize); // Minimum 300px
+    };
+
     const handleResize = () => {
       const newSize = calculateCanvasSize();
-      fabricCanvas.setDimensions({ width: newSize, height: newSize });
+      canvas.setDimensions({ width: newSize, height: newSize });
       
       // Update base image scaling when canvas resizes
       if (baseImage) {
         const scale = Math.min(
-          fabricCanvas.width! / baseImage.width!,
-          fabricCanvas.height! / baseImage.height!
+          canvas.width! / baseImage.width!,
+          canvas.height! / baseImage.height!
         ) * 0.7;
         
         baseImage.set({
-          left: fabricCanvas.width! / 2,
-          top: fabricCanvas.height! / 2,
+          left: canvas.width! / 2,
+          top: canvas.height! / 2,
           scaleX: scale,
           scaleY: scale
         });
@@ -249,8 +268,8 @@ const CreateTraits: React.FC = () => {
       
       // Update any loaded saved traits scaling
       loadedTraits.forEach((traitObject) => {
-        const canvasWidth = fabricCanvas.width!;
-        const canvasHeight = fabricCanvas.height!;
+        const canvasWidth = canvas.width!;
+        const canvasHeight = canvas.height!;
         const scaleX = canvasWidth / traitObject.width!;
         const scaleY = canvasHeight / traitObject.height!;
         
@@ -260,17 +279,15 @@ const CreateTraits: React.FC = () => {
         });
       });
       
-      fabricCanvas.renderAll();
+      canvas.renderAll();
     };
 
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      fabricCanvas.dispose();
     };
-  }, []);
-
+  }, [canvas, baseImage, loadedTraits]);
   // Update canvas when tool changes
   useEffect(() => {
     if (!canvas) return;
