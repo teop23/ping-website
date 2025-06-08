@@ -389,18 +389,34 @@ const CreateTraits: React.FC = () => {
       canvas.renderAll();
     }
 
+    // Also temporarily hide any loaded saved traits to only export current work
+    const hiddenTraits: { object: fabric.Image; originalVisibility: boolean }[] = [];
+    loadedTraits.forEach((traitObject) => {
+      if (traitObject.visible) {
+        hiddenTraits.push({ object: traitObject, originalVisibility: true });
+        traitObject.set({ visible: false });
+      }
+    });
+    
+    canvas.renderAll();
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
-      withoutTransform: false
+      withoutTransform: false,
+      backgroundColor: 'transparent'
     });
 
     // Restore base image
     if (baseImage && originalOpacity !== undefined) {
       baseImage.set({ opacity: originalOpacity });
-      canvas.renderAll();
     }
+    
+    // Restore saved traits visibility
+    hiddenTraits.forEach(({ object, originalVisibility }) => {
+      object.set({ visible: originalVisibility });
+    });
+    
+    canvas.renderAll();
 
     const link = document.createElement('a');
     link.download = `${traitName || 'ping-trait'}.png`;
