@@ -22,10 +22,10 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   return (
     <>
       <nav className={cn("bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-4 sm:px-6 md:px-12 relative flex items-center shadow-sm z-50", className)} {...props}>
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="w-full flex justify-between items-center">
           {/* Logo */}
           <motion.div 
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 flex-shrink-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
@@ -57,7 +57,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex-shrink-0">
             <Button
               variant="ghost"
               size="icon"
