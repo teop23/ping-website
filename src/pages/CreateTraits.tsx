@@ -27,6 +27,8 @@ interface SavedTrait {
   name: string;
   data: string;
   timestamp: number;
+  isVisible: boolean;
+  fabricObject?: fabric.Image;
 }
 
 interface CanvasState {
@@ -42,6 +44,7 @@ const CreateTraits: React.FC = () => {
   const [tool, setTool] = useState<'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line'>('select');
   const [traitName, setTraitName] = useState('');
   const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
+  const [loadedTraits, setLoadedTraits] = useState<Map<string, fabric.Image>>(new Map());
   
   // Undo/Redo state
   const [canvasHistory, setCanvasHistory] = useState<CanvasState[]>([]);
@@ -389,7 +392,8 @@ const CreateTraits: React.FC = () => {
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2
+      multiplier: 2,
+      withoutTransform: false
     });
 
     // Restore base image
@@ -417,7 +421,8 @@ const CreateTraits: React.FC = () => {
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2
+      multiplier: 2,
+      withoutTransform: false
     });
 
     // Restore base image
@@ -430,7 +435,8 @@ const CreateTraits: React.FC = () => {
       id: Date.now().toString(),
       name: traitName.trim(),
       data: dataURL,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      isVisible: false
     };
 
     const updatedTraits = [...savedTraits, newTrait];
@@ -443,24 +449,75 @@ const CreateTraits: React.FC = () => {
   };
 
   const deleteTrait = (id: string) => {
+    // Remove from canvas if loaded
+    const fabricObject = loadedTraits.get(id);
+    if (fabricObject && canvas) {
+      canvas.remove(fabricObject);
+      canvas.renderAll();
+    }
+    
+    // Remove from loaded traits map
+    const newLoadedTraits = new Map(loadedTraits);
+    newLoadedTraits.delete(id);
+    setLoadedTraits(newLoadedTraits);
+    
+    // Remove from saved traits
     const updatedTraits = savedTraits.filter(trait => trait.id !== id);
     setSavedTraits(updatedTraits);
     localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
   };
 
-  const loadTrait = (trait: SavedTrait) => {
+  const toggleTrait = (trait: SavedTrait) => {
     if (!canvas) return;
     
-    fabric.Image.fromURL(trait.data, (img) => {
-      img.set({
-        left: canvas.width! / 2,
-        top: canvas.height! / 2,
-        originX: 'center',
-        originY: 'center'
-      });
-      canvas.add(img);
+    const existingObject = loadedTraits.get(trait.id);
+    
+    if (existingObject) {
+      // Toggle visibility
+      const newVisibility = !trait.isVisible;
+      existingObject.set({ visible: newVisibility });
+      
+      // Update trait visibility state
+      const updatedTraits = savedTraits.map(t => 
+        t.id === trait.id ? { ...t, isVisible: newVisibility } : t
+      );
+      setSavedTraits(updatedTraits);
+      localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
+      
       canvas.renderAll();
-    });
+    } else {
+      // Load trait for the first time
+      fabric.Image.fromURL(trait.data, (img) => {
+        // Make the trait semi-transparent so it doesn't completely override the base
+        img.set({
+          left: canvas.width! / 2,
+          top: canvas.height! / 2,
+          originX: 'center',
+          originY: 'center',
+          opacity: 0.8, // Make it semi-transparent
+          selectable: true,
+          evented: true,
+          name: `trait-${trait.id}`,
+          visible: true
+        });
+        
+        canvas.add(img);
+        
+        // Store reference to the fabric object
+        const newLoadedTraits = new Map(loadedTraits);
+        newLoadedTraits.set(trait.id, img);
+        setLoadedTraits(newLoadedTraits);
+        
+        // Update trait visibility state
+        const updatedTraits = savedTraits.map(t => 
+          t.id === trait.id ? { ...t, isVisible: true } : t
+        );
+        setSavedTraits(updatedTraits);
+        localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
+        
+        canvas.renderAll();
+      });
+    }
   };
 
   return (
@@ -492,31 +549,48 @@ const CreateTraits: React.FC = () => {
                   {savedTraits.map((trait) => (
                     <div
                       key={trait.id}
-                      className="group flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      className={`group flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer ${
+                        trait.isVisible 
+                          ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
+                          : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+                      }`}
+                      onClick={() => toggleTrait(trait)}
                     >
                       <div className="flex items-center space-x-3">
                         <img
                           src={trait.data}
                           alt={trait.name}
-                          className="w-8 h-8 object-cover rounded cursor-pointer"
-                          onClick={() => loadTrait(trait)}
+                          className={`w-8 h-8 object-cover rounded ${
+                            trait.isVisible ? 'ring-2 ring-blue-400' : ''
+                          }`}
                         />
-                        <span className="text-sm font-medium truncate">{trait.name}</span>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium truncate">{trait.name}</span>
+                          <span className={`text-xs ${trait.isVisible ? 'text-blue-600' : 'text-gray-500'}`}>
+                            {trait.isVisible ? 'Visible' : 'Hidden'}
+                          </span>
+                        </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteTrait(trait.id)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash2 size={16} />
-                      </Button>
+                      <div className="flex items-center space-x-1">
+                        <div className={`w-2 h-2 rounded-full ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteTrait(trait.id);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                   {savedTraits.length === 0 && (
                     <div className="text-center text-gray-500 py-8">
                       <p>No saved traits yet</p>
-                      <p className="text-sm">Create and save your first trait!</p>
+                      <p className="text-sm">Create and save your first trait! Click on saved traits to toggle visibility.</p>
                     </div>
                   )}
                 </div>
