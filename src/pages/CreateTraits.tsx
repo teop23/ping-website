@@ -1021,12 +1021,12 @@ const CreateTraits: React.FC = () => {
                       {getDownloadButtonText()}
                     </Button>
                     {/* Download Mode Toggle */}
-                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg">
+                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[100px]">
                       <button
                         onClick={() => setDownloadMode('trait')}
-                        className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                        className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${
                           downloadMode === 'trait'
-                            ? 'bg-white text-gray-900 shadow-sm'
+                            ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
                         }`}
                       >
@@ -1034,9 +1034,9 @@ const CreateTraits: React.FC = () => {
                       </button>
                       <button
                         onClick={() => setDownloadMode('character')}
-                        className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                        className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${
                           downloadMode === 'character'
-                            ? 'bg-white text-gray-900 shadow-sm'
+                            ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
                         }`}
                       >
