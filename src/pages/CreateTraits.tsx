@@ -995,30 +995,6 @@ const CreateTraits: React.FC = () => {
 
               {/* Save Controls */}
               <div className="mt-6 space-y-3">
-                {/* Download Mode Toggle */}
-                <div className="flex items-center justify-center space-x-1 p-1 bg-gray-100 rounded-lg">
-                  <button
-                    onClick={() => setDownloadMode('trait')}
-                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      downloadMode === 'trait'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Trait Only
-                  </button>
-                  <button
-                    onClick={() => setDownloadMode('character')}
-                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      downloadMode === 'character'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Full Character
-                  </button>
-                </div>
-                
                 <input
                   type="text"
                   value={traitName}
@@ -1035,14 +1011,39 @@ const CreateTraits: React.FC = () => {
                     <Save size={16} className="mr-2" />
                     Save Trait
                   </Button>
-                  <Button
-                    onClick={downloadTrait}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    <Download size={16} className="mr-2" />
-                    {getDownloadButtonText()}
-                  </Button>
+                  <div className="flex-1 flex space-x-2">
+                    <Button
+                      onClick={downloadTrait}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Download size={16} className="mr-2" />
+                      {getDownloadButtonText()}
+                    </Button>
+                    {/* Download Mode Toggle */}
+                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg">
+                      <button
+                        onClick={() => setDownloadMode('trait')}
+                        className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                          downloadMode === 'trait'
+                            ? 'bg-white text-gray-900 shadow-sm'
+                            : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                      >
+                        Trait
+                      </button>
+                      <button
+                        onClick={() => setDownloadMode('character')}
+                        className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                          downloadMode === 'character'
+                            ? 'bg-white text-gray-900 shadow-sm'
+                            : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                      >
+                        Full
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Card>
