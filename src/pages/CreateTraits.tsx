@@ -136,9 +136,22 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    // Calculate canvas size based on container
+    const calculateCanvasSize = () => {
+      const container = canvasRef.current?.parentElement;
+      if (!container) return 400;
+      
+      const containerWidth = container.clientWidth - 32; // Account for padding
+      const containerHeight = window.innerHeight * 0.6; // Max 60% of viewport height
+      const maxSize = Math.min(containerWidth, containerHeight, 600); // Cap at 600px
+      return Math.max(300, maxSize); // Minimum 300px
+    };
+
+    const canvasSize = calculateCanvasSize();
+
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: 600,
-      height: 600,
+      width: canvasSize,
+      height: canvasSize,
       backgroundColor: 'white',
       selection: tool === 'select'
     });
@@ -214,7 +227,17 @@ const CreateTraits: React.FC = () => {
 
     setCanvas(fabricCanvas);
 
+    // Handle window resize to maintain square aspect ratio
+    const handleResize = () => {
+      const newSize = calculateCanvasSize();
+      fabricCanvas.setDimensions({ width: newSize, height: newSize });
+      fabricCanvas.renderAll();
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       fabricCanvas.dispose();
     };
   }, []);
@@ -992,7 +1015,7 @@ const CreateTraits: React.FC = () => {
               <div className="flex justify-center items-center overflow-hidden">
                 <canvas
                   ref={canvasRef}
-                  className="border-2 border-gray-200 rounded-lg shadow-sm max-w-full max-h-[50vh] sm:max-h-none"
+                  className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-auto max-w-full aspect-square object-contain"
                 />
               </div>
 
