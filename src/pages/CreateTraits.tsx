@@ -439,13 +439,13 @@ const CreateTraits: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <Card className="h-[600px]">
+            <Card className="h-[600px] overflow-hidden">
               <CardHeader>
                 <h3 className="text-lg font-semibold">Tools</h3>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 h-[520px] overflow-y-auto">
                 {/* Tool Selection */}
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-1">
                   <ToolButton
                     icon={<MousePointer size={18} />}
                     label="Select"
@@ -485,11 +485,11 @@ const CreateTraits: React.FC = () => {
                 </div>
 
                 {/* Color Picker */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <label className="text-sm font-medium">Color</label>
                   <div className="relative">
                     <button
-                      className="w-full h-10 rounded-md border-2 border-gray-200"
+                      className="w-full h-8 rounded-md border-2 border-gray-200"
                       style={{ backgroundColor: color }}
                       onClick={() => setShowColorPicker(!showColorPicker)}
                     />
@@ -511,7 +511,7 @@ const CreateTraits: React.FC = () => {
 
                 {/* Brush Size */}
                 {tool === 'brush' && (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <label className="text-sm font-medium">Brush Size: {brushSize}px</label>
                     <input
                       type="range"
@@ -526,8 +526,8 @@ const CreateTraits: React.FC = () => {
 
                 {/* Text Controls */}
                 {tool === 'text' && (
-                  <div className="space-y-3">
-                    <div className="space-y-2">
+                  <div className="space-y-2">
+                    <div className="space-y-1">
                       <label className="text-sm font-medium">Text Size: {textSize}px</label>
                       <input
                         type="range"
@@ -538,7 +538,7 @@ const CreateTraits: React.FC = () => {
                         className="w-full"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <label className="text-sm font-medium">Text Color</label>
                       <div className="relative">
                         <button
@@ -565,20 +565,22 @@ const CreateTraits: React.FC = () => {
                 )}
 
                 {/* Action Buttons */}
-                <div className="space-y-2 pt-4 border-t">
-                  <Button onClick={uploadImage} variant="outline" className="w-full">
+                <div className="space-y-1 pt-2 border-t">
+                  <Button onClick={uploadImage} variant="outline" size="sm" className="w-full">
                     <Upload size={16} className="mr-2" />
                     Upload Image
                   </Button>
-                  <Button onClick={deleteSelected} variant="outline" className="w-full">
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button onClick={deleteSelected} variant="outline" size="sm">
                     <Trash2 size={16} className="mr-2" />
-                    Delete Selected
+                    Delete
                   </Button>
-                  <Button onClick={undo} variant="outline" className="w-full">
+                    <Button onClick={undo} variant="outline" size="sm">
                     <Undo size={16} className="mr-2" />
                     Undo
                   </Button>
-                  <Button onClick={clearCanvas} variant="outline" className="w-full">
+                  </div>
+                  <Button onClick={clearCanvas} variant="outline" size="sm" className="w-full">
                     <RotateCcw size={16} className="mr-2" />
                     Clear All
                   </Button>
@@ -660,14 +662,14 @@ const ToolButton: React.FC<ToolButtonProps> = ({ icon, label, active, onClick })
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
+      className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all ${
         active
           ? 'border-blue-500 bg-blue-50 text-blue-700'
           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
       }`}
     >
       {icon}
-      <span className="text-xs mt-1 font-medium">{label}</span>
+      <span className="text-[10px] mt-0.5 font-medium leading-tight">{label}</span>
     </button>
   );
 };
