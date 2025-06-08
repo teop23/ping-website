@@ -536,14 +536,19 @@ const CreateTraits: React.FC = () => {
     } else {
       // Load trait for the first time
       fabric.Image.fromURL(trait.data, (img) => {
-        // Position the trait to match the canvas exactly
+        // Calculate the scale to match canvas dimensions exactly
+        const canvasWidth = canvas.width!;
+        const canvasHeight = canvas.height!;
+        const scaleX = canvasWidth / img.width!;
+        const scaleY = canvasHeight / img.height!;
+        
         img.set({
           left: 0,
           top: 0,
           originX: 'left',
           originY: 'top',
-          scaleX: 1,
-          scaleY: 1,
+          scaleX: scaleX,
+          scaleY: scaleY,
           selectable: true,
           evented: true,
           name: `trait-${trait.id}`,
