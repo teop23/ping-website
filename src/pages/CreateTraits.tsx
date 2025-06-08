@@ -986,7 +986,7 @@ const CreateTraits: React.FC = () => {
                 </Button>
               </div>
               
-              <div className="flex justify-center">
+              <div className="flex justify-center items-center">
                 <canvas
                   ref={canvasRef}
                   className="border-2 border-gray-200 rounded-lg shadow-sm"
