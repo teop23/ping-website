@@ -827,11 +827,11 @@ const CreateTraits: React.FC = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="w-full lg:w-1/4 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="h-[400px] sm:h-[600px] overflow-hidden">
+            <Card className="h-auto lg:h-[600px] overflow-hidden">
               <CardHeader>
                 <h3 className="text-base sm:text-lg font-semibold">Tools</h3>
               </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3 h-[320px] sm:h-[520px] overflow-y-auto">
+              <CardContent className="space-y-2 sm:space-y-3 h-auto lg:h-[520px] lg:overflow-y-auto">
                 {/* Tool Selection */}
                 <div className="grid grid-cols-3 gap-1 sm:gap-2">
                   <ToolButton
