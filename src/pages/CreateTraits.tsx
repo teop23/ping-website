@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { HexColorPicker } from 'react-colorful';
 import { 
   Download, 
@@ -61,6 +62,9 @@ const CreateTraits: React.FC = () => {
   const [textSize, setTextSize] = useState(24);
   const [textColor, setTextColor] = useState('#000000');
   const [showTextColorPicker, setShowTextColorPicker] = useState(false);
+  
+  // Delete confirmation state
+  const [traitToDelete, setTraitToDelete] = useState<string | null>(null);
 
   // Load saved traits from localStorage
   useEffect(() => {
@@ -552,6 +556,13 @@ const CreateTraits: React.FC = () => {
     const updatedTraits = savedTraits.filter(trait => trait.id !== id);
     setSavedTraits(updatedTraits);
     localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
+    
+    // Close the confirmation dialog
+    setTraitToDelete(null);
+  };
+
+  const confirmDeleteTrait = (id: string) => {
+    setTraitToDelete(id);
   };
 
   const toggleTrait = (trait: SavedTrait) => {
@@ -661,14 +672,16 @@ const CreateTraits: React.FC = () => {
                   {savedTraits.map((trait) => (
                     <div
                       key={trait.id}
-                      className={`group flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer ${
+                      className={`flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer ${
                         trait.isVisible 
                           ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
                           : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
                       }`}
-                      onClick={() => toggleTrait(trait)}
                     >
-                      <div className="flex items-center space-x-3">
+                      <div 
+                        className="flex items-center space-x-3 flex-1 cursor-pointer"
+                        onClick={() => toggleTrait(trait)}
+                      >
                         <img
                           src={trait.data}
                           alt={trait.name}
@@ -685,17 +698,43 @@ const CreateTraits: React.FC = () => {
                       </div>
                       <div className="flex items-center space-x-1">
                         <div className={`w-2 h-2 rounded-full ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteTrait(trait.id);
-                          }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Trash2 size={16} />
-                        </Button>
+                        <Dialog open={traitToDelete === trait.id} onOpenChange={(open) => !open && setTraitToDelete(null)}>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmDeleteTrait(trait.id);
+                              }}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Delete Trait</DialogTitle>
+                              <DialogDescription>
+                                Are you sure you want to delete "{trait.name}"? This action cannot be undone.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                              <Button
+                                variant="outline"
+                                onClick={() => setTraitToDelete(null)}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                onClick={() => deleteTrait(trait.id)}
+                              >
+                                Delete
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </div>
                   ))}
