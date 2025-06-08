@@ -488,13 +488,13 @@ const CreateTraits: React.FC = () => {
     } else {
       // Load trait for the first time
       fabric.Image.fromURL(trait.data, (img) => {
-        // Make the trait semi-transparent so it doesn't completely override the base
+        // Make the trait semi-transparent but keep base image at full opacity
         img.set({
           left: canvas.width! / 2,
           top: canvas.height! / 2,
           originX: 'center',
           originY: 'center',
-          opacity: 0.8, // Make it semi-transparent
+          opacity: 0.9, // Make trait semi-transparent for layering effect
           selectable: true,
           evented: true,
           name: `trait-${trait.id}`,
@@ -502,6 +502,12 @@ const CreateTraits: React.FC = () => {
         });
         
         canvas.add(img);
+        
+        // Ensure base image stays at the back and maintains its opacity
+        if (baseImage) {
+          canvas.sendToBack(baseImage);
+          // Don't change base image opacity when adding traits
+        }
         
         // Store reference to the fabric object
         const newLoadedTraits = new Map(loadedTraits);
