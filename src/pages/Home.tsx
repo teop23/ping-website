@@ -1,7 +1,6 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import React from 'react';
 import Builder from './Builder';
-import TokenInfo from '../components/TokenInfo';
 
 const Home: React.FC = () => {
   return (

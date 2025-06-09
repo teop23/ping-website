@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import CharacterPreview from '../components/CharacterPreview';
 import TraitSelector from '../components/TraitSelector';
 import { categories, traits } from '../data/traits';
 import { Trait } from '../types';
 
+export type CategoryName = 'head' | 'face' | 'body' | 'accessory';
+
 const Builder: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0].id);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryName>(categories[0].id);
   const [selectedTraits, setSelectedTraits] = useState<Record<string, Trait | null>>({
     head: null,
     face: null,
@@ -14,7 +15,7 @@ const Builder: React.FC = () => {
     accessory: null
   });
   
-  const handleCategoryChange = (category: string) => {
+  const handleCategoryChange = (category: CategoryName) => {
     setSelectedCategory(category);
   };
   

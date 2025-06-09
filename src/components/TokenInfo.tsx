@@ -81,24 +81,4 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value }) => {
   );
 };
 
-interface LinkButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-}
-
-const LinkButton: React.FC<LinkButtonProps> = ({ icon, label, href }) => {
-  return (
-    <motion.a
-      href={href}
-      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 px-6 rounded-lg shadow-md w-full"
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      {icon}
-      <span>{label}</span>
-    </motion.a>
-  );
-};
-
 export default TokenInfo;

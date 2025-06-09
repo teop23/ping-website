@@ -1,12 +1,12 @@
-import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Copy, RotateCcw } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import { Copy, Download, RotateCcw } from 'lucide-react';
+import React, { useRef } from 'react';
+import pingImage from '../assets/images/ping.png';
+import { placeholderTraits } from '../data/traits';
+import { Trait } from '../types';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { Trait } from '../types';
-import { placeholderTraits, baseCharacterImage } from '../data/traits';
-import pingImage from '../assets/images/ping.png';
 
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Palette, Menu, X } from 'lucide-react';

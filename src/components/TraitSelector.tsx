@@ -1,19 +1,20 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { CategoryName } from '@/pages/Builder';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
+import { Check, Upload } from 'lucide-react';
+import React from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
-import { Upload, Check } from 'lucide-react';
-import { Trait, CategoryOption } from '../types';
 import { placeholderTraits } from '../data/traits';
+import { CategoryOption, Trait } from '../types';
+import { Card, CardContent } from './ui/card';
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 interface TraitSelectorProps {
   categories: CategoryOption[];
   traits: Trait[];
   selectedCategory: string;
   selectedTraits: Record<string, Trait | null>;
-  onCategoryChange: (category: string) => void;
+  onCategoryChange: (category: CategoryName) => void;
   onTraitSelect: (trait: Trait) => void;
 }
 
@@ -31,7 +32,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
     body: [],
     accessory: []
   });
-  
+
   // Filter traits by the selected category, including uploaded traits
   const filteredTraits = [
     ...uploadedTraits[selectedCategory as keyof typeof uploadedTraits],
@@ -71,7 +72,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   return (
     <Card className="flex flex-col h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
       {/* Category tabs */}
-      <Tabs value={selectedCategory} onValueChange={onCategoryChange}>
+      <Tabs value={selectedCategory} onValueChange={() => onCategoryChange(selectedCategory as CategoryName)}>
         <TabsList className="w-full justify-start bg-gradient-to-r from-muted to-muted/80 overflow-x-auto">
           {categories.map((category) => (
             <TabsTrigger
@@ -84,7 +85,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           ))}
         </TabsList>
       </Tabs>
-      
+
       {/* Traits grid */}
       <ScrollArea className="flex-1">
         <CardContent className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -100,12 +101,12 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
               <span className="text-xs">Upload</span>
             </div>
           </motion.button>
-          
+
           {filteredTraits.map((trait) => {
             // Get placeholder image for this trait
             const placeholderImage = placeholderTraits[trait.category as keyof typeof placeholderTraits]?.[trait.id];
             const isSelected = selectedTraits[trait.category]?.id === trait.id;
-          
+
             return (
               <TraitCard
                 key={trait.id}
@@ -122,29 +123,6 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   );
 };
 
-interface CategoryTabProps {
-  category: CategoryOption;
-  isSelected: boolean;
-  onClick: () => void;
-}
-
-const CategoryTab: React.FC<CategoryTabProps> = ({ category, isSelected, onClick }) => {
-  return (
-    <motion.button
-      className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
-        isSelected
-          ? 'bg-indigo-600 text-white'
-          : 'bg-transparent text-gray-600 hover:bg-gray-200'
-      }`}
-      onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      {category.label}
-    </motion.button>
-  );
-};
-
 interface TraitCardProps {
   trait: Trait;
   isSelected: boolean;
@@ -155,11 +133,10 @@ interface TraitCardProps {
 const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onClick }) => {
   return (
     <motion.div
-      className={`relative cursor-pointer rounded-lg overflow-hidden border ${
-        isSelected
-          ? 'border-primary'
-          : 'border-border hover:border-primary/50'
-      }`}
+      className={`relative cursor-pointer rounded-lg overflow-hidden border ${isSelected
+        ? 'border-primary'
+        : 'border-border hover:border-primary/50'
+        }`}
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.97 }}
@@ -169,12 +146,11 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
         <img
           src={imageSrc}
           alt={trait.name}
-          className={`w-full h-full object-contain p-2 transition-transform duration-200 ${
-            isSelected ? 'scale-95' : ''
-          }`}
+          className={`w-full h-full object-contain p-2 transition-transform duration-200 ${isSelected ? 'scale-95' : ''
+            }`}
         />
       </div>
-      
+
       {isSelected && (
         <motion.div
           className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1"
@@ -186,8 +162,8 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
           <Check size={16} />
         </motion.div>
       )}
-      
-      <motion.div 
+
+      <motion.div
         className="absolute inset-x-0 bottom-0 p-2 bg-secondary/90 text-secondary-foreground text-xs text-center truncate"
         initial={{ y: '100%' }}
         whileHover={{ y: 0 }}
