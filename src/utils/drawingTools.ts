@@ -1,13 +1,15 @@
 import { fabric } from 'fabric';
 import { safeRenderAll } from './canvasUtils';
 
+type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line';
+
 export const addText = (
   x: number,
   y: number,
   canvas: fabric.Canvas,
   textSize: number,
   textColor: string,
-  setTool: (tool: string) => void
+  setTool: (tool: ToolType) => void
 ) => {
   const text = new fabric.IText('Double click to edit', {
     left: x,
@@ -48,7 +50,7 @@ export const addRectangle = (
   y: number,
   canvas: fabric.Canvas,
   color: string,
-  setTool: (tool: string) => void
+  setTool: (tool: ToolType) => void
 ) => {
   const rect = new fabric.Rect({
     left: x - 50,
@@ -77,7 +79,7 @@ export const addCircle = (
   y: number,
   canvas: fabric.Canvas,
   color: string,
-  setTool: (tool: string) => void
+  setTool: (tool: ToolType) => void
 ) => {
   const circle = new fabric.Circle({
     left: x - 25,
@@ -106,7 +108,7 @@ export const addLine = (
   canvas: fabric.Canvas,
   color: string,
   brushSize: number,
-  setTool: (tool: string) => void
+  setTool: (tool: ToolType) => void
 ) => {
   const line = new fabric.Line([x, y, x + 100, y], {
     stroke: color,

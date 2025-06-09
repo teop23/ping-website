@@ -52,12 +52,14 @@ import {
   type SavedTrait 
 } from '../utils/traitManager';
 
+type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line';
+
 const CreateTraits: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [baseImage, setBaseImage] = useState<fabric.Image | null>(null);
   const [showBaseLayer, setShowBaseLayer] = useState(true);
-  const [tool, setTool] = useState<'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line'>('select');
+  const [tool, setTool] = useState<ToolType>('select');
   const [traitName, setTraitName] = useState('');
   const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
   const [loadedTraits, setLoadedTraits] = useState<Map<string, fabric.Image>>(new Map());

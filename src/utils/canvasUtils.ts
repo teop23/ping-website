@@ -128,7 +128,7 @@ export const saveCanvasState = (
   canvasHistory: CanvasState[],
   historyIndex: number,
   setCanvasHistory: (history: CanvasState[]) => void,
-  setHistoryIndex: (index: number) => void,
+  setHistoryIndex: (callback: (prev: number) => number) => void,
   isUndoing: boolean,
   isRedoing: boolean
 ) => {
@@ -168,14 +168,14 @@ export const restoreCanvasState = (
     }
   });
   
-  state.objects.forEach(objData => {
-    fabric.util.enlivenObjects([objData], (objects: fabric.Object[]) => {
+  if (state.objects.length > 0) {
+    fabric.util.enlivenObjects(state.objects, (objects: fabric.Object[]) => {
       objects.forEach(obj => {
         canvas.add(obj);
       });
       safeRenderAll(canvas);
     });
-  });
+  }
   
   setTimeout(() => setIsUndoing(false), 100);
 };
