@@ -174,7 +174,7 @@ export const restoreCanvasState = (
         canvas.add(obj);
       });
       safeRenderAll(canvas);
-    });
+    }, 'fabric');
   }
   
   setTimeout(() => setIsUndoing(false), 100);
