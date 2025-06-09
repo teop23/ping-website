@@ -402,9 +402,11 @@ const CreateTraits: React.FC = () => {
     
     // Enter editing mode immediately
     setTimeout(() => {
-      if (text.enterEditing) {
+      if ('enterEditing' in text && typeof text.enterEditing === 'function') {
         text.enterEditing();
-        text.selectAll();
+        if ('selectAll' in text && typeof text.selectAll === 'function') {
+          text.selectAll();
+        }
       }
     }, 100);
     
@@ -1068,7 +1070,7 @@ const CreateTraits: React.FC = () => {
                     <div className="space-y-1">
                       <label className="text-xs sm:text-sm font-medium">Font Weight</label>
                       <select
-                        value={canvas?.getActiveObject()?.fontWeight || 'normal'}
+                        value={(canvas?.getActiveObject() as fabric.IText)?.fontWeight || 'normal'}
                         onChange={(e) => {
                           const activeObject = canvas?.getActiveObject();
                           if (activeObject && activeObject.type === 'i-text') {
