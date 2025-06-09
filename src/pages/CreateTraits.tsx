@@ -1255,3 +1255,5 @@ const ToolButton: React.FC<ToolButtonProps> = ({ icon, label, active, onClick })
 };
 
 export default CreateTraits;
+
+export default CreateTraits
