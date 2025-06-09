@@ -31,6 +31,7 @@ import {
   saveCanvasState,
   restoreCanvasState,
   ensureProperLayering,
+  safeRenderAll,
   type CanvasState
 } from '../utils/canvasUtils';
 import { 
@@ -203,7 +204,7 @@ const CreateTraits: React.FC = () => {
       }
       
       updateLoadedTraitsScale(canvas, loadedTraits);
-      canvas.renderAll();
+      safeRenderAll(canvas);
     };
 
     window.addEventListener('resize', handleResize);
@@ -241,7 +242,7 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!baseImage || !canvas) return;
     baseImage.set({ opacity: showBaseLayer ? 1 : 0.2 });
-    canvas.renderAll();
+    safeRenderAll(canvas);
   }, [showBaseLayer, baseImage, canvas]);
 
   const undo = () => {
@@ -547,7 +548,7 @@ const CreateTraits: React.FC = () => {
                           const activeObject = canvas?.getActiveObject();
                           if (activeObject && activeObject.type === 'i-text') {
                             (activeObject as fabric.IText).set({ fontWeight: e.target.value });
-                            canvas?.renderAll();
+                            canvas && safeRenderAll(canvas);
                           }
                         }}
                         className="w-full px-2 py-1 text-sm border border-gray-300 rounded"

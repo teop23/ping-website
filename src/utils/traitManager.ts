@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import { safeRenderAll } from './canvasUtils';
 
 export interface SavedTrait {
   id: string;
@@ -23,7 +24,7 @@ export const saveTrait = (
   const originalOpacity = baseImage?.opacity;
   if (baseImage) {
     baseImage.set({ opacity: 0 });
-    canvas.renderAll();
+    safeRenderAll(canvas);
   }
 
   const hiddenTraits: { object: fabric.Image; originalVisibility: boolean }[] = [];
@@ -36,7 +37,7 @@ export const saveTrait = (
   
   const originalBackground = canvas.backgroundColor;
   canvas.setBackgroundColor('transparent', () => {
-    canvas.renderAll();
+    safeRenderAll(canvas);
     
     const dataURL = canvas.toDataURL({
       format: 'png',
@@ -55,7 +56,7 @@ export const saveTrait = (
         object.set({ visible: originalVisibility });
       });
       
-      canvas.renderAll();
+      safeRenderAll(canvas);
     });
 
     const newTrait: SavedTrait = {
@@ -86,7 +87,7 @@ export const downloadTrait = (
     const originalOpacity = baseImage?.opacity;
     if (baseImage) {
       baseImage.set({ opacity: 0 });
-      canvas.renderAll();
+      safeRenderAll(canvas);
     }
 
     const hiddenTraits: { object: fabric.Image; originalVisibility: boolean }[] = [];
@@ -99,7 +100,7 @@ export const downloadTrait = (
     
     const originalBackground = canvas.backgroundColor;
     canvas.setBackgroundColor('transparent', () => {
-      canvas.renderAll();
+      safeRenderAll(canvas);
       
       const dataURL = canvas.toDataURL({
         format: 'png',
@@ -117,7 +118,7 @@ export const downloadTrait = (
           object.set({ visible: originalVisibility });
         });
         
-        canvas.renderAll();
+        safeRenderAll(canvas);
       });
 
       const link = document.createElement('a');
@@ -151,7 +152,7 @@ export const deleteTrait = (
   const fabricObject = loadedTraits.get(id);
   if (fabricObject && canvas) {
     canvas.remove(fabricObject);
-    canvas.renderAll();
+    safeRenderAll(canvas);
   }
   
   const newLoadedTraits = new Map(loadedTraits);
@@ -191,7 +192,7 @@ export const toggleTrait = (
     setSavedTraits(updatedTraits);
     localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
     
-    canvas.renderAll();
+    safeRenderAll(canvas);
   } else {
     fabric.Image.fromURL(trait.data, (img) => {
       const canvasWidth = canvas.width!;
@@ -240,7 +241,7 @@ export const toggleTrait = (
       setSavedTraits(updatedTraits);
       localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
       
-      canvas.renderAll();
+      safeRenderAll(canvas);
     });
   }
 };

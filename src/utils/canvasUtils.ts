@@ -5,6 +5,24 @@ export interface CanvasState {
   timestamp: number;
 }
 
+// Safe canvas rendering with error handling
+export const safeRenderAll = (canvas: fabric.Canvas) => {
+  try {
+    if (canvas && canvas.getContext && canvas.getContext()) {
+      canvas.renderAll();
+    }
+  } catch (error) {
+    console.warn('Canvas render error:', error);
+    // Attempt to recover by re-initializing the canvas context
+    try {
+      canvas.calcOffset();
+      canvas.renderAll();
+    } catch (retryError) {
+      console.error('Failed to recover canvas:', retryError);
+    }
+  }
+};
+
 export const calculateCanvasSize = (container?: HTMLElement | null): number => {
   if (!container) return 400;
   
@@ -39,7 +57,7 @@ export const setupBaseImage = (
     
     canvas.add(img);
     canvas.sendToBack(img);
-    canvas.renderAll();
+    safeRenderAll(canvas);
     onImageLoaded(img);
   });
 };
@@ -136,7 +154,7 @@ export const restoreCanvasState = (
       objects.forEach(obj => {
         canvas.add(obj);
       });
-      canvas.renderAll();
+      safeRenderAll(canvas);
     });
   });
   
@@ -151,6 +169,6 @@ export const ensureProperLayering = (canvas: fabric.Canvas) => {
         canvas.bringToFront(obj);
       }
     });
-    canvas.renderAll();
+    safeRenderAll(canvas);
   }, 50);
 };

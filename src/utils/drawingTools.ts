@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import { safeRenderAll } from './canvasUtils';
 
 export const addText = (
   x: number,
@@ -28,7 +29,7 @@ export const addText = (
   canvas.add(text);
   canvas.bringToFront(text);
   canvas.setActiveObject(text);
-  canvas.renderAll();
+  safeRenderAll(canvas);
   
   setTimeout(() => {
     if ('enterEditing' in text && typeof text.enterEditing === 'function') {
@@ -67,7 +68,7 @@ export const addRectangle = (
   canvas.add(rect);
   canvas.bringToFront(rect);
   canvas.setActiveObject(rect);
-  canvas.renderAll();
+  safeRenderAll(canvas);
   setTool('select');
 };
 
@@ -95,7 +96,7 @@ export const addCircle = (
   canvas.add(circle);
   canvas.bringToFront(circle);
   canvas.setActiveObject(circle);
-  canvas.renderAll();
+  safeRenderAll(canvas);
   setTool('select');
 };
 
@@ -121,7 +122,7 @@ export const addLine = (
   canvas.add(line);
   canvas.bringToFront(line);
   canvas.setActiveObject(line);
-  canvas.renderAll();
+  safeRenderAll(canvas);
   setTool('select');
 };
 
@@ -147,7 +148,7 @@ export const uploadImage = (canvas: fabric.Canvas) => {
           canvas.add(img);
           canvas.bringToFront(img);
           canvas.setActiveObject(img);
-          canvas.renderAll();
+          safeRenderAll(canvas);
         });
       };
       reader.readAsDataURL(file);
@@ -164,7 +165,7 @@ export const deleteSelected = (canvas: fabric.Canvas) => {
     }
   });
   canvas.discardActiveObject();
-  canvas.renderAll();
+  safeRenderAll(canvas);
 };
 
 export const clearCanvas = (canvas: fabric.Canvas) => {
@@ -177,5 +178,5 @@ export const clearCanvas = (canvas: fabric.Canvas) => {
   });
   
   canvas.discardActiveObject();
-  canvas.renderAll();
+  safeRenderAll(canvas);
 };
