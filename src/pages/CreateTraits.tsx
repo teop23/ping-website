@@ -193,6 +193,19 @@ const CreateTraits: React.FC = () => {
 
     // Canvas event handlers for saving state
     fabricCanvas.on('mouse:down', handleCanvasClick);
+    
+    // Handle text editing events
+    fabricCanvas.on('text:editing:entered', () => {
+      // Disable canvas selection while editing text
+      fabricCanvas.selection = false;
+    });
+    
+    fabricCanvas.on('text:editing:exited', () => {
+      // Re-enable canvas selection after editing text
+      fabricCanvas.selection = tool === 'select';
+      saveCanvasState();
+    });
+    
     fabricCanvas.on('object:added', () => {
       // Maintain proper layering when objects are added
       setTimeout(() => {
@@ -344,13 +357,19 @@ const CreateTraits: React.FC = () => {
   const addText = (x: number, y: number) => {
     if (!canvas) return;
     
-    const text = new fabric.IText('Edit me', {
+    const text = new fabric.IText('Double click to edit', {
       left: x,
       top: y,
       fontSize: textSize,
       fill: textColor,
-      fontFamily: 'Arial',
-      editable: true
+      fontFamily: 'Inter, Arial, sans-serif',
+      editable: true,
+      cornerStyle: 'circle',
+      cornerColor: '#4F46E5',
+      cornerSize: 8,
+      transparentCorners: false,
+      borderColor: '#4F46E5',
+      editingBorderColor: '#4F46E5'
     });
     
     canvas.add(text);
@@ -360,7 +379,17 @@ const CreateTraits: React.FC = () => {
     
     canvas.setActiveObject(text);
     canvas.renderAll();
-    setTool('select');
+    
+    // Enter editing mode immediately
+    setTimeout(() => {
+      text.enterEditing();
+      text.selectAll();
+    }, 100);
+    
+    // Switch back to select tool after adding text
+    setTimeout(() => {
+      setTool('select');
+    }, 200);
   };
 
   const addRectangle = (x: number, y: number) => {
@@ -973,12 +1002,15 @@ const CreateTraits: React.FC = () => {
                 {/* Text Controls */}
                 {tool === 'text' && (
                   <div className="space-y-2">
+                    <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200">
+                      💡 Click on canvas to add text, then double-click to edit
+                    </div>
                     <div className="space-y-1">
                       <label className="text-xs sm:text-sm font-medium">Text Size: {textSize}px</label>
                       <input
                         type="range"
                         min="12"
-                        max="72"
+                        max="96"
                         value={textSize}
                         onChange={(e) => setTextSize(Number(e.target.value))}
                         className="w-full"
@@ -1006,6 +1038,25 @@ const CreateTraits: React.FC = () => {
                           </div>
                         )}
                       </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs sm:text-sm font-medium">Font Weight</label>
+                      <select
+                        value={canvas?.getActiveObject()?.fontWeight || 'normal'}
+                        onChange={(e) => {
+                          const activeObject = canvas?.getActiveObject();
+                          if (activeObject && activeObject.type === 'i-text') {
+                            (activeObject as fabric.IText).set({ fontWeight: e.target.value });
+                            canvas?.renderAll();
+                          }
+                        }}
+                        className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
+                      >
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="600">Semi Bold</option>
+                        <option value="300">Light</option>
+                      </select>
                     </div>
                   </div>
                 )}
