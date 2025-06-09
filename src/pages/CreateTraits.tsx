@@ -192,7 +192,7 @@ const CreateTraits: React.FC = () => {
     });
 
     // Canvas event handlers for saving state
-    fabricCanvas.on('mouse:up', handleCanvasClick);
+    fabricCanvas.on('mouse:down', handleCanvasClick);
     
     // Handle text editing events
     fabricCanvas.on('text:editing:entered', () => {
@@ -349,10 +349,11 @@ const CreateTraits: React.FC = () => {
   const handleCanvasClick = (e: fabric.IEvent) => {
     if (!canvas) return;
     
-    // Only handle clicks for drawing tools, not select or brush
+    // Only handle clicks for drawing tools (not select or brush)
     if (tool === 'select' || tool === 'brush') return;
 
-    const pointer = canvas.getPointer(e.e);
+    // Get the pointer position relative to the canvas
+    const pointer = canvas.getPointer(e.e as MouseEvent);
     
     switch (tool) {
       case 'text':
@@ -372,8 +373,6 @@ const CreateTraits: React.FC = () => {
 
   const addText = (x: number, y: number) => {
     if (!canvas) return;
-    
-    console.log('Adding text at:', x, y); // Debug log
     
     const text = new fabric.IText('Double click to edit', {
       left: x,
@@ -408,12 +407,10 @@ const CreateTraits: React.FC = () => {
           text.selectAll();
         }
       }
-    }, 100);
+    }, 50);
     
     // Switch back to select tool after adding text
-    setTimeout(() => {
-      setTool('select');
-    }, 200);
+    setTool('select');
   };
 
   const addRectangle = (x: number, y: number) => {
@@ -425,8 +422,13 @@ const CreateTraits: React.FC = () => {
       width: 100,
       height: 50,
       fill: color,
-      stroke: color,
-      strokeWidth: 2
+      stroke: '#333',
+      strokeWidth: 1,
+      cornerStyle: 'circle',
+      cornerColor: '#4F46E5',
+      cornerSize: 8,
+      transparentCorners: false,
+      borderColor: '#4F46E5'
     });
     
     canvas.add(rect);
@@ -447,8 +449,13 @@ const CreateTraits: React.FC = () => {
       top: y - 25,
       radius: 25,
       fill: color,
-      stroke: color,
-      strokeWidth: 2
+      stroke: '#333',
+      strokeWidth: 1,
+      cornerStyle: 'circle',
+      cornerColor: '#4F46E5',
+      cornerSize: 8,
+      transparentCorners: false,
+      borderColor: '#4F46E5'
     });
     
     canvas.add(circle);
@@ -467,7 +474,12 @@ const CreateTraits: React.FC = () => {
     const line = new fabric.Line([x, y, x + 100, y], {
       stroke: color,
       strokeWidth: brushSize,
-      selectable: true
+      selectable: true,
+      cornerStyle: 'circle',
+      cornerColor: '#4F46E5',
+      cornerSize: 8,
+      transparentCorners: false,
+      borderColor: '#4F46E5'
     });
     
     canvas.add(line);
@@ -1030,8 +1042,8 @@ const CreateTraits: React.FC = () => {
                 {/* Text Controls */}
                 {tool === 'text' && (
                   <div className="space-y-2">
-                    <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200">
-                      💡 Click on canvas to add text, then double-click to edit
+                    <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+                      💡 Click anywhere on canvas to add text
                     </div>
                     <div className="space-y-1">
                       <label className="text-xs sm:text-sm font-medium">Text Size: {textSize}px</label>
