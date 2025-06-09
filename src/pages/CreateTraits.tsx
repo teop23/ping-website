@@ -192,8 +192,6 @@ const CreateTraits: React.FC = () => {
     });
 
     // Canvas event handlers for saving state
-    fabricCanvas.on('mouse:down', handleCanvasClick);
-    
     // Handle text editing events
     fabricCanvas.on('text:editing:entered', () => {
       // Disable canvas selection while editing text
@@ -236,6 +234,11 @@ const CreateTraits: React.FC = () => {
         fabricCanvas.renderAll();
       }, 50);
       setTimeout(saveCanvasState, 100);
+    });
+
+    // Attach click handler after canvas is set up
+    fabricCanvas.on('mouse:down', (e: fabric.IEvent) => {
+      handleCanvasClick(e, fabricCanvas);
     });
 
     setCanvas(fabricCanvas);
@@ -346,33 +349,32 @@ const CreateTraits: React.FC = () => {
     canvas.renderAll();
   }, [showBaseLayer, baseImage, canvas]);
 
-  const handleCanvasClick = (e: fabric.IEvent) => {
-    if (!canvas) return;
+  const handleCanvasClick = (e: fabric.IEvent, fabricCanvas: fabric.Canvas) => {
+    if (!fabricCanvas) return;
     
     // Only handle clicks for drawing tools (not select or brush)
     if (tool === 'select' || tool === 'brush') return;
 
     // Get the pointer position relative to the canvas
-    const pointer = canvas.getPointer(e.e as MouseEvent);
+    const pointer = fabricCanvas.getPointer(e.e as MouseEvent);
     
     switch (tool) {
       case 'text':
-        addText(pointer.x, pointer.y);
+        addText(pointer.x, pointer.y, fabricCanvas);
         break;
       case 'rectangle':
-        addRectangle(pointer.x, pointer.y);
+        addRectangle(pointer.x, pointer.y, fabricCanvas);
         break;
       case 'circle':
-        addCircle(pointer.x, pointer.y);
+        addCircle(pointer.x, pointer.y, fabricCanvas);
         break;
       case 'line':
-        addLine(pointer.x, pointer.y);
+        addLine(pointer.x, pointer.y, fabricCanvas);
         break;
     }
   };
 
-  const addText = (x: number, y: number) => {
-    if (!canvas) return;
+  const addText = (x: number, y: number, fabricCanvas: fabric.Canvas) => {
     
     const text = new fabric.IText('Double click to edit', {
       left: x,
@@ -391,13 +393,13 @@ const CreateTraits: React.FC = () => {
       originY: 'top'
     });
     
-    canvas.add(text);
+    fabricCanvas.add(text);
     
     // Ensure new objects are above saved traits
-    canvas.bringToFront(text);
+    fabricCanvas.bringToFront(text);
     
-    canvas.setActiveObject(text);
-    canvas.renderAll();
+    fabricCanvas.setActiveObject(text);
+    fabricCanvas.renderAll();
     
     // Enter editing mode immediately
     setTimeout(() => {
@@ -413,8 +415,7 @@ const CreateTraits: React.FC = () => {
     setTool('select');
   };
 
-  const addRectangle = (x: number, y: number) => {
-    if (!canvas) return;
+  const addRectangle = (x: number, y: number, fabricCanvas: fabric.Canvas) => {
     
     const rect = new fabric.Rect({
       left: x - 50,
@@ -431,18 +432,17 @@ const CreateTraits: React.FC = () => {
       borderColor: '#4F46E5'
     });
     
-    canvas.add(rect);
+    fabricCanvas.add(rect);
     
     // Ensure new objects are above saved traits
-    canvas.bringToFront(rect);
+    fabricCanvas.bringToFront(rect);
     
-    canvas.setActiveObject(rect);
-    canvas.renderAll();
+    fabricCanvas.setActiveObject(rect);
+    fabricCanvas.renderAll();
     setTool('select');
   };
 
-  const addCircle = (x: number, y: number) => {
-    if (!canvas) return;
+  const addCircle = (x: number, y: number, fabricCanvas: fabric.Canvas) => {
     
     const circle = new fabric.Circle({
       left: x - 25,
@@ -458,18 +458,17 @@ const CreateTraits: React.FC = () => {
       borderColor: '#4F46E5'
     });
     
-    canvas.add(circle);
+    fabricCanvas.add(circle);
     
     // Ensure new objects are above saved traits
-    canvas.bringToFront(circle);
+    fabricCanvas.bringToFront(circle);
     
-    canvas.setActiveObject(circle);
-    canvas.renderAll();
+    fabricCanvas.setActiveObject(circle);
+    fabricCanvas.renderAll();
     setTool('select');
   };
 
-  const addLine = (x: number, y: number) => {
-    if (!canvas) return;
+  const addLine = (x: number, y: number, fabricCanvas: fabric.Canvas) => {
     
     const line = new fabric.Line([x, y, x + 100, y], {
       stroke: color,
@@ -482,13 +481,13 @@ const CreateTraits: React.FC = () => {
       borderColor: '#4F46E5'
     });
     
-    canvas.add(line);
+    fabricCanvas.add(line);
     
     // Ensure new objects are above saved traits
-    canvas.bringToFront(line);
+    fabricCanvas.bringToFront(line);
     
-    canvas.setActiveObject(line);
-    canvas.renderAll();
+    fabricCanvas.setActiveObject(line);
+    fabricCanvas.renderAll();
     setTool('select');
   };
 
