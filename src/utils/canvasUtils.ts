@@ -37,7 +37,19 @@ export const setupBaseImage = (
   imageSrc: string,
   onImageLoaded: (img: fabric.Image) => void
 ) => {
+  // Ensure canvas is ready before proceeding
+  if (!canvas || !canvas.getContext() || !canvas.width || !canvas.height) {
+    console.warn('Canvas not ready for image loading');
+    return;
+  }
+
   fabric.Image.fromURL(imageSrc, (img) => {
+    // Double-check canvas is still valid when image loads
+    if (!canvas || !canvas.getContext()) {
+      console.warn('Canvas became invalid during image loading');
+      return;
+    }
+
     const scale = Math.min(
       canvas.width! / img.width!,
       canvas.height! / img.height!
@@ -55,26 +67,17 @@ export const setupBaseImage = (
       name: 'baseImage'
     });
     
-    // Safe canvas operations with error handling
-    try {
-      canvas.add(img);
-      canvas.sendToBack(img);
-      safeRenderAll(canvas);
-      onImageLoaded(img);
-    } catch (error) {
-      console.warn('Error adding base image to canvas:', error);
-      // Retry with a slight delay to allow canvas to stabilize
-      setTimeout(() => {
-        try {
-          canvas.add(img);
-          canvas.sendToBack(img);
-          safeRenderAll(canvas);
-          onImageLoaded(img);
-        } catch (retryError) {
-          console.error('Failed to add base image after retry:', retryError);
-        }
-      }, 100);
-    }
+    // Use requestAnimationFrame to ensure canvas is ready for operations
+    requestAnimationFrame(() => {
+      try {
+        canvas.add(img);
+        canvas.sendToBack(img);
+        canvas.renderAll();
+        onImageLoaded(img);
+      } catch (error) {
+        console.warn('Error adding base image to canvas:', error);
+      }
+    });
   });
 };
 
