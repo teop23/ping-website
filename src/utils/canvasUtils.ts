@@ -55,10 +55,26 @@ export const setupBaseImage = (
       name: 'baseImage'
     });
     
-    canvas.add(img);
-    canvas.sendToBack(img);
-    safeRenderAll(canvas);
-    onImageLoaded(img);
+    // Safe canvas operations with error handling
+    try {
+      canvas.add(img);
+      canvas.sendToBack(img);
+      safeRenderAll(canvas);
+      onImageLoaded(img);
+    } catch (error) {
+      console.warn('Error adding base image to canvas:', error);
+      // Retry with a slight delay to allow canvas to stabilize
+      setTimeout(() => {
+        try {
+          canvas.add(img);
+          canvas.sendToBack(img);
+          safeRenderAll(canvas);
+          onImageLoaded(img);
+        } catch (retryError) {
+          console.error('Failed to add base image after retry:', retryError);
+        }
+      }, 100);
+    }
   });
 };
 
