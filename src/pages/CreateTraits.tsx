@@ -159,6 +159,7 @@ const CreateTraits: React.FC = () => {
     return () => {
       fabricCanvas.dispose();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle canvas click events
@@ -550,7 +551,9 @@ const CreateTraits: React.FC = () => {
                           const activeObject = canvas?.getActiveObject();
                           if (activeObject && activeObject.type === 'i-text') {
                             (activeObject as fabric.IText).set({ fontWeight: e.target.value });
-                            canvas && safeRenderAll(canvas);
+                            if(canvas) {
+                              safeRenderAll(canvas);
+                            }
                           }
                         }}
                         className="w-full px-2 py-1 text-sm border border-gray-300 rounded"

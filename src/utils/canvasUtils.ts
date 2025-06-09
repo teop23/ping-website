@@ -1,7 +1,7 @@
 import { fabric } from 'fabric';
 
 export interface CanvasState {
-  objects: any[];
+  objects: unknown[];
   timestamp: number;
 }
 
