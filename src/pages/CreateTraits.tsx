@@ -192,7 +192,7 @@ const CreateTraits: React.FC = () => {
     });
 
     // Canvas event handlers for saving state
-    fabricCanvas.on('mouse:down', handleCanvasClick);
+    fabricCanvas.on('mouse:up', handleCanvasClick);
     
     // Handle text editing events
     fabricCanvas.on('text:editing:entered', () => {
@@ -323,7 +323,20 @@ const CreateTraits: React.FC = () => {
       canvas.freeDrawingBrush.color = color;
     }
 
-    canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
+    // Set appropriate cursor for each tool
+    switch (tool) {
+      case 'select':
+        canvas.defaultCursor = 'default';
+        break;
+      case 'brush':
+        canvas.defaultCursor = 'crosshair';
+        break;
+      case 'text':
+        canvas.defaultCursor = 'text';
+        break;
+      default:
+        canvas.defaultCursor = 'crosshair';
+    }
   }, [tool, canvas, brushSize, color]);
 
   // Update base image visibility
@@ -334,7 +347,10 @@ const CreateTraits: React.FC = () => {
   }, [showBaseLayer, baseImage, canvas]);
 
   const handleCanvasClick = (e: fabric.IEvent) => {
-    if (!canvas || tool === 'select' || tool === 'brush') return;
+    if (!canvas) return;
+    
+    // Only handle clicks for drawing tools, not select or brush
+    if (tool === 'select' || tool === 'brush') return;
 
     const pointer = canvas.getPointer(e.e);
     
@@ -357,6 +373,8 @@ const CreateTraits: React.FC = () => {
   const addText = (x: number, y: number) => {
     if (!canvas) return;
     
+    console.log('Adding text at:', x, y); // Debug log
+    
     const text = new fabric.IText('Double click to edit', {
       left: x,
       top: y,
@@ -369,7 +387,9 @@ const CreateTraits: React.FC = () => {
       cornerSize: 8,
       transparentCorners: false,
       borderColor: '#4F46E5',
-      editingBorderColor: '#4F46E5'
+      editingBorderColor: '#4F46E5',
+      originX: 'left',
+      originY: 'top'
     });
     
     canvas.add(text);
@@ -382,8 +402,10 @@ const CreateTraits: React.FC = () => {
     
     // Enter editing mode immediately
     setTimeout(() => {
-      text.enterEditing();
-      text.selectAll();
+      if (text.enterEditing) {
+        text.enterEditing();
+        text.selectAll();
+      }
     }, 100);
     
     // Switch back to select tool after adding text
@@ -472,12 +494,16 @@ const CreateTraits: React.FC = () => {
   const clearCanvas = () => {
     if (!canvas) return;
     
-    const objects = canvas.getObjects();
-    objects.forEach(obj => {
-      if (obj.name !== 'baseImage') {
+    // Get all objects except base image and saved traits
+    const objectsToRemove = canvas.getObjects().filter(obj => 
+      obj.name !== 'baseImage' && !obj.name?.startsWith('trait-')
+    );
+    
+    objectsToRemove.forEach(obj => {
         canvas.remove(obj);
-      }
     });
+    
+    canvas.discardActiveObject();
     canvas.renderAll();
   };
 
