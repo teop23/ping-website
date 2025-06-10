@@ -28,22 +28,22 @@ export const calculateCanvasSize = (container?: HTMLElement | null): number => {
     // Fallback based on window size
     const width = window.innerWidth;
     if (width < 768) {
-      return 350;
-    } else if (width < 1024) {
       return 500;
+    } else if (width < 1024) {
+      return 700;
     } else {
-      return 600;
+      return 900;
     }
   }
   
   // Calculate based on available container space
-  const containerWidth = container.clientWidth - 32; // Account for padding
-  const containerHeight = container.clientHeight - 32;
+  const containerWidth = container.clientWidth - 64; // Account for padding
+  const containerHeight = container.clientHeight - 64;
   const availableSize = Math.min(containerWidth, containerHeight);
   
   // Set reasonable min/max bounds
-  const minSize = 300;
-  const maxSize = 700;
+  const minSize = 500;
+  const maxSize = 1200;
   
   return Math.max(minSize, Math.min(maxSize, availableSize));
 };
