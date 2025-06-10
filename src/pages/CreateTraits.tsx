@@ -90,7 +90,7 @@ const CreateTraits: React.FC = () => {
 
   // Curved line state
   const [curvePoints, setCurvePoints] = useState<{ x: number; y: number }[]>([]);
-  const [tempCurveLine, setTempCurveLine] = useState<fabric.Path | null>(null);
+  const [tempCurveLine, setTempCurveLine] = useState<fabric.Object | null>(null);
   // Load saved traits from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('pingTraits');
@@ -657,13 +657,17 @@ const CreateTraits: React.FC = () => {
                 {tool === 'curve' && (
                   <div className="space-y-2">
                     <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
-                      💡 Click 3 points to create a curved line:
+                      💡 Click 3 points to create an editable curved line:
                       <br />
-                      1. Start point
+                      1. Start point (blue)
                       <br />
-                      2. Control point (curve direction)
+                      2. Control point (orange - curve direction)
                       <br />
-                      3. End point
+                      3. End point (red)
+                      <br />
+                      <span className="text-xs text-gray-600">
+                        After creation, you can select and move the entire curve or individual control points.
+                      </span>
                     </div>
                     {curvePoints.length > 0 && (
                       <div className="text-xs text-green-700 bg-green-50 p-2 rounded border border-green-200">
