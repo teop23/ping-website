@@ -69,7 +69,7 @@ export const setupBaseImage = (
     const scale = Math.min(
       canvas.width! / img.width!,
       canvas.height! / img.height!
-    ) * 0.7;
+    ) * 0.9;
     
     img.set({
       left: canvas.width! / 2,
@@ -107,7 +107,7 @@ export const updateBaseImageScale = (
   const scale = Math.min(
     canvas.width! / originalWidth,
     canvas.height! / originalHeight
-  ) * 0.7;
+  ) * 0.9;
   
   baseImage.set({
     left: canvas.width! / 2,
