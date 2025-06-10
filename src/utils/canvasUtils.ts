@@ -27,11 +27,11 @@ export const calculateCanvasSize = (container?: HTMLElement | null): number => {
   const width = window.innerWidth;
   
   if (width < 768) {
-    return 300; // Small screens
+    return 400; // Small screens
   } else if (width < 1024) {
-    return 400; // Medium screens
+    return 600; // Medium screens
   } else {
-    return 500; // Large screens
+    return 700; // Large screens
   }
 };
 

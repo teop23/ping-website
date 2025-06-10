@@ -11,7 +11,7 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
     <div className="flex justify-center items-center flex-1 overflow-hidden min-h-0 w-full h-full">
       <canvas
         ref={canvasRef}
-        className="border-2 border-gray-200 rounded-lg shadow-sm w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px]"
+        className="border-2 border-gray-200 rounded-lg shadow-sm w-[400px] h-[400px] md:w-[600px] md:h-[600px] lg:w-[700px] lg:h-[700px]"
       />
     </div>
   );
