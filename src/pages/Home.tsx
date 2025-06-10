@@ -20,7 +20,7 @@ const Home: React.FC = () => {
           Create Your PING Character
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground">
-          Customize your unique PING character with different traits and join the vibrant Solana memetoken community.
+          Customize your unique PING character with different traits and join the community.
         </p>
       </motion.div>
       
