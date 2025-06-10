@@ -24,15 +24,28 @@ export const safeRenderAll = (canvas: fabric.Canvas) => {
 };
 
 export const calculateCanvasSize = (container?: HTMLElement | null): number => {
-  const width = window.innerWidth;
-  
-  if (width < 768) {
-    return 400; // Small screens
-  } else if (width < 1024) {
-    return 600; // Medium screens
-  } else {
-    return 700; // Large screens
+  if (!container) {
+    // Fallback based on window size
+    const width = window.innerWidth;
+    if (width < 768) {
+      return 350;
+    } else if (width < 1024) {
+      return 500;
+    } else {
+      return 600;
+    }
   }
+  
+  // Calculate based on available container space
+  const containerWidth = container.clientWidth - 32; // Account for padding
+  const containerHeight = container.clientHeight - 32;
+  const availableSize = Math.min(containerWidth, containerHeight);
+  
+  // Set reasonable min/max bounds
+  const minSize = 300;
+  const maxSize = 700;
+  
+  return Math.max(minSize, Math.min(maxSize, availableSize));
 };
 
 export const setupBaseImage = (

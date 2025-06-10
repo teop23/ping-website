@@ -85,7 +85,7 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvasSize = calculateCanvasSize();
+    const canvasSize = calculateCanvasSize(canvasRef.current?.parentElement);
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: canvasSize,
@@ -174,7 +174,7 @@ const CreateTraits: React.FC = () => {
     if (!canvas) return;
 
     const handleResize = () => {
-      const newSize = calculateCanvasSize();
+      const newSize = calculateCanvasSize(canvasRef.current?.parentElement);
       canvas.setDimensions({ width: newSize, height: newSize });
       
       if (baseImage) {
