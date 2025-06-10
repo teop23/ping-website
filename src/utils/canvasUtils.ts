@@ -24,8 +24,15 @@ export const safeRenderAll = (canvas: fabric.Canvas) => {
 };
 
 export const calculateCanvasSize = (container?: HTMLElement | null): number => {
-  // Return a default size - the actual sizing will be handled by CSS
-  return 500;
+  const width = window.innerWidth;
+  
+  if (width < 768) {
+    return 300; // Small screens
+  } else if (width < 1024) {
+    return 400; // Medium screens
+  } else {
+    return 500; // Large screens
+  }
 };
 
 export const setupBaseImage = (
