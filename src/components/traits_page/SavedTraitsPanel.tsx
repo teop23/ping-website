@@ -32,7 +32,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
   };
 
   return (
-    <Card className="h-full overflow-hidden flex flex-col">
+    <Card className="flex-1 overflow-hidden flex flex-col">
       <CardHeader>
         <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
       </CardHeader>

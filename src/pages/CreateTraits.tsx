@@ -275,104 +275,78 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-4 w-full min-h-0 flex flex-col">
-      <div className="max-w-7xl mx-auto w-full flex flex-col h-full">
-        {/* Title Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-4 sm:mb-8"
-        >
-          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">Create PING Traits</h1>
-          <p className="text-sm sm:text-base text-gray-600">Design custom traits for your PING character</p>
-        </motion.div>
+    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex">
+      {/* Left Sidebar - Tools */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+        className="w-80 flex-shrink-0 p-4 border-r border-gray-200 bg-white/50 backdrop-blur-sm"
+      >
+        <ToolsPanel
+          tool={tool}
+          setTool={setTool}
+          color={color}
+          setColor={setColor}
+          showColorPicker={showColorPicker}
+          setShowColorPicker={setShowColorPicker}
+          brushSize={brushSize}
+          setBrushSize={setBrushSize}
+          textSize={textSize}
+          setTextSize={setTextSize}
+          textColor={textColor}
+          setTextColor={setTextColor}
+          showTextColorPicker={showTextColorPicker}
+          setShowTextColorPicker={setShowTextColorPicker}
+          curvePoints={curvePoints}
+          canvas={canvas}
+          historyIndex={historyIndex}
+          canvasHistory={canvasHistory}
+          showBaseLayer={showBaseLayer}
+          onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
+          onUploadImage={() => uploadImage(canvas!)}
+          onDeleteSelected={() => deleteSelected(canvas!)}
+          onUndo={undo}
+          onRedo={redo}
+          onClearCanvas={() => clearCanvas(canvas!)}
+        />
+      </motion.div>
 
-        {/* Horizontal Container: Tools, Canvas, Saved Traits */}
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full mb-6 min-w-0 overflow-hidden flex-1">
-          {/* Tools Panel - Left Side */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="w-full lg:w-1/5 lg:flex-shrink-0 lg:min-w-[280px] lg:max-w-[320px] min-w-0"
-          >
-            <ToolsPanel
-              tool={tool}
-              setTool={setTool}
-              color={color}
-              setColor={setColor}
-              showColorPicker={showColorPicker}
-              setShowColorPicker={setShowColorPicker}
-              brushSize={brushSize}
-              setBrushSize={setBrushSize}
-              textSize={textSize}
-              setTextSize={setTextSize}
-              textColor={textColor}
-              setTextColor={setTextColor}
-              showTextColorPicker={showTextColorPicker}
-              setShowTextColorPicker={setShowTextColorPicker}
-              curvePoints={curvePoints}
-              canvas={canvas}
-              historyIndex={historyIndex}
-              canvasHistory={canvasHistory}
-              showBaseLayer={showBaseLayer}
-              onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
-              onUploadImage={() => uploadImage(canvas!)}
-              onDeleteSelected={() => deleteSelected(canvas!)}
-              onUndo={undo}
-              onRedo={redo}
-              onClearCanvas={() => clearCanvas(canvas!)}
-            />
-          </motion.div>
+      {/* Center - Canvas */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.6, duration: 0.6 }}
+        className="flex-1 flex flex-col min-w-0"
+      >
+        <CanvasArea canvasRef={canvasRef} />
+      </motion.div>
 
-          {/* Canvas */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="w-full lg:flex-1 lg:flex-shrink lg:flex-grow min-w-0 flex flex-col"
-          >
-            <CanvasArea
-              canvasRef={canvasRef}
-            />
-          </motion.div>
-
-          {/* Saved Traits Panel - Right Side */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-full lg:w-1/5 lg:flex-shrink-0 lg:min-w-[280px] lg:max-w-[320px] min-w-0"
-          >
-            <SavedTraitsPanel
-              savedTraits={savedTraits}
-              traitToDelete={traitToDelete}
-              setTraitToDelete={setTraitToDelete}
-              onToggleTrait={handleToggleTrait}
-              onDownloadTrait={downloadIndividualTrait}
-              onDeleteTrait={handleDeleteTrait}
-            />
-          </motion.div>
-        </div>
-
-        {/* Save Controls Card - Below Canvas */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="w-full max-w-4xl mx-auto"
-        >
-          <SaveControls
-            traitName={traitName}
-            setTraitName={setTraitName}
-            downloadMode={downloadMode}
-            setDownloadMode={setDownloadMode}
-            onSaveTrait={handleSaveTrait}
-            onDownloadTrait={handleDownloadTrait}
-          />
-        </motion.div>
-      </div>
+      {/* Right Sidebar - Saved Traits + Save Controls */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.4, duration: 0.6 }}
+        className="w-80 flex-shrink-0 p-4 border-l border-gray-200 bg-white/50 backdrop-blur-sm flex flex-col gap-4"
+      >
+        <SavedTraitsPanel
+          savedTraits={savedTraits}
+          traitToDelete={traitToDelete}
+          setTraitToDelete={setTraitToDelete}
+          onToggleTrait={handleToggleTrait}
+          onDownloadTrait={downloadIndividualTrait}
+          onDeleteTrait={handleDeleteTrait}
+        />
+        
+        <SaveControls
+          traitName={traitName}
+          setTraitName={setTraitName}
+          downloadMode={downloadMode}
+          setDownloadMode={setDownloadMode}
+          onSaveTrait={handleSaveTrait}
+          onDownloadTrait={handleDownloadTrait}
+        />
+      </motion.div>
     </div>
   );
 };
