@@ -18,7 +18,8 @@ import {
   Trash2,
   RotateCw,
   Palette,
-  MousePointer
+  MousePointer,
+  Spline
 } from 'lucide-react';
 import { fabric } from 'fabric';
 import pingImage from '../assets/images/ping.png';
@@ -39,6 +40,7 @@ import {
   addRectangle, 
   addCircle, 
   addLine, 
+  addCurvedLine,
   uploadImage, 
   deleteSelected, 
   clearCanvas 
@@ -52,7 +54,7 @@ import {
   type SavedTrait 
 } from '../utils/traitManager';
 
-type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line';
+type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
 
 const CreateTraits: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -86,6 +88,9 @@ const CreateTraits: React.FC = () => {
   // Download mode toggle
   const [downloadMode, setDownloadMode] = useState<'trait' | 'character'>('trait');
 
+  // Curved line state
+  const [curvePoints, setCurvePoints] = useState<{ x: number; y: number }[]>([]);
+  const [tempCurveLine, setTempCurveLine] = useState<fabric.Path | null>(null);
   // Load saved traits from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('pingTraits');
@@ -184,6 +189,9 @@ const CreateTraits: React.FC = () => {
         case 'line':
           addLine(pointer.x, pointer.y, canvas, color, brushSize, setTool);
           break;
+        case 'curve':
+          addCurvedLine(pointer.x, pointer.y, canvas, color, brushSize, curvePoints, setCurvePoints, tempCurveLine, setTempCurveLine, setTool);
+          break;
       }
     };
 
@@ -192,7 +200,7 @@ const CreateTraits: React.FC = () => {
     return () => {
       canvas.off('mouse:down', handleCanvasClick);
     };
-  }, [canvas, tool, textSize, textColor, color, brushSize]);
+  }, [canvas, tool, textSize, textColor, color, brushSize, curvePoints, tempCurveLine]);
 
   // Handle clipboard paste
   useEffect(() => {
@@ -277,6 +285,16 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvas) return;
 
+    // Reset curve state when changing tools
+    if (tool !== 'curve') {
+      setCurvePoints([]);
+      if (tempCurveLine) {
+        canvas.remove(tempCurveLine);
+        setTempCurveLine(null);
+        safeRenderAll(canvas);
+      }
+    }
+
     canvas.selection = tool === 'select';
     canvas.isDrawingMode = tool === 'brush';
     
@@ -294,6 +312,9 @@ const CreateTraits: React.FC = () => {
         break;
       case 'text':
         canvas.defaultCursor = 'text';
+        break;
+      case 'curve':
+        canvas.defaultCursor = 'crosshair';
         break;
       default:
         canvas.defaultCursor = 'crosshair';
@@ -520,6 +541,12 @@ const CreateTraits: React.FC = () => {
                     active={tool === 'line'}
                     onClick={() => setTool('line')}
                   />
+                  <ToolButton
+                    icon={<Spline size={14} className="sm:w-[18px] sm:h-[18px]" />}
+                    label="Curve"
+                    active={tool === 'curve'}
+                    onClick={() => setTool('curve')}
+                  />
                 </div>
 
                 {/* Color Picker */}
@@ -548,7 +575,7 @@ const CreateTraits: React.FC = () => {
                 </div>
 
                 {/* Brush Size */}
-                {tool === 'brush' && (
+                {(tool === 'brush' || tool === 'line' || tool === 'curve') && (
                   <div className="space-y-1">
                     <label className="text-xs sm:text-sm font-medium">Brush Size: {brushSize}px</label>
                     <input
@@ -623,6 +650,31 @@ const CreateTraits: React.FC = () => {
                         <option value="300">Light</option>
                       </select>
                     </div>
+                  </div>
+                )}
+
+                {/* Curve Tool Instructions */}
+                {tool === 'curve' && (
+                  <div className="space-y-2">
+                    <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+                      💡 Click 3 points to create a curved line:
+                      <br />
+                      1. Start point
+                      <br />
+                      2. Control point (curve direction)
+                      <br />
+                      3. End point
+                    </div>
+                    {curvePoints.length > 0 && (
+                      <div className="text-xs text-green-700 bg-green-50 p-2 rounded border border-green-200">
+                        Points clicked: {curvePoints.length}/3
+                        {curvePoints.length < 3 && (
+                          <span className="block mt-1">
+                            Click {curvePoints.length === 1 ? 'control point' : 'end point'}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
 
