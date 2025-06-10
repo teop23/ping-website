@@ -385,126 +385,20 @@ const CreateTraits: React.FC = () => {
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full">
-          {/* Saved Traits Panel */}
+          {/* Tools Panel - Left Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="w-full lg:w-1/4 lg:flex-shrink-0 min-w-0"
+            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0 order-1"
           >
-            <Card className="h-fit">
-              <CardHeader>
-                <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className={`p-2 sm:p-4 space-y-2 ${
-                  savedTraits.length > 3 ? 'max-h-[300px] sm:max-h-[400px] overflow-y-auto' : ''
-                }`}>
-                  {savedTraits.map((trait) => (
-                    <div
-                      key={trait.id}
-                      className={`flex items-center p-2 sm:p-3 rounded-lg transition-colors cursor-pointer ${
-                        trait.isVisible 
-                          ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
-                          : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
-                      }`}
-                    >
-                      <div 
-                        className="flex items-center space-x-3 flex-1 min-w-0 cursor-pointer"
-                        onClick={() => handleToggleTrait(trait)}
-                      >
-                        <img
-                          src={trait.data}
-                          alt={trait.name}
-                          className={`w-8 h-8 object-cover rounded ${
-                            trait.isVisible ? 'ring-2 ring-blue-400' : ''
-                          }`}
-                        />
-                        <div className="flex flex-col min-w-0 flex-1">
-                          <span className="text-xs sm:text-sm font-medium truncate">{trait.name}</span>
-                          <span className={`text-xs ${trait.isVisible ? 'text-blue-600' : 'text-gray-500'}`}>
-                            {trait.isVisible ? 'Visible' : 'Hidden'}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2 flex-shrink-0">
-                        <div className={`w-2 h-2 rounded-full ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            downloadIndividualTrait(trait);
-                          }}
-                          className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-                        >
-                          <Download size={12} className="sm:w-4 sm:h-4" />
-                        </Button>
-                        <Dialog open={traitToDelete === trait.id} onOpenChange={(open) => !open && setTraitToDelete(null)}>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                confirmDeleteTrait(trait.id);
-                              }}
-                              className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 size={12} className="sm:w-4 sm:h-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Delete Trait</DialogTitle>
-                              <DialogDescription>
-                                Are you sure you want to delete "{trait.name}"? This action cannot be undone.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                              <Button
-                                variant="outline"
-                                onClick={() => setTraitToDelete(null)}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                variant="destructive"
-                                onClick={() => handleDeleteTrait(trait.id)}
-                              >
-                                Delete
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </div>
-                  ))}
-                  {savedTraits.length === 0 && (
-                    <div className="text-center text-gray-500 py-8">
-                      <p>No saved traits yet</p>
-                      <p className="text-xs sm:text-sm">Create and save your first trait! Click on saved traits to toggle visibility.</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Tools Panel */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-full lg:w-1/4 lg:flex-shrink-0 min-w-0"
-          >
-            <Card className="h-auto lg:h-[600px] overflow-hidden">
+            <Card className="h-auto lg:h-[700px] overflow-hidden">
               <CardHeader>
                 <h3 className="text-base sm:text-lg font-semibold">Tools</h3>
               </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3 h-auto lg:h-[520px] lg:overflow-y-auto">
+              <CardContent className="space-y-2 sm:space-y-3 h-auto lg:h-[620px] lg:overflow-y-auto">
                 {/* Tool Selection */}
-                <div className="grid grid-cols-3 gap-1 sm:gap-2">
+                <div className="grid grid-cols-2 gap-1 sm:gap-2">
                   <ToolButton
                     icon={<MousePointer size={14} className="sm:w-[18px] sm:h-[18px]" />}
                     label="Select"
@@ -732,9 +626,9 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="w-full lg:w-1/2 lg:flex-shrink-0 min-w-0"
+            className="w-full lg:w-3/5 lg:flex-shrink-0 min-w-0 order-2"
           >
-            <Card className="p-3 sm:p-6">
+            <Card className="p-3 sm:p-6 h-auto lg:h-[700px]">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base sm:text-lg font-semibold">Canvas</h3>
                 <Button
@@ -747,15 +641,15 @@ const CreateTraits: React.FC = () => {
                 </Button>
               </div>
               
-              <div className="flex justify-center items-center overflow-hidden">
+              <div className="flex justify-center items-center overflow-hidden mb-4">
                 <canvas
                   ref={canvasRef}
-                  className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-auto max-w-full aspect-square object-contain"
+                  className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-auto max-w-[600px] aspect-square object-contain"
                 />
               </div>
 
               {/* Save Controls */}
-              <div className="mt-3 sm:mt-6 space-y-2 sm:space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 <input
                   type="text"
                   value={traitName}
@@ -809,6 +703,110 @@ const CreateTraits: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </Card>
+          </motion.div>
+
+          {/* Saved Traits Panel - Right Side */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0 order-3"
+          >
+            <Card className="h-auto lg:h-[700px] overflow-hidden">
+              <CardHeader>
+                <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="p-2 sm:p-4 space-y-2 h-auto lg:h-[620px] lg:overflow-y-auto">
+                  {savedTraits.map((trait) => (
+                    <div
+                      key={trait.id}
+                      className={`flex flex-col p-2 sm:p-3 rounded-lg transition-colors cursor-pointer ${
+                        trait.isVisible 
+                          ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
+                          : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+                      }`}
+                    >
+                      <div 
+                        className="flex flex-col items-center space-y-2 cursor-pointer"
+                        onClick={() => handleToggleTrait(trait)}
+                      >
+                        <img
+                          src={trait.data}
+                          alt={trait.name}
+                          className={`w-16 h-16 object-cover rounded ${
+                            trait.isVisible ? 'ring-2 ring-blue-400' : ''
+                          }`}
+                        />
+                        <div className="text-center">
+                          <span className="text-xs sm:text-sm font-medium block truncate">{trait.name}</span>
+                          <span className={`text-xs ${trait.isVisible ? 'text-blue-600' : 'text-gray-500'}`}>
+                            {trait.isVisible ? 'Visible' : 'Hidden'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center space-x-2 mt-2">
+                        <div className={`w-2 h-2 rounded-full ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            downloadIndividualTrait(trait);
+                          }}
+                          className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Download size={12} className="sm:w-4 sm:h-4" />
+                        </Button>
+                        <Dialog open={traitToDelete === trait.id} onOpenChange={(open) => !open && setTraitToDelete(null)}>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmDeleteTrait(trait.id);
+                              }}
+                              className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 size={12} className="sm:w-4 sm:h-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Delete Trait</DialogTitle>
+                              <DialogDescription>
+                                Are you sure you want to delete "{trait.name}"? This action cannot be undone.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                              <Button
+                                variant="outline"
+                                onClick={() => setTraitToDelete(null)}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                onClick={() => handleDeleteTrait(trait.id)}
+                              >
+                                Delete
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </div>
+                  ))}
+                  {savedTraits.length === 0 && (
+                    <div className="text-center text-gray-500 py-8">
+                      <p className="text-sm">No saved traits yet</p>
+                      <p className="text-xs mt-2">Create and save your first trait! Click on saved traits to toggle visibility.</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
             </Card>
           </motion.div>
         </div>
