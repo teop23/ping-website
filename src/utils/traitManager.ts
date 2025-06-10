@@ -42,7 +42,7 @@ export const saveTrait = (
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 1024 / Math.max(canvas.width!, canvas.height!),
+      multiplier: 2,
       withoutTransform: false,
       backgroundColor: 'transparent'
     });
@@ -105,7 +105,6 @@ export const downloadTrait = (
       const dataURL = canvas.toDataURL({
         format: 'png',
         quality: 1,
-        multiplier: 1024 / Math.max(canvas.width!, canvas.height!),
         withoutTransform: false,
         backgroundColor: 'transparent'
       });
@@ -128,11 +127,9 @@ export const downloadTrait = (
       link.click();
     });
   } else {
-    // For character download, also ensure 1024x1024
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 1024 / Math.max(canvas.width!, canvas.height!),
       withoutTransform: false,
       backgroundColor: 'white'
     });

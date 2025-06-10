@@ -8,11 +8,10 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
   canvasRef
 }) => {
   return (
-    <div className="flex-1 flex items-center justify-center p-4">
+    <div className="flex justify-center items-center flex-1 overflow-hidden min-h-0 w-full h-full p-4 lg:p-8">
       <canvas
         ref={canvasRef}
-        className="border-2 border-gray-200 rounded-lg shadow-lg"
-        style={{ width: '100%', height: '100%' }}
+        className="border-2 border-gray-200 rounded-lg shadow-lg max-w-full max-h-full aspect-square"
       />
     </div>
   );
