@@ -91,7 +91,7 @@ class EditableCurve extends fabric.Group {
       name: 'curveHelperLine2'
     });
 
-    // Create the curve path
+    // Create the curve path with proper positioning
     const pathString = `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${end.x} ${end.y}`;
     const curvePath = new fabric.Path(pathString, {
       stroke: options.stroke || '#000000',
@@ -99,6 +99,10 @@ class EditableCurve extends fabric.Group {
       fill: '',
       selectable: false,
       evented: false,
+      left: 0,
+      top: 0,
+      originX: 'left',
+      originY: 'top',
       name: 'curvePath'
     });
 
@@ -167,9 +171,34 @@ class EditableCurve extends fabric.Group {
     const controlPos = { x: this.controlPoint.left!, y: this.controlPoint.top! };
     const endPos = { x: this.endPoint.left!, y: this.endPoint.top! };
 
-    // Update the curve path
+    // Update the curve path with proper positioning
     const pathString = `M ${startPos.x} ${startPos.y} Q ${controlPos.x} ${controlPos.y} ${endPos.x} ${endPos.y}`;
-    this.curvePath.set({ path: fabric.util.parsePath(pathString) });
+    
+    // Remove the old path and create a new one to ensure proper positioning
+    if (this.canvas) {
+      this.canvas.remove(this.curvePath);
+      
+      this.curvePath = new fabric.Path(pathString, {
+        stroke: this.curvePath.stroke,
+        strokeWidth: this.curvePath.strokeWidth,
+        fill: '',
+        selectable: false,
+        evented: false,
+        left: 0,
+        top: 0,
+        originX: 'left',
+        originY: 'top',
+        name: 'curvePath'
+      });
+      
+      this.canvas.add(this.curvePath);
+      this.canvas.sendToBack(this.curvePath);
+      
+      // Ensure anchor points are on top
+      this.canvas.bringToFront(this.startPoint);
+      this.canvas.bringToFront(this.controlPoint);
+      this.canvas.bringToFront(this.endPoint);
+    }
 
     // Update helper lines
     this.helperLine1.set({
