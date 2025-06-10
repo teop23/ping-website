@@ -267,7 +267,7 @@ export const addCurvedLine = (
       fill: '',
       stroke: color,
       strokeWidth: strokeWidth,
-      selectable: true,
+      selectable: false,
       evented: true,
       cornerStyle: 'circle',
       cornerColor: '#4F46E5',
@@ -314,6 +314,15 @@ export const addCurvedLine = (
       safeRenderAll(canvas);
     });
 
+    // Make the curve path clickable but not movable
+    curvePath.on('mousedown', () => {
+      // Show control points when curve is clicked
+      startPoint.set({ opacity: 1, selectable: true });
+      controlPoint.set({ opacity: 1, selectable: true });
+      endPoint.set({ opacity: 1, selectable: true });
+      safeRenderAll(canvas);
+    });
+
     // Set up event handlers for control point movement
     const setupControlPointMovement = (point: fabric.Circle) => {
       point.on('moving', () => {
@@ -325,14 +334,33 @@ export const addCurvedLine = (
         updateCurvePath(curvePath, startPoint, controlPoint, endPoint);
         safeRenderAll(canvas);
       });
+
+      // Hide control points when a control point is deselected
+      point.on('deselected', () => {
+        const curvePath = (point as any).curvePath;
+        const startPoint = (curvePath as any).startPoint;
+        const controlPoint = (curvePath as any).controlPoint;
+        const endPoint = (curvePath as any).endPoint;
+        
+        // Check if any control point is still selected
+        const activeObject = canvas.getActiveObject();
+        if (activeObject !== startPoint && activeObject !== controlPoint && activeObject !== endPoint) {
+          startPoint.set({ opacity: 0, selectable: false });
+          controlPoint.set({ opacity: 0, selectable: false });
+          endPoint.set({ opacity: 0, selectable: false });
+          safeRenderAll(canvas);
+        }
+      });
     };
 
     setupControlPointMovement(startPoint);
     setupControlPointMovement(controlPoint);
     setupControlPointMovement(endPoint);
 
-    // Select the curve initially to show control points
-    canvas.setActiveObject(curvePath);
+    // Show control points initially
+    startPoint.set({ opacity: 1, selectable: true });
+    controlPoint.set({ opacity: 1, selectable: true });
+    endPoint.set({ opacity: 1, selectable: true });
     
     // Reset curve state
     setCurvePoints([]);
