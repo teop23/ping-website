@@ -1,7 +1,7 @@
 import { fabric } from 'fabric';
 import { CanvasState } from '../utils/canvasUtils';
 
-export type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve' | 'magnify';
+export type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
 
 export interface ToolsPanelProps {
   tool: ToolType;
@@ -23,6 +23,8 @@ export interface ToolsPanelProps {
   historyIndex: number;
   canvasHistory: CanvasState[];
   showBaseLayer: boolean;
+  magnifyEnabled: boolean;
+  onToggleMagnify: () => void;
   onToggleBaseLayer: () => void;
   onUploadImage: () => void;
   onDeleteSelected: () => void;

@@ -71,6 +71,7 @@ const CreateTraits: React.FC = () => {
   const [tempCurveLine, setTempCurveLine] = useState<fabric.Object | null>(null);
 
   // Magnifying glass state
+  const [magnifyEnabled, setMagnifyEnabled] = useState(false);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showMagnifyingGlass, setShowMagnifyingGlass] = useState(false);
   // Load saved traits from localStorage
@@ -211,13 +212,6 @@ const CreateTraits: React.FC = () => {
       }
     }
 
-    // Handle magnifying glass tool
-    if (tool === 'magnify') {
-      setShowMagnifyingGlass(true);
-      canvas.defaultCursor = 'none';
-    } else {
-      setShowMagnifyingGlass(false);
-    }
     canvas.selection = tool === 'select';
     canvas.isDrawingMode = tool === 'brush';
     
@@ -239,9 +233,6 @@ const CreateTraits: React.FC = () => {
       case 'curve':
         canvas.defaultCursor = 'crosshair';
         break;
-      case 'magnify':
-        canvas.defaultCursor = 'none';
-        break;
       default:
         canvas.defaultCursor = 'crosshair';
     }
@@ -249,7 +240,7 @@ const CreateTraits: React.FC = () => {
 
   // Handle mouse movement for magnifying glass
   useEffect(() => {
-    if (!canvas || tool !== 'magnify') return;
+    if (!canvas || !magnifyEnabled) return;
 
     const handleMouseMove = (e: fabric.IEvent) => {
       const pointer = canvas.getPointer(e.e as MouseEvent);
@@ -267,7 +258,7 @@ const CreateTraits: React.FC = () => {
     };
 
     const handleMouseEnter = () => {
-      if (tool === 'magnify') {
+      if (magnifyEnabled) {
         setShowMagnifyingGlass(true);
       }
     };
@@ -281,7 +272,7 @@ const CreateTraits: React.FC = () => {
       canvas.off('mouse:out', handleMouseLeave);
       canvas.off('mouse:over', handleMouseEnter);
     };
-  }, [canvas, tool]);
+  }, [canvas, magnifyEnabled]);
   // Update base image visibility
   useEffect(() => {
     if (!baseImage || !canvas) return;
@@ -352,6 +343,8 @@ const CreateTraits: React.FC = () => {
           historyIndex={historyIndex}
           canvasHistory={canvasHistory}
           showBaseLayer={showBaseLayer}
+          magnifyEnabled={magnifyEnabled}
+          onToggleMagnify={() => setMagnifyEnabled(!magnifyEnabled)}
           onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
           onUploadImage={() => uploadImage(canvas!)}
           onDeleteSelected={() => deleteSelected(canvas!)}
@@ -401,7 +394,7 @@ const CreateTraits: React.FC = () => {
       <MagnifyingGlass
         canvas={canvas}
         mousePosition={mousePosition}
-        isActive={showMagnifyingGlass && tool === 'magnify'}
+        isActive={showMagnifyingGlass && magnifyEnabled}
         zoomLevel={3}
         size={150}
       />

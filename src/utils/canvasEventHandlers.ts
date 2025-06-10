@@ -22,7 +22,7 @@ export const setupCanvasEventHandlers = (
   setTool: (tool: ToolType) => void
 ) => {
   const handleCanvasClick = (e: fabric.IEvent) => {
-    if (tool === 'select' || tool === 'brush' || tool === 'magnify') return;
+    if (tool === 'select' || tool === 'brush') return;
 
     const pointer = canvas.getPointer(e.e as MouseEvent);
     
