@@ -644,7 +644,7 @@ const CreateTraits: React.FC = () => {
               <div className="flex justify-center items-center overflow-hidden mb-4">
                 <canvas
                   ref={canvasRef}
-                  className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-auto max-w-[600px] aspect-square object-contain"
+                  className="border-2 border-gray-200 rounded-lg shadow-sm max-w-full aspect-square object-contain mx-auto block"
                 />
               </div>
 
