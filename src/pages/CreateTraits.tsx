@@ -657,16 +657,16 @@ const CreateTraits: React.FC = () => {
                 {tool === 'curve' && (
                   <div className="space-y-2">
                     <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
-                      💡 Click 3 points to create an editable curved line:
+                      💡 Click 3 points to create a curved line with movable anchors:
                       <br />
-                      1. Start point (blue)
+                      1. Start point (blue anchor)
                       <br />
-                      2. Control point (orange - curve direction)
+                      2. Control point (orange anchor - curve direction)
                       <br />
-                      3. End point (red)
+                      3. End point (red anchor)
                       <br />
                       <span className="text-xs text-gray-600">
-                        After creation, you can select and move the entire curve or individual control points.
+                        After creation, you can drag any anchor point to reshape the curve in real-time!
                       </span>
                     </div>
                     {curvePoints.length > 0 && (
@@ -674,7 +674,7 @@ const CreateTraits: React.FC = () => {
                         Points clicked: {curvePoints.length}/3
                         {curvePoints.length < 3 && (
                           <span className="block mt-1">
-                            Click {curvePoints.length === 1 ? 'control point' : 'end point'}
+                            Click {curvePoints.length === 1 ? 'control anchor' : 'end anchor'}
                           </span>
                         )}
                       </div>
