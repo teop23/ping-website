@@ -2,18 +2,17 @@ import React from 'react';
 
 interface CanvasAreaProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  showBaseLayer: boolean;
-  onToggleBaseLayer: () => void;
 }
 
 const CanvasArea: React.FC<CanvasAreaProps> = ({
   canvasRef
 }) => {
   return (
-    <div className="flex justify-center items-center flex-1 overflow-hidden min-h-0 aspect-square">
+    <div className="flex justify-center items-center flex-1 overflow-hidden min-h-0 w-full h-full">
       <canvas
         ref={canvasRef}
-        className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-full max-w-full max-h-full object-contain"
+        className="border-2 border-gray-200 rounded-lg shadow-sm max-w-full max-h-full"
+        style={{ width: '100%', height: '100%' }}
       />
     </div>
   );

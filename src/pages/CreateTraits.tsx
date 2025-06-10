@@ -85,9 +85,8 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Get the actual rendered size of the canvas element
-    const rect = canvasRef.current.getBoundingClientRect();
-    const canvasSize = Math.min(rect.width, rect.height) || 500;
+    // Set initial canvas size
+    const canvasSize = 500;
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: canvasSize,
@@ -176,15 +175,20 @@ const CreateTraits: React.FC = () => {
     if (!canvas) return;
 
     const handleResize = () => {
-      if (!canvasRef.current) return;
+      if (!canvasRef.current?.parentElement) return;
       
-      // Get the actual rendered size of the canvas element
-      const rect = canvasRef.current.getBoundingClientRect();
-      const newSize = Math.min(rect.width, rect.height);
+      // Get the container size and make canvas responsive
+      const container = canvasRef.current.parentElement;
+      const containerRect = container.getBoundingClientRect();
+      const size = Math.min(containerRect.width, containerRect.height) * 0.9;
       
-      if (newSize <= 0) return; // Avoid setting invalid dimensions
-      
-      canvas.setDimensions({ width: newSize, height: newSize });
+      if (size > 100) { // Ensure minimum size
+        canvas.setDimensions({ width: size, height: size });
+        
+        // Update canvas element style to match
+        canvasRef.current.style.width = `${size}px`;
+        canvasRef.current.style.height = `${size}px`;
+      }
       
       if (baseImage) {
         updateBaseImageScale(canvas, baseImage);
@@ -194,13 +198,12 @@ const CreateTraits: React.FC = () => {
       safeRenderAll(canvas);
     };
 
-    // Use ResizeObserver for better resize detection
-    const resizeObserver = new ResizeObserver(() => {
-      handleResize();
-    });
+    // Initial resize and setup resize observer
+    setTimeout(handleResize, 100);
     
-    if (canvasRef.current) {
-      resizeObserver.observe(canvasRef.current);
+    const resizeObserver = new ResizeObserver(handleResize);
+    if (canvasRef.current?.parentElement) {
+      resizeObserver.observe(canvasRef.current.parentElement);
     }
 
     window.addEventListener('resize', handleResize);
