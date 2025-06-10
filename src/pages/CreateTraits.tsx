@@ -285,13 +285,13 @@ const CreateTraits: React.FC = () => {
         </motion.div>
 
         {/* Horizontal Container: Tools, Canvas, Saved Traits */}
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full mb-6 min-w-0 overflow-hidden">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full mb-6 min-w-0 overflow-hidden flex-1">
           {/* Tools Panel - Left Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="w-full lg:w-1/5 lg:flex-shrink-0 lg:min-w-[280px] lg:max-w-[320px] min-w-0 h-fit"
+            className="w-full lg:w-1/5 lg:flex-shrink-0 lg:min-w-[280px] lg:max-w-[320px] min-w-0"
           >
             <ToolsPanel
               tool={tool}
@@ -325,7 +325,7 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="w-full lg:flex-1 lg:flex-shrink lg:flex-grow min-w-0 h-fit"
+            className="w-full lg:flex-1 lg:flex-shrink lg:flex-grow min-w-0 flex flex-col"
           >
             <CanvasArea
               canvasRef={canvasRef}
@@ -339,7 +339,7 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-full lg:w-1/5 lg:flex-shrink-0 lg:min-w-[280px] lg:max-w-[320px] min-w-0 h-fit"
+            className="w-full lg:w-1/5 lg:flex-shrink-0 lg:min-w-[280px] lg:max-w-[320px] min-w-0"
           >
             <SavedTraitsPanel
               savedTraits={savedTraits}

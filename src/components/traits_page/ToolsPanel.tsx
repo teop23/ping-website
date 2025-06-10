@@ -58,11 +58,11 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   };
 
   return (
-    <Card className="h-auto lg:h-[700px] overflow-hidden">
+    <Card className="h-full overflow-hidden flex flex-col">
       <CardHeader>
         <h3 className="text-base sm:text-lg font-semibold">Tools</h3>
       </CardHeader>
-      <CardContent className="space-y-2 sm:space-y-3 h-auto lg:h-[620px] lg:overflow-y-auto">
+      <CardContent className="space-y-2 sm:space-y-3 flex-1 overflow-y-auto">
         {/* Tool Selection */}
         <div className="grid grid-cols-2 gap-1 sm:gap-2">
           {tools.map((toolItem) => (
