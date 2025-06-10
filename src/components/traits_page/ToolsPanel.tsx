@@ -43,25 +43,18 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
 
   const getIconComponent = (iconName: string, size: number = 14) => {
     const iconProps = { size, className: "sm:w-[18px] sm:h-[18px]" };
-    
-    switch (iconName) {
-      case 'MousePointer':
-        return React.createElement(MousePointer, iconProps);
-      case 'Palette':
-        return React.createElement(Palette, iconProps);
-      case 'Type':
-        return React.createElement(Type, iconProps);
-      case 'Square':
-        return React.createElement(Square, iconProps);
-      case 'Circle':
-        return React.createElement(Circle, iconProps);
-      case 'Minus':
-        return React.createElement(Minus, iconProps);
-      case 'Spline':
-        return React.createElement(Spline, iconProps);
-      default:
-        return null;
-    }
+   
+    const icons: { [key: string]: React.ElementType } = {
+      MousePointer,
+      Palette,
+      Type,
+      Square,
+      Circle,
+      Minus,
+      Spline
+    };
+
+    return icons[iconName] ? React.createElement(icons[iconName], iconProps) : null;
   };
 
   return (
