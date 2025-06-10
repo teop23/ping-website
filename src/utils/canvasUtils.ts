@@ -25,25 +25,43 @@ export const safeRenderAll = (canvas: fabric.Canvas) => {
 
 export const calculateCanvasSize = (container?: HTMLElement | null): number => {
   if (!container) {
-    // Fallback based on window size
+    // Fallback based on window size - ensure square canvas
     const width = window.innerWidth;
+    const height = window.innerHeight;
+    const availableSize = Math.min(width, height);
+    
     if (width < 768) {
-      return 500;
+      // On mobile, use most of the available space but ensure it's square
+      return Math.min(availableSize * 0.8, 400);
     } else if (width < 1024) {
-      return 700;
+      return Math.min(availableSize * 0.7, 600);
     } else {
-      return 900;
+      return Math.min(availableSize * 0.6, 800);
     }
   }
   
   // Calculate based on available container space
   const containerWidth = container.clientWidth - 64; // Account for padding
   const containerHeight = container.clientHeight - 64;
-  const availableSize = Math.min(containerWidth, containerHeight);
+  
+  // For mobile layout (single column), we need to account for the fact that
+  // the canvas container shares vertical space with other elements
+  const isMobile = window.innerWidth < 1024; // lg breakpoint
+  
+  let availableSize;
+  if (isMobile) {
+    // On mobile, prioritize fitting within the viewport width
+    // and limit height to ensure it doesn't overflow
+    const maxHeight = Math.min(containerHeight, window.innerHeight * 0.4);
+    availableSize = Math.min(containerWidth, maxHeight);
+  } else {
+    // On desktop, use the smaller of width/height as before
+    availableSize = Math.min(containerWidth, containerHeight);
+  }
   
   // Set reasonable min/max bounds
-  const minSize = 500;
-  const maxSize = 1200;
+  const minSize = isMobile ? 300 : 500;
+  const maxSize = isMobile ? 500 : 1200;
   
   return Math.max(minSize, Math.min(maxSize, availableSize));
 };
