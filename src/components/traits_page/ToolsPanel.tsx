@@ -1,6 +1,6 @@
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff } from 'lucide-react';
+import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff, Search } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import ToolButton from '../ToolButton';
@@ -40,7 +40,8 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
     { type: 'rectangle' as ToolType, icon: 'Square', label: 'Rectangle' },
     { type: 'circle' as ToolType, icon: 'Circle', label: 'Circle' },
     { type: 'line' as ToolType, icon: 'Minus', label: 'Line' },
-    { type: 'curve' as ToolType, icon: 'Spline', label: 'Curve' }
+    { type: 'curve' as ToolType, icon: 'Spline', label: 'Curve' },
+    { type: 'magnify' as ToolType, icon: 'Search', label: 'Magnify' }
   ];
 
   const getIconComponent = (iconName: string, size: number = 14) => {
@@ -53,7 +54,8 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
       Square,
       Circle,
       Minus,
-      Spline
+      Spline,
+      Search
     };
 
     return icons[iconName] ? React.createElement(icons[iconName], iconProps) : null;
@@ -208,6 +210,21 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Magnify Tool Instructions */}
+        {tool === 'magnify' && (
+          <div className="space-y-2">
+            <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+              🔍 Magnifying Glass Tool:
+              <br />
+              Move your cursor over the canvas to see a zoomed-in view of the area under your cursor.
+              <br />
+              <span className="text-xs text-gray-600">
+                Perfect for detailed work and precision editing!
+              </span>
+            </div>
           </div>
         )}
 

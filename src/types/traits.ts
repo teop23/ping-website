@@ -1,7 +1,7 @@
 import { fabric } from 'fabric';
 import { CanvasState } from '../utils/canvasUtils';
 
-export type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
+export type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve' | 'magnify';
 
 export interface ToolsPanelProps {
   tool: ToolType;
