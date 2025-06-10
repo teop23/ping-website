@@ -49,68 +49,26 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         const reader = new FileReader();
         reader.onload = (e) => {
           const imageSrc = e.target?.result as string;
-          
-          // Create images to get their actual dimensions
-          const baseImg = new Image();
           const traitImg = new Image();
-          
-          baseImg.onload = () => {
-            traitImg.onload = () => {
-              // Create canvas to scale the trait image to match base image dimensions
-              const canvas = document.createElement('canvas');
-              const ctx = canvas.getContext('2d');
-              
-              if (!ctx) return;
-              
-              // Set canvas size to match base image dimensions
-              canvas.width = baseImg.width;
-              canvas.height = baseImg.height;
-              
-              // Calculate scale factor to fit trait image to base image size
-              const scaleX = baseImg.width / traitImg.width;
-              const scaleY = baseImg.height / traitImg.height;
-              
-              // For square images, use the same scale for both dimensions
-              const scale = Math.min(scaleX, scaleY);
-              
-              const scaledWidth = traitImg.width * scale;
-              const scaledHeight = traitImg.height * scale;
-              
-              // Center the scaled image on the canvas
-              const offsetX = (canvas.width - scaledWidth) / 2;
-              const offsetY = (canvas.height - scaledHeight) / 2;
-              
-              // Clear canvas with transparent background
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              
-              // Draw the scaled trait image
-              ctx.drawImage(traitImg, offsetX, offsetY, scaledWidth, scaledHeight);
-              
-              // Convert back to data URL
-              const scaledImageSrc = canvas.toDataURL('image/png');
-              
-              const uploadedTrait: Trait = {
-                id: `uploaded-${Date.now()}`,
-                name: 'Uploaded Trait',
-                category: category as any,
-                imageSrc: scaledImageSrc
-              };
-              
-              // Add the uploaded trait to our state
-              setUploadedTraits(prev => ({
-                ...prev,
-                [category]: [...prev[category as keyof typeof prev], uploadedTrait]
-              }));
-              
-              // Select the newly uploaded trait
-              onTraitSelect(uploadedTrait);
+          traitImg.onload = () => {
+            const uploadedTrait: Trait = {
+              id: `uploaded-${Date.now()}`,
+              name: 'Uploaded Trait',
+              category: category as any,
+              imageSrc: imageSrc,
             };
-            
-            traitImg.src = imageSrc;
+
+            // Add the uploaded trait to our state
+            setUploadedTraits(prev => ({
+              ...prev,
+              [category]: [...prev[category as keyof typeof prev], uploadedTrait]
+            }));
+
+            // Select the newly uploaded trait
+            onTraitSelect(uploadedTrait);
           };
-          
-          // Load the base image from the ping image source
-          baseImg.src = '/src/assets/images/ping.png';
+
+          traitImg.src = imageSrc;
         };
         reader.readAsDataURL(file);
       }

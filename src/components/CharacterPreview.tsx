@@ -69,16 +69,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
     const container = containerRef.current;
     if (container) {
       const rect = container.getBoundingClientRect();
+      console.log('Container size:', rect);
       const size = Math.min(rect.width, rect.height);
       canvas.width = size;
       canvas.height = size;
+      console.log('Canvas size set to:', size);
     }
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Calculate scale to fit base image
-    const scale = Math.min(canvas.width / baseImage.width, canvas.height / baseImage.height) * 0.9;
+    const scale = Math.min(canvas.width / baseImage.width, canvas.height / baseImage.height);
     const scaledWidth = baseImage.width * scale;
     const scaledHeight = baseImage.height * scale;
     const x = (canvas.width - scaledWidth) / 2;
@@ -139,7 +141,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       downloadCanvas.height = 1024;
 
       // Calculate scale for base image
-      const scale = Math.min(downloadCanvas.width / baseImage.width, downloadCanvas.height / baseImage.height) * 0.9;
+      const scale = Math.min(downloadCanvas.width / baseImage.width, downloadCanvas.height / baseImage.height);
       const scaledWidth = baseImage.width * scale;
       const scaledHeight = baseImage.height * scale;
       const x = (downloadCanvas.width - scaledWidth) / 2;
@@ -199,7 +201,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       copyCanvas.height = 1024;
 
       // Calculate scale for base image
-      const scale = Math.min(copyCanvas.width / baseImage.width, copyCanvas.height / baseImage.height) * 0.9;
+      const scale = Math.min(copyCanvas.width / baseImage.width, copyCanvas.height / baseImage.height);
       const scaledWidth = baseImage.width * scale;
       const scaledHeight = baseImage.height * scale;
       const x = (copyCanvas.width - scaledWidth) / 2;
@@ -250,7 +252,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
     <div className="flex flex-col items-center">
       <div className="w-full aspect-square relative max-w-[500px]" ref={containerRef}>
         <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
-          <CardContent className="h-full p-4 flex items-center justify-center">
+          <CardContent className="h-full p-0 flex items-center justify-center">
             <canvas 
               ref={canvasRef}
               className="w-full h-full object-contain"
