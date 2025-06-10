@@ -85,7 +85,9 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvasSize = calculateCanvasSize(canvasRef.current?.parentElement);
+    // Get the actual rendered size of the canvas element
+    const rect = canvasRef.current.getBoundingClientRect();
+    const canvasSize = Math.min(rect.width, rect.height) || 500;
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: canvasSize,
@@ -174,7 +176,14 @@ const CreateTraits: React.FC = () => {
     if (!canvas) return;
 
     const handleResize = () => {
-      const newSize = calculateCanvasSize(canvasRef.current?.parentElement);
+      if (!canvasRef.current) return;
+      
+      // Get the actual rendered size of the canvas element
+      const rect = canvasRef.current.getBoundingClientRect();
+      const newSize = Math.min(rect.width, rect.height);
+      
+      if (newSize <= 0) return; // Avoid setting invalid dimensions
+      
       canvas.setDimensions({ width: newSize, height: newSize });
       
       if (baseImage) {
@@ -185,8 +194,21 @@ const CreateTraits: React.FC = () => {
       safeRenderAll(canvas);
     };
 
+    // Use ResizeObserver for better resize detection
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    
+    if (canvasRef.current) {
+      resizeObserver.observe(canvasRef.current);
+    }
+
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
+    };
   }, [canvas, baseImage, loadedTraits]);
 
   // Update canvas when tool changes
