@@ -372,8 +372,9 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-4 w-full min-h-0">
+    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-4 w-full min-h-0 flex flex-col">
       <div className="max-w-7xl mx-auto">
+        {/* Title Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -384,13 +385,14 @@ const CreateTraits: React.FC = () => {
           <p className="text-sm sm:text-base text-gray-600">Design custom traits for your PING character</p>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full">
+        {/* Horizontal Container: Tools, Canvas, Saved Traits */}
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full mb-6">
           {/* Tools Panel - Left Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0 order-1"
+            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0"
           >
             <Card className="h-auto lg:h-[700px] overflow-hidden">
               <CardHeader>
@@ -626,7 +628,7 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="w-full lg:w-3/5 lg:flex-shrink-0 min-w-0 order-2"
+            className="w-full lg:w-3/5 lg:flex-shrink-0 min-w-0"
           >
             <Card className="p-3 sm:p-6 h-auto lg:h-[700px]">
               <div className="flex items-center justify-between mb-4">
@@ -650,77 +652,12 @@ const CreateTraits: React.FC = () => {
             </Card>
           </motion.div>
 
-          {/* Save Controls Card - Below Canvas */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-            className="w-full lg:w-3/5 lg:flex-shrink-0 min-w-0 order-3 lg:order-3"
-          >
-            <Card className="p-3 sm:p-6">
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={traitName}
-                  onChange={(e) => setTraitName(e.target.value)}
-                  placeholder="Enter trait name..."
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                  <Button
-                    onClick={handleSaveTrait}
-                    disabled={!traitName.trim()}
-                    className="flex-1 h-10"
-                    size="sm"
-                  >
-                    <Save size={16} className="mr-2" />
-                    Save Trait
-                  </Button>
-                  <div className="flex-1 flex space-x-2">
-                    <Button
-                      onClick={handleDownloadTrait}
-                      variant="outline"
-                      className="flex-1 h-10"
-                      size="sm"
-                    >
-                      <Download size={16} className="mr-2" />
-                      {getDownloadButtonText()}
-                    </Button>
-                    {/* Download Mode Toggle */}
-                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[100px] h-10">
-                      <button
-                        onClick={() => setDownloadMode('trait')}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
-                          downloadMode === 'trait'
-                            ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        Trait
-                      </button>
-                      <button
-                        onClick={() => setDownloadMode('character')}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
-                          downloadMode === 'character'
-                            ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        Full
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-
           {/* Saved Traits Panel - Right Side */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0 order-4 lg:order-3"
+            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0"
           >
             <Card className="h-auto lg:h-[700px] overflow-hidden">
               <CardHeader>
@@ -819,6 +756,71 @@ const CreateTraits: React.FC = () => {
             </Card>
           </motion.div>
         </div>
+
+        {/* Save Controls Card - Below Canvas */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className="w-full max-w-4xl mx-auto"
+        >
+          <Card className="p-4 sm:p-6">
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={traitName}
+                onChange={(e) => setTraitName(e.target.value)}
+                placeholder="Enter trait name..."
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                <Button
+                  onClick={handleSaveTrait}
+                  disabled={!traitName.trim()}
+                  className="flex-1 h-10"
+                  size="sm"
+                >
+                  <Save size={16} className="mr-2" />
+                  Save Trait
+                </Button>
+                <div className="flex-1 flex space-x-2">
+                  <Button
+                    onClick={handleDownloadTrait}
+                    variant="outline"
+                    className="flex-1 h-10"
+                    size="sm"
+                  >
+                    <Download size={16} className="mr-2" />
+                    {getDownloadButtonText()}
+                  </Button>
+                  {/* Download Mode Toggle */}
+                  <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[100px] h-10">
+                    <button
+                      onClick={() => setDownloadMode('trait')}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
+                        downloadMode === 'trait'
+                          ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      Trait
+                    </button>
+                    <button
+                      onClick={() => setDownloadMode('character')}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
+                        downloadMode === 'character'
+                          ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      Full
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );
