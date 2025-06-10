@@ -26,10 +26,10 @@ export const safeRenderAll = (canvas: fabric.Canvas) => {
 export const calculateCanvasSize = (container?: HTMLElement | null): number => {
   if (!container) return 400;
   
-  const containerWidth = container.clientWidth - 64; // Account for padding and margins
-  const containerHeight = window.innerHeight * 0.7; // Max 70% of viewport height
-  const maxSize = Math.min(containerWidth, containerHeight, 600); // Cap at 600px for better fit
-  return Math.max(400, maxSize); // Minimum 400px
+  const containerWidth = container.clientWidth - 32; // Account for reduced padding
+  const containerHeight = container.clientHeight - 80; // Account for header and reduced padding
+  const maxSize = Math.min(containerWidth, containerHeight, 800); // Increased cap to 800px
+  return Math.max(500, maxSize); // Increased minimum to 500px
 };
 
 export const setupBaseImage = (

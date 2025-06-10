@@ -15,7 +15,7 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
   onToggleBaseLayer
 }) => {
   return (
-    <Card className="p-3 sm:p-6 h-auto lg:h-[700px]">
+    <Card className="p-3 sm:p-4 h-auto lg:h-[700px]">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base sm:text-lg font-semibold">Canvas</h3>
         <Button
@@ -28,10 +28,10 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
         </Button>
       </div>
       
-      <div className="flex justify-center items-center overflow-hidden mb-4">
+      <div className="flex justify-center items-center overflow-hidden">
         <canvas
           ref={canvasRef}
-          className="border-2 border-gray-200 rounded-lg shadow-sm max-w-full aspect-square object-contain mx-auto block"
+          className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-full max-w-full max-h-full object-contain mx-auto block"
         />
       </div>
     </Card>
