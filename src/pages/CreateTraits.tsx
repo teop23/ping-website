@@ -85,11 +85,16 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvasSize = calculateCanvasSize(canvasRef.current?.parentElement);
+    // Let the canvas size itself based on its container
+    const container = canvasRef.current.parentElement;
+    if (!container) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const size = Math.min(containerRect.width, containerRect.height) * 0.9;
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: canvasSize,
-      height: canvasSize,
+      width: size,
+      height: size,
       backgroundColor: 'white',
       selection: tool === 'select'
     });
@@ -174,8 +179,13 @@ const CreateTraits: React.FC = () => {
     if (!canvas) return;
 
     const handleResize = () => {
-      const newSize = calculateCanvasSize(canvasRef.current?.parentElement);
-      canvas.setDimensions({ width: newSize, height: newSize });
+      const container = canvasRef.current?.parentElement;
+      if (!container) return;
+      
+      const containerRect = container.getBoundingClientRect();
+      const size = Math.min(containerRect.width, containerRect.height) * 0.9;
+      
+      canvas.setDimensions({ width: size, height: size });
       
       if (baseImage) {
         updateBaseImageScale(canvas, baseImage);
@@ -275,13 +285,13 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex flex-col lg:flex-row">
+    <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 w-full flex flex-col lg:flex-row">
       {/* Left Sidebar - Tools */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="w-full lg:w-80 flex-shrink-0 p-4 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white/50 backdrop-blur-sm"
+        className="w-full lg:w-80 flex-shrink-0 p-2 lg:p-4 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white/50 backdrop-blur-sm"
       >
         <ToolsPanel
           tool={tool}
@@ -317,7 +327,7 @@ const CreateTraits: React.FC = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.6 }}
-        className="flex-1 flex flex-col min-w-0 order-1 lg:order-none"
+        className="flex-1 flex flex-col min-w-0 min-h-0 order-1 lg:order-none"
       >
         <CanvasArea canvasRef={canvasRef} />
       </motion.div>
@@ -327,7 +337,7 @@ const CreateTraits: React.FC = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
-        className="w-full lg:w-80 flex-shrink-0 p-4 border-t lg:border-t-0 lg:border-l border-gray-200 bg-white/50 backdrop-blur-sm flex flex-col gap-4 order-2 lg:order-none"
+        className="w-full lg:w-80 flex-shrink-0 p-2 lg:p-4 border-t lg:border-t-0 lg:border-l border-gray-200 bg-white/50 backdrop-blur-sm flex flex-col gap-4 order-2 lg:order-none"
       >
         <SavedTraitsPanel
           savedTraits={savedTraits}

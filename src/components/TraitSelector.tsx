@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Check, Upload } from 'lucide-react';
 import React from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
-import { placeholderTraits } from '../data/traits';
 import { CategoryOption, Trait } from '../types';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
@@ -50,11 +49,11 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         reader.onload = (e) => {
           const imageSrc = e.target?.result as string;
           
-          // Create images to get their actual dimensions
+          // Create images to get base image dimensions
           const baseImg = new Image();
-          const traitImg = new Image();
           
           baseImg.onload = () => {
+            const traitImg = new Image();
             traitImg.onload = () => {
               // Create canvas to scale the trait image to match base image dimensions
               const canvas = document.createElement('canvas');
@@ -65,26 +64,15 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
               // Set canvas size to match base image dimensions
               canvas.width = baseImg.width;
               canvas.height = baseImg.height;
-              
-              // Calculate scale factor to fit trait image to base image size
-              const scaleX = baseImg.width / traitImg.width;
-              const scaleY = baseImg.height / traitImg.height;
-              
-              // For square images, use the same scale for both dimensions
-              const scale = Math.min(scaleX, scaleY);
-              
-              const scaledWidth = traitImg.width * scale;
-              const scaledHeight = traitImg.height * scale;
-              
-              // Center the scaled image on the canvas
-              const offsetX = (canvas.width - scaledWidth) / 2;
-              const offsetY = (canvas.height - scaledHeight) / 2;
+              console.log('Canvas size:', canvas.width, canvas.height);
+              console.log('Trait image size:', traitImg.width, traitImg.height);
               
               // Clear canvas with transparent background
               ctx.clearRect(0, 0, canvas.width, canvas.height);
               
-              // Draw the scaled trait image
-              ctx.drawImage(traitImg, offsetX, offsetY, scaledWidth, scaledHeight);
+              // Use canvas built-in scaling - draw trait image to fill the entire canvas
+              // This automatically scales the trait image to match the base image size
+              ctx.drawImage(traitImg, 0, 0, traitImg.width, traitImg.height, 0, 0, canvas.width, canvas.height);
               
               // Convert back to data URL
               const scaledImageSrc = canvas.toDataURL('image/png');
@@ -152,8 +140,6 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           </motion.button>
 
           {filteredTraits.map((trait) => {
-            // Get placeholder image for this trait
-            const placeholderImage = placeholderTraits[trait.category as keyof typeof placeholderTraits]?.[trait.id];
             const isSelected = selectedTraits[trait.category]?.id === trait.id;
 
             return (
@@ -161,7 +147,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                 key={trait.id}
                 trait={trait}
                 isSelected={isSelected}
-                imageSrc={placeholderImage || trait.imageSrc}
+                imageSrc={trait.imageSrc}
                 onClick={() => onTraitSelect(trait)}
               />
             );
