@@ -1,6 +1,6 @@
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { Upload, Trash2, Undo, RotateCw } from 'lucide-react';
+import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import ToolButton from '../ToolButton';
@@ -46,19 +46,19 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
     
     switch (iconName) {
       case 'MousePointer':
-        return React.createElement(require('lucide-react').MousePointer, iconProps);
+        return React.createElement(MousePointer, iconProps);
       case 'Palette':
-        return React.createElement(require('lucide-react').Palette, iconProps);
+        return React.createElement(Palette, iconProps);
       case 'Type':
-        return React.createElement(require('lucide-react').Type, iconProps);
+        return React.createElement(Type, iconProps);
       case 'Square':
-        return React.createElement(require('lucide-react').Square, iconProps);
+        return React.createElement(Square, iconProps);
       case 'Circle':
-        return React.createElement(require('lucide-react').Circle, iconProps);
+        return React.createElement(Circle, iconProps);
       case 'Minus':
-        return React.createElement(require('lucide-react').Minus, iconProps);
+        return React.createElement(Minus, iconProps);
       case 'Spline':
-        return React.createElement(require('lucide-react').Spline, iconProps);
+        return React.createElement(Spline, iconProps);
       default:
         return null;
     }
