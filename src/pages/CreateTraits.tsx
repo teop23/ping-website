@@ -194,6 +194,65 @@ const CreateTraits: React.FC = () => {
     };
   }, [canvas, tool, textSize, textColor, color, brushSize]);
 
+  // Handle clipboard paste
+  useEffect(() => {
+    if (!canvas) return;
+
+    const handlePaste = async (e: ClipboardEvent) => {
+      e.preventDefault();
+      
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        
+        if (item.type.indexOf('image') !== -1) {
+          const file = item.getAsFile();
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              const imgSrc = event.target?.result as string;
+              fabric.Image.fromURL(imgSrc, (img) => {
+                // Scale the image to fit nicely in the canvas
+                const maxSize = Math.min(canvas.width!, canvas.height!) * 0.4;
+                const scale = Math.min(maxSize / img.width!, maxSize / img.height!);
+                
+                img.set({
+                  left: canvas.width! / 2,
+                  top: canvas.height! / 2,
+                  originX: 'center',
+                  originY: 'center',
+                  scaleX: scale,
+                  scaleY: scale,
+                  cornerStyle: 'circle',
+                  cornerColor: '#4F46E5',
+                  cornerSize: 8,
+                  transparentCorners: false,
+                  borderColor: '#4F46E5'
+                });
+                
+                canvas.add(img);
+                canvas.bringToFront(img);
+                canvas.setActiveObject(img);
+                safeRenderAll(canvas);
+              });
+            };
+            reader.readAsDataURL(file);
+          }
+          break;
+        }
+      }
+    };
+
+    // Add event listener to the document
+    document.addEventListener('paste', handlePaste);
+
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, [canvas]);
+
   // Handle window resize
   useEffect(() => {
     if (!canvas) return;
@@ -602,6 +661,11 @@ const CreateTraits: React.FC = () => {
                     <RotateCw size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                     Clear All
                   </Button>
+                  
+                  {/* Paste hint */}
+                  <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200 mt-2">
+                    💡 Tip: You can paste images directly from your clipboard using Ctrl+V (Cmd+V on Mac)
+                  </div>
                 </div>
               </CardContent>
             </Card>
