@@ -77,7 +77,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
         transition={{ duration: 0.3 }}
       >
         <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
-          <CardContent className="h-full p-6 flex items-center justify-center">
+          <CardContent className="h-full p-0 flex items-center justify-center">
             <div ref={characterRef} className="relative w-full h-full flex items-center justify-center">
               {/* Base character */}
               <img 
