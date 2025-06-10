@@ -71,11 +71,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
 
   return (
     <div className="flex flex-col items-center">
-      <motion.div
-        className="w-full aspect-square relative max-w-[500px]"
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.3 }}
-      >
+      <div className="w-full aspect-square relative max-w-[500px]">
         <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
           <CardContent className="h-full p-0 flex items-center justify-center">
             <div ref={characterRef} className="relative w-full h-full flex items-center justify-center">
@@ -83,7 +79,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
               <img 
                 src={pingImage} 
                 alt="Base character" 
-                className="absolute inset-0 w-full h-full object-cover z-[1] transition-transform duration-300 hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover z-[1]"
               />
           
               {/* Render traits in specific order with proper z-index */}
@@ -125,7 +121,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
       
       <div className="flex flex-wrap justify-center gap-4 mt-6 px-2">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
