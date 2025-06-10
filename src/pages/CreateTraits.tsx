@@ -647,15 +647,24 @@ const CreateTraits: React.FC = () => {
                   className="border-2 border-gray-200 rounded-lg shadow-sm max-w-full aspect-square object-contain mx-auto block"
                 />
               </div>
+            </Card>
+          </motion.div>
 
-              {/* Save Controls */}
-              <div className="space-y-2 sm:space-y-3">
+          {/* Save Controls Card - Below Canvas */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="w-full lg:w-3/5 lg:flex-shrink-0 min-w-0 order-3 lg:order-3"
+          >
+            <Card className="p-3 sm:p-6">
+              <div className="space-y-3">
                 <input
                   type="text"
                   value={traitName}
                   onChange={(e) => setTraitName(e.target.value)}
                   placeholder="Enter trait name..."
-                  className="w-full px-2 sm:px-3 py-1 sm:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                   <Button
@@ -664,24 +673,24 @@ const CreateTraits: React.FC = () => {
                     className="flex-1 h-10"
                     size="sm"
                   >
-                    <Save size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
+                    <Save size={16} className="mr-2" />
                     Save Trait
                   </Button>
-                  <div className="flex-1 flex space-x-1 sm:space-x-2">
+                  <div className="flex-1 flex space-x-2">
                     <Button
                       onClick={handleDownloadTrait}
                       variant="outline"
                       className="flex-1 h-10"
                       size="sm"
                     >
-                      <Download size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
+                      <Download size={16} className="mr-2" />
                       {getDownloadButtonText()}
                     </Button>
                     {/* Download Mode Toggle */}
-                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[80px] sm:min-w-[100px] h-10">
+                    <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[100px] h-10">
                       <button
                         onClick={() => setDownloadMode('trait')}
-                        className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
                           downloadMode === 'trait'
                             ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
@@ -691,7 +700,7 @@ const CreateTraits: React.FC = () => {
                       </button>
                       <button
                         onClick={() => setDownloadMode('character')}
-                        className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
                           downloadMode === 'character'
                             ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                             : 'text-gray-600 hover:text-gray-900'
@@ -711,7 +720,7 @@ const CreateTraits: React.FC = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0 order-3"
+            className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0 order-4 lg:order-3"
           >
             <Card className="h-auto lg:h-[700px] overflow-hidden">
               <CardHeader>
