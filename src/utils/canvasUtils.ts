@@ -5,6 +5,8 @@ export interface CanvasState {
   timestamp: number;
 }
 
+export const BASE_IMAGE_SCALE_MULTIPLIER = 1.4;
+
 // Safe canvas rendering with error handling
 export const safeRenderAll = (canvas: fabric.Canvas) => {
   try {
@@ -87,7 +89,7 @@ export const setupBaseImage = (
     const scale = Math.min(
       canvas.width! / img.width!,
       canvas.height! / img.height!
-    );
+    ) * BASE_IMAGE_SCALE_MULTIPLIER;
     
     img.set({
       left: canvas.width! / 2,
@@ -125,7 +127,7 @@ export const updateBaseImageScale = (
   const scale = Math.min(
     canvas.width! / originalWidth,
     canvas.height! / originalHeight
-  );
+  ) * BASE_IMAGE_SCALE_MULTIPLIER;
   
   baseImage.set({
     left: canvas.width! / 2,

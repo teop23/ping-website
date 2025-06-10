@@ -7,6 +7,7 @@ import { placeholderTraits } from '../data/traits';
 import { Trait } from '../types';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
+import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
 
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;
@@ -80,7 +81,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Calculate scale to fit base image
-    const scale = Math.min(canvas.width / baseImage.width, canvas.height / baseImage.height);
+    const scale = Math.min(canvas.width / baseImage.width, canvas.height / baseImage.height) * BASE_IMAGE_SCALE_MULTIPLIER;
     const scaledWidth = baseImage.width * scale;
     const scaledHeight = baseImage.height * scale;
     const x = (canvas.width - scaledWidth) / 2;
@@ -141,7 +142,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       downloadCanvas.height = 1024;
 
       // Calculate scale for base image
-      const scale = Math.min(downloadCanvas.width / baseImage.width, downloadCanvas.height / baseImage.height);
+      const scale = Math.min(downloadCanvas.width / baseImage.width, downloadCanvas.height / baseImage.height) * BASE_IMAGE_SCALE_MULTIPLIER;
       const scaledWidth = baseImage.width * scale;
       const scaledHeight = baseImage.height * scale;
       const x = (downloadCanvas.width - scaledWidth) / 2;
@@ -201,7 +202,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       copyCanvas.height = 1024;
 
       // Calculate scale for base image
-      const scale = Math.min(copyCanvas.width / baseImage.width, copyCanvas.height / baseImage.height);
+      const scale = Math.min(copyCanvas.width / baseImage.width, copyCanvas.height / baseImage.height) * BASE_IMAGE_SCALE_MULTIPLIER;
       const scaledWidth = baseImage.width * scale;
       const scaledHeight = baseImage.height * scale;
       const x = (copyCanvas.width - scaledWidth) / 2;
