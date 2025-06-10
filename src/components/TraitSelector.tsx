@@ -50,56 +50,21 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         reader.onload = (e) => {
           const imageSrc = e.target?.result as string;
           
-          // Create a temporary image to get dimensions and scale it properly
-          const img = new Image();
-          img.onload = () => {
-            // Create a canvas to resize the image to match the main character size
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            if (!ctx) return;
-            
-            // Set target dimensions (matching the main character preview size)
-            const targetSize = 400; // This should match your character preview size
-            canvas.width = targetSize;
-            canvas.height = targetSize;
-            
-            // Calculate scaling to fit the image within the target size while maintaining aspect ratio
-            const scale = Math.min(targetSize / img.width, targetSize / img.height);
-            const scaledWidth = img.width * scale;
-            const scaledHeight = img.height * scale;
-            
-            // Center the image on the canvas
-            const offsetX = (targetSize - scaledWidth) / 2;
-            const offsetY = (targetSize - scaledHeight) / 2;
-            
-            // Clear canvas with transparent background
-            ctx.clearRect(0, 0, targetSize, targetSize);
-            
-            // Draw the scaled image
-            ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
-            
-            // Convert back to data URL
-            const scaledImageSrc = canvas.toDataURL('image/png');
-            
-            const uploadedTrait: Trait = {
-              id: `uploaded-${Date.now()}`,
-              name: 'Uploaded Trait',
-              category: category as any,
-              imageSrc: scaledImageSrc
-            };
-            
-            // Add the uploaded trait to our state
-            setUploadedTraits(prev => ({
-              ...prev,
-              [category]: [...prev[category as keyof typeof prev], uploadedTrait]
-            }));
-            
-            // Select the newly uploaded trait
-            onTraitSelect(uploadedTrait);
+          const uploadedTrait: Trait = {
+            id: `uploaded-${Date.now()}`,
+            name: 'Uploaded Trait',
+            category: category as any,
+            imageSrc: imageSrc
           };
           
-          img.src = imageSrc;
+          // Add the uploaded trait to our state
+          setUploadedTraits(prev => ({
+            ...prev,
+            [category]: [...prev[category as keyof typeof prev], uploadedTrait]
+          }));
+          
+          // Select the newly uploaded trait
+          onTraitSelect(uploadedTrait);
         };
         reader.readAsDataURL(file);
       }
