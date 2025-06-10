@@ -32,7 +32,6 @@ import ToolsPanel from '../components/traits_page/ToolsPanel';
 import CanvasArea from '../components/traits_page/CanvasArea';
 import SavedTraitsPanel from '../components/traits_page/SavedTraitsPanel';
 import SaveControls from '../components/traits_page/SaveControls';
-import MagnifyingGlass from '../components/traits_page/MagnifyingGlass';
 
 const CreateTraits: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -70,10 +69,6 @@ const CreateTraits: React.FC = () => {
   const [curvePoints, setCurvePoints] = useState<{ x: number; y: number }[]>([]);
   const [tempCurveLine, setTempCurveLine] = useState<fabric.Object | null>(null);
 
-  // Magnifying glass state
-  const [magnifyEnabled, setMagnifyEnabled] = useState(false);
-  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [showMagnifyingGlass, setShowMagnifyingGlass] = useState(false);
   // Load saved traits from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('pingTraits');
@@ -238,41 +233,6 @@ const CreateTraits: React.FC = () => {
     }
   }, [tool, canvas, brushSize, color]);
 
-  // Handle mouse movement for magnifying glass
-  useEffect(() => {
-    if (!canvas || !magnifyEnabled) return;
-
-    const handleMouseMove = (e: fabric.IEvent) => {
-      const pointer = canvas.getPointer(e.e as MouseEvent);
-      const canvasElement = canvas.getElement();
-      const rect = canvasElement.getBoundingClientRect();
-      
-      setMousePosition({
-        x: rect.left + pointer.x,
-        y: rect.top + pointer.y
-      });
-    };
-
-    const handleMouseLeave = () => {
-      setShowMagnifyingGlass(false);
-    };
-
-    const handleMouseEnter = () => {
-      if (magnifyEnabled) {
-        setShowMagnifyingGlass(true);
-      }
-    };
-
-    canvas.on('mouse:move', handleMouseMove);
-    canvas.on('mouse:out', handleMouseLeave);
-    canvas.on('mouse:over', handleMouseEnter);
-
-    return () => {
-      canvas.off('mouse:move', handleMouseMove);
-      canvas.off('mouse:out', handleMouseLeave);
-      canvas.off('mouse:over', handleMouseEnter);
-    };
-  }, [canvas, magnifyEnabled]);
   // Update base image visibility
   useEffect(() => {
     if (!baseImage || !canvas) return;
@@ -343,8 +303,6 @@ const CreateTraits: React.FC = () => {
           historyIndex={historyIndex}
           canvasHistory={canvasHistory}
           showBaseLayer={showBaseLayer}
-          magnifyEnabled={magnifyEnabled}
-          onToggleMagnify={() => setMagnifyEnabled(!magnifyEnabled)}
           onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
           onUploadImage={() => uploadImage(canvas!)}
           onDeleteSelected={() => deleteSelected(canvas!)}
@@ -389,15 +347,6 @@ const CreateTraits: React.FC = () => {
           onDownloadTrait={handleDownloadTrait}
         />
       </motion.div>
-      
-      {/* Magnifying Glass */}
-      <MagnifyingGlass
-        canvas={canvas}
-        mousePosition={mousePosition}
-        isActive={showMagnifyingGlass && magnifyEnabled}
-        zoomLevel={3}
-        size={150}
-      />
     </div>
   );
 };

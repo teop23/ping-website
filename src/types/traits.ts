@@ -23,8 +23,6 @@ export interface ToolsPanelProps {
   historyIndex: number;
   canvasHistory: CanvasState[];
   showBaseLayer: boolean;
-  magnifyEnabled: boolean;
-  onToggleMagnify: () => void;
   onToggleBaseLayer: () => void;
   onUploadImage: () => void;
   onDeleteSelected: () => void;

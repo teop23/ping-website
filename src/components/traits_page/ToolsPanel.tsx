@@ -1,6 +1,6 @@
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff, Search } from 'lucide-react';
+import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import ToolButton from '../ToolButton';
@@ -26,8 +26,6 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   historyIndex,
   canvasHistory,
   showBaseLayer,
-  magnifyEnabled,
-  onToggleMagnify,
   onToggleBaseLayer,
   onUploadImage,
   onDeleteSelected,
@@ -216,15 +214,6 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
         {/* Action Buttons */}
         <div className="space-y-1 pt-2 border-t">
           <Button 
-            onClick={onToggleMagnify} 
-            variant={magnifyEnabled ? "default" : "outline"}
-            size="sm" 
-            className="w-full"
-          >
-            <Search size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
-            {magnifyEnabled ? 'Disable' : 'Enable'} Magnifier
-          </Button>
-          <Button 
             onClick={onToggleBaseLayer} 
             variant="outline" 
             size="sm" 
@@ -270,12 +259,6 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
           {/* Paste hint */}
           <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200 mt-2">
             💡 Tip: You can paste images directly from your clipboard using Ctrl+V (Cmd+V on Mac)
-            {magnifyEnabled && (
-              <>
-                <br />
-                🔍 Magnifier is enabled - move your cursor over the canvas for a zoomed view!
-              </>
-            )}
           </div>
         </div>
       </CardContent>
