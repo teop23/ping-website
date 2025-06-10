@@ -3,329 +3,6 @@ import { safeRenderAll } from './canvasUtils';
 
 type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
 
-// Custom curve class with individually movable anchor points
-class EditableCurve extends fabric.Group {
-  public startPoint: fabric.Circle;
-  public controlPoint: fabric.Circle;
-  public endPoint: fabric.Circle;
-  public curvePath: fabric.Path;
-  public helperLine1: fabric.Line;
-  public helperLine2: fabric.Line;
-  public isEditableCurve: boolean = true;
-  private canvas: fabric.Canvas | null = null;
-  private curveGroup: fabric.Group | null = null;
-
-  constructor(start: { x: number; y: number }, control: { x: number; y: number }, end: { x: number; y: number }, options: any = {}) {
-    // Create the curve path first
-    const pathString = `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${end.x} ${end.y}`;
-    const curvePath = new fabric.Path(pathString, {
-      stroke: options.stroke || '#000000',
-      strokeWidth: options.strokeWidth || 2,
-      fill: '',
-      selectable: true,
-      evented: true,
-      left: 0,
-      top: 0,
-      originX: 'left',
-      originY: 'top',
-      name: 'editableCurvePath'
-    });
-
-    // Create control points as individually selectable and movable
-    const startPoint = new fabric.Circle({
-      left: start.x,
-      top: start.y,
-      radius: 6,
-      fill: '#4F46E5',
-      stroke: '#ffffff',
-      strokeWidth: 2,
-      originX: 'center',
-      originY: 'center',
-      selectable: true,
-      evented: true,
-      hasControls: false,
-      hasBorders: false,
-      hoverCursor: 'move',
-      moveCursor: 'move',
-      name: 'curveStartPoint',
-      visible: false // Initially hidden
-    });
-
-    const controlPoint = new fabric.Circle({
-      left: control.x,
-      top: control.y,
-      radius: 6,
-      fill: '#F59E0B',
-      stroke: '#ffffff',
-      strokeWidth: 2,
-      originX: 'center',
-      originY: 'center',
-      selectable: true,
-      evented: true,
-      hasControls: false,
-      hasBorders: false,
-      hoverCursor: 'move',
-      moveCursor: 'move',
-      name: 'curveControlPoint',
-      visible: false // Initially hidden
-    });
-
-    const endPoint = new fabric.Circle({
-      left: end.x,
-      top: end.y,
-      radius: 6,
-      fill: '#EF4444',
-      stroke: '#ffffff',
-      strokeWidth: 2,
-      originX: 'center',
-      originY: 'center',
-      selectable: true,
-      evented: true,
-      hasControls: false,
-      hasBorders: false,
-      hoverCursor: 'move',
-      moveCursor: 'move',
-      name: 'curveEndPoint',
-      visible: false // Initially hidden
-    });
-
-    // Create helper lines (dashed lines from control point to start/end)
-    const helperLine1 = new fabric.Line([start.x, start.y, control.x, control.y], {
-      stroke: '#9CA3AF',
-      strokeWidth: 1,
-      strokeDashArray: [3, 3],
-      selectable: false,
-      evented: false,
-      opacity: 0.6,
-      name: 'curveHelperLine1',
-      visible: false // Initially hidden
-    });
-
-    const helperLine2 = new fabric.Line([control.x, control.y, end.x, end.y], {
-      stroke: '#9CA3AF',
-      strokeWidth: 1,
-      strokeDashArray: [3, 3],
-      selectable: false,
-      evented: false,
-      opacity: 0.6,
-      name: 'curveHelperLine2',
-      visible: false // Initially hidden
-    });
-
-    super([curvePath], {
-      ...options,
-      selectable: true,
-      evented: true,
-      name: 'editableCurve'
-    });
-
-    this.startPoint = startPoint;
-    this.controlPoint = controlPoint;
-    this.endPoint = endPoint;
-    this.curvePath = curvePath;
-    this.helperLine1 = helperLine1;
-    this.helperLine2 = helperLine2;
-
-    // Set up event handlers for the curve path and anchor points
-    this.setupCurveEvents();
-    this.setupAnchorEvents();
-  }
-
-  setupCurveEvents() {
-    // Show anchor points when curve is selected
-    this.curvePath.on('selected', () => {
-      this.showAnchors();
-    });
-
-    // Hide anchor points when curve is deselected
-    this.curvePath.on('deselected', () => {
-      this.hideAnchors();
-    });
-  }
-
-  setupAnchorEvents() {
-    // Start point events
-    this.startPoint.on('moving', () => {
-      this.updateCurveFromAnchor();
-    });
-
-    this.startPoint.on('moved', () => {
-      this.renderCanvas();
-    });
-
-    // Control point events
-    this.controlPoint.on('moving', () => {
-      this.updateCurveFromAnchor();
-    });
-
-    this.controlPoint.on('moved', () => {
-      this.renderCanvas();
-    });
-
-    // End point events
-    this.endPoint.on('moving', () => {
-      this.updateCurveFromAnchor();
-    });
-
-    this.endPoint.on('moved', () => {
-      this.renderCanvas();
-    });
-
-    // Add visual feedback on hover
-    [this.startPoint, this.controlPoint, this.endPoint].forEach(point => {
-      point.on('mouseover', () => {
-        point.set({ radius: 8 });
-        this.renderCanvas();
-      });
-
-      point.on('mouseout', () => {
-        point.set({ radius: 6 });
-        this.renderCanvas();
-      });
-    });
-  }
-
-  showAnchors() {
-    if (this.canvas) {
-      this.startPoint.set({ visible: true });
-      this.controlPoint.set({ visible: true });
-      this.endPoint.set({ visible: true });
-      this.helperLine1.set({ visible: true });
-      this.helperLine2.set({ visible: true });
-      this.renderCanvas();
-    }
-  }
-
-  hideAnchors() {
-    if (this.canvas) {
-      this.startPoint.set({ visible: false });
-      this.controlPoint.set({ visible: false });
-      this.endPoint.set({ visible: false });
-      this.helperLine1.set({ visible: false });
-      this.helperLine2.set({ visible: false });
-      this.renderCanvas();
-    }
-  }
-
-  updateCurveFromAnchor() {
-    const startPos = { x: this.startPoint.left!, y: this.startPoint.top! };
-    const controlPos = { x: this.controlPoint.left!, y: this.controlPoint.top! };
-    const endPos = { x: this.endPoint.left!, y: this.endPoint.top! };
-
-    // Update the curve path with correct positioning
-    const pathString = `M ${startPos.x} ${startPos.y} Q ${controlPos.x} ${controlPos.y} ${endPos.x} ${endPos.y}`;
-    
-    if (this.canvas) {
-      // Remove the old path and create a new one
-      this.canvas.remove(this.curvePath);
-      
-      this.curvePath = new fabric.Path(pathString, {
-        stroke: this.curvePath.stroke,
-        strokeWidth: this.curvePath.strokeWidth,
-        fill: '',
-        selectable: true,
-        evented: true,
-        left: 0,
-        top: 0,
-        originX: 'left',
-        originY: 'top',
-        name: 'editableCurvePath'
-      });
-      
-      // Re-setup curve events
-      this.setupCurveEvents();
-      
-      this.canvas.add(this.curvePath);
-      
-      // Ensure proper layering - curve above base, anchors above curve
-      this.ensureProperLayering();
-    }
-
-    // Update helper lines
-    this.helperLine1.set({
-      x1: startPos.x,
-      y1: startPos.y,
-      x2: controlPos.x,
-      y2: controlPos.y
-    });
-
-    this.helperLine2.set({
-      x1: controlPos.x,
-      y1: controlPos.y,
-      x2: endPos.x,
-      y2: endPos.y
-    });
-
-    this.renderCanvas();
-  }
-
-  setCanvas(canvas: fabric.Canvas) {
-    this.canvas = canvas;
-  }
-
-  ensureProperLayering() {
-    if (!this.canvas) return;
-    
-    const allObjects = this.canvas.getObjects();
-    
-    // Send base image to back
-    allObjects.forEach(obj => {
-      if (obj.name === 'baseImage') {
-        this.canvas!.sendToBack(obj);
-      }
-    });
-
-    // Bring curve elements to front in correct order
-    this.canvas.bringToFront(this.curvePath);
-    this.canvas.bringToFront(this.helperLine1);
-    this.canvas.bringToFront(this.helperLine2);
-    this.canvas.bringToFront(this.startPoint);
-    this.canvas.bringToFront(this.controlPoint);
-    this.canvas.bringToFront(this.endPoint);
-  }
-
-  renderCanvas() {
-    if (this.canvas) {
-      safeRenderAll(this.canvas);
-    }
-  }
-
-  // Method to add all components to canvas individually for proper event handling
-  addToCanvas(canvas: fabric.Canvas) {
-    this.setCanvas(canvas);
-    
-    // Add all components individually to the canvas
-    canvas.add(this.curvePath);
-    canvas.add(this.helperLine1);
-    canvas.add(this.helperLine2);
-    canvas.add(this.startPoint);
-    canvas.add(this.controlPoint);
-    canvas.add(this.endPoint);
-
-    // Ensure proper layering
-    this.ensureProperLayering();
-    safeRenderAll(canvas);
-  }
-
-  // Method to remove all components from canvas
-  removeFromCanvas(canvas: fabric.Canvas) {
-    canvas.remove(this.curvePath);
-    canvas.remove(this.helperLine1);
-    canvas.remove(this.helperLine2);
-    canvas.remove(this.startPoint);
-    canvas.remove(this.controlPoint);
-    canvas.remove(this.endPoint);
-    safeRenderAll(canvas);
-  }
-
-  // Method to select the curve
-  selectCurve(canvas: fabric.Canvas) {
-    canvas.setActiveObject(this.curvePath);
-    this.showAnchors();
-    safeRenderAll(canvas);
-  }
-}
-
 export const addText = (
   x: number,
   y: number,
@@ -451,6 +128,42 @@ export const addLine = (
   setTool('select');
 };
 
+// Helper functions for curve creation
+function makeCurveControlPoint(left: number, top: number, curvePath: fabric.Path, isControlPoint: boolean = false) {
+  const circle = new fabric.Circle({
+    left: left,
+    top: top,
+    strokeWidth: isControlPoint ? 3 : 2,
+    radius: isControlPoint ? 8 : 6,
+    fill: isControlPoint ? '#F59E0B' : '#4F46E5',
+    stroke: '#ffffff',
+    originX: 'center',
+    originY: 'center',
+    hasBorders: false,
+    hasControls: false,
+    selectable: true,
+    evented: true,
+    hoverCursor: 'move',
+    moveCursor: 'move',
+    name: isControlPoint ? 'curveControlPoint' : 'curveEndPoint',
+    opacity: 0 // Initially hidden
+  });
+
+  // Store reference to the curve path
+  (circle as any).curvePath = curvePath;
+  
+  return circle;
+}
+
+function updateCurvePath(curvePath: fabric.Path, startPoint: fabric.Circle, controlPoint: fabric.Circle, endPoint: fabric.Circle) {
+  const pathString = `M ${startPoint.left} ${startPoint.top} Q ${controlPoint.left} ${controlPoint.top} ${endPoint.left} ${endPoint.top}`;
+  
+  // Update the path data
+  (curvePath as any).path = fabric.util.parsePath(pathString);
+  curvePath._setPath(pathString);
+  curvePath.setCoords();
+}
+
 export const addCurvedLine = (
   x: number,
   y: number,
@@ -514,7 +227,7 @@ export const addCurvedLine = (
     const controlIndicator = new fabric.Circle({
       left: control.x,
       top: control.y,
-      radius: 6,
+      radius: 8,
       fill: '#F59E0B',
       stroke: '#ffffff',
       strokeWidth: 2,
@@ -545,26 +258,88 @@ export const addCurvedLine = (
     setTempCurveLine(tempGroup);
     safeRenderAll(canvas);
   } else if (newPoints.length === 3) {
-    // Third point - create the final editable curve with movable anchors
+    // Third point - create the final editable curve
     const [start, control, end] = newPoints;
     
-    const editableCurve = new EditableCurve(start, control, end, {
+    // Create the curve path
+    const pathString = `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${end.x} ${end.y}`;
+    const curvePath = new fabric.Path(pathString, {
+      fill: '',
       stroke: color,
-      strokeWidth: strokeWidth
+      strokeWidth: strokeWidth,
+      selectable: true,
+      evented: true,
+      cornerStyle: 'circle',
+      cornerColor: '#4F46E5',
+      cornerSize: 8,
+      transparentCorners: false,
+      borderColor: '#4F46E5',
+      name: 'editableCurvePath',
+      objectCaching: false
     });
-    
-    // Add the curve components to the canvas
-    editableCurve.addToCanvas(canvas);
-    
-    // Select the curve to show anchors initially
-    setTimeout(() => {
-      editableCurve.selectCurve(canvas);
-    }, 100);
+
+    // Create control points
+    const startPoint = makeCurveControlPoint(start.x, start.y, curvePath, false);
+    const controlPoint = makeCurveControlPoint(control.x, control.y, curvePath, true);
+    const endPoint = makeCurveControlPoint(end.x, end.y, curvePath, false);
+
+    // Set up the relationships
+    (startPoint as any).isStartPoint = true;
+    (endPoint as any).isEndPoint = true;
+    (controlPoint as any).isControlPoint = true;
+
+    // Store references to all control points in the curve path
+    (curvePath as any).startPoint = startPoint;
+    (curvePath as any).controlPoint = controlPoint;
+    (curvePath as any).endPoint = endPoint;
+
+    // Add all objects to canvas
+    canvas.add(curvePath);
+    canvas.add(startPoint);
+    canvas.add(controlPoint);
+    canvas.add(endPoint);
+
+    // Set up event handlers for showing/hiding control points
+    curvePath.on('selected', () => {
+      startPoint.set({ opacity: 1, selectable: true });
+      controlPoint.set({ opacity: 1, selectable: true });
+      endPoint.set({ opacity: 1, selectable: true });
+      safeRenderAll(canvas);
+    });
+
+    curvePath.on('deselected', () => {
+      startPoint.set({ opacity: 0, selectable: false });
+      controlPoint.set({ opacity: 0, selectable: false });
+      endPoint.set({ opacity: 0, selectable: false });
+      safeRenderAll(canvas);
+    });
+
+    // Set up event handlers for control point movement
+    const setupControlPointMovement = (point: fabric.Circle) => {
+      point.on('moving', () => {
+        const curvePath = (point as any).curvePath;
+        const startPoint = (curvePath as any).startPoint;
+        const controlPoint = (curvePath as any).controlPoint;
+        const endPoint = (curvePath as any).endPoint;
+        
+        updateCurvePath(curvePath, startPoint, controlPoint, endPoint);
+        safeRenderAll(canvas);
+      });
+    };
+
+    setupControlPointMovement(startPoint);
+    setupControlPointMovement(controlPoint);
+    setupControlPointMovement(endPoint);
+
+    // Select the curve initially to show control points
+    canvas.setActiveObject(curvePath);
     
     // Reset curve state
     setCurvePoints([]);
     setTempCurveLine(null);
     setTool('select');
+    
+    safeRenderAll(canvas);
   }
 };
 
@@ -603,17 +378,25 @@ export const deleteSelected = (canvas: fabric.Canvas) => {
   const activeObjects = canvas.getActiveObjects();
   activeObjects.forEach(obj => {
     if (obj.name !== 'baseImage') {
-      // Check if it's part of an editable curve and remove all related components
-      if (obj.name?.startsWith('curve') || obj.name === 'editableCurvePath') {
-        // Find and remove all related curve components
-        const allObjects = canvas.getObjects();
-        const curveComponents = allObjects.filter(o => 
-          o.name?.startsWith('curve') || o.name === 'editableCurvePath'
-        );
-        curveComponents.forEach(component => canvas.remove(component));
-      } else {
-        canvas.remove(obj);
+      // Check if it's a curve path and remove all related components
+      if (obj.name === 'editableCurvePath') {
+        const curvePath = obj as any;
+        if (curvePath.startPoint) canvas.remove(curvePath.startPoint);
+        if (curvePath.controlPoint) canvas.remove(curvePath.controlPoint);
+        if (curvePath.endPoint) canvas.remove(curvePath.endPoint);
       }
+      // Check if it's a control point and remove the entire curve
+      else if (obj.name?.includes('curveControlPoint') || obj.name?.includes('curveEndPoint')) {
+        const controlPoint = obj as any;
+        const curvePath = controlPoint.curvePath;
+        if (curvePath) {
+          canvas.remove(curvePath);
+          if ((curvePath as any).startPoint) canvas.remove((curvePath as any).startPoint);
+          if ((curvePath as any).controlPoint) canvas.remove((curvePath as any).controlPoint);
+          if ((curvePath as any).endPoint) canvas.remove((curvePath as any).endPoint);
+        }
+      }
+      canvas.remove(obj);
     }
   });
   canvas.discardActiveObject();
