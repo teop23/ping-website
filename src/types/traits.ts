@@ -22,6 +22,8 @@ export interface ToolsPanelProps {
   canvas: fabric.Canvas | null;
   historyIndex: number;
   canvasHistory: CanvasState[];
+  showBaseLayer: boolean;
+  onToggleBaseLayer: () => void;
   onUploadImage: () => void;
   onDeleteSelected: () => void;
   onUndo: () => void;

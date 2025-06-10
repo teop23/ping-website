@@ -1,6 +1,6 @@
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline } from 'lucide-react';
+import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import ToolButton from '../ToolButton';
@@ -25,6 +25,8 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   canvas,
   historyIndex,
   canvasHistory,
+  showBaseLayer,
+  onToggleBaseLayer,
   onUploadImage,
   onDeleteSelected,
   onUndo,
@@ -211,6 +213,15 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
 
         {/* Action Buttons */}
         <div className="space-y-1 pt-2 border-t">
+          <Button 
+            onClick={onToggleBaseLayer} 
+            variant="outline" 
+            size="sm" 
+            className="w-full"
+          >
+            {showBaseLayer ? <EyeOff size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" /> : <Eye size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />}
+            {showBaseLayer ? 'Hide' : 'Show'} Base
+          </Button>
           <Button onClick={onUploadImage} variant="outline" size="sm" className="w-full">
             <Upload size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
             Upload Image

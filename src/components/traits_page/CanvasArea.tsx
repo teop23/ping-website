@@ -1,7 +1,4 @@
 import React from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import { Card } from '../ui/card';
-import { Button } from '../ui/button';
 
 interface CanvasAreaProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -10,31 +7,15 @@ interface CanvasAreaProps {
 }
 
 const CanvasArea: React.FC<CanvasAreaProps> = ({
-  canvasRef,
-  showBaseLayer,
-  onToggleBaseLayer
+  canvasRef
 }) => {
   return (
-    <Card className="p-3 sm:p-4 flex flex-col h-full">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base sm:text-lg font-semibold">Canvas</h3>
-        <Button
-          variant="outline"
-          onClick={onToggleBaseLayer}
-          size="sm"
-        >
-          {showBaseLayer ? <EyeOff size={14} className="sm:w-4 sm:h-4" /> : <Eye size={14} className="sm:w-4 sm:h-4" />}
-          <span className="ml-1 sm:ml-2 text-xs sm:text-sm">{showBaseLayer ? 'Hide' : 'Show'} Base</span>
-        </Button>
-      </div>
-      
-      <div className="flex justify-center items-center flex-1 overflow-hidden min-h-0 aspect-square">
-        <canvas
-          ref={canvasRef}
-          className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-full max-w-full max-h-full object-contain"
-        />
-      </div>
-    </Card>
+    <div className="flex justify-center items-center flex-1 overflow-hidden min-h-0 aspect-square">
+      <canvas
+        ref={canvasRef}
+        className="border-2 border-gray-200 rounded-lg shadow-sm w-full h-full max-w-full max-h-full object-contain"
+      />
+    </div>
   );
 };
 

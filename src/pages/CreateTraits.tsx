@@ -334,6 +334,8 @@ const CreateTraits: React.FC = () => {
               canvas={canvas}
               historyIndex={historyIndex}
               canvasHistory={canvasHistory}
+              showBaseLayer={showBaseLayer}
+              onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
               onUploadImage={() => uploadImage(canvas!)}
               onDeleteSelected={() => deleteSelected(canvas!)}
               onUndo={undo}
@@ -351,8 +353,6 @@ const CreateTraits: React.FC = () => {
           >
             <CanvasArea
               canvasRef={canvasRef}
-              showBaseLayer={showBaseLayer}
-              onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
             />
           </motion.div>
 
