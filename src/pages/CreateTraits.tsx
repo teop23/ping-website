@@ -1,29 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { HexColorPicker } from 'react-colorful';
-import { 
-  Download, 
-  Eye, 
-  EyeOff, 
-  Undo, 
-  Save, 
-  Type, 
-  Circle,
-  Square,
-  Minus,
-  Upload,
-  Trash2,
-  RotateCw,
-  Palette,
-  MousePointer,
-  Spline
-} from 'lucide-react';
 import { fabric } from 'fabric';
 import pingImage from '../assets/images/ping.png';
-import ToolButton from '../components/ToolButton';
+import { ToolType } from '../types/traits';
 import { 
   calculateCanvasSize, 
   setupBaseImage, 
@@ -36,11 +15,6 @@ import {
   type CanvasState
 } from '../utils/canvasUtils';
 import { 
-  addText, 
-  addRectangle, 
-  addCircle, 
-  addLine, 
-  addCurvedLine,
   uploadImage, 
   deleteSelected, 
   clearCanvas 
@@ -53,8 +27,11 @@ import {
   toggleTrait,
   type SavedTrait 
 } from '../utils/traitManager';
-
-type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
+import { setupCanvasEventHandlers, setupClipboardHandlers } from '../utils/canvasEventHandlers';
+import ToolsPanel from '../components/traits_page/ToolsPanel';
+import CanvasArea from '../components/traits_page/CanvasArea';
+import SavedTraitsPanel from '../components/traits_page/SavedTraitsPanel';
+import SaveControls from '../components/traits_page/SaveControls';
 
 const CreateTraits: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -91,6 +68,7 @@ const CreateTraits: React.FC = () => {
   // Curved line state
   const [curvePoints, setCurvePoints] = useState<{ x: number; y: number }[]>([]);
   const [tempCurveLine, setTempCurveLine] = useState<fabric.Object | null>(null);
+
   // Load saved traits from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('pingTraits');
@@ -164,101 +142,31 @@ const CreateTraits: React.FC = () => {
     return () => {
       fabricCanvas.dispose();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle canvas click events
   useEffect(() => {
     if (!canvas) return;
 
-    const handleCanvasClick = (e: fabric.IEvent) => {
-      if (tool === 'select' || tool === 'brush') return;
-
-      const pointer = canvas.getPointer(e.e as MouseEvent);
-      
-      switch (tool) {
-        case 'text':
-          addText(pointer.x, pointer.y, canvas, textSize, textColor, setTool);
-          break;
-        case 'rectangle':
-          addRectangle(pointer.x, pointer.y, canvas, color, setTool);
-          break;
-        case 'circle':
-          addCircle(pointer.x, pointer.y, canvas, color, setTool);
-          break;
-        case 'line':
-          addLine(pointer.x, pointer.y, canvas, color, brushSize, setTool);
-          break;
-        case 'curve':
-          addCurvedLine(pointer.x, pointer.y, canvas, color, brushSize, curvePoints, setCurvePoints, tempCurveLine, setTempCurveLine, setTool);
-          break;
-      }
-    };
-
-    canvas.on('mouse:down', handleCanvasClick);
-
-    return () => {
-      canvas.off('mouse:down', handleCanvasClick);
-    };
+    return setupCanvasEventHandlers(
+      canvas,
+      tool,
+      textSize,
+      textColor,
+      color,
+      brushSize,
+      curvePoints,
+      setCurvePoints,
+      tempCurveLine,
+      setTempCurveLine,
+      setTool
+    );
   }, [canvas, tool, textSize, textColor, color, brushSize, curvePoints, tempCurveLine]);
 
   // Handle clipboard paste
   useEffect(() => {
     if (!canvas) return;
-
-    const handlePaste = async (e: ClipboardEvent) => {
-      e.preventDefault();
-      
-      const items = e.clipboardData?.items;
-      if (!items) return;
-
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        
-        if (item.type.indexOf('image') !== -1) {
-          const file = item.getAsFile();
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-              const imgSrc = event.target?.result as string;
-              fabric.Image.fromURL(imgSrc, (img) => {
-                // Scale the image to fit nicely in the canvas
-                const maxSize = Math.min(canvas.width!, canvas.height!) * 0.4;
-                const scale = Math.min(maxSize / img.width!, maxSize / img.height!);
-                
-                img.set({
-                  left: canvas.width! / 2,
-                  top: canvas.height! / 2,
-                  originX: 'center',
-                  originY: 'center',
-                  scaleX: scale,
-                  scaleY: scale,
-                  cornerStyle: 'circle',
-                  cornerColor: '#4F46E5',
-                  cornerSize: 8,
-                  transparentCorners: false,
-                  borderColor: '#4F46E5'
-                });
-                
-                canvas.add(img);
-                canvas.bringToFront(img);
-                canvas.setActiveObject(img);
-                safeRenderAll(canvas);
-              });
-            };
-            reader.readAsDataURL(file);
-          }
-          break;
-        }
-      }
-    };
-
-    // Add event listener to the document
-    document.addEventListener('paste', handlePaste);
-
-    return () => {
-      document.removeEventListener('paste', handlePaste);
-    };
+    return setupClipboardHandlers(canvas);
   }, [canvas]);
 
   // Handle window resize
@@ -346,19 +254,6 @@ const CreateTraits: React.FC = () => {
     }
   };
 
-  const getDownloadButtonText = () => {
-    return downloadMode === 'trait' ? 'Download Trait' : 'Download Character';
-  };
-
-  const confirmDeleteTrait = (id: string) => {
-    setTraitToDelete(id);
-  };
-
-  const handleDeleteTrait = (id: string) => {
-    deleteTrait(id, canvas, loadedTraits, setLoadedTraits, savedTraits, setSavedTraits);
-    setTraitToDelete(null);
-  };
-
   const handleSaveTrait = () => {
     saveTrait(canvas!, traitName, baseImage, loadedTraits, savedTraits, setSavedTraits, setTraitName);
   };
@@ -371,9 +266,13 @@ const CreateTraits: React.FC = () => {
     toggleTrait(trait, canvas!, loadedTraits, setLoadedTraits, savedTraits, setSavedTraits, baseImage);
   };
 
+  const handleDeleteTrait = (id: string) => {
+    deleteTrait(id, canvas, loadedTraits, setLoadedTraits, savedTraits, setSavedTraits);
+  };
+
   return (
     <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-4 w-full min-h-0 flex flex-col">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto w-full flex flex-col h-full">
         {/* Title Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -386,7 +285,7 @@ const CreateTraits: React.FC = () => {
         </motion.div>
 
         {/* Horizontal Container: Tools, Canvas, Saved Traits */}
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full mb-6">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 w-full mb-6 flex-1">
           {/* Tools Panel - Left Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -394,233 +293,31 @@ const CreateTraits: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="h-auto lg:h-[700px] overflow-hidden">
-              <CardHeader>
-                <h3 className="text-base sm:text-lg font-semibold">Tools</h3>
-              </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3 h-auto lg:h-[620px] lg:overflow-y-auto">
-                {/* Tool Selection */}
-                <div className="grid grid-cols-2 gap-1 sm:gap-2">
-                  <ToolButton
-                    icon={<MousePointer size={14} className="sm:w-[18px] sm:h-[18px]" />}
-                    label="Select"
-                    active={tool === 'select'}
-                    onClick={() => setTool('select')}
-                  />
-                  <ToolButton
-                    icon={<Palette size={14} className="sm:w-[18px] sm:h-[18px]" />}
-                    label="Brush"
-                    active={tool === 'brush'}
-                    onClick={() => setTool('brush')}
-                  />
-                  <ToolButton
-                    icon={<Type size={14} className="sm:w-[18px] sm:h-[18px]" />}
-                    label="Text"
-                    active={tool === 'text'}
-                    onClick={() => setTool('text')}
-                  />
-                  <ToolButton
-                    icon={<Square size={14} className="sm:w-[18px] sm:h-[18px]" />}
-                    label="Rectangle"
-                    active={tool === 'rectangle'}
-                    onClick={() => setTool('rectangle')}
-                  />
-                  <ToolButton
-                    icon={<Circle size={14} className="sm:w-[18px] sm:h-[18px]" />}
-                    label="Circle"
-                    active={tool === 'circle'}
-                    onClick={() => setTool('circle')}
-                  />
-                  <ToolButton
-                    icon={<Minus size={14} className="sm:w-[18px] sm:h-[18px]" />}
-                    label="Line"
-                    active={tool === 'line'}
-                    onClick={() => setTool('line')}
-                  />
-                  <ToolButton
-                    icon={<Spline size={14} className="sm:w-[18px] sm:h-[18px]" />}
-                    label="Curve"
-                    active={tool === 'curve'}
-                    onClick={() => setTool('curve')}
-                  />
-                </div>
-
-                {/* Color Picker */}
-                <div className="space-y-1">
-                  <label className="text-xs sm:text-sm font-medium">Color</label>
-                  <div className="relative">
-                    <button
-                      className="w-full h-6 sm:h-8 rounded-md border-2 border-gray-200"
-                      style={{ backgroundColor: color }}
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                    />
-                    {showColorPicker && (
-                      <div className="absolute z-10 mt-2">
-                        <div className="p-3 bg-white rounded-lg shadow-lg border">
-                          <HexColorPicker color={color} onChange={setColor} />
-                          <button
-                            className="mt-2 w-full px-3 py-1 text-sm bg-gray-100 rounded"
-                            onClick={() => setShowColorPicker(false)}
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Brush Size */}
-                {(tool === 'brush' || tool === 'line' || tool === 'curve') && (
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium">Brush Size: {brushSize}px</label>
-                    <input
-                      type="range"
-                      min="1"
-                      max="50"
-                      value={brushSize}
-                      onChange={(e) => setBrushSize(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                )}
-
-                {/* Text Controls */}
-                {tool === 'text' && (
-                  <div className="space-y-2">
-                    <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
-                      💡 Click anywhere on canvas to add text
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium">Text Size: {textSize}px</label>
-                      <input
-                        type="range"
-                        min="12"
-                        max="96"
-                        value={textSize}
-                        onChange={(e) => setTextSize(Number(e.target.value))}
-                        className="w-full"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium">Text Color</label>
-                      <div className="relative">
-                        <button
-                          className="w-full h-6 sm:h-8 rounded border-2 border-gray-200"
-                          style={{ backgroundColor: textColor }}
-                          onClick={() => setShowTextColorPicker(!showTextColorPicker)}
-                        />
-                        {showTextColorPicker && (
-                          <div className="absolute z-10 mt-2">
-                            <div className="p-3 bg-white rounded-lg shadow-lg border">
-                              <HexColorPicker color={textColor} onChange={setTextColor} />
-                              <button
-                                className="mt-2 w-full px-3 py-1 text-sm bg-gray-100 rounded"
-                                onClick={() => setShowTextColorPicker(false)}
-                              >
-                                Close
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium">Font Weight</label>
-                      <select
-                        value={(canvas?.getActiveObject() as fabric.IText)?.fontWeight || 'normal'}
-                        onChange={(e) => {
-                          const activeObject = canvas?.getActiveObject();
-                          if (activeObject && activeObject.type === 'i-text') {
-                            (activeObject as fabric.IText).set({ fontWeight: e.target.value });
-                            if(canvas) {
-                              safeRenderAll(canvas);
-                            }
-                          }
-                        }}
-                        className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
-                      >
-                        <option value="normal">Normal</option>
-                        <option value="bold">Bold</option>
-                        <option value="600">Semi Bold</option>
-                        <option value="300">Light</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
-
-                {/* Curve Tool Instructions */}
-                {tool === 'curve' && (
-                  <div className="space-y-2">
-                    <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
-                      💡 Click 3 points to create a curved line with movable anchors:
-                      <br />
-                      1. Start point (blue anchor)
-                      <br />
-                      2. Control point (orange anchor - curve direction)
-                      <br />
-                      3. End point (red anchor)
-                      <br />
-                      <span className="text-xs text-gray-600">
-                        After creation, you can drag any anchor point to reshape the curve in real-time!
-                      </span>
-                    </div>
-                    {curvePoints.length > 0 && (
-                      <div className="text-xs text-green-700 bg-green-50 p-2 rounded border border-green-200">
-                        Points clicked: {curvePoints.length}/3
-                        {curvePoints.length < 3 && (
-                          <span className="block mt-1">
-                            Click {curvePoints.length === 1 ? 'control anchor' : 'end anchor'}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="space-y-1 pt-2 border-t">
-                  <Button onClick={() => uploadImage(canvas!)} variant="outline" size="sm" className="w-full">
-                    <Upload size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
-                    Upload Image
-                  </Button>
-                  <div className="grid grid-cols-2 gap-1">
-                    <Button onClick={() => deleteSelected(canvas!)} variant="outline" size="sm">
-                      <Trash2 size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
-                      Delete
-                    </Button>
-                    <Button 
-                      onClick={undo} 
-                      variant="outline" 
-                      size="sm"
-                      disabled={historyIndex <= 0}
-                    >
-                      <Undo size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
-                      Undo
-                    </Button>
-                  </div>
-                  <Button 
-                    onClick={redo} 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    disabled={historyIndex >= canvasHistory.length - 1}
-                  >
-                    <RotateCw size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
-                    Redo
-                  </Button>
-                  <Button onClick={() => clearCanvas(canvas!)} variant="outline" size="sm" className="w-full">
-                    <RotateCw size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
-                    Clear All
-                  </Button>
-                  
-                  {/* Paste hint */}
-                  <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200 mt-2">
-                    💡 Tip: You can paste images directly from your clipboard using Ctrl+V (Cmd+V on Mac)
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ToolsPanel
+              tool={tool}
+              setTool={setTool}
+              color={color}
+              setColor={setColor}
+              showColorPicker={showColorPicker}
+              setShowColorPicker={setShowColorPicker}
+              brushSize={brushSize}
+              setBrushSize={setBrushSize}
+              textSize={textSize}
+              setTextSize={setTextSize}
+              textColor={textColor}
+              setTextColor={setTextColor}
+              showTextColorPicker={showTextColorPicker}
+              setShowTextColorPicker={setShowTextColorPicker}
+              curvePoints={curvePoints}
+              canvas={canvas}
+              historyIndex={historyIndex}
+              canvasHistory={canvasHistory}
+              onUploadImage={() => uploadImage(canvas!)}
+              onDeleteSelected={() => deleteSelected(canvas!)}
+              onUndo={undo}
+              onRedo={redo}
+              onClearCanvas={() => clearCanvas(canvas!)}
+            />
           </motion.div>
 
           {/* Canvas */}
@@ -630,26 +327,11 @@ const CreateTraits: React.FC = () => {
             transition={{ delay: 0.6, duration: 0.6 }}
             className="w-full lg:w-3/5 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="p-3 sm:p-6 h-auto lg:h-[700px]">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base sm:text-lg font-semibold">Canvas</h3>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowBaseLayer(!showBaseLayer)}
-                  size="sm"
-                >
-                  {showBaseLayer ? <EyeOff size={14} className="sm:w-4 sm:h-4" /> : <Eye size={14} className="sm:w-4 sm:h-4" />}
-                  <span className="ml-1 sm:ml-2 text-xs sm:text-sm">{showBaseLayer ? 'Hide' : 'Show'} Base</span>
-                </Button>
-              </div>
-              
-              <div className="flex justify-center items-center overflow-hidden mb-4">
-                <canvas
-                  ref={canvasRef}
-                  className="border-2 border-gray-200 rounded-lg shadow-sm max-w-full aspect-square object-contain mx-auto block"
-                />
-              </div>
-            </Card>
+            <CanvasArea
+              canvasRef={canvasRef}
+              showBaseLayer={showBaseLayer}
+              onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
+            />
           </motion.div>
 
           {/* Saved Traits Panel - Right Side */}
@@ -659,101 +341,14 @@ const CreateTraits: React.FC = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="w-full lg:w-1/5 lg:flex-shrink-0 min-w-0"
           >
-            <Card className="h-auto lg:h-[700px] overflow-hidden">
-              <CardHeader>
-                <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="p-2 sm:p-4 space-y-2 h-auto lg:h-[620px] lg:overflow-y-auto">
-                  {savedTraits.map((trait) => (
-                    <div
-                      key={trait.id}
-                      className={`flex flex-row items-center p-2 sm:p-3 rounded-lg transition-colors cursor-pointer ${
-                        trait.isVisible 
-                          ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
-                          : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
-                      }`}
-                    >
-                      <div 
-                        className="flex items-center space-x-3 cursor-pointer flex-1"
-                        onClick={() => handleToggleTrait(trait)}
-                      >
-                        <img
-                          src={trait.data}
-                          alt={trait.name}
-                          className={`w-12 h-12 sm:w-16 sm:h-16 object-cover rounded flex-shrink-0 ${
-                            trait.isVisible ? 'ring-2 ring-blue-400' : ''
-                          }`}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <span className="text-xs sm:text-sm font-medium block truncate">{trait.name}</span>
-                          <span className={`text-xs ${trait.isVisible ? 'text-blue-600' : 'text-gray-500'}`}>
-                            {trait.isVisible ? 'Visible' : 'Hidden'}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2 ml-2">
-                        <div className={`w-2 h-2 rounded-full flex-shrink-0 ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            downloadIndividualTrait(trait);
-                          }}
-                          className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50 flex-shrink-0"
-                        >
-                          <Download size={12} className="sm:w-4 sm:h-4" />
-                        </Button>
-                        <Dialog open={traitToDelete === trait.id} onOpenChange={(open) => !open && setTraitToDelete(null)}>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                confirmDeleteTrait(trait.id);
-                              }}
-                              className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
-                            >
-                              <Trash2 size={12} className="sm:w-4 sm:h-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Delete Trait</DialogTitle>
-                              <DialogDescription>
-                                Are you sure you want to delete "{trait.name}"? This action cannot be undone.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                              <Button
-                                variant="outline"
-                                onClick={() => setTraitToDelete(null)}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                variant="destructive"
-                                onClick={() => handleDeleteTrait(trait.id)}
-                              >
-                                Delete
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </div>
-                  ))}
-                  {savedTraits.length === 0 && (
-                    <div className="text-center text-gray-500 py-8">
-                      <p className="text-sm">No saved traits yet</p>
-                      <p className="text-xs mt-2">Create and save your first trait! Click on saved traits to toggle visibility.</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <SavedTraitsPanel
+              savedTraits={savedTraits}
+              traitToDelete={traitToDelete}
+              setTraitToDelete={setTraitToDelete}
+              onToggleTrait={handleToggleTrait}
+              onDownloadTrait={downloadIndividualTrait}
+              onDeleteTrait={handleDeleteTrait}
+            />
           </motion.div>
         </div>
 
@@ -764,62 +359,14 @@ const CreateTraits: React.FC = () => {
           transition={{ delay: 0.8, duration: 0.6 }}
           className="w-full max-w-4xl mx-auto"
         >
-          <Card className="p-4 sm:p-6">
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={traitName}
-                onChange={(e) => setTraitName(e.target.value)}
-                placeholder="Enter trait name..."
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                <Button
-                  onClick={handleSaveTrait}
-                  disabled={!traitName.trim()}
-                  className="flex-1 h-10"
-                  size="sm"
-                >
-                  <Save size={16} className="mr-2" />
-                  Save Trait
-                </Button>
-                <div className="flex-1 flex space-x-2">
-                  <Button
-                    onClick={handleDownloadTrait}
-                    variant="outline"
-                    className="flex-1 h-10"
-                    size="sm"
-                  >
-                    <Download size={16} className="mr-2" />
-                    {getDownloadButtonText()}
-                  </Button>
-                  {/* Download Mode Toggle */}
-                  <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg min-w-[100px] h-10">
-                    <button
-                      onClick={() => setDownloadMode('trait')}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
-                        downloadMode === 'trait'
-                          ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      Trait
-                    </button>
-                    <button
-                      onClick={() => setDownloadMode('character')}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center ${
-                        downloadMode === 'character'
-                          ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      Full
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
+          <SaveControls
+            traitName={traitName}
+            setTraitName={setTraitName}
+            downloadMode={downloadMode}
+            setDownloadMode={setDownloadMode}
+            onSaveTrait={handleSaveTrait}
+            onDownloadTrait={handleDownloadTrait}
+          />
         </motion.div>
       </div>
     </div>
