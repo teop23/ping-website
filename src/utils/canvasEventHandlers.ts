@@ -52,7 +52,7 @@ export const setupCanvasEventHandlers = (
   };
 };
 
-export const setupClipboardHandlers = (canvas: fabric.Canvas) => {
+export const setupClipboardHandlers = (canvas: fabric.Canvas, setTool?: (tool: 'select' | 'brush' | 'eraser' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve') => void) => {
   const handlePaste = async (e: ClipboardEvent) => {
     e.preventDefault();
     
@@ -91,6 +91,11 @@ export const setupClipboardHandlers = (canvas: fabric.Canvas) => {
               canvas.bringToFront(img);
               canvas.setActiveObject(img);
               canvas.renderAll();
+              
+              // Switch to select tool after pasting image
+              if (setTool) {
+                setTool('select');
+              }
             });
           };
           reader.readAsDataURL(file);

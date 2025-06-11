@@ -207,7 +207,7 @@ const CreateTraits: React.FC = () => {
   // Handle clipboard paste
   useEffect(() => {
     if (!canvas) return;
-    return setupClipboardHandlers(canvas);
+    return setupClipboardHandlers(canvas, setTool);
   }, [canvas]);
 
   // Handle window resize
