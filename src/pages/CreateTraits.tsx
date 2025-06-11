@@ -114,10 +114,6 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvas || !undoRedoManager) return;
 
-    const saveStateDelayed = () => {
-      setTimeout(() => undoRedoManager.saveState(), 100);
-    };
-
     canvas.on('text:editing:entered', () => {
       canvas.selection = false;
     });
@@ -129,20 +125,20 @@ const CreateTraits: React.FC = () => {
     
     canvas.on('object:added', () => {
       ensureProperLayering(canvas);
-      saveStateDelayed();
+      undoRedoManager.saveState();
     });
     
     canvas.on('object:removed', () => {
-      saveStateDelayed();
+      undoRedoManager.saveState();
     });
     
     canvas.on('object:modified', () => {
-      saveStateDelayed();
+      undoRedoManager.saveState();
     });
     
     canvas.on('path:created', () => {
       ensureProperLayering(canvas);
-      saveStateDelayed();
+      undoRedoManager.saveState();
     });
 
     return () => {

@@ -2,7 +2,7 @@ import { fabric } from 'fabric';
 import { safeRenderAll } from './canvasUtils';
 
 export interface CanvasState {
-  objects: unknown[];
+  objects: any[];
   timestamp: number;
 }
 
@@ -11,6 +11,7 @@ export class UndoRedoManager {
   private currentIndex: number = -1;
   private maxHistorySize: number = 50;
   private isProcessing: boolean = false;
+  private saveTimeout: NodeJS.Timeout | null = null;
 
   constructor(private canvas: fabric.Canvas) {}
 
@@ -18,10 +19,35 @@ export class UndoRedoManager {
   saveState(): void {
     if (this.isProcessing || !this.canvas) return;
 
+    // Clear any pending save operations
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+
+    // Debounce save operations to avoid too many saves
+    this.saveTimeout = setTimeout(() => {
+      this.performSave();
+    }, 100);
+  }
+
+  private performSave(): void {
+    if (this.isProcessing || !this.canvas) return;
+
     try {
-      const objects = this.canvas.getObjects().filter(obj => obj.name !== 'baseImage');
+      // Get all objects except base image and trait images
+      const objects = this.canvas.getObjects().filter(obj => 
+        obj.name !== 'baseImage' && !obj.name?.startsWith('trait-')
+      );
+      
       const state: CanvasState = {
-        objects: objects.map(obj => obj.toObject()),
+        objects: objects.map(obj => {
+          try {
+            return obj.toObject(['name', 'selectable', 'evented']);
+          } catch (error) {
+            console.warn('Error serializing object:', error);
+            return null;
+          }
+        }).filter(obj => obj !== null),
         timestamp: Date.now()
       };
 
@@ -43,7 +69,7 @@ export class UndoRedoManager {
   }
 
   // Restore a specific state
-  private restoreState(state: CanvasState): Promise<void> {
+  private async restoreState(state: CanvasState): Promise<void> {
     return new Promise((resolve) => {
       if (!this.canvas || !state || !Array.isArray(state.objects)) {
         resolve();
@@ -53,26 +79,43 @@ export class UndoRedoManager {
       this.isProcessing = true;
 
       try {
-        // Remove all objects except base image
-        const objects = this.canvas.getObjects();
-        objects.forEach(obj => {
-          if (obj.name !== 'baseImage') {
-            this.canvas.remove(obj);
-          }
+        // Remove all objects except base image and trait images
+        const objectsToRemove = this.canvas.getObjects().filter(obj => 
+          obj.name !== 'baseImage' && !obj.name?.startsWith('trait-')
+        );
+        
+        objectsToRemove.forEach(obj => {
+          this.canvas.remove(obj);
         });
 
         // Add objects from state
         if (state.objects.length > 0) {
-          fabric.util.enlivenObjects(state.objects, (objects: fabric.Object[]) => {
-            objects.forEach(obj => {
-              this.canvas.add(obj);
-            });
-            safeRenderAll(this.canvas);
+          const validObjects = state.objects.filter(obj => obj && typeof obj === 'object');
+          
+          if (validObjects.length > 0) {
+            fabric.util.enlivenObjects(validObjects, (objects: fabric.Object[]) => {
+              try {
+                objects.forEach(obj => {
+                  if (obj) {
+                    this.canvas.add(obj);
+                  }
+                });
+                this.canvas.renderAll();
+                this.isProcessing = false;
+                resolve();
+              } catch (error) {
+                console.error('Error adding objects to canvas:', error);
+                this.isProcessing = false;
+                resolve();
+              }
+            }, 'fabric');
+          } else {
+            this.canvas.renderAll();
             this.isProcessing = false;
             resolve();
-          }, 'fabric');
+          }
         } else {
-          safeRenderAll(this.canvas);
+          this.canvas.renderAll();
           this.isProcessing = false;
           resolve();
         }
@@ -86,6 +129,8 @@ export class UndoRedoManager {
 
   // Undo the last action
   async undo(): Promise<boolean> {
+    if (this.isProcessing) return false;
+    
     if (this.currentIndex > 0 && this.history[this.currentIndex - 1]) {
       this.currentIndex--;
       await this.restoreState(this.history[this.currentIndex]);
@@ -96,6 +141,8 @@ export class UndoRedoManager {
 
   // Redo the next action
   async redo(): Promise<boolean> {
+    if (this.isProcessing) return false;
+    
     if (this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1]) {
       this.currentIndex++;
       await this.restoreState(this.history[this.currentIndex]);
@@ -106,12 +153,12 @@ export class UndoRedoManager {
 
   // Check if undo is available
   canUndo(): boolean {
-    return this.currentIndex > 0 && this.history[this.currentIndex - 1] !== undefined;
+    return !this.isProcessing && this.currentIndex > 0 && this.history[this.currentIndex - 1] !== undefined;
   }
 
   // Check if redo is available
   canRedo(): boolean {
-    return this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1] !== undefined;
+    return !this.isProcessing && this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1] !== undefined;
   }
 
   // Initialize with empty state
@@ -122,6 +169,7 @@ export class UndoRedoManager {
     };
     this.history = [initialState];
     this.currentIndex = 0;
+    this.isProcessing = false;
   }
 
   // Clear all history
@@ -129,6 +177,10 @@ export class UndoRedoManager {
     this.history = [];
     this.currentIndex = -1;
     this.isProcessing = false;
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+      this.saveTimeout = null;
+    }
   }
 
   // Get current state info for debugging
