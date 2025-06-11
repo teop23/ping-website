@@ -146,6 +146,22 @@ const CreateTraits: React.FC = () => {
     
     canvas.on('path:created', () => {
       ensureProperLayering(canvas);
+      
+      // Handle eraser tool - convert the path to an eraser
+      if (tool === 'eraser') {
+        const objects = canvas.getObjects();
+        const lastPath = objects[objects.length - 1];
+        if (lastPath && lastPath.type === 'path') {
+          // Set the path to use destination-out composite operation to erase
+          lastPath.set({
+            globalCompositeOperation: 'destination-out',
+            stroke: 'rgba(0,0,0,1)',
+            fill: 'rgba(0,0,0,1)'
+          });
+          canvas.renderAll();
+        }
+      }
+      
       saveStateDelayed('Path created');
     });
 
@@ -223,11 +239,17 @@ const CreateTraits: React.FC = () => {
     }
 
     canvas.selection = tool === 'select';
-    canvas.isDrawingMode = tool === 'brush';
+    canvas.isDrawingMode = tool === 'brush' || tool === 'eraser';
     
-    if (tool === 'brush') {
+    if (tool === 'brush' || tool === 'eraser') {
       canvas.freeDrawingBrush.width = brushSize;
-      canvas.freeDrawingBrush.color = color;
+      if (tool === 'brush') {
+        canvas.freeDrawingBrush.color = color;
+      } else if (tool === 'eraser') {
+        // Set eraser mode - this makes the brush erase by setting destination-out composite operation
+        canvas.freeDrawingBrush.color = 'rgba(0,0,0,1)';
+        // We'll handle the eraser effect in the path:created event
+      }
     }
 
     switch (tool) {
@@ -235,6 +257,7 @@ const CreateTraits: React.FC = () => {
         canvas.defaultCursor = 'default';
         break;
       case 'brush':
+      case 'eraser':
         canvas.defaultCursor = 'crosshair';
         break;
       case 'text':

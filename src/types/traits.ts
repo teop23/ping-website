@@ -1,7 +1,7 @@
 import { fabric } from 'fabric';
 import { UndoRedoManager } from '../utils/undoRedoManager';
 
-export type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
+export type ToolType = 'select' | 'brush' | 'eraser' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
 
 export interface ToolsPanelProps {
   tool: ToolType;
