@@ -7,7 +7,7 @@ export const SOCIAL_LINKS = {
   TELEGRAM: "https://t.me/ping_token_official"
 };
 
-// Other constants can be added here
+// Other constants can be added heCre
 export const NETWORK = "mainnet";
 export const TOKEN_SYMBOL = "PING";
 export const TOKEN_NAME = "PING Token";

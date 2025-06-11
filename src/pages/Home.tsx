@@ -138,24 +138,7 @@ const Home: React.FC = () => {
             >
               Create Your PING
               <br />
-              <span className="relative inline-block">
-                Character
-                {/* Sparkle effect */}
-                <motion.div
-                  className="absolute -top-2 -right-2 text-yellow-400"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 180, 360],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <Sparkles size={24} />
-                </motion.div>
-              </span>
+              
             </motion.h1>
             
             {/* Glow effect behind title */}
@@ -235,30 +218,6 @@ const Home: React.FC = () => {
             <Builder />
           </motion.div>
         </div>
-
-        {/* Call to Action Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.6, duration: 0.8 }}
-          className="text-center space-y-4 max-w-2xl mx-auto"
-        >
-          <h2 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-            Ready to Get Started?
-          </h2>
-          <p className="text-muted-foreground">
-            Choose your traits, customize your character, and become part of the PING universe!
-          </p>
-          
-          {/* Animated arrow pointing to builder */}
-          <motion.div
-            className="flex justify-center mt-6"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="w-6 h-6 border-r-2 border-b-2 border-primary/60 transform rotate-45" />
-          </motion.div>
-        </motion.div>
       </motion.div>
     </div>
   );
