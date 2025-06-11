@@ -25,7 +25,10 @@ const Builder: React.FC = () => {
     const loadTraits = async () => {
       setIsLoading(true);
       try {
+        console.log('Starting trait initialization...');
         const { traits: loadedTraits, categories: loadedCategories } = await initializeTraits();
+        console.log('Traits loaded:', loadedTraits);
+        console.log('Categories loaded:', loadedCategories);
         setTraits(loadedTraits);
         setCategories(loadedCategories);
         

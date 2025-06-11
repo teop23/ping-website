@@ -1,5 +1,5 @@
 import { Trait, CategoryOption } from '../types';
-import { loadTraitsFromAssets, getAvailableCategories } from '../utils/traitLoader';
+import { loadTraitsFromAssets, loadTraitsFromAssetsDynamic, getAvailableCategories } from '../utils/traitLoader';
 
 // Default category options (will be updated based on available traits)
 export const defaultCategories: CategoryOption[] = [
@@ -21,7 +21,24 @@ let loadedCategories: CategoryOption[] = defaultCategories;
 // Function to load traits dynamically
 export const initializeTraits = async (): Promise<{ traits: Trait[], categories: CategoryOption[] }> => {
   try {
-    const traitFiles = await loadTraitsFromAssets();
+    console.log('🚀 Initializing traits...');
+    
+    // Try dynamic loading first, fall back to manual loading
+    let traitFiles = await loadTraitsFromAssetsDynamic();
+    
+    // If dynamic loading fails or returns empty, try manual loading
+    if (traitFiles.length === 0) {
+      console.log('Dynamic loading failed, trying manual loading...');
+      traitFiles = await loadTraitsFromAssets();
+    }
+    
+    // If still no traits loaded, create some demo traits using placeholders
+    if (traitFiles.length === 0) {
+      console.log('No traits found, creating demo traits with placeholders...');
+      traitFiles = createDemoTraits();
+    }
+    
+    console.log(`📦 Found ${traitFiles.length} trait files:`, traitFiles);
     
     // Convert trait files to Trait objects
     loadedTraits = traitFiles.map(traitFile => ({
@@ -74,6 +91,53 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
   }
 };
 
+// Function to create demo traits using placeholder images
+const createDemoTraits = (): any[] => {
+  return [
+    {
+      id: 'example-hat',
+      name: 'example-hat',
+      uiName: 'Example Hat',
+      category: 'head',
+      imageSrc: 'https://via.placeholder.com/100x100/FFD700/000000?text=Example+Hat'
+    },
+    {
+      id: 'cool-sunglasses',
+      name: 'cool-sunglasses',
+      uiName: 'Cool Sunglasses',
+      category: 'face',
+      imageSrc: 'https://via.placeholder.com/100x100/000000/ffffff?text=Cool+Sunglasses'
+    },
+    {
+      id: 'gold-necklace',
+      name: 'gold-necklace',
+      uiName: 'Gold Necklace',
+      category: 'body',
+      imageSrc: 'https://via.placeholder.com/100x100/FFD700/000000?text=Gold+Necklace'
+    },
+    {
+      id: 'sword',
+      name: 'sword',
+      uiName: 'Sword',
+      category: 'right_hand',
+      imageSrc: 'https://via.placeholder.com/100x100/708090/ffffff?text=Sword'
+    },
+    {
+      id: 'magic-book',
+      name: 'magic-book',
+      uiName: 'Magic Book',
+      category: 'left_hand',
+      imageSrc: 'https://via.placeholder.com/100x100/8B4513/ffffff?text=Magic+Book'
+    },
+    {
+      id: 'magic-wand',
+      name: 'magic-wand',
+      uiName: 'Magic Wand',
+      category: 'accessory',
+      imageSrc: 'https://via.placeholder.com/100x100/9400D3/ffffff?text=Magic+Wand'
+    }
+  ];
+};
 // Export current traits and categories (will be empty until initialized)
 export const traits: Trait[] = loadedTraits;
 export const categories: CategoryOption[] = loadedCategories;
