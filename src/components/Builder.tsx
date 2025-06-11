@@ -129,7 +129,7 @@ const Builder: React.FC = () => {
   }
   
   return (
-    <div className="flex items-start justify-center max-w-[1400px] mx-auto px-2 sm:px-4 py-4">
+    <div className="flex items-start justify-center max-w-[1400px] mx-auto px-1 sm:px-2 py-2">
       <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-12 w-full">
         {/* Character Preview Section */}
         <motion.div 
@@ -164,7 +164,7 @@ const Builder: React.FC = () => {
         
         {/* Controls Section */}
         <motion.div 
-          className="w-full lg:w-[400px] lg:mr-auto lg:flex-shrink-0 pb-24 sm:pb-8 space-y-6"
+          className="w-full lg:w-[400px] lg:mr-auto lg:flex-shrink-0 pb-4 sm:pb-6 space-y-4"
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
@@ -198,7 +198,7 @@ const Builder: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
             className="relative"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/5 to-indigo-600/10 rounded-2xl blur-xl -z-10 scale-105" />

@@ -116,7 +116,7 @@ const Home: React.FC = () => {
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 flex flex-col items-center justify-center gap-8 sm:gap-10 md:gap-16 p-4 pb-24 sm:pb-12 sm:py-8 md:py-16 sm:px-6"
+        className="relative z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6"
         initial={{ opacity: 0, filter: "blur(10px)" }}
         animate={{ opacity: 1, filter: "blur(0px)" }}
         transition={{ duration: 1, ease: "easeOut" }}
@@ -126,12 +126,12 @@ const Home: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-center space-y-4 sm:space-y-6 w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2 mt-8 sm:mt-4"
+          className="text-center space-y-2 sm:space-y-4 w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2"
         >
           {/* Main Title with Enhanced Styling */}
           <div className="relative">
             <motion.h1 
-              className="text-4xl sm:text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
@@ -147,7 +147,7 @@ const Home: React.FC = () => {
           
           {/* Subtitle with Animation */}
           <motion.p 
-            className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
@@ -160,7 +160,7 @@ const Home: React.FC = () => {
 
           {/* Feature Pills */}
           <motion.div
-            className="flex flex-wrap justify-center gap-3 mt-6"
+            className="flex flex-wrap justify-center gap-2 mt-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.8 }}
@@ -172,7 +172,7 @@ const Home: React.FC = () => {
             ].map((feature, index) => (
               <motion.div
                 key={feature.text}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border border-border/50 rounded-full text-sm font-medium shadow-lg"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border border-border/50 rounded-full text-xs sm:text-sm font-medium shadow-lg"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, x: -20 }}
@@ -199,7 +199,7 @@ const Home: React.FC = () => {
         </motion.div>
         
         {/* Builder Section with Enhanced Container */}
-        <div className="w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-6xl relative">
+        <div className="w-full max-w-[98vw] sm:max-w-[95vw] md:max-w-6xl relative">
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
           
@@ -207,13 +207,13 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.8 }}
-            className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl"
+            className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-2 sm:p-4 md:p-6 shadow-2xl"
           >
             {/* Decorative corner elements */}
-            <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
-            <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
-            <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
-            <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
+            <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
+            <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
+            <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
+            <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
             
             <Builder />
           </motion.div>
