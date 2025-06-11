@@ -181,11 +181,11 @@ export const saveCanvasState = (
   
   if (newHistory.length > 50) {
     newHistory.shift();
+    setCanvasHistory(newHistory);
   } else {
     setHistoryIndex(prev => prev + 1);
+    setCanvasHistory(newHistory);
   }
-  
-  setCanvasHistory(newHistory);
 };
 
 export const restoreCanvasState = (
