@@ -6,7 +6,7 @@ import { Sparkles, Zap, Star, Heart } from 'lucide-react';
 
 const Home: React.FC = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative h-full flex flex-col overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Orbs */}
@@ -116,7 +116,7 @@ const Home: React.FC = () => {
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6"
+        className="relative z-10 flex flex-col items-center justify-center gap-3 sm:gap-4 md:gap-6 p-2 sm:p-3 py-2 sm:py-3 flex-1 min-h-0"
         initial={{ opacity: 0, filter: "blur(10px)" }}
         animate={{ opacity: 1, filter: "blur(0px)" }}
         transition={{ duration: 1, ease: "easeOut" }}
@@ -126,12 +126,12 @@ const Home: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-center space-y-2 sm:space-y-4 w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2"
+          className="text-center space-y-1 sm:space-y-2 w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2"
         >
           {/* Main Title with Enhanced Styling */}
           <div className="relative">
             <motion.h1 
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
@@ -147,7 +147,7 @@ const Home: React.FC = () => {
           
           {/* Subtitle with Animation */}
           <motion.p 
-            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
@@ -160,7 +160,7 @@ const Home: React.FC = () => {
 
           {/* Feature Pills */}
           <motion.div
-            className="flex flex-wrap justify-center gap-2 mt-3"
+            className="flex flex-wrap justify-center gap-1.5 mt-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.8 }}
@@ -172,7 +172,7 @@ const Home: React.FC = () => {
             ].map((feature, index) => (
               <motion.div
                 key={feature.text}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border border-border/50 rounded-full text-xs sm:text-sm font-medium shadow-lg"
+                className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border border-border/50 rounded-full text-xs font-medium shadow-lg"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, x: -20 }}
@@ -199,7 +199,7 @@ const Home: React.FC = () => {
         </motion.div>
         
         {/* Builder Section with Enhanced Container */}
-        <div className="w-full max-w-[98vw] sm:max-w-[95vw] md:max-w-6xl relative">
+        <div className="w-full max-w-[98vw] sm:max-w-[95vw] md:max-w-6xl relative flex-1 min-h-0">
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
           
@@ -207,15 +207,17 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.8 }}
-            className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-2 sm:p-4 md:p-6 shadow-2xl"
+            className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-1 sm:p-2 md:p-3 shadow-2xl h-full flex flex-col"
           >
             {/* Decorative corner elements */}
-            <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
-            <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
-            <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
-            <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
+            <div className="absolute top-1 left-1 w-4 h-4 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
+            <div className="absolute top-1 right-1 w-4 h-4 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
+            <div className="absolute bottom-1 left-1 w-4 h-4 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
+            <div className="absolute bottom-1 right-1 w-4 h-4 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
             
-            <Builder />
+            <div className="flex-1 min-h-0">
+              <Builder />
+            </div>
           </motion.div>
         </div>
       </motion.div>

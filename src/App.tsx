@@ -7,10 +7,10 @@ import CreateTraits from './pages/CreateTraits';
 
 function App() {
   return (
-    <div className="relative size-full text-foreground flex flex-col">
+    <div className="relative h-screen text-foreground flex flex-col overflow-hidden">
       <Background />
       <Navbar className="h-16" />
-      <main className="flex flex-col flex-grow">
+      <main className="flex flex-col flex-1 min-h-0">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create-traits" element={<CreateTraits />} />
