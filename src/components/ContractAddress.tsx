@@ -42,6 +42,17 @@ const ContractAddress: React.FC = () => {
     >
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
         <CardContent className="p-3 space-y-3">
+          {/* Buy Button */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={handleBuyToken}
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
+            >
+              <ShoppingCart size={18} className="mr-2" />
+              Buy $PING
+            </Button>
+          </motion.div>
+          
           <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50">
             <div className="flex-1 min-w-0">
               <div className="font-mono text-sm text-foreground">
@@ -51,17 +62,6 @@ const ContractAddress: React.FC = () => {
             </div>
             
             <div className="flex gap-1 flex-shrink-0">
-              {/* Buy Button */}
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  onClick={handleBuyToken}
-                  className="h-8 px-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold text-xs rounded-md shadow-lg transition-all duration-300"
-                >
-                  <ShoppingCart size={12} className="mr-1" />
-                  Buy
-                </Button>
-              </motion.div>
-              
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
