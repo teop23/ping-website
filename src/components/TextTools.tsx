@@ -12,7 +12,6 @@ interface TextElement {
   y: number;
   fontSize: number;
   color: string;
-  fontWeight: string;
 }
 
 interface TextToolsProps {
@@ -24,7 +23,6 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
   const [newText, setNewText] = useState('');
   const [fontSize, setFontSize] = useState(24);
   const [textColor, setTextColor] = useState('#000000');
-  const [fontWeight, setFontWeight] = useState('normal');
   const [showColorPicker, setShowColorPicker] = useState(false);
 
   const addTextElement = () => {
@@ -37,7 +35,6 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
       y: Math.random() * 0.6 + 0.2,
       fontSize,
       color: textColor,
-      fontWeight
     };
 
     const updatedElements = [...textElements, newElement];
@@ -71,31 +68,32 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
       
       <CardContent className="space-y-3">
         {/* Compact Add Text Section */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           {/* Text Input and Color in one row */}
           <div className="flex gap-2">
             <div className="flex-1">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Text & Color</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Text & Color</label>
               <div className="flex gap-1">
                 <input
                   type="text"
                   value={newText}
                   onChange={(e) => setNewText(e.target.value)}
                   placeholder="Add text..."
-                  className="flex-1 px-2 py-1.5 text-sm border border-input rounded focus:outline-none focus:ring-1 focus:ring-ring"
+                  className="flex-1 px-3 py-2 text-sm border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
                   onKeyPress={(e) => e.key === 'Enter' && addTextElement()}
                 />
                 <div className="relative">
                   <button
-                    className="w-8 h-8 rounded border border-input flex-shrink-0"
+                    className="w-10 h-10 rounded-md border border-input flex-shrink-0 hover:border-ring transition-colors"
                     style={{ backgroundColor: textColor }}
                     onClick={() => setShowColorPicker(!showColorPicker)}
                   />
                   {showColorPicker && (
                     <div className="absolute z-10 mt-1 right-0">
-                      <div className="p-2 bg-background rounded-lg shadow-lg border">
+                      <div className="p-3 bg-background rounded-lg shadow-lg border">
                         <HexColorPicker color={textColor} onChange={setTextColor} />
-                        <div className="mt-2 mb-1">
+                        <div className="mt-3 mb-2">
+                          <label className="block text-xs font-medium text-muted-foreground mb-1">Hex Color</label>
                           <input
                             type="text"
                             value={textColor}
@@ -106,12 +104,12 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                               }
                             }}
                             placeholder="#000000"
-                            className="w-full px-2 py-1 text-xs border border-input rounded focus:outline-none focus:ring-1 focus:ring-ring font-mono"
+                            className="w-full px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring font-mono"
                             maxLength={7}
                           />
                         </div>
                         <button
-                          className="w-full px-2 py-1 text-xs bg-muted rounded hover:bg-muted/80"
+                          className="w-full px-3 py-1.5 text-xs bg-muted rounded-md hover:bg-muted/80 transition-colors"
                           onClick={() => setShowColorPicker(false)}
                         >
                           Close
@@ -123,13 +121,13 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
               </div>
             </div>
             
-            <div className="w-20">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Size</label>
+            <div className="w-24">
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Size</label>
               <div className="flex items-center gap-1">
                 <input
                   type="range"
                   min="12"
-                  max="48"
+                  max="40"
                   value={fontSize}
                   onChange={(e) => setFontSize(Number(e.target.value))}
                   className="flex-1"
@@ -138,29 +136,12 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                   onClick={addTextElement}
                   disabled={!newText.trim()}
                   size="icon"
-                  className="h-8 w-8 flex-shrink-0"
+                  className="h-10 w-10 flex-shrink-0"
                 >
-                  <Plus size={14} />
+                  <Plus size={16} />
                 </Button>
               </div>
-              <div className="text-xs text-muted-foreground text-center mt-0.5">{fontSize}px</div>
-            </div>
-          </div>
-
-          {/* Font Weight */}
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Font Weight</label>
-              <select
-                value={fontWeight}
-                onChange={(e) => setFontWeight(e.target.value)}
-                className="w-full px-2 py-1.5 text-sm border border-input rounded focus:outline-none focus:ring-1 focus:ring-ring"
-              >
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-                <option value="600">Semi Bold</option>
-                <option value="300">Light</option>
-              </select>
+              <div className="text-xs text-muted-foreground text-center mt-1">{fontSize}px</div>
             </div>
           </div>
         </div>
@@ -168,25 +149,22 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
         {/* Compact Text Elements List */}
         {textElements.length > 0 && (
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Added Text ({textElements.length})</label>
-            <div className="space-y-1 max-h-24 overflow-y-auto">
+            <label className="text-xs font-medium text-muted-foreground">Added Text</label>
+            <div className="space-y-1.5 max-h-32 overflow-y-auto">
               {textElements.map((element) => (
                 <motion.div
                   key={element.id}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
-                  className="flex items-center gap-2 p-1.5 bg-muted/30 rounded border text-xs"
+                  className="flex items-center gap-2 p-2 bg-muted/30 rounded-md border text-xs"
                 >
                   <input
                     type="text"
                     value={element.text}
                     onChange={(e) => updateTextElement(element.id, { text: e.target.value })}
                     className="flex-1 bg-transparent text-xs font-medium focus:outline-none min-w-0"
-                    style={{ 
-                      color: element.color,
-                      fontWeight: element.fontWeight
-                    }}
+                    style={{ color: element.color }}
                   />
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
                     {element.fontSize}px
@@ -195,9 +173,9 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                     variant="ghost"
                     size="icon"
                     onClick={() => removeTextElement(element.id)}
-                    className="h-5 w-5 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10"
                   >
-                    <Trash2 size={10} />
+                    <Trash2 size={12} />
                   </Button>
                 </motion.div>
               ))}
@@ -206,7 +184,7 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
         )}
 
         {textElements.length === 0 && (
-          <div className="text-center py-2 text-muted-foreground">
+          <div className="text-center py-3 text-muted-foreground">
             <p className="text-xs">Add text to customize your PING!</p>
           </div>
         )}

@@ -113,7 +113,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // Draw text elements
     textElements.forEach(textElement => {
       if (textElement.text.trim()) {
-        ctx.font = `${textElement.fontWeight} ${textElement.fontSize * (canvas.width / 500)}px Inter, Arial, sans-serif`;
+        ctx.font = `${textElement.fontSize * (canvas.width / 500)}px Inter, Arial, sans-serif`;
         ctx.fillStyle = textElement.color;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -198,7 +198,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       // Draw text elements on download canvas
       textElements.forEach(textElement => {
         if (textElement.text.trim()) {
-          downloadCtx.font = `${textElement.fontWeight} ${textElement.fontSize * (downloadCanvas.width / 500)}px Inter, Arial, sans-serif`;
+          downloadCtx.font = `${textElement.fontSize * (downloadCanvas.width / 500)}px Inter, Arial, sans-serif`;
           downloadCtx.fillStyle = textElement.color;
           downloadCtx.textAlign = 'center';
           downloadCtx.textBaseline = 'middle';
@@ -286,7 +286,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       // Draw text elements on copy canvas
       textElements.forEach(textElement => {
         if (textElement.text.trim()) {
-          copyCtx.font = `${textElement.fontWeight} ${textElement.fontSize * (copyCanvas.width / 500)}px Inter, Arial, sans-serif`;
+          copyCtx.font = `${textElement.fontSize * (copyCanvas.width / 500)}px Inter, Arial, sans-serif`;
           copyCtx.fillStyle = textElement.color;
           copyCtx.textAlign = 'center';
           copyCtx.textBaseline = 'middle';
