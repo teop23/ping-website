@@ -3,7 +3,6 @@ import { toPng } from 'html-to-image';
 import { Copy, Download, RotateCcw } from 'lucide-react';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import pingImage from '../assets/images/ping.png';
-import { placeholderTraits } from '../data/traits';
 import { Trait } from '../types';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -35,8 +34,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       
       for (const [category, trait] of Object.entries(selectedTraits)) {
         if (trait) {
-          const placeholderImage = placeholderTraits[trait.category as keyof typeof placeholderTraits]?.[trait.id];
-          const imageSrc = placeholderImage || trait.imageSrc;
+          const imageSrc = trait.imageSrc;
           
           try {
             const img = new Image();

@@ -40,57 +40,20 @@ const testImageLoad = (src: string): Promise<boolean> => {
   });
 };
 
-// Manually define available traits with their import paths
-const traitDefinitions = [
-  { filename: 'trait-example-hat_head.png', importPath: () => import('../assets/traits/trait-example-hat_head.png') },
-  { filename: 'trait-cool-sunglasses_face.png', importPath: () => import('../assets/traits/trait-cool-sunglasses_face.png') },
-  { filename: 'trait-gold-necklace_body.png', importPath: () => import('../assets/traits/trait-gold-necklace_body.png') },
-  { filename: 'trait-magic-wand_accessory.png', importPath: () => import('../assets/traits/trait-magic-wand_accessory.png') },
-  { filename: 'trait-sword_right_hand.png', importPath: () => import('../assets/traits/trait-sword_right_hand.png') },
-  { filename: 'trait-magic-book_left_hand.png', importPath: () => import('../assets/traits/trait-magic-book_left_hand.png') }
-];
-
 // Function to load traits using explicit imports
 export const loadTraitsFromAssets = async (): Promise<TraitFile[]> => {
   const traits: TraitFile[] = [];
   
   console.log('Loading traits using explicit imports...');
   
-  for (const traitDef of traitDefinitions) {
-    try {
-      const parsed = parseTraitFilename(traitDef.filename);
-      
-      if (parsed) {
-        // Try to import the trait file
-        const module = await traitDef.importPath();
-        const imageSrc = module.default;
-        
-        // Test if the image can be loaded
-        const canLoad = await testImageLoad(imageSrc);
-        
-        if (canLoad) {
-          traits.push({
-            id: parsed.name, // Use the parsed name as ID
-            name: parsed.name,
-            uiName: parsed.uiName,
-            category: parsed.category,
-            imageSrc: imageSrc
-          });
-          console.log(`✓ Loaded trait: ${parsed.uiName} (${parsed.category})`);
-        } else {
-          console.warn(`✗ Failed to load image for trait: ${traitDef.filename}`);
-        }
-      }
-    } catch (error) {
-      console.warn(`✗ Failed to import trait: ${traitDef.filename}`, error);
-    }
-  }
+  // Since we don't know what files exist, we'll return empty array
+  // This will be populated when you add actual trait files
   
   console.log(`Successfully loaded ${traits.length} traits`);
   return traits;
 };
 
-// Function to load traits using dynamic imports (fallback)
+// Function to load traits using dynamic imports
 export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
   const traits: TraitFile[] = [];
   
