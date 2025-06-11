@@ -6,7 +6,7 @@ import React from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { CategoryOption, Trait } from '../types';
 import { Card, CardContent } from './ui/card';
-import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
+import { Button } from './ui/button';
 
 interface TraitSelectorProps {
   categories: CategoryOption[];
@@ -76,61 +76,77 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   };
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
-      {/* Category tabs */}
-      <Tabs value={selectedCategory} onValueChange={(value) => onCategoryChange(value as CategoryName)}>
-        <TabsList className="w-full justify-start bg-gradient-to-r from-muted to-muted/80 overflow-x-auto">
+    <Card className="flex flex-row h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
+      {/* Left Sidebar - Categories */}
+      <div className="w-24 sm:w-28 flex-shrink-0 border-r border-border bg-gradient-to-b from-muted/50 to-muted/30">
+        <div className="p-2 space-y-1">
           {categories.map((category) => (
-            <TabsTrigger
+            <Button
               key={category.id}
-              value={category.id}
-              className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary/10 data-[state=active]:to-primary/5"
+              variant={selectedCategory === category.id ? "default" : "ghost"}
+              size="sm"
+              onClick={() => onCategoryChange(category.id as CategoryName)}
+              className={`w-full h-auto py-3 px-2 flex flex-col items-center justify-center text-xs font-medium transition-all ${
+                selectedCategory === category.id
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'hover:bg-muted/80 text-muted-foreground hover:text-foreground'
+              }`}
             >
-              {category.label}
-            </TabsTrigger>
+              <span className="text-center leading-tight">{category.label}</span>
+            </Button>
           ))}
-        </TabsList>
-      </Tabs>
+        </div>
+      </div>
 
-      {/* Traits grid */}
-      <ScrollArea className="flex-1">
-        <CardContent className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {/* Upload button */}
-          <motion.button
-            className="relative cursor-pointer rounded-lg overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background to-muted/50"
-            onClick={() => handleUpload(selectedCategory)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <div className="aspect-square bg-card flex flex-col items-center justify-center gap-2 text-muted-foreground">
-              <Upload size={24} className="text-primary/60" />
-              <span className="text-xs">Upload</span>
-            </div>
-          </motion.button>
+      {/* Right Content - Traits Grid */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Header */}
+        <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20">
+          <h3 className="text-sm font-semibold text-foreground">
+            {categories.find(c => c.id === selectedCategory)?.label || 'Traits'}
+          </h3>
+        </div>
 
-          {filteredTraits.map((trait) => {
-            const isSelected = selectedTraits[trait.category]?.id === trait.id;
+        {/* Traits Grid */}
+        <ScrollArea className="flex-1">
+          <CardContent className="p-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {/* Upload button */}
+            <motion.button
+              className="relative cursor-pointer rounded-lg overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background to-muted/50"
+              onClick={() => handleUpload(selectedCategory)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="aspect-square bg-card flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                <Upload size={20} className="text-primary/60" />
+                <span className="text-xs">Upload</span>
+              </div>
+            </motion.button>
 
-            return (
-              <TraitCard
-                key={trait.id}
-                trait={trait}
-                isSelected={isSelected}
-                imageSrc={trait.imageSrc}
-                onClick={() => onTraitSelect(trait)}
-              />
-            );
-          })}
+            {filteredTraits.map((trait) => {
+              const isSelected = selectedTraits[trait.category]?.id === trait.id;
 
-          {/* Show message if no traits available */}
-          {filteredTraits.length === 0 && (
-            <div className="col-span-full text-center py-8 text-muted-foreground">
-              <p className="text-sm">No traits available for this category</p>
-              <p className="text-xs mt-2">Upload your first trait using the upload button above!</p>
-            </div>
-          )}
-        </CardContent>
-      </ScrollArea>
+              return (
+                <TraitCard
+                  key={trait.id}
+                  trait={trait}
+                  isSelected={isSelected}
+                  imageSrc={trait.imageSrc}
+                  onClick={() => onTraitSelect(trait)}
+                />
+              );
+            })}
+
+            {/* Show message if no traits available */}
+            {filteredTraits.length === 0 && (
+              <div className="col-span-full text-center py-6 text-muted-foreground">
+                <p className="text-sm">No traits available for this category</p>
+                <p className="text-xs mt-2">Upload your first trait using the upload button above!</p>
+              </div>
+            )}
+          </CardContent>
+        </ScrollArea>
+      </div>
     </Card>
   );
 };
@@ -146,7 +162,7 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
   return (
     <motion.div
       className={`relative cursor-pointer rounded-lg overflow-hidden border ${isSelected
-        ? 'border-primary'
+        ? 'border-primary ring-2 ring-primary/20'
         : 'border-border hover:border-primary/50'
         }`}
       onClick={onClick}
@@ -171,12 +187,12 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
       {isSelected && (
         <motion.div
           className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.2 }}
         >
-          <Check size={16} />
+          <Check size={14} />
         </motion.div>
       )}
 
