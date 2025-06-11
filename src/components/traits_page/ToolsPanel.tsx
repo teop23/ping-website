@@ -85,6 +85,20 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               style={{ backgroundColor: color }}
               onClick={() => setShowColorPicker(!showColorPicker)}
             />
+            <input
+              type="text"
+              value={color}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Allow typing # and partial hex values
+                if (value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
+                  setColor(value);
+                }
+              }}
+              placeholder="#000000"
+              className="w-full mt-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
+              maxLength={7}
+            />
             {showColorPicker && (
               <div className="absolute z-10 mt-2">
                 <div className="p-3 bg-white rounded-lg shadow-lg border">
@@ -140,6 +154,20 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                   className="w-full h-6 sm:h-8 rounded border-2 border-gray-200"
                   style={{ backgroundColor: textColor }}
                   onClick={() => setShowTextColorPicker(!showTextColorPicker)}
+                />
+                <input
+                  type="text"
+                  value={textColor}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow typing # and partial hex values
+                    if (value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
+                      setTextColor(value);
+                    }
+                  }}
+                  placeholder="#000000"
+                  className="w-full mt-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
+                  maxLength={7}
                 />
                 {showTextColorPicker && (
                   <div className="absolute z-10 mt-2">
