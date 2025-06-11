@@ -514,43 +514,29 @@ interface ActionButtonProps {
 
 const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, variant, disabled, isCopying }) => {
   return (
-    <motion.div
-      animate={isCopying ? {
-        scale: [1, 1.1, 1],
-        backgroundColor: ["hsl(var(--secondary))", "hsl(142, 76%, 36%)", "hsl(142, 76%, 36%)"],
-      } : {
-        backgroundColor: "hsl(var(--secondary))"
-      }}
-      transition={{ 
-        duration: isCopying ? 0.4 : 0.2, 
-        ease: "easeInOut",
-        backgroundColor: {
-          duration: isCopying ? 1.5 : 0.2
-        }
-      }}
+    <Button
+      variant={variant}
+      onClick={onClick}
+      className={`flex items-center gap-2 transition-all duration-300 ${
+        isCopying 
+          ? 'bg-green-600 hover:bg-green-600 text-white border-green-600' 
+          : ''
+      }`}
+      disabled={disabled}
     >
-      <Button
-        variant={variant}
-        onClick={onClick}
-        className={`flex items-center gap-2 ${isCopying ? 'text-white' : ''}`}
-        disabled={disabled}
+      <motion.div
+        animate={isCopying ? {
+          scale: [1, 1.2, 1]
+        } : {}}
+        transition={{ 
+          duration: 0.3, 
+          ease: "easeInOut"
+        }}
       >
-        <motion.div
-          animate={isCopying ? {
-            scale: [1, 1.3, 1.1],
-            rotate: [0, 360]
-          } : {}}
-          transition={{ 
-            duration: 0.4, 
-            ease: "easeInOut",
-            scale: { times: [0, 0.5, 1] }
-          }}
-        >
-          {icon}
-        </motion.div>
-        <span>{isCopying ? 'Copied!' : label}</span>
-      </Button>
-    </motion.div>
+        {icon}
+      </motion.div>
+      <span>{isCopying ? 'Copied!' : label}</span>
+    </Button>
   );
 };
 
