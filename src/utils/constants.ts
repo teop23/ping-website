@@ -1,5 +1,5 @@
 // Contract addresses and other constants
-export const CONTRACT_ADDRESS = "7pMhzqKpkrqzQjjVjTsVqGhXbFkuKpkrqzQjjVjTsVqG"; // Example Solana address
+export const CONTRACT_ADDRESS = "TO BE ANNOUNCED"; // Example Solana address
 
 // Social media links
 export const SOCIAL_LINKS = {
