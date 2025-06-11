@@ -7,6 +7,7 @@ interface Blob {
   angle: number;
   velocity: number;
   opacity: number;
+  hue: number;
 }
 
 const Background: React.FC = () => {
@@ -27,41 +28,52 @@ const Background: React.FC = () => {
     window.addEventListener('resize', handleResize);
     handleResize();
 
-    // Create animated blobs
-    const blobs: Blob[] = Array.from({ length: 3 }, () => ({
+    // Create animated blobs with colors
+    const blobs: Blob[] = Array.from({ length: 4 }, (_, i) => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      radius: Math.random() * 400 + 300,
+      radius: Math.random() * 300 + 200,
       angle: Math.random() * Math.PI * 2,
-      velocity: 0.0002,
-      opacity: Math.random() * 0.03 + 0.01
+      velocity: 0.0003 + Math.random() * 0.0002,
+      opacity: Math.random() * 0.02 + 0.01,
+      hue: i * 90 + Math.random() * 60 // Different hues for each blob
     }));
 
     const animate = () => {
       requestAnimationFrame(animate);
       
-      // Clear with solid background
-      ctx.fillStyle = '#ffffff';
+      // Clear with gradient background
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, '#ffffff');
+      gradient.addColorStop(0.5, '#fafafa');
+      gradient.addColorStop(1, '#f8fafc');
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Update and draw blobs
-      blobs.forEach(blob => {
-        // Orbital movement
+      blobs.forEach((blob, index) => {
+        // Orbital movement with different patterns
         blob.angle += blob.velocity;
-        const orbitRadius = Math.min(canvas.width, canvas.height) * 0.2;
-        blob.x = canvas.width/2 + Math.cos(blob.angle) * orbitRadius;
-        blob.y = canvas.height/2 + Math.sin(blob.angle) * orbitRadius;
+        const orbitRadius = Math.min(canvas.width, canvas.height) * (0.15 + index * 0.05);
+        const centerX = canvas.width / 2 + Math.sin(blob.angle * 0.5) * 100;
+        const centerY = canvas.height / 2 + Math.cos(blob.angle * 0.3) * 50;
+        
+        blob.x = centerX + Math.cos(blob.angle) * orbitRadius;
+        blob.y = centerY + Math.sin(blob.angle) * orbitRadius;
 
-        // Draw with extreme blur
+        // Draw with colorful blur
         ctx.save();
-        ctx.filter = 'blur(150px)';
+        ctx.filter = 'blur(120px)';
         
         const blobGradient = ctx.createRadialGradient(
           blob.x, blob.y, 0,
           blob.x, blob.y, blob.radius
         );
-        blobGradient.addColorStop(0, `rgba(0, 0, 0, ${blob.opacity})`);
-        blobGradient.addColorStop(0.6, `rgba(0, 0, 0, ${blob.opacity * 0.3})`);
+        
+        // Create HSL color with the blob's hue
+        const color = `hsl(${blob.hue}, 70%, 60%)`;
+        blobGradient.addColorStop(0, `hsla(${blob.hue}, 70%, 60%, ${blob.opacity})`);
+        blobGradient.addColorStop(0.6, `hsla(${blob.hue}, 70%, 60%, ${blob.opacity * 0.3})`);
         blobGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = blobGradient;
@@ -84,7 +96,7 @@ const Background: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full -z-10 pointer-events-none"
-      style={{ opacity: 0.5 }}
+      style={{ opacity: 0.6 }}
     />
   );
 };
