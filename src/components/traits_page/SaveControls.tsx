@@ -45,37 +45,39 @@ const SaveControls: React.FC<SaveControlsProps> = ({
             <Save size={16} className="mr-2" />
             Save Trait
           </Button>
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 items-center">
             <Button
               onClick={onDownloadTrait}
               variant="outline"
-              className="flex-1 h-10"
+              className="flex-1 h-10 text-xs px-2"
               size="sm"
             >
               <Download size={16} className="mr-2" />
-              {getDownloadButtonText()}
+              Download
             </Button>
-            {/* Download Mode Toggle */}
-            <div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-lg w-20 h-10">
+            {/* Compact Download Mode Toggle */}
+            <div className="flex items-center p-0.5 bg-gray-100 rounded-lg h-10 flex-shrink-0">
               <button
                 onClick={() => setDownloadMode('trait')}
-                className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center flex-1 ${
+                className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
                   downloadMode === 'trait'
                     ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
+                title="Download trait only"
               >
-                Trait
+                T
               </button>
               <button
                 onClick={() => setDownloadMode('character')}
-                className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-8 flex items-center justify-center flex-1 ${
+                className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
                   downloadMode === 'character'
                     ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
+                title="Download full character"
               >
-                Full
+                F
               </button>
             </div>
           </div>
