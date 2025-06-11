@@ -36,11 +36,7 @@ const ContractAddress: React.FC = () => {
       className="w-full max-w-lg mx-auto"
     >
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
-        <CardContent className="p-4 space-y-3">
-          <div className="text-center">
-            <h3 className="text-sm font-semibold text-foreground mb-1">Contract Address</h3>
-            <p className="text-xs text-muted-foreground">PING Token on Solana</p>
-          </div>
+        <CardContent className="p-2 space-y-3">
           
           <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50">
             <div className="flex-1 min-w-0">
