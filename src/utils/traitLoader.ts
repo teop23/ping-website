@@ -4,12 +4,13 @@
 export interface TraitFile {
   id: string;
   name: string;
+  uiName: string;
   category: string;
   imageSrc: string;
 }
 
 // Function to extract trait info from filename
-export const parseTraitFilename = (filename: string): { name: string; category: string } | null => {
+export const parseTraitFilename = (filename: string): { name: string; uiName: string; category: string } | null => {
   // Remove file extension
   const nameWithoutExt = filename.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '');
   
@@ -18,8 +19,10 @@ export const parseTraitFilename = (filename: string): { name: string; category: 
   
   if (match) {
     const [, name, category] = match;
+    const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Convert kebab-case to Title Case
     return {
-      name: name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), // Convert kebab-case to Title Case
+      name: name, // Keep original kebab-case for ID matching
+      uiName: uiName, // Human-readable name for UI
       category: category.toLowerCase()
     };
   }
@@ -49,6 +52,7 @@ export const loadTraitsFromAssets = async (): Promise<TraitFile[]> => {
           traits.push({
             id: filename.replace(/\.(png|jpg|jpeg|gif|webp)$/i, ''), // Use filename without extension as ID
             name: parsed.name,
+            uiName: parsed.uiName,
             category: parsed.category,
             imageSrc: url as string
           });

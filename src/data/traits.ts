@@ -26,7 +26,7 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
     // Convert trait files to Trait objects
     loadedTraits = traitFiles.map(traitFile => ({
       id: traitFile.id,
-      name: traitFile.name,
+      name: traitFile.uiName, // Use the UI-friendly name
       category: traitFile.category as any,
       imageSrc: traitFile.imageSrc
     }));
@@ -34,7 +34,24 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
     // Get available categories from loaded traits
     const availableCategories = getAvailableCategories(traitFiles);
     
-    // Create category options, using defaults where available
+    // Always use the default categories in the specified order
+    // Only include categories that have traits OR show all default categories
+    loadedCategories = defaultCategories.filter(defaultCategory => {
+      // Always show all categories regardless of whether they have traits
+      return true;
+    });
+    
+    // Alternative: Only show categories that have traits
+    // loadedCategories = defaultCategories.filter(defaultCategory => {
+    //   return availableCategories.includes(defaultCategory.id);
+    // });
+    
+    // If no specific filtering is needed, just use all default categories
+    if (loadedCategories.length === 0) {
+      loadedCategories = defaultCategories;
+    }
+    
+    /* Old logic - replaced with above
     loadedCategories = availableCategories.map(categoryId => {
       const defaultCategory = defaultCategories.find(cat => cat.id === categoryId);
       return defaultCategory || {
@@ -42,11 +59,7 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
         label: categoryId.charAt(0).toUpperCase() + categoryId.slice(1)
       };
     });
-    
-    // If no traits were loaded, fall back to default categories
-    if (loadedCategories.length === 0) {
-      loadedCategories = defaultCategories;
-    }
+    */
     
     console.log('Traits initialized:', { 
       traitsCount: loadedTraits.length, 
