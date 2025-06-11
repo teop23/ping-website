@@ -118,12 +118,12 @@ const CreateTraits: React.FC = () => {
       setTimeout(() => undoRedoManager.saveState(), 100);
     };
 
-    fabricCanvas.on('text:editing:entered', () => {
-      fabricCanvas.selection = false;
+    canvas.on('text:editing:entered', () => {
+      canvas.selection = false;
     });
     
-    fabricCanvas.on('text:editing:exited', () => {
-      fabricCanvas.selection = tool === 'select';
+    canvas.on('text:editing:exited', () => {
+      canvas.selection = tool === 'select';
       undoRedoManager.saveState();
     });
     
