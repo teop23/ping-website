@@ -124,14 +124,22 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
             <div className="w-24">
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Size</label>
               <div className="flex items-center gap-1">
-                <input
-                  type="range"
-                  min="12"
-                  max="40"
+                <select
                   value={fontSize}
                   onChange={(e) => setFontSize(Number(e.target.value))}
-                  className="flex-1"
-                />
+                  className="flex-1 px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring bg-background"
+                >
+                  <option value={12}>12px</option>
+                  <option value={14}>14px</option>
+                  <option value={16}>16px</option>
+                  <option value={18}>18px</option>
+                  <option value={20}>20px</option>
+                  <option value={24}>24px</option>
+                  <option value={28}>28px</option>
+                  <option value={32}>32px</option>
+                  <option value={36}>36px</option>
+                  <option value={40}>40px</option>
+                </select>
                 <Button
                   onClick={addTextElement}
                   disabled={!newText.trim()}
@@ -141,7 +149,6 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                   <Plus size={16} />
                 </Button>
               </div>
-              <div className="text-xs text-muted-foreground text-center mt-1">{fontSize}px</div>
             </div>
           </div>
         </div>
