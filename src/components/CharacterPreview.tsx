@@ -152,7 +152,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       downloadCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
       // Draw traits in order
-      const traitOrder = ['body', 'face', 'head', 'accessory'];
+      const traitOrder = ['body', 'face', 'head', 'right_hand', 'left_hand', 'accessory'];
       
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];
@@ -212,7 +212,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
       copyCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
       // Draw traits in order
-      const traitOrder = ['body', 'face', 'head', 'accessory'];
+      const traitOrder = ['body', 'face', 'head', 'right_hand', 'left_hand', 'accessory'];
       
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];

@@ -85,9 +85,18 @@ export const placeholderTraits = {
     'tie': 'https://via.placeholder.com/100x100/FF0000/ffffff?text=Tie',
     'hoodie': 'https://via.placeholder.com/100x100/4169E1/ffffff?text=Hoodie'
   },
+  right_hand: {
+    'sword': 'https://via.placeholder.com/100x100/708090/ffffff?text=Sword',
+    'shield': 'https://via.placeholder.com/100x100/8B4513/ffffff?text=Shield',
+    'hammer': 'https://via.placeholder.com/100x100/696969/ffffff?text=Hammer'
+  },
+  left_hand: {
+    'book': 'https://via.placeholder.com/100x100/8B4513/ffffff?text=Book',
+    'potion': 'https://via.placeholder.com/100x100/9932CC/ffffff?text=Potion',
+    'orb': 'https://via.placeholder.com/100x100/4169E1/ffffff?text=Orb'
+  },
   accessory: {
     'wand': 'https://via.placeholder.com/100x100/9400D3/ffffff?text=Wand',
-    'sword': 'https://via.placeholder.com/100x100/708090/ffffff?text=Sword',
     'skateboard': 'https://via.placeholder.com/100x100/A52A2A/ffffff?text=Skateboard',
     'flame': 'https://via.placeholder.com/100x100/FF4500/000000?text=Flame'
   }
