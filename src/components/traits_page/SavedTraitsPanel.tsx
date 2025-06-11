@@ -43,14 +43,14 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
           {savedTraits.map((trait) => (
             <div
               key={trait.id}
-              className={`flex flex-row items-center p-2 sm:p-3 rounded-lg transition-colors cursor-pointer ${
+              className={`flex flex-row items-center p-2 sm:p-3 rounded-lg transition-colors cursor-pointer w-full ${
                 trait.isVisible 
                   ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
                   : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
               }`}
             >
               <div 
-                className="flex items-center space-x-3 cursor-pointer flex-1"
+                className="flex items-center space-x-3 cursor-pointer flex-1 min-w-0"
                 onClick={() => onToggleTrait(trait)}
               >
                 <img
@@ -67,7 +67,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                   </span>
                 </div>
               </div>
-              <div className="flex items-center space-x-2 ml-2">
+              <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${trait.isVisible ? 'bg-green-400' : 'bg-gray-300'}`} />
                 <Button
                   variant="ghost"
@@ -76,7 +76,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                     e.stopPropagation();
                     onDownloadTrait(trait);
                   }}
-                  className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50 flex-shrink-0"
+                  className="h-7 w-7 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50 flex-shrink-0"
                 >
                   <Download size={12} className="sm:w-4 sm:h-4" />
                 </Button>
@@ -89,7 +89,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                         e.stopPropagation();
                         confirmDeleteTrait(trait.id);
                       }}
-                      className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
+                      className="h-7 w-7 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
                     >
                       <Trash2 size={12} className="sm:w-4 sm:h-4" />
                     </Button>
