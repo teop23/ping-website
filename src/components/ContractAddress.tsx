@@ -41,19 +41,10 @@ const ContractAddress: React.FC = () => {
       className="w-full max-w-lg mx-auto"
     >
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
-        <CardContent className="p-3 space-y-3">
-          {/* Buy Button */}
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              onClick={handleBuyToken}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
-            >
-              <ShoppingCart size={18} className="mr-2" />
-              Buy $PING
-            </Button>
-          </motion.div>
-          
-          <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-3">
+            {/* Contract Address Box */}
+            <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50 flex-1">
             <div className="flex-1 min-w-0">
               <div className="font-mono text-sm text-foreground">
                 <span className="hidden sm:inline whitespace-nowrap">{CONTRACT_ADDRESS}</span>
@@ -100,6 +91,18 @@ const ContractAddress: React.FC = () => {
                 </Button>
               </motion.div>
             </div>
+          </div>
+            
+            {/* Buy Button */}
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                onClick={handleBuyToken}
+                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 whitespace-nowrap"
+              >
+                <ShoppingCart size={18} className="mr-2" />
+                Buy $PING
+              </Button>
+            </motion.div>
           </div>
           
           {isCopied && (
