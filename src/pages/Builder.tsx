@@ -100,6 +100,7 @@ const Builder: React.FC = () => {
           <CharacterPreview
             selectedTraits={selectedTraits}
             textElements={textElements}
+            onTextElementsChange={handleTextElementsChange}
             onReset={handleReset}
           />
         </div>
