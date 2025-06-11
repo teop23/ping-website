@@ -1,10 +1,5 @@
 import { fabric } from 'fabric';
 
-export interface CanvasState {
-  objects: unknown[];
-  timestamp: number;
-}
-
 export const BASE_IMAGE_SCALE_MULTIPLIER = 1.4;
 
 // Safe canvas rendering with error handling
@@ -157,67 +152,6 @@ export const updateLoadedTraitsScale = (
       scaleY: scaleY
     });
   });
-};
-
-export const saveCanvasState = (
-  canvas: fabric.Canvas,
-  canvasHistory: CanvasState[],
-  historyIndex: number,
-  setCanvasHistory: (history: CanvasState[]) => void,
-  setHistoryIndex: (callback: (prev: number) => number) => void,
-  isUndoing: boolean,
-  isRedoing: boolean
-) => {
-  if (!canvas || isUndoing || isRedoing) return;
-  
-  const objects = canvas.getObjects().filter(obj => obj.name !== 'baseImage');
-  const state: CanvasState = {
-    objects: objects.map(obj => obj.toObject()),
-    timestamp: Date.now()
-  };
-  
-  const newHistory = canvasHistory.slice(0, historyIndex + 1);
-  newHistory.push(state);
-  
-  if (newHistory.length > 50) {
-    newHistory.shift();
-    // When we remove the first element, we need to adjust the index
-    setCanvasHistory(newHistory);
-    // Don't increment the index since we removed an element
-  } else {
-    setCanvasHistory(newHistory);
-    setHistoryIndex(prev => prev + 1);
-  }
-};
-
-export const restoreCanvasState = (
-  canvas: fabric.Canvas,
-  state: CanvasState,
-  setIsUndoing: (value: boolean) => void
-) => {
-  if (!canvas || !state || !state.objects) return;
-  
-  setIsUndoing(true);
-  
-  const objects = canvas.getObjects();
-  objects.forEach(obj => {
-    if (obj.name !== 'baseImage') {
-      canvas.remove(obj);
-    }
-  });
-  
-  if (state.objects.length > 0) {
-    fabric.util.enlivenObjects(state.objects, (objects: fabric.Object[]) => {
-      objects.forEach(obj => {
-        canvas.add(obj);
-      });
-      safeRenderAll(canvas);
-      setTimeout(() => setIsUndoing(false), 100);
-    }, 'fabric');
-  } else {
-    safeRenderAll(canvas);
-    setTimeout(() => setIsUndoing(false), 100);
-  }
 };
 
 export const ensureProperLayering = (canvas: fabric.Canvas) => {

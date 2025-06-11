@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { CanvasState } from '../utils/canvasUtils';
+import { UndoRedoManager } from '../utils/undoRedoManager';
 
 export type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
 
@@ -19,9 +19,7 @@ export interface ToolsPanelProps {
   showTextColorPicker: boolean;
   setShowTextColorPicker: (show: boolean) => void;
   curvePoints: { x: number; y: number }[];
-  canvas: fabric.Canvas | null;
-  historyIndex: number;
-  canvasHistory: CanvasState[];
+  undoRedoManager: UndoRedoManager | null;
   showBaseLayer: boolean;
   onToggleBaseLayer: () => void;
   onUploadImage: () => void;

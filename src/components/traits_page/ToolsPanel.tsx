@@ -22,9 +22,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   showTextColorPicker,
   setShowTextColorPicker,
   curvePoints,
-  canvas,
-  historyIndex,
-  canvasHistory,
+  undoRedoManager,
   showBaseLayer,
   onToggleBaseLayer,
   onUploadImage,
@@ -235,7 +233,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               onClick={onUndo} 
               variant="outline" 
               size="sm"
-              disabled={historyIndex <= 0}
+              disabled={!undoRedoManager?.canUndo()}
             >
               <Undo size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
               Undo
@@ -246,7 +244,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
             variant="outline" 
             size="sm" 
             className="w-full"
-            disabled={historyIndex >= canvasHistory.length - 1}
+            disabled={!undoRedoManager?.canRedo()}
           >
             <RotateCw size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
             Redo

@@ -8,12 +8,10 @@ import {
   setupBaseImage, 
   updateBaseImageScale, 
   updateLoadedTraitsScale,
-  saveCanvasState,
-  restoreCanvasState,
   ensureProperLayering,
-  safeRenderAll,
-  type CanvasState
+  safeRenderAll
 } from '../utils/canvasUtils';
+import { UndoRedoManager } from '../utils/undoRedoManager';
 import { 
   uploadImage, 
   deleteSelected, 
@@ -43,11 +41,8 @@ const CreateTraits: React.FC = () => {
   const [savedTraits, setSavedTraits] = useState<SavedTrait[]>([]);
   const [loadedTraits, setLoadedTraits] = useState<Map<string, fabric.Image>>(new Map());
   
-  // Undo/Redo state
-  const [canvasHistory, setCanvasHistory] = useState<CanvasState[]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-  const [isRedoing, setIsRedoing] = useState(false);
-  const [isUndoing, setIsUndoing] = useState(false);
+  // Undo/Redo manager
+  const [undoRedoManager, setUndoRedoManager] = useState<UndoRedoManager | null>(null);
   
   // Drawing properties
   const [color, setColor] = useState('#000000');
@@ -98,43 +93,14 @@ const CreateTraits: React.FC = () => {
     setupBaseImage(fabricCanvas, pingImage, (img) => {
       setBaseImage(img);
       
-      // Save initial state
+      // Initialize undo/redo manager
+      const manager = new UndoRedoManager(fabricCanvas);
+      manager.initialize();
+      setUndoRedoManager(manager);
+      
       setTimeout(() => {
-        const initialState: CanvasState = {
-          objects: [],
-          timestamp: Date.now()
-        };
-        setCanvasHistory([initialState]);
-        setHistoryIndex(0);
+        manager.saveState();
       }, 100);
-    });
-
-    // Canvas event handlers for saving state
-    fabricCanvas.on('text:editing:entered', () => {
-      fabricCanvas.selection = false;
-    });
-    
-    fabricCanvas.on('text:editing:exited', () => {
-      fabricCanvas.selection = tool === 'select';
-      saveCanvasState(fabricCanvas, canvasHistory, historyIndex, setCanvasHistory, setHistoryIndex, isUndoing, isRedoing);
-    });
-    
-    fabricCanvas.on('object:added', () => {
-      ensureProperLayering(fabricCanvas);
-      setTimeout(() => saveCanvasState(fabricCanvas, canvasHistory, historyIndex, setCanvasHistory, setHistoryIndex, isUndoing, isRedoing), 100);
-    });
-    
-    fabricCanvas.on('object:removed', () => {
-      setTimeout(() => saveCanvasState(fabricCanvas, canvasHistory, historyIndex, setCanvasHistory, setHistoryIndex, isUndoing, isRedoing), 100);
-    });
-    
-    fabricCanvas.on('object:modified', () => {
-      setTimeout(() => saveCanvasState(fabricCanvas, canvasHistory, historyIndex, setCanvasHistory, setHistoryIndex, isUndoing, isRedoing), 100);
-    });
-    
-    fabricCanvas.on('path:created', () => {
-      ensureProperLayering(fabricCanvas);
-      setTimeout(() => saveCanvasState(fabricCanvas, canvasHistory, historyIndex, setCanvasHistory, setHistoryIndex, isUndoing, isRedoing), 100);
     });
 
     setCanvas(fabricCanvas);
@@ -143,6 +109,51 @@ const CreateTraits: React.FC = () => {
       fabricCanvas.dispose();
     };
   }, []);
+
+  // Setup canvas event handlers for undo/redo
+  useEffect(() => {
+    if (!canvas || !undoRedoManager) return;
+
+    const saveStateDelayed = () => {
+      setTimeout(() => undoRedoManager.saveState(), 100);
+    };
+
+    fabricCanvas.on('text:editing:entered', () => {
+      fabricCanvas.selection = false;
+    });
+    
+    fabricCanvas.on('text:editing:exited', () => {
+      fabricCanvas.selection = tool === 'select';
+      undoRedoManager.saveState();
+    });
+    
+    canvas.on('object:added', () => {
+      ensureProperLayering(canvas);
+      saveStateDelayed();
+    });
+    
+    canvas.on('object:removed', () => {
+      saveStateDelayed();
+    });
+    
+    canvas.on('object:modified', () => {
+      saveStateDelayed();
+    });
+    
+    canvas.on('path:created', () => {
+      ensureProperLayering(canvas);
+      saveStateDelayed();
+    });
+
+    return () => {
+      canvas.off('text:editing:entered');
+      canvas.off('text:editing:exited');
+      canvas.off('object:added');
+      canvas.off('object:removed');
+      canvas.off('object:modified');
+      canvas.off('path:created');
+    };
+  }, [canvas, undoRedoManager, tool]);
 
   // Handle canvas click events
   useEffect(() => {
@@ -240,21 +251,15 @@ const CreateTraits: React.FC = () => {
     safeRenderAll(canvas);
   }, [showBaseLayer, baseImage, canvas]);
 
-  const undo = () => {
-    if (historyIndex > 0 && canvasHistory[historyIndex - 1]) {
-      const newIndex = historyIndex - 1;
-      setHistoryIndex(newIndex);
-      restoreCanvasState(canvas!, canvasHistory[newIndex], setIsUndoing);
+  const undo = async () => {
+    if (undoRedoManager) {
+      await undoRedoManager.undo();
     }
   };
 
-  const redo = () => {
-    if (historyIndex < canvasHistory.length - 1 && canvasHistory[historyIndex + 1]) {
-      setIsRedoing(true);
-      const newIndex = historyIndex + 1;
-      setHistoryIndex(newIndex);
-      restoreCanvasState(canvas!, canvasHistory[newIndex], setIsUndoing);
-      setTimeout(() => setIsRedoing(false), 100);
+  const redo = async () => {
+    if (undoRedoManager) {
+      await undoRedoManager.redo();
     }
   };
 
@@ -299,9 +304,7 @@ const CreateTraits: React.FC = () => {
           showTextColorPicker={showTextColorPicker}
           setShowTextColorPicker={setShowTextColorPicker}
           curvePoints={curvePoints}
-          canvas={canvas}
-          historyIndex={historyIndex}
-          canvasHistory={canvasHistory}
+          undoRedoManager={undoRedoManager}
           showBaseLayer={showBaseLayer}
           onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
           onUploadImage={() => uploadImage(canvas!)}
