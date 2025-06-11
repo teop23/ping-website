@@ -39,6 +39,10 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
       imageSrc: traitFile.imageSrc
     }));
     
+    // Log categories found for debugging
+    const foundCategories = [...new Set(loadedTraits.map(t => t.category))];
+    console.log('📂 Categories found:', foundCategories);
+    
     // Always show all default categories regardless of whether they have traits
     loadedCategories = defaultCategories;
     

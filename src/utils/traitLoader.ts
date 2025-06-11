@@ -15,7 +15,8 @@ export const parseTraitFilename = (filename: string): { name: string; uiName: st
   const nameWithoutExt = filename.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '');
   
   // Check if it follows the pattern: trait-{name}_{category}
-  const match = nameWithoutExt.match(/^trait-(.+)_(.+)$/);
+  // Updated regex to handle categories with underscores (like right_hand, left_hand)
+  const match = nameWithoutExt.match(/^trait-(.+)_(head|face|body|right_hand|left_hand|accessory)$/);
   
   if (match) {
     const [, name, category] = match;
@@ -23,7 +24,7 @@ export const parseTraitFilename = (filename: string): { name: string; uiName: st
     return {
       name: name, // Keep original kebab-case for ID matching
       uiName: uiName, // Human-readable name for UI
-      category: category.toLowerCase()
+      category: category // Keep exact category match (already lowercase in regex)
     };
   }
   
