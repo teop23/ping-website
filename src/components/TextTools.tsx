@@ -58,119 +58,120 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Type size={18} className="text-primary" />
+    <Card className="w-full shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95">
+      <CardHeader className="pb-3 px-4 pt-4">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+          <Type size={16} className="text-primary" />
           Text Tools
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="space-y-3">
+      <CardContent className="px-4 pb-4 space-y-3">
         {/* Compact Add Text Section */}
-        <div className="space-y-3">
-          {/* Text Input and Color in one row */}
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Text & Color</label>
-              <div className="flex gap-1">
-                <input
-                  type="text"
-                  value={newText}
-                  onChange={(e) => setNewText(e.target.value)}
-                  placeholder="Add text..."
-                  className="flex-1 px-3 py-2 text-sm border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                  onKeyPress={(e) => e.key === 'Enter' && addTextElement()}
+        <div className="space-y-2">
+          {/* Text Input Row */}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Text & Color</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newText}
+                onChange={(e) => setNewText(e.target.value)}
+                placeholder="Add text..."
+                className="flex-1 px-2 py-1.5 text-sm border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring min-w-0"
+                onKeyPress={(e) => e.key === 'Enter' && addTextElement()}
+              />
+              <div className="relative">
+                <button
+                  className="w-8 h-8 rounded-md border border-input flex-shrink-0 hover:border-ring transition-colors"
+                  style={{ backgroundColor: textColor }}
+                  onClick={() => setShowColorPicker(!showColorPicker)}
                 />
-                <div className="relative">
-                  <button
-                    className="w-10 h-10 rounded-md border border-input flex-shrink-0 hover:border-ring transition-colors"
-                    style={{ backgroundColor: textColor }}
-                    onClick={() => setShowColorPicker(!showColorPicker)}
-                  />
-                  {showColorPicker && (
-                    <div className="absolute z-10 mt-1 right-0">
-                      <div className="p-3 bg-background rounded-lg shadow-lg border">
+                {showColorPicker && (
+                  <div className="absolute z-20 mt-1 right-0">
+                    <div className="p-2 bg-background rounded-lg shadow-lg border">
+                      <div className="w-48">
                         <HexColorPicker color={textColor} onChange={setTextColor} />
-                        <div className="mt-3 mb-2">
-                          <label className="block text-xs font-medium text-muted-foreground mb-1">Hex Color</label>
-                          <input
-                            type="text"
-                            value={textColor}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              if (value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
-                                setTextColor(value);
-                              }
-                            }}
-                            placeholder="#000000"
-                            className="w-full px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring font-mono"
-                            maxLength={7}
-                          />
-                        </div>
-                        <button
-                          className="w-full px-3 py-1.5 text-xs bg-muted rounded-md hover:bg-muted/80 transition-colors"
-                          onClick={() => setShowColorPicker(false)}
-                        >
-                          Close
-                        </button>
                       </div>
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          value={textColor}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
+                              setTextColor(value);
+                            }
+                          }}
+                          placeholder="#000000"
+                          className="w-full px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring font-mono"
+                          maxLength={7}
+                        />
+                      </div>
+                      <button
+                        className="w-full mt-2 px-2 py-1 text-xs bg-muted rounded-md hover:bg-muted/80 transition-colors"
+                        onClick={() => setShowColorPicker(false)}
+                      >
+                        Close
+                      </button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
-            
-            <div className="w-24">
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Size</label>
-              <div className="flex items-center gap-1">
-                <select
-                  value={fontSize}
-                  onChange={(e) => setFontSize(Number(e.target.value))}
-                  className="flex-1 px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring bg-background"
-                >
-                  <option value={12}>12px</option>
-                  <option value={14}>14px</option>
-                  <option value={16}>16px</option>
-                  <option value={18}>18px</option>
-                  <option value={20}>20px</option>
-                  <option value={24}>24px</option>
-                  <option value={28}>28px</option>
-                  <option value={32}>32px</option>
-                  <option value={36}>36px</option>
-                  <option value={40}>40px</option>
-                </select>
-                <Button
-                  onClick={addTextElement}
-                  disabled={!newText.trim()}
-                  size="icon"
-                  className="h-10 w-10 flex-shrink-0"
-                >
-                  <Plus size={16} />
-                </Button>
-              </div>
+          </div>
+          
+          {/* Size and Add Button Row */}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Size</label>
+            <div className="flex gap-2">
+              <select
+                value={fontSize}
+                onChange={(e) => setFontSize(Number(e.target.value))}
+                className="flex-1 px-2 py-1.5 text-sm border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring bg-background"
+              >
+                <option value={12}>12px</option>
+                <option value={14}>14px</option>
+                <option value={16}>16px</option>
+                <option value={18}>18px</option>
+                <option value={20}>20px</option>
+                <option value={24}>24px</option>
+                <option value={28}>28px</option>
+                <option value={32}>32px</option>
+                <option value={36}>36px</option>
+                <option value={40}>40px</option>
+              </select>
+              <Button
+                onClick={addTextElement}
+                disabled={!newText.trim()}
+                size="sm"
+                className="px-3 h-8 flex-shrink-0"
+              >
+                <Plus size={14} className="mr-1" />
+                Add
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Compact Text Elements List */}
+        {/* Text Elements List */}
         {textElements.length > 0 && (
           <div className="space-y-1">
             <label className="text-xs font-medium text-muted-foreground">Added Text</label>
-            <div className="space-y-1.5 max-h-32 overflow-y-auto">
+            <div className="space-y-1 max-h-24 overflow-y-auto">
               {textElements.map((element) => (
                 <motion.div
                   key={element.id}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
-                  className="flex items-center gap-2 p-2 bg-muted/30 rounded-md border text-xs"
+                  className="flex items-center gap-2 p-1.5 bg-muted/30 rounded-md border"
                 >
                   <input
                     type="text"
                     value={element.text}
                     onChange={(e) => updateTextElement(element.id, { text: e.target.value })}
-                    className="flex-1 bg-transparent text-xs font-medium focus:outline-none min-w-0"
+                    className="flex-1 bg-transparent text-xs font-medium focus:outline-none min-w-0 px-1"
                     style={{ color: element.color }}
                   />
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
@@ -180,9 +181,9 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                     variant="ghost"
                     size="icon"
                     onClick={() => removeTextElement(element.id)}
-                    className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="h-5 w-5 text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
                   >
-                    <Trash2 size={12} />
+                    <Trash2 size={10} />
                   </Button>
                 </motion.div>
               ))}
@@ -191,7 +192,7 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
         )}
 
         {textElements.length === 0 && (
-          <div className="text-center py-3 text-muted-foreground">
+          <div className="text-center py-2 text-muted-foreground">
             <p className="text-xs">Add text to customize your PING!</p>
           </div>
         )}
