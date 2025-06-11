@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import React from 'react';
 import Builder from './Builder';
+import ContractAddress from '../components/ContractAddress';
 
 const Home: React.FC = () => {
   return (
@@ -23,6 +24,9 @@ const Home: React.FC = () => {
           Customize your unique PING character with different traits and join the community.
         </p>
       </motion.div>
+      
+      {/* Contract Address Section */}
+      <ContractAddress />
       
       <div className="w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-6xl">
         <motion.div
