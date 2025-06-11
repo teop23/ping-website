@@ -14,18 +14,18 @@ export interface TraitFile {
 // Function to extract trait info from filename
 export const parseTraitFilename = (filename: string): { name: string; uiName: string; category: string } | null => {
   // Remove file extension
-  const nameWithoutExt = filename.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '');
+  const nameWithoutExt = filename.replace(/\.png$/i, '');
   
   // Build regex pattern dynamically from defaultCategories
   const categoryIds = defaultCategories.map(cat => cat.id).join('|');
   const regex = new RegExp(`^trait-(.+)_(${categoryIds})$`);
-  
   // Check if it follows the pattern: trait-{name}_{category}
   const match = nameWithoutExt.match(regex);
   
   if (match) {
     const [, name, category] = match;
     const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Convert kebab-case to Title Case
+    console.log(`Parsed trait: ${name} (UI: ${uiName}, Category: ${category})`);
     return {
       name: name, // Keep original kebab-case for ID matching
       uiName: uiName, // Human-readable name for UI
@@ -61,11 +61,7 @@ export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
   const traits: TraitFile[] = [];
   
   try {
-    // Use Vite's import.meta.glob to get all trait files
-    const traitModules = import.meta.glob('/src/assets/traits/trait-*_*.{png,jpg,jpeg,gif,webp}', { 
-      eager: true,
-      as: 'url'
-    });
+    const traitModules = import.meta.glob('../assets/traits/*.png', { eager: true, import: 'default' }) as Record<string, string>;
     
     console.log(`🎨 Found ${Object.keys(traitModules).length} trait files`);
     
