@@ -4,7 +4,7 @@ import TraitSelector from '../components/TraitSelector';
 import { initializeTraits } from '../data/traits';
 import { Trait, CategoryOption } from '../types';
 
-export type CategoryName = 'head' | 'face' | 'body' | 'accessory';
+export type CategoryName = 'head' | 'face' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
 
 const Builder: React.FC = () => {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -14,6 +14,8 @@ const Builder: React.FC = () => {
     head: null,
     face: null,
     body: null,
+    right_hand: null,
+    left_hand: null,
     accessory: null
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +70,8 @@ const Builder: React.FC = () => {
       head: null,
       face: null,
       body: null,
+      right_hand: null,
+      left_hand: null,
       accessory: null
     });
   };

@@ -91,7 +91,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
     ctx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
     // Draw traits in the same order as CreateTraits: body → face → head → accessory
-    const traitOrder = ['body', 'face', 'head', 'accessory'];
+    const traitOrder = ['body', 'face', 'head', 'right_hand', 'left_hand', 'accessory'];
     
     traitOrder.forEach(category => {
       const trait = selectedTraits[category];

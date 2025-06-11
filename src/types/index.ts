@@ -5,7 +5,7 @@ export interface Trait {
   imageSrc: string;
 }
 
-export type TraitCategory = 'head' | 'face' | 'body' | 'accessory';
+export type TraitCategory = 'head' | 'face' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
 
 export interface CategoryOption {
   id: TraitCategory;

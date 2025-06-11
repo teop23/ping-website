@@ -29,6 +29,8 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
     head: [],
     face: [],
     body: [],
+    right_hand: [],
+    left_hand: [],
     accessory: []
   });
 

@@ -6,6 +6,8 @@ export const defaultCategories: CategoryOption[] = [
   { id: 'head', label: 'Head' },
   { id: 'face', label: 'Face' },
   { id: 'body', label: 'Body' },
+  { id: 'right_hand', label: 'Right Hand' },
+  { id: 'left_hand', label: 'Left Hand' },
   { id: 'accessory', label: 'Accessory' }
 ];
 
