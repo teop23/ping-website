@@ -6,7 +6,7 @@ import { Sparkles, Zap, Star, Heart } from 'lucide-react';
 
 const Home: React.FC = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative h-full overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Orbs */}
@@ -51,72 +51,11 @@ const Home: React.FC = () => {
             delay: 2
           }}
         />
-
-        {/* Floating Icons */}
-        <motion.div
-          className="absolute top-32 right-1/4 text-purple-400/30"
-          animate={{
-            y: [0, -10, 0],
-            rotate: [0, 10, 0],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          <Sparkles size={24} />
-        </motion.div>
-        <motion.div
-          className="absolute bottom-1/3 right-10 text-blue-400/30"
-          animate={{
-            y: [0, 15, 0],
-            rotate: [0, -15, 0],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1.5
-          }}
-        >
-          <Zap size={20} />
-        </motion.div>
-        <motion.div
-          className="absolute top-1/2 left-16 text-pink-400/30"
-          animate={{
-            y: [0, -12, 0],
-            rotate: [0, 20, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.5
-          }}
-        >
-          <Star size={18} />
-        </motion.div>
-        <motion.div
-          className="absolute bottom-20 right-1/3 text-yellow-400/30"
-          animate={{
-            y: [0, 8, 0],
-            rotate: [0, -10, 0],
-          }}
-          transition={{
-            duration: 7,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2.5
-          }}
-        >
-          <Heart size={16} />
-        </motion.div>
       </div>
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6"
+        className="relative h-full z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6"
         initial={{ opacity: 0, filter: "blur(10px)" }}
         animate={{ opacity: 1, filter: "blur(0px)" }}
         transition={{ duration: 1, ease: "easeOut" }}
@@ -130,7 +69,7 @@ const Home: React.FC = () => {
         >
           {/* Main Title with Enhanced Styling */}
           <div className="relative">
-            <motion.h1 
+            <motion.h1
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -138,15 +77,15 @@ const Home: React.FC = () => {
             >
               Create Your PING
               <br />
-              
+
             </motion.h1>
-            
+
             {/* Glow effect behind title */}
             <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 blur-3xl -z-10 scale-110" />
           </div>
-          
+
           {/* Subtitle with Animation */}
-          <motion.p 
+          <motion.p
             className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -185,7 +124,7 @@ const Home: React.FC = () => {
             ))}
           </motion.div>
         </motion.div>
-        
+
         {/* Contract Address Section with Enhanced Styling */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -197,12 +136,12 @@ const Home: React.FC = () => {
           {/* Subtle glow effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-600/10 blur-2xl -z-10 scale-110" />
         </motion.div>
-        
+
         {/* Builder Section with Enhanced Container */}
         <div className="w-full max-w-[98vw] sm:max-w-[95vw] md:max-w-6xl relative">
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
-          
+
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -214,7 +153,7 @@ const Home: React.FC = () => {
             <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
             <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
             <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
-            
+
             <Builder />
           </motion.div>
         </div>
