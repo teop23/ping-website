@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Copy, Check, ExternalLink } from 'lucide-react';
+import { Copy, Check, ExternalLink, ShoppingCart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { CONTRACT_ADDRESS } from '../utils/constants';
+import { CONTRACT_ADDRESS, BUY_LINK } from '../utils/constants';
 
 const ContractAddress: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
@@ -23,6 +23,11 @@ const ContractAddress: React.FC = () => {
     window.open(`https://explorer.solana.com/address/${CONTRACT_ADDRESS}`, '_blank');
   };
 
+  const handleBuyToken = () => {
+    // Open buy link in new tab
+    window.open(BUY_LINK, '_blank');
+  };
+
   const formatAddress = (address: string) => {
     if (address.length <= 12) return address;
     return `${address.slice(0, 6)}...${address.slice(-6)}`;
@@ -36,7 +41,18 @@ const ContractAddress: React.FC = () => {
       className="w-full max-w-lg mx-auto"
     >
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
-        <CardContent className="p-2 space-y-3">
+        <CardContent className="p-3 space-y-3">
+          
+          {/* Buy Button */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={handleBuyToken}
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
+            >
+              <ShoppingCart size={18} className="mr-2" />
+              Buy $PING
+            </Button>
+          </motion.div>
           
           <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50">
             <div className="flex-1 min-w-0">
