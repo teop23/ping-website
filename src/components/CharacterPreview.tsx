@@ -17,6 +17,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
   const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
   const [traitImages, setTraitImages] = useState<Map<string, HTMLImageElement>>(new Map());
 
@@ -186,6 +187,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
   const handleCopy = async () => {
     if (!baseImage) return;
     
+    setIsCopying(true);
     setIsLoading(true);
     try {
       // Create a high-resolution canvas for copying
@@ -232,13 +234,17 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
             await navigator.clipboard.write([
               new ClipboardItem({ 'image/png': blob })
             ]);
+            // Keep the animation visible for a moment to show success
+            setTimeout(() => setIsCopying(false), 300);
           } catch (err) {
             console.error('Failed to copy image: ', err);
+            setIsCopying(false);
           }
         }
       }, 'image/png');
     } catch (error) {
       console.error('Error copying image:', error);
+      setIsCopying(false);
     } finally {
       setIsLoading(false);
     }
@@ -275,6 +281,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
             onClick={handleCopy} 
             variant="secondary"
             disabled={isLoading}
+            isCopying={isCopying}
           />
         </motion.div>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -297,19 +304,36 @@ interface ActionButtonProps {
   onClick: () => void;
   variant: 'default' | 'secondary' | 'outline';
   disabled?: boolean;
+  isCopying?: boolean;
 }
 
-const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, variant, disabled }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, variant, disabled, isCopying }) => {
   return (
-    <Button
-      variant={variant}
-      onClick={onClick}
-      className="flex items-center gap-2"
-      disabled={disabled}
+    <motion.div
+      animate={isCopying ? {
+        scale: [1, 1.1, 1],
+        backgroundColor: ["hsl(var(--secondary))", "hsl(142, 76%, 36%)", "hsl(var(--secondary))"],
+      } : {}}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
     >
-      {icon}
-      <span>{label}</span>
-    </Button>
+      <Button
+        variant={variant}
+        onClick={onClick}
+        className="flex items-center gap-2"
+        disabled={disabled}
+      >
+        <motion.div
+          animate={isCopying ? {
+            rotate: [0, 10, -10, 0],
+            scale: [1, 1.2, 1]
+          } : {}}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          {icon}
+        </motion.div>
+        <span>{isCopying ? 'Copied!' : label}</span>
+      </Button>
+    </motion.div>
   );
 };
 
