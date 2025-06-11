@@ -12,13 +12,12 @@ export class UndoRedoManager {
   private maxHistorySize: number = 50;
   private isProcessing: boolean = false;
   private saveTimeout: NodeJS.Timeout | null = null;
-  private isUndoRedoOperation: boolean = false; // Flag to prevent saving during undo/redo
 
   constructor(private canvas: fabric.Canvas) {}
 
   // Save the current canvas state
   saveState(): void {
-    if (this.isProcessing || !this.canvas || this.isUndoRedoOperation) return;
+    if (this.isProcessing || !this.canvas) return;
 
     // Clear any pending save operations
     if (this.saveTimeout) {
@@ -28,11 +27,11 @@ export class UndoRedoManager {
     // Debounce save operations to avoid too many saves
     this.saveTimeout = setTimeout(() => {
       this.performSave();
-    }, 100);
+    }, 50);
   }
 
   private performSave(): void {
-    if (this.isProcessing || !this.canvas || this.isUndoRedoOperation) return;
+    if (this.isProcessing || !this.canvas) return;
 
     try {
       // Get all objects except base image and trait images
@@ -52,6 +51,14 @@ export class UndoRedoManager {
         timestamp: Date.now()
       };
 
+      // Only save if the state is actually different from the current one
+      if (this.currentIndex >= 0 && this.history[this.currentIndex]) {
+        const currentState = this.history[this.currentIndex];
+        if (JSON.stringify(currentState.objects) === JSON.stringify(state.objects)) {
+          return; // No changes, don't save
+        }
+      }
+
       // Remove any states after current index (when user made changes after undo)
       this.history = this.history.slice(0, this.currentIndex + 1);
       
@@ -64,6 +71,8 @@ export class UndoRedoManager {
         this.history.shift();
         this.currentIndex = this.history.length - 1;
       }
+
+      console.log('State saved. History length:', this.history.length, 'Current index:', this.currentIndex);
     } catch (error) {
       console.error('Error saving canvas state:', error);
     }
@@ -78,7 +87,6 @@ export class UndoRedoManager {
       }
 
       this.isProcessing = true;
-      this.isUndoRedoOperation = true; // Prevent saving during restore
 
       try {
         // Remove all objects except base image and trait images
@@ -104,38 +112,26 @@ export class UndoRedoManager {
                 });
                 this.canvas.renderAll();
                 this.isProcessing = false;
-                // Reset the flag after a short delay to allow canvas events to settle
-                setTimeout(() => {
-                  this.isUndoRedoOperation = false;
-                }, 200);
                 resolve();
               } catch (error) {
                 console.error('Error adding objects to canvas:', error);
                 this.isProcessing = false;
-                this.isUndoRedoOperation = false;
                 resolve();
               }
             }, 'fabric');
           } else {
             this.canvas.renderAll();
             this.isProcessing = false;
-            setTimeout(() => {
-              this.isUndoRedoOperation = false;
-            }, 200);
             resolve();
           }
         } else {
           this.canvas.renderAll();
           this.isProcessing = false;
-          setTimeout(() => {
-            this.isUndoRedoOperation = false;
-          }, 200);
           resolve();
         }
       } catch (error) {
         console.error('Error restoring canvas state:', error);
         this.isProcessing = false;
-        this.isUndoRedoOperation = false;
         resolve();
       }
     });
@@ -146,8 +142,10 @@ export class UndoRedoManager {
     if (this.isProcessing) return false;
     
     if (this.currentIndex > 0 && this.history[this.currentIndex - 1]) {
+      console.log('Undoing. Current index:', this.currentIndex, 'Moving to:', this.currentIndex - 1);
       this.currentIndex--;
       await this.restoreState(this.history[this.currentIndex]);
+      console.log('Undo complete. New index:', this.currentIndex, 'Can redo:', this.canRedo());
       return true;
     }
     return false;
@@ -158,8 +156,10 @@ export class UndoRedoManager {
     if (this.isProcessing) return false;
     
     if (this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1]) {
+      console.log('Redoing. Current index:', this.currentIndex, 'Moving to:', this.currentIndex + 1);
       this.currentIndex++;
       await this.restoreState(this.history[this.currentIndex]);
+      console.log('Redo complete. New index:', this.currentIndex, 'Can redo:', this.canRedo());
       return true;
     }
     return false;
@@ -167,12 +167,14 @@ export class UndoRedoManager {
 
   // Check if undo is available
   canUndo(): boolean {
-    return !this.isProcessing && this.currentIndex > 0 && this.history[this.currentIndex - 1] !== undefined;
+    const result = !this.isProcessing && this.currentIndex > 0 && this.history[this.currentIndex - 1] !== undefined;
+    return result;
   }
 
   // Check if redo is available
   canRedo(): boolean {
-    return !this.isProcessing && this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1] !== undefined;
+    const result = !this.isProcessing && this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1] !== undefined;
+    return result;
   }
 
   // Initialize with empty state
@@ -184,7 +186,7 @@ export class UndoRedoManager {
     this.history = [initialState];
     this.currentIndex = 0;
     this.isProcessing = false;
-    this.isUndoRedoOperation = false;
+    console.log('UndoRedoManager initialized');
   }
 
   // Clear all history
@@ -192,7 +194,6 @@ export class UndoRedoManager {
     this.history = [];
     this.currentIndex = -1;
     this.isProcessing = false;
-    this.isUndoRedoOperation = false;
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
       this.saveTimeout = null;
