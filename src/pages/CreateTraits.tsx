@@ -152,11 +152,9 @@ const CreateTraits: React.FC = () => {
         const objects = canvas.getObjects();
         const lastPath = objects[objects.length - 1];
         if (lastPath && lastPath.type === 'path') {
-          // Set the path to use destination-out composite operation to erase
+          // Create an eraser path that erases to white/transparent
           lastPath.set({
-            globalCompositeOperation: 'destination-out',
-            stroke: 'rgba(0,0,0,1)',
-            fill: 'rgba(0,0,0,1)'
+            globalCompositeOperation: 'destination-out'
           });
           canvas.renderAll();
         }
@@ -246,9 +244,8 @@ const CreateTraits: React.FC = () => {
       if (tool === 'brush') {
         canvas.freeDrawingBrush.color = color;
       } else if (tool === 'eraser') {
-        // Set eraser mode - this makes the brush erase by setting destination-out composite operation
-        canvas.freeDrawingBrush.color = 'rgba(0,0,0,1)';
-        // We'll handle the eraser effect in the path:created event
+        // Set eraser color to white - the globalCompositeOperation will handle the erasing
+        canvas.freeDrawingBrush.color = '#FFFFFF';
       }
     }
 
