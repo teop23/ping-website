@@ -1,12 +1,7 @@
-export interface BasicTrait {
+export interface Trait {
   id: string;
   name: string;
-  path: string;
   category: TraitCategory;
-}
-
-// Legacy interface for compatibility
-export interface Trait extends BasicTrait {
   imageSrc: string;
 }
 

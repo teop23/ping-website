@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
 import TraitSelector from '../components/TraitSelector';
-import { categories, traits } from '../data/traits';
+import { initializeTraits } from '../data/traits';
 import { Trait, CategoryOption } from '../types';
 
 export type CategoryName = 'head' | 'face' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
 
 const Builder: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryName>(categories[0].id as CategoryName);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [traits, setTraits] = useState<Trait[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryName>('head');
   const [selectedTraits, setSelectedTraits] = useState<Record<string, Trait | null>>({
     head: null,
     face: null,
@@ -16,6 +18,30 @@ const Builder: React.FC = () => {
     left_hand: null,
     accessory: null
   });
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Load traits on component mount
+  useEffect(() => {
+    const loadTraits = async () => {
+      setIsLoading(true);
+      try {
+        const { traits: loadedTraits, categories: loadedCategories } = await initializeTraits();
+        setTraits(loadedTraits);
+        setCategories(loadedCategories);
+        
+        // Set the first available category as selected
+        if (loadedCategories.length > 0) {
+          setSelectedCategory(loadedCategories[0].id as CategoryName);
+        }
+      } catch (error) {
+        console.error('Error loading traits:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadTraits();
+  }, []);
   
   const handleCategoryChange = (category: CategoryName) => {
     setSelectedCategory(category);
@@ -49,6 +75,17 @@ const Builder: React.FC = () => {
       accessory: null
     });
   };
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center max-w-[1400px] mx-auto px-2 sm:px-4 py-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading traits...</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="flex items-start justify-center max-w-[1400px] mx-auto px-2 sm:px-4 py-4">
