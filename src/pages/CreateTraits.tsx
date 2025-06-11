@@ -153,9 +153,21 @@ const CreateTraits: React.FC = () => {
         const lastPath = objects[objects.length - 1];
         if (lastPath && lastPath.type === 'path') {
           // Create an eraser path that erases to white/transparent
-          lastPath.set({
-            globalCompositeOperation: 'destination-out'
+          // Remove the path and create a proper eraser effect
+          canvas.remove(lastPath);
+          
+          // Create a white path that covers the erased area
+          const eraserPath = new fabric.Path(lastPath.path, {
+            fill: '',
+            stroke: '#FFFFFF',
+            strokeWidth: lastPath.strokeWidth,
+            globalCompositeOperation: 'source-over',
+            selectable: true,
+            evented: true,
+            name: 'eraserPath'
           });
+          
+          canvas.add(eraserPath);
           canvas.renderAll();
         }
       }
