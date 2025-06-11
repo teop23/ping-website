@@ -1,6 +1,6 @@
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff } from 'lucide-react';
+import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff, Eraser } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import ToolButton from '../ToolButton';
@@ -34,6 +34,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   const tools = [
     { type: 'select' as ToolType, icon: 'MousePointer', label: 'Select' },
     { type: 'brush' as ToolType, icon: 'Palette', label: 'Brush' },
+    { type: 'eraser' as ToolType, icon: 'Eraser', label: 'Eraser' },
     { type: 'text' as ToolType, icon: 'Type', label: 'Text' },
     { type: 'rectangle' as ToolType, icon: 'Square', label: 'Rectangle' },
     { type: 'circle' as ToolType, icon: 'Circle', label: 'Circle' },
@@ -47,6 +48,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
     const icons: { [key: string]: React.ElementType } = {
       MousePointer,
       Palette,
+      Eraser,
       Type,
       Square,
       Circle,
@@ -64,7 +66,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
       </CardHeader>
       <CardContent className="space-y-2 sm:space-y-3 flex-1 overflow-y-auto">
         {/* Tool Selection */}
-        <div className="grid grid-cols-2 gap-1 sm:gap-2">
+        <div className="grid grid-cols-3 gap-1 sm:gap-2">
           {tools.map((toolItem) => (
             <ToolButton
               key={toolItem.type}
@@ -119,9 +121,11 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
         </div>
 
         {/* Brush Size */}
-        {(tool === 'brush' || tool === 'line' || tool === 'curve') && (
+        {(tool === 'brush' || tool === 'eraser' || tool === 'line' || tool === 'curve') && (
           <div className="space-y-1">
-            <label className="text-xs sm:text-sm font-medium">Brush Size: {brushSize}px</label>
+            <label className="text-xs sm:text-sm font-medium">
+              {tool === 'eraser' ? 'Eraser' : 'Brush'} Size: {brushSize}px
+            </label>
             <input
               type="range"
               min="1"
