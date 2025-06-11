@@ -52,7 +52,7 @@ export const setupCanvasEventHandlers = (
   };
 };
 
-export const setupClipboardHandlers = (canvas: fabric.Canvas, setTool?: (tool: 'select' | 'brush' | 'eraser' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve') => void) => {
+export const setupClipboardHandlers = (canvas: fabric.Canvas, setTool?: (tool: ToolType) => void) => {
   const handlePaste = async (e: ClipboardEvent) => {
     e.preventDefault();
     
@@ -94,6 +94,7 @@ export const setupClipboardHandlers = (canvas: fabric.Canvas, setTool?: (tool: '
               
               // Switch to select tool after pasting image
               if (setTool) {
+                console.log('Switching to select tool after paste');
                 setTool('select');
               }
             });
