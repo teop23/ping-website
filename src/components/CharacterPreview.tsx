@@ -136,7 +136,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         ctx.shadowOffsetY = 0;
       }
     });
-  }, [baseImage, traitImages, selectedTraits]);
   }, [baseImage, traitImages, selectedTraits, textElements]);
 
   // Render canvas when dependencies change
