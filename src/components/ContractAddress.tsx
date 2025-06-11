@@ -33,30 +33,30 @@ const ContractAddress: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4, duration: 0.7 }}
-      className="w-full max-w-md mx-auto"
+      className="w-full max-w-2xl mx-auto"
     >
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
-        <CardContent className="p-4 space-y-3">
+        <CardContent className="p-6 space-y-4">
           <div className="text-center">
             <h3 className="text-sm font-semibold text-foreground mb-1">Contract Address</h3>
             <p className="text-xs text-muted-foreground">PING Token on Solana</p>
           </div>
           
-          <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50">
+          <div className="flex items-center gap-3 p-4 bg-background/50 rounded-lg border border-border/50">
             <div className="flex-1 min-w-0">
-              <div className="font-mono text-sm text-foreground break-all">
-                <span className="hidden sm:inline">{CONTRACT_ADDRESS}</span>
-                <span className="sm:hidden">{formatAddress(CONTRACT_ADDRESS)}</span>
+              <div className="font-mono text-sm text-foreground">
+                <span className="hidden md:inline whitespace-nowrap">{CONTRACT_ADDRESS}</span>
+                <span className="md:hidden break-all">{formatAddress(CONTRACT_ADDRESS)}</span>
               </div>
             </div>
             
-            <div className="flex gap-1 flex-shrink-0">
+            <div className="flex gap-2 flex-shrink-0">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={handleCopy}
-                  className={`h-8 w-8 transition-all duration-300 ${
+                  className={`h-9 w-9 transition-all duration-300 ${
                     isCopied 
                       ? 'bg-green-600 hover:bg-green-600 text-white border-green-600' 
                       : 'hover:bg-primary/10 hover:border-primary/50'
@@ -72,7 +72,7 @@ const ContractAddress: React.FC = () => {
                       ease: "easeInOut"
                     }}
                   >
-                    {isCopied ? <Check size={14} /> : <Copy size={14} />}
+                    {isCopied ? <Check size={16} /> : <Copy size={16} />}
                   </motion.div>
                 </Button>
               </motion.div>
@@ -82,10 +82,10 @@ const ContractAddress: React.FC = () => {
                   variant="outline"
                   size="icon"
                   onClick={handleViewOnExplorer}
-                  className="h-8 w-8 hover:bg-primary/10 hover:border-primary/50"
+                  className="h-9 w-9 hover:bg-primary/10 hover:border-primary/50"
                   title="View on Solana Explorer"
                 >
-                  <ExternalLink size={14} />
+                  <ExternalLink size={16} />
                 </Button>
               </motion.div>
             </div>
