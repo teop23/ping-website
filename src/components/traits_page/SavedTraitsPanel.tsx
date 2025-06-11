@@ -33,12 +33,12 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
 
   return (
     <Card className="flex-1 overflow-hidden flex flex-col max-h-[400px]">
-      <CardHeader className="flex-shrink-0">
+      <CardHeader className="p-2 flex-shrink-0">
         <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
       </CardHeader>
       <CardContent className="p-0 flex-1 overflow-hidden">
         <div className="h-full overflow-y-auto">
-          <div className="p-2 sm:p-4 space-y-2">
+          <div className="pt-1 px-1 pb-2 space-y-2">
             {savedTraits.map((trait) => (
               <div
                 key={trait.id}
