@@ -1,7 +1,8 @@
 import { Trait, CategoryOption } from '../types';
+import { loadTraitsFromAssets, getAvailableCategories } from '../utils/traitLoader';
 
-// Category options
-export const categories: CategoryOption[] = [
+// Default category options (will be updated based on available traits)
+export const defaultCategories: CategoryOption[] = [
   { id: 'head', label: 'Head' },
   { id: 'face', label: 'Face' },
   { id: 'body', label: 'Body' },
@@ -11,108 +12,58 @@ export const categories: CategoryOption[] = [
 // Base character
 export const baseCharacterImage = './assets/images/ping.png';
 
-// Trait data
-export const traits: Trait[] = [
-  // Head traits
-  {
-    id: 'yellow-bandana',
-    name: 'Yellow Bandana',
-    category: 'head',
-    imageSrc: '/images/traits/head/yellow-bandana.png'
-  },
-  {
-    id: 'green-cap',
-    name: 'Green Cap',
-    category: 'head',
-    imageSrc: '/images/traits/head/green-cap.png'
-  },
-  {
-    id: 'wizard-hat',
-    name: 'Wizard Hat',
-    category: 'head',
-    imageSrc: '/images/traits/head/wizard-hat.png'
-  },
-  {
-    id: 'party-hat',
-    name: 'Party Hat',
-    category: 'head',
-    imageSrc: '/images/traits/head/party-hat.png'
-  },
-  {
-    id: 'devil-horns',
-    name: 'Devil Horns',
-    category: 'head',
-    imageSrc: '/images/traits/head/devil-horns.png'
-  },
-  
-  // Face traits
-  {
-    id: 'cool-glasses',
-    name: 'Cool Glasses',
-    category: 'face',
-    imageSrc: '/images/traits/face/cool-glasses.png'
-  },
-  {
-    id: 'eye-patch',
-    name: 'Eye Patch',
-    category: 'face',
-    imageSrc: '/images/traits/face/eye-patch.png'
-  },
-  {
-    id: 'monocle',
-    name: 'Monocle',
-    category: 'face',
-    imageSrc: '/images/traits/face/monocle.png'
-  },
-  
-  // Body traits
-  {
-    id: 'gold-chain',
-    name: 'Gold Chain',
-    category: 'body',
-    imageSrc: '/images/traits/body/gold-chain.png'
-  },
-  {
-    id: 'tie',
-    name: 'Tie',
-    category: 'body',
-    imageSrc: '/images/traits/body/tie.png'
-  },
-  {
-    id: 'hoodie',
-    name: 'Hoodie',
-    category: 'body',
-    imageSrc: '/images/traits/body/hoodie.png'
-  },
-  
-  // Accessory traits
-  {
-    id: 'wand',
-    name: 'Wand',
-    category: 'accessory',
-    imageSrc: '/images/traits/accessory/wand.png'
-  },
-  {
-    id: 'sword',
-    name: 'Sword',
-    category: 'accessory',
-    imageSrc: '/images/traits/accessory/sword.png'
-  },
-  {
-    id: 'skateboard',
-    name: 'Skateboard',
-    category: 'accessory',
-    imageSrc: '/images/traits/accessory/skateboard.png'
-  },
-  {
-    id: 'flame',
-    name: 'Flame',
-    category: 'accessory',
-    imageSrc: '/images/traits/accessory/flame.png'
-  }
-];
+// Dynamic traits loaded from assets folder
+let loadedTraits: Trait[] = [];
+let loadedCategories: CategoryOption[] = defaultCategories;
 
-// Placeholder images for the MVP version since we don't have the actual trait images
+// Function to load traits dynamically
+export const initializeTraits = async (): Promise<{ traits: Trait[], categories: CategoryOption[] }> => {
+  try {
+    const traitFiles = await loadTraitsFromAssets();
+    
+    // Convert trait files to Trait objects
+    loadedTraits = traitFiles.map(traitFile => ({
+      id: traitFile.id,
+      name: traitFile.name,
+      category: traitFile.category as any,
+      imageSrc: traitFile.imageSrc
+    }));
+    
+    // Get available categories from loaded traits
+    const availableCategories = getAvailableCategories(traitFiles);
+    
+    // Create category options, using defaults where available
+    loadedCategories = availableCategories.map(categoryId => {
+      const defaultCategory = defaultCategories.find(cat => cat.id === categoryId);
+      return defaultCategory || {
+        id: categoryId as any,
+        label: categoryId.charAt(0).toUpperCase() + categoryId.slice(1)
+      };
+    });
+    
+    // If no traits were loaded, fall back to default categories
+    if (loadedCategories.length === 0) {
+      loadedCategories = defaultCategories;
+    }
+    
+    console.log('Traits initialized:', { 
+      traitsCount: loadedTraits.length, 
+      categories: loadedCategories.map(c => c.id) 
+    });
+    
+    return { traits: loadedTraits, categories: loadedCategories };
+  } catch (error) {
+    console.error('Error initializing traits:', error);
+    // Fall back to defaults
+    return { traits: [], categories: defaultCategories };
+  }
+};
+
+// Export current traits and categories (will be empty until initialized)
+export const traits: Trait[] = loadedTraits;
+export const categories: CategoryOption[] = loadedCategories;
+
+// Placeholder images for fallback (when no actual trait files are available)
 export const placeholderTraits = {
   baseCharacter: 'https://via.placeholder.com/300x400/654321/ffffff?text=Base+Character',
   head: {

@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Check, Upload } from 'lucide-react';
 import React from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
-import { placeholderTraits } from '../data/traits';
 import { CategoryOption, Trait } from '../types';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
@@ -35,7 +34,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
   // Filter traits by the selected category, including uploaded traits
   const filteredTraits = [
-    ...uploadedTraits[selectedCategory as keyof typeof uploadedTraits],
+    ...uploadedTraits[selectedCategory as keyof typeof uploadedTraits] || [],
     ...traits.filter(trait => trait.category === selectedCategory)
   ];
 
@@ -53,7 +52,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           traitImg.onload = () => {
             const uploadedTrait: Trait = {
               id: `uploaded-${Date.now()}`,
-              name: 'Uploaded Trait',
+              name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
               category: category as any,
               imageSrc: imageSrc,
             };
@@ -61,7 +60,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
             // Add the uploaded trait to our state
             setUploadedTraits(prev => ({
               ...prev,
-              [category]: [...prev[category as keyof typeof prev], uploadedTrait]
+              [category]: [...(prev[category as keyof typeof prev] || []), uploadedTrait]
             }));
 
             // Select the newly uploaded trait
@@ -79,7 +78,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   return (
     <Card className="flex flex-col h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
       {/* Category tabs */}
-      <Tabs value={selectedCategory} onValueChange={() => onCategoryChange(selectedCategory as CategoryName)}>
+      <Tabs value={selectedCategory} onValueChange={(value) => onCategoryChange(value as CategoryName)}>
         <TabsList className="w-full justify-start bg-gradient-to-r from-muted to-muted/80 overflow-x-auto">
           {categories.map((category) => (
             <TabsTrigger
@@ -110,8 +109,6 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           </motion.button>
 
           {filteredTraits.map((trait) => {
-            // Get placeholder image for this trait
-            const placeholderImage = placeholderTraits[trait.category as keyof typeof placeholderTraits]?.[trait.id];
             const isSelected = selectedTraits[trait.category]?.id === trait.id;
 
             return (
@@ -119,11 +116,19 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                 key={trait.id}
                 trait={trait}
                 isSelected={isSelected}
-                imageSrc={placeholderImage || trait.imageSrc}
+                imageSrc={trait.imageSrc}
                 onClick={() => onTraitSelect(trait)}
               />
             );
           })}
+
+          {/* Show message if no traits available */}
+          {filteredTraits.length === 0 && (
+            <div className="col-span-full text-center py-8 text-muted-foreground">
+              <p className="text-sm">No traits available for this category</p>
+              <p className="text-xs mt-2">Upload your first trait using the upload button above!</p>
+            </div>
+          )}
         </CardContent>
       </ScrollArea>
     </Card>
@@ -155,6 +160,11 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
           alt={trait.name}
           className={`w-full h-full object-contain p-2 transition-transform duration-200 ${isSelected ? 'scale-95' : ''
             }`}
+          onError={(e) => {
+            // Fallback to a placeholder if image fails to load
+            const target = e.target as HTMLImageElement;
+            target.src = `https://via.placeholder.com/100x100/9CA3AF/ffffff?text=${encodeURIComponent(trait.name)}`;
+          }}
         />
       </div>
 
