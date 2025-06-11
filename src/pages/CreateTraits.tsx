@@ -241,7 +241,7 @@ const CreateTraits: React.FC = () => {
   }, [showBaseLayer, baseImage, canvas]);
 
   const undo = () => {
-    if (historyIndex > 0) {
+    if (historyIndex > 0 && canvasHistory[historyIndex - 1]) {
       const newIndex = historyIndex - 1;
       setHistoryIndex(newIndex);
       restoreCanvasState(canvas!, canvasHistory[newIndex], setIsUndoing);
@@ -249,7 +249,7 @@ const CreateTraits: React.FC = () => {
   };
 
   const redo = () => {
-    if (historyIndex < canvasHistory.length - 1) {
+    if (historyIndex < canvasHistory.length - 1 && canvasHistory[historyIndex + 1]) {
       setIsRedoing(true);
       const newIndex = historyIndex + 1;
       setHistoryIndex(newIndex);

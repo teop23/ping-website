@@ -181,10 +181,12 @@ export const saveCanvasState = (
   
   if (newHistory.length > 50) {
     newHistory.shift();
+    // When we remove the first element, we need to adjust the index
     setCanvasHistory(newHistory);
+    // Don't increment the index since we removed an element
   } else {
-    setHistoryIndex(prev => prev + 1);
     setCanvasHistory(newHistory);
+    setHistoryIndex(prev => prev + 1);
   }
 };
 
@@ -193,7 +195,7 @@ export const restoreCanvasState = (
   state: CanvasState,
   setIsUndoing: (value: boolean) => void
 ) => {
-  if (!canvas) return;
+  if (!canvas || !state || !state.objects) return;
   
   setIsUndoing(true);
   
@@ -210,10 +212,12 @@ export const restoreCanvasState = (
         canvas.add(obj);
       });
       safeRenderAll(canvas);
+      setTimeout(() => setIsUndoing(false), 100);
     }, 'fabric');
+  } else {
+    safeRenderAll(canvas);
+    setTimeout(() => setIsUndoing(false), 100);
   }
-  
-  setTimeout(() => setIsUndoing(false), 100);
 };
 
 export const ensureProperLayering = (canvas: fabric.Canvas) => {
