@@ -44,12 +44,9 @@ const testImageLoad = (src: string): Promise<boolean> => {
 export const loadTraitsFromAssets = async (): Promise<TraitFile[]> => {
   const traits: TraitFile[] = [];
   
-  console.log('Loading traits using explicit imports...');
-  
   // Since we don't know what files exist, we'll return empty array
   // This will be populated when you add actual trait files
   
-  console.log(`Successfully loaded ${traits.length} traits`);
   return traits;
 };
 
@@ -58,20 +55,13 @@ export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
   const traits: TraitFile[] = [];
   
   try {
-    console.log('Attempting dynamic trait loading...');
-    
     // Use Vite's import.meta.glob to get all trait files
     const traitModules = import.meta.glob('/src/assets/traits/trait-*_*.{png,jpg,jpeg,gif,webp}', { 
       eager: true,
       as: 'url'
     });
     
-    console.log('Found trait modules:', Object.keys(traitModules));
-    
-    if (Object.keys(traitModules).length === 0) {
-      console.log('No trait modules found via dynamic import');
-      return [];
-    }
+    console.log(`🎨 Found ${Object.keys(traitModules).length} trait files`);
     
     Object.entries(traitModules).forEach(([path, url]) => {
       // Extract filename from path
@@ -88,12 +78,10 @@ export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
             category: parsed.category,
             imageSrc: url as string
           });
-          console.log(`✓ Dynamically loaded trait: ${parsed.uiName} (${parsed.category})`);
         }
       }
     });
     
-    console.log(`Dynamically loaded ${traits.length} traits`);
     return traits;
   } catch (error) {
     console.error('Error in dynamic trait loading:', error);

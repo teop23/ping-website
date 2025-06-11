@@ -109,7 +109,6 @@ export class UndoRedoManager {
         this.currentIndex = this.history.length - 1;
       }
 
-      console.log(`State saved: "${state.description}". History length: ${this.history.length}, Current index: ${this.currentIndex}`);
     } catch (error) {
       console.error('Error saving canvas state:', error);
     }
@@ -124,7 +123,6 @@ export class UndoRedoManager {
       }
 
       this.isProcessing = true;
-      console.log(`Restoring state: "${state.description}" with ${state.objects.length} objects`);
 
       try {
         // Remove all user-created objects (keep base image and trait overlays)
@@ -158,7 +156,6 @@ export class UndoRedoManager {
                 
                 this.canvas.renderAll();
                 this.isProcessing = false;
-                console.log(`State restored successfully: ${objects.length} objects added`);
                 resolve();
               } catch (error) {
                 console.error('Error adding objects to canvas:', error);
@@ -192,10 +189,8 @@ export class UndoRedoManager {
     
     if (this.currentIndex > 0 && this.history[this.currentIndex - 1]) {
       const previousState = this.history[this.currentIndex - 1];
-      console.log(`Undoing from "${this.history[this.currentIndex].description}" to "${previousState.description}"`);
       this.currentIndex--;
       await this.restoreState(previousState);
-      console.log(`Undo complete. New index: ${this.currentIndex}, Can redo: ${this.canRedo()}`);
       return true;
     }
     return false;
@@ -207,10 +202,8 @@ export class UndoRedoManager {
     
     if (this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1]) {
       const nextState = this.history[this.currentIndex + 1];
-      console.log(`Redoing from "${this.history[this.currentIndex].description}" to "${nextState.description}"`);
       this.currentIndex++;
       await this.restoreState(nextState);
-      console.log(`Redo complete. New index: ${this.currentIndex}, Can redo: ${this.canRedo()}`);
       return true;
     }
     return false;
@@ -239,7 +232,6 @@ export class UndoRedoManager {
     this.currentIndex = 0;
     this.isProcessing = false;
     this.lastStateHash = this.generateStateHash([]);
-    console.log('UndoRedoManager initialized with initial state');
   }
 
   // Clear all history

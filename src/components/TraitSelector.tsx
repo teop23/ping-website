@@ -40,14 +40,6 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
     ...traits.filter(trait => trait.category === selectedCategory)
   ];
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('TraitSelector - Selected category:', selectedCategory);
-    console.log('TraitSelector - All traits:', traits);
-    console.log('TraitSelector - Filtered traits:', filteredTraits);
-    console.log('TraitSelector - Categories:', categories);
-  }, [selectedCategory, traits, filteredTraits, categories]);
-
   const handleUpload = (category: string) => {
     const input = document.createElement('input');
     input.type = 'file';

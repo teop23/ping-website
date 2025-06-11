@@ -21,18 +21,15 @@ let loadedCategories: CategoryOption[] = defaultCategories;
 // Function to load traits dynamically
 export const initializeTraits = async (): Promise<{ traits: Trait[], categories: CategoryOption[] }> => {
   try {
-    console.log('🚀 Initializing traits...');
-    
     // Try dynamic loading first, fall back to manual loading
     let traitFiles = await loadTraitsFromAssetsDynamic();
     
     // If dynamic loading fails or returns empty, try manual loading
     if (traitFiles.length === 0) {
-      console.log('Dynamic loading failed, trying manual loading...');
       traitFiles = await loadTraitsFromAssets();
     }
     
-    console.log(`📦 Found ${traitFiles.length} trait files:`, traitFiles);
+    console.log(`📦 Loaded ${traitFiles.length} trait files`);
     
     // Convert trait files to Trait objects
     loadedTraits = traitFiles.map(traitFile => ({
@@ -44,11 +41,6 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
     
     // Always show all default categories regardless of whether they have traits
     loadedCategories = defaultCategories;
-    
-    console.log('Traits initialized:', { 
-      traitsCount: loadedTraits.length, 
-      categories: loadedCategories.map(c => c.id) 
-    });
     
     return { traits: loadedTraits, categories: loadedCategories };
   } catch (error) {

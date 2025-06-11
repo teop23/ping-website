@@ -68,11 +68,9 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
     const container = containerRef.current;
     if (container) {
       const rect = container.getBoundingClientRect();
-      console.log('Container size:', rect);
       const size = Math.min(rect.width, rect.height);
       canvas.width = size;
       canvas.height = size;
-      console.log('Canvas size set to:', size);
     }
 
     // Clear canvas
@@ -234,7 +232,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
             await navigator.clipboard.write([
               new ClipboardItem({ 'image/png': blob })
             ]);
-            console.log('Image copied to clipboard');
           } catch (err) {
             console.error('Failed to copy image: ', err);
           }
