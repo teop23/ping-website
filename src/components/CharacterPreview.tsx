@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { toPng } from 'html-to-image';
-import { Copy, Download, RotateCcw, Move } from 'lucide-react';
+import { Copy, Download, RotateCcw, Move, Check } from 'lucide-react';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import pingImage from '../assets/images/ping.png';
 import { Trait } from '../types';
@@ -395,8 +395,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
             await navigator.clipboard.write([
               new ClipboardItem({ 'image/png': blob })
             ]);
-            // Keep the animation visible for a moment to show success
-            setTimeout(() => setIsCopying(false), 300);
+            // Keep the animation visible longer to show success
+            setTimeout(() => setIsCopying(false), 1500);
           } catch (err) {
             console.error('Failed to copy image: ', err);
             setIsCopying(false);
@@ -481,7 +481,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         </motion.div>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <ActionButton 
-            icon={<Copy size={20} />} 
+            icon={isCopying ? <Check size={20} /> : <Copy size={20} />} 
             label="Copy" 
             onClick={handleCopy} 
             variant="secondary"
@@ -517,22 +517,34 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
     <motion.div
       animate={isCopying ? {
         scale: [1, 1.1, 1],
-        backgroundColor: ["hsl(var(--secondary))", "hsl(142, 76%, 36%)", "hsl(var(--secondary))"],
-      } : {}}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+        backgroundColor: ["hsl(var(--secondary))", "hsl(142, 76%, 36%)", "hsl(142, 76%, 36%)"],
+      } : {
+        backgroundColor: "hsl(var(--secondary))"
+      }}
+      transition={{ 
+        duration: isCopying ? 0.4 : 0.2, 
+        ease: "easeInOut",
+        backgroundColor: {
+          duration: isCopying ? 1.5 : 0.2
+        }
+      }}
     >
       <Button
         variant={variant}
         onClick={onClick}
-        className="flex items-center gap-2"
+        className={`flex items-center gap-2 ${isCopying ? 'text-white' : ''}`}
         disabled={disabled}
       >
         <motion.div
           animate={isCopying ? {
-            rotate: [0, 10, -10, 0],
-            scale: [1, 1.2, 1]
+            scale: [1, 1.3, 1.1],
+            rotate: [0, 360]
           } : {}}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          transition={{ 
+            duration: 0.4, 
+            ease: "easeInOut",
+            scale: { times: [0, 0.5, 1] }
+          }}
         >
           {icon}
         </motion.div>
