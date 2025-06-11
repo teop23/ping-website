@@ -103,6 +103,20 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                               setTextColor(value);
                             }
                           }}
+                         onPaste={(e) => {
+                           e.preventDefault();
+                           const pastedText = e.clipboardData.getData('text');
+                           // Clean and validate pasted hex color
+                           let cleanHex = pastedText.trim();
+                           // Add # if missing
+                           if (!cleanHex.startsWith('#')) {
+                             cleanHex = '#' + cleanHex;
+                           }
+                           // Validate hex format
+                           if (cleanHex.match(/^#[0-9A-Fa-f]{6}$/)) {
+                             setTextColor(cleanHex);
+                           }
+                         }}
                           placeholder="#000000"
                           className="w-full px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring font-mono"
                           maxLength={7}

@@ -103,6 +103,20 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                           setColor(value);
                         }
                       }}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const pastedText = e.clipboardData.getData('text');
+                        // Clean and validate pasted hex color
+                        let cleanHex = pastedText.trim();
+                        // Add # if missing
+                        if (!cleanHex.startsWith('#')) {
+                          cleanHex = '#' + cleanHex;
+                        }
+                        // Validate hex format
+                        if (cleanHex.match(/^#[0-9A-Fa-f]{6}$/)) {
+                          setColor(cleanHex);
+                        }
+                      }}
                       placeholder="#000000"
                       className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
                       maxLength={7}
@@ -176,6 +190,20 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                             // Allow typing # and partial hex values
                             if (value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
                               setTextColor(value);
+                            }
+                          }}
+                          onPaste={(e) => {
+                            e.preventDefault();
+                            const pastedText = e.clipboardData.getData('text');
+                            // Clean and validate pasted hex color
+                            let cleanHex = pastedText.trim();
+                            // Add # if missing
+                            if (!cleanHex.startsWith('#')) {
+                              cleanHex = '#' + cleanHex;
+                            }
+                            // Validate hex format
+                            if (cleanHex.match(/^#[0-9A-Fa-f]{6}$/)) {
+                              setTextColor(cleanHex);
                             }
                           }}
                           placeholder="#000000"
