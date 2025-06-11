@@ -172,11 +172,11 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
       whileTap={{ scale: 0.97 }}
       initial={{ overflow: 'hidden' }}
     >
-      <div className="aspect-square bg-card flex items-center justify-center">
+      <div className="aspect-square bg-card flex items-center justify-center pb-6">
         <img
           src={imageSrc}
           alt={trait.name}
-          className={`w-full h-full object-contain p-2 transition-transform duration-200 ${isSelected ? 'scale-95' : ''
+          className={`w-full h-full object-contain p-2 pb-0 transition-transform duration-200 ${isSelected ? 'scale-95' : ''
             }`}
           onError={(e) => {
             // Fallback to a placeholder if image fails to load
@@ -198,14 +198,12 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
         </motion.div>
       )}
 
-      <motion.div
-        className="absolute inset-x-0 bottom-0 p-2 bg-secondary/90 text-secondary-foreground text-xs text-center truncate"
-        initial={{ y: '100%' }}
-        whileHover={{ y: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        {trait.name}
-      </motion.div>
+      {/* Always visible trait name at bottom */}
+      <div className="absolute inset-x-0 bottom-0 p-1.5 bg-background/95 backdrop-blur-sm border-t border-border/50">
+        <p className="text-xs text-center text-foreground font-medium truncate leading-tight">
+          {trait.name}
+        </p>
+      </div>
     </motion.div>
   );
 };
