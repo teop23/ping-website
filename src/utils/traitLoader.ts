@@ -1,3 +1,5 @@
+import { defaultCategories } from '../data/traits';
+
 // Utility to load traits from the assets/traits folder
 // File naming convention: trait-{trait-name}_{category}.png
 
@@ -14,9 +16,12 @@ export const parseTraitFilename = (filename: string): { name: string; uiName: st
   // Remove file extension
   const nameWithoutExt = filename.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '');
   
+  // Build regex pattern dynamically from defaultCategories
+  const categoryIds = defaultCategories.map(cat => cat.id).join('|');
+  const regex = new RegExp(`^trait-(.+)_(${categoryIds})$`);
+  
   // Check if it follows the pattern: trait-{name}_{category}
-  // Updated regex to handle categories with underscores (like right_hand, left_hand)
-  const match = nameWithoutExt.match(/^trait-(.+)_(head|face|body|right_hand|left_hand|accessory)$/);
+  const match = nameWithoutExt.match(regex);
   
   if (match) {
     const [, name, category] = match;
@@ -24,7 +29,7 @@ export const parseTraitFilename = (filename: string): { name: string; uiName: st
     return {
       name: name, // Keep original kebab-case for ID matching
       uiName: uiName, // Human-readable name for UI
-      category: category // Keep exact category match (already lowercase in regex)
+      category: category // Keep exact category match from defaultCategories
     };
   }
   
