@@ -3,6 +3,7 @@ import { Download, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { ScrollArea } from '../ui/scroll-area';
 import { SavedTrait } from '../../utils/traitManager';
 
 interface SavedTraitsPanelProps {
@@ -32,12 +33,13 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
   };
 
   return (
-    <Card className="flex-1 overflow-hidden flex flex-col">
+    <Card className="flex-1 overflow-hidden flex flex-col max-h-[400px]">
       <CardHeader>
         <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="p-2 sm:p-4 space-y-2 flex-1 overflow-y-auto">
+      <CardContent className="p-0 flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-2 sm:p-4 space-y-2">
           {savedTraits.map((trait) => (
             <div
               key={trait.id}
@@ -124,7 +126,8 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
               <p className="text-xs mt-2">Create and save your first trait! Click on saved traits to toggle visibility.</p>
             </div>
           )}
-        </div>
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );
