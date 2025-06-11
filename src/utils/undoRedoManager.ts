@@ -12,12 +12,13 @@ export class UndoRedoManager {
   private maxHistorySize: number = 50;
   private isProcessing: boolean = false;
   private saveTimeout: NodeJS.Timeout | null = null;
+  private isUndoRedoOperation: boolean = false; // Flag to prevent saving during undo/redo
 
   constructor(private canvas: fabric.Canvas) {}
 
   // Save the current canvas state
   saveState(): void {
-    if (this.isProcessing || !this.canvas) return;
+    if (this.isProcessing || !this.canvas || this.isUndoRedoOperation) return;
 
     // Clear any pending save operations
     if (this.saveTimeout) {
@@ -31,7 +32,7 @@ export class UndoRedoManager {
   }
 
   private performSave(): void {
-    if (this.isProcessing || !this.canvas) return;
+    if (this.isProcessing || !this.canvas || this.isUndoRedoOperation) return;
 
     try {
       // Get all objects except base image and trait images
@@ -77,6 +78,7 @@ export class UndoRedoManager {
       }
 
       this.isProcessing = true;
+      this.isUndoRedoOperation = true; // Prevent saving during restore
 
       try {
         // Remove all objects except base image and trait images
@@ -102,26 +104,38 @@ export class UndoRedoManager {
                 });
                 this.canvas.renderAll();
                 this.isProcessing = false;
+                // Reset the flag after a short delay to allow canvas events to settle
+                setTimeout(() => {
+                  this.isUndoRedoOperation = false;
+                }, 200);
                 resolve();
               } catch (error) {
                 console.error('Error adding objects to canvas:', error);
                 this.isProcessing = false;
+                this.isUndoRedoOperation = false;
                 resolve();
               }
             }, 'fabric');
           } else {
             this.canvas.renderAll();
             this.isProcessing = false;
+            setTimeout(() => {
+              this.isUndoRedoOperation = false;
+            }, 200);
             resolve();
           }
         } else {
           this.canvas.renderAll();
           this.isProcessing = false;
+          setTimeout(() => {
+            this.isUndoRedoOperation = false;
+          }, 200);
           resolve();
         }
       } catch (error) {
         console.error('Error restoring canvas state:', error);
         this.isProcessing = false;
+        this.isUndoRedoOperation = false;
         resolve();
       }
     });
@@ -170,6 +184,7 @@ export class UndoRedoManager {
     this.history = [initialState];
     this.currentIndex = 0;
     this.isProcessing = false;
+    this.isUndoRedoOperation = false;
   }
 
   // Clear all history
@@ -177,6 +192,7 @@ export class UndoRedoManager {
     this.history = [];
     this.currentIndex = -1;
     this.isProcessing = false;
+    this.isUndoRedoOperation = false;
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
       this.saveTimeout = null;
