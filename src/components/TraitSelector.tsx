@@ -7,6 +7,7 @@ import { ScrollArea } from '../components/ui/scroll-area';
 import { CategoryOption, Trait } from '../types';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 interface TraitSelectorProps {
   categories: CategoryOption[];
@@ -78,6 +79,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   };
 
   return (
+    <TooltipProvider>
     <Card className="flex flex-row h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
       {/* Left Sidebar - Categories */}
       <div className="w-24 sm:w-28 flex-shrink-0 border-r border-border bg-gradient-to-b from-muted/50 to-muted/30">
@@ -150,6 +152,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </ScrollArea>
       </div>
     </Card>
+    </TooltipProvider>
   );
 };
 
@@ -162,6 +165,8 @@ interface TraitCardProps {
 
 const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onClick }) => {
   return (
+    <Tooltip>
+      <TooltipTrigger asChild>
     <motion.div
       className={`relative cursor-pointer rounded-lg overflow-hidden border ${isSelected
         ? 'border-primary ring-2 ring-primary/20'
@@ -205,6 +210,11 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
         </p>
       </div>
     </motion.div>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs">
+        <p className="text-sm font-medium">{trait.name}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };
 
