@@ -50,7 +50,7 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
   };
 
   const updateTextElement = (id: string, updates: Partial<TextElement>) => {
-    const updatedElements = textElements.map(el => 
+    const updatedElements = textElements.map(el =>
       el.id === id ? { ...el, ...updates } : el
     );
     setTextElements(updatedElements);
@@ -65,7 +65,7 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
           Text Tools
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="px-4 pb-4 space-y-3">
         {/* Compact Add Text Section */}
         <div className="space-y-2">
@@ -120,7 +120,7 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
               </div>
             </div>
           </div>
-          
+
           {/* Size and Add Button Row */}
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Size</label>
@@ -188,12 +188,6 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                 </motion.div>
               ))}
             </div>
-          </div>
-        )}
-
-        {textElements.length === 0 && (
-          <div className="text-center py-2 text-muted-foreground">
-            <p className="text-xs">Add text to customize your PING!</p>
           </div>
         )}
       </CardContent>
