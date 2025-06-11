@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
 import TraitSelector from '../components/TraitSelector';
+import TextTools, { TextElement } from '../components/TextTools';
 import { initializeTraits } from '../data/traits';
 import { Trait, CategoryOption } from '../types';
 
@@ -19,6 +20,7 @@ const Builder: React.FC = () => {
     accessory: null
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [textElements, setTextElements] = useState<TextElement[]>([]);
   
   // Load traits on component mount
   useEffect(() => {
@@ -75,6 +77,10 @@ const Builder: React.FC = () => {
       accessory: null
     });
   };
+
+  const handleTextElementsChange = (elements: TextElement[]) => {
+    setTextElements(elements);
+  };
   
   if (isLoading) {
     return (
@@ -93,11 +99,12 @@ const Builder: React.FC = () => {
         <div className="w-full lg:w-[500px] lg:ml-auto lg:flex-shrink-0">
           <CharacterPreview
             selectedTraits={selectedTraits}
+            textElements={textElements}
             onReset={handleReset}
           />
         </div>
         
-        <div className="w-full lg:w-[400px] lg:mr-auto lg:flex-shrink-0 pb-24 sm:pb-8">
+        <div className="w-full lg:w-[400px] lg:mr-auto lg:flex-shrink-0 pb-24 sm:pb-8 space-y-6">
           <TraitSelector
             categories={categories}
             traits={traits}
@@ -106,6 +113,8 @@ const Builder: React.FC = () => {
             onCategoryChange={handleCategoryChange}
             onTraitSelect={handleTraitSelect}
           />
+          
+          <TextTools onTextElementsChange={handleTextElementsChange} />
         </div>
       </div>
     </div>

@@ -7,13 +7,15 @@ import { Trait } from '../types';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
+import { TextElement } from './TextTools';
 
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;
+  textElements?: TextElement[];
   onReset: () => void;
 }
 
-const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onReset }) => {
+const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, textElements = [], onReset }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -107,7 +109,35 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
         }
       }
     });
+
+    // Draw text elements
+    textElements.forEach(textElement => {
+      if (textElement.text.trim()) {
+        ctx.font = `${textElement.fontWeight} ${textElement.fontSize * (canvas.width / 500)}px Inter, Arial, sans-serif`;
+        ctx.fillStyle = textElement.color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        const x = textElement.x * canvas.width;
+        const y = textElement.y * canvas.height;
+        
+        // Add text shadow for better visibility
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 2;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+        
+        ctx.fillText(textElement.text, x, y);
+        
+        // Reset shadow
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+      }
+    });
   }, [baseImage, traitImages, selectedTraits]);
+  }, [baseImage, traitImages, selectedTraits, textElements]);
 
   // Render canvas when dependencies change
   useEffect(() => {
@@ -163,6 +193,33 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
               downloadCanvas.width, downloadCanvas.height
             );
           }
+        }
+      });
+
+      // Draw text elements on download canvas
+      textElements.forEach(textElement => {
+        if (textElement.text.trim()) {
+          downloadCtx.font = `${textElement.fontWeight} ${textElement.fontSize * (downloadCanvas.width / 500)}px Inter, Arial, sans-serif`;
+          downloadCtx.fillStyle = textElement.color;
+          downloadCtx.textAlign = 'center';
+          downloadCtx.textBaseline = 'middle';
+          
+          const x = textElement.x * downloadCanvas.width;
+          const y = textElement.y * downloadCanvas.height;
+          
+          // Add text shadow for better visibility
+          downloadCtx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+          downloadCtx.shadowBlur = 4;
+          downloadCtx.shadowOffsetX = 2;
+          downloadCtx.shadowOffsetY = 2;
+          
+          downloadCtx.fillText(textElement.text, x, y);
+          
+          // Reset shadow
+          downloadCtx.shadowColor = 'transparent';
+          downloadCtx.shadowBlur = 0;
+          downloadCtx.shadowOffsetX = 0;
+          downloadCtx.shadowOffsetY = 0;
         }
       });
 
@@ -224,6 +281,33 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onR
               copyCanvas.width, copyCanvas.height
             );
           }
+        }
+      });
+
+      // Draw text elements on copy canvas
+      textElements.forEach(textElement => {
+        if (textElement.text.trim()) {
+          copyCtx.font = `${textElement.fontWeight} ${textElement.fontSize * (copyCanvas.width / 500)}px Inter, Arial, sans-serif`;
+          copyCtx.fillStyle = textElement.color;
+          copyCtx.textAlign = 'center';
+          copyCtx.textBaseline = 'middle';
+          
+          const x = textElement.x * copyCanvas.width;
+          const y = textElement.y * copyCanvas.height;
+          
+          // Add text shadow for better visibility
+          copyCtx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+          copyCtx.shadowBlur = 4;
+          copyCtx.shadowOffsetX = 2;
+          copyCtx.shadowOffsetY = 2;
+          
+          copyCtx.fillText(textElement.text, x, y);
+          
+          // Reset shadow
+          copyCtx.shadowColor = 'transparent';
+          copyCtx.shadowBlur = 0;
+          copyCtx.shadowOffsetX = 0;
+          copyCtx.shadowOffsetY = 0;
         }
       });
 
