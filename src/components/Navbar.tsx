@@ -1,10 +1,24 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Palette, Menu, X } from 'lucide-react';
+import { Palette, Menu, X, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
+import { SOCIAL_LINKS } from '../utils/constants';
+
+// Twitter/X icon component
+const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 
@@ -54,6 +68,20 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
               isActive={location.pathname === '/create-traits'}
               icon={<Palette size={16} />} 
             />
+            
+            {/* Social Links */}
+            <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-border/50">
+              <SocialLink 
+                href={SOCIAL_LINKS.TWITTER}
+                icon={<TwitterIcon size={18} />}
+                label="Twitter"
+              />
+              <SocialLink 
+                href={SOCIAL_LINKS.TELEGRAM}
+                icon={<MessageCircle size={18} />}
+                label="Telegram"
+              />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -128,12 +156,59 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   icon={<Palette size={18} />}
                   onClick={closeMobileMenu}
                 />
+                
+                {/* Mobile Social Links */}
+                <div className="pt-2 mt-2 border-t border-border/50">
+                  <div className="flex justify-center space-x-4">
+                    <SocialLink 
+                      href={SOCIAL_LINKS.TWITTER}
+                      icon={<TwitterIcon size={20} />}
+                      label="Twitter"
+                      isMobile
+                    />
+                    <SocialLink 
+                      href={SOCIAL_LINKS.TELEGRAM}
+                      icon={<MessageCircle size={20} />}
+                      label="Telegram"
+                      isMobile
+                    />
+                  </div>
+                </div>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
     </>
+  );
+};
+
+interface SocialLinkProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  isMobile?: boolean;
+}
+
+const SocialLink: React.FC<SocialLinkProps> = ({ href, icon, label, isMobile = false }) => {
+  return (
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "transition-colors duration-200 hover:text-primary",
+        isMobile 
+          ? "flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted text-muted-foreground" 
+          : "text-muted-foreground hover:text-primary"
+      )}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      title={label}
+    >
+      {icon}
+      {isMobile && <span className="text-xs font-medium">{label}</span>}
+    </motion.a>
   );
 };
 
