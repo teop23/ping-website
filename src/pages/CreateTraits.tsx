@@ -114,38 +114,39 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvas || !undoRedoManager) return;
 
-    const saveStateDelayed = () => {
+    const saveStateDelayed = (description?: string) => {
       setTimeout(() => {
-        if (undoRedoManager && !undoRedoManager.getStateInfo().canRedo) {
-          undoRedoManager.saveState();
+        if (undoRedoManager && !undoRedoManager.isProcessing) {
+          undoRedoManager.saveState(description);
         }
-      }, 100);
+      }, 200);
     };
+
     canvas.on('text:editing:entered', () => {
       canvas.selection = false;
     });
     
     canvas.on('text:editing:exited', () => {
       canvas.selection = tool === 'select';
-      saveStateDelayed();
+      saveStateDelayed('Text edited');
     });
     
     canvas.on('object:added', () => {
       ensureProperLayering(canvas);
-      saveStateDelayed();
+      saveStateDelayed('Object added');
     });
     
     canvas.on('object:removed', () => {
-      saveStateDelayed();
+      saveStateDelayed('Object removed');
     });
     
     canvas.on('object:modified', () => {
-      saveStateDelayed();
+      saveStateDelayed('Object modified');
     });
     
     canvas.on('path:created', () => {
       ensureProperLayering(canvas);
-      saveStateDelayed();
+      saveStateDelayed('Path created');
     });
 
     return () => {

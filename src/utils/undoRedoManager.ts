@@ -4,6 +4,7 @@ import { safeRenderAll } from './canvasUtils';
 export interface CanvasState {
   objects: any[];
   timestamp: number;
+  description?: string;
 }
 
 export class UndoRedoManager {
@@ -12,11 +13,32 @@ export class UndoRedoManager {
   private maxHistorySize: number = 50;
   private isProcessing: boolean = false;
   private saveTimeout: NodeJS.Timeout | null = null;
+  private lastStateHash: string = '';
 
   constructor(private canvas: fabric.Canvas) {}
 
+  // Generate a hash of the current canvas state for comparison
+  private generateStateHash(objects: any[]): string {
+    try {
+      return JSON.stringify(objects.map(obj => ({
+        type: obj.type,
+        left: obj.left,
+        top: obj.top,
+        width: obj.width,
+        height: obj.height,
+        scaleX: obj.scaleX,
+        scaleY: obj.scaleY,
+        angle: obj.angle,
+        text: obj.text,
+        path: obj.path
+      })));
+    } catch (error) {
+      return Math.random().toString();
+    }
+  }
+
   // Save the current canvas state
-  saveState(): void {
+  saveState(description?: string): void {
     if (this.isProcessing || !this.canvas) return;
 
     // Clear any pending save operations
@@ -26,45 +48,60 @@ export class UndoRedoManager {
 
     // Debounce save operations to avoid too many saves
     this.saveTimeout = setTimeout(() => {
-      this.performSave();
-    }, 50);
+      this.performSave(description);
+    }, 100);
   }
 
-  private performSave(): void {
+  private performSave(description?: string): void {
     if (this.isProcessing || !this.canvas) return;
 
     try {
-      // Get all objects except base image and trait images
-      const objects = this.canvas.getObjects().filter(obj => 
-        obj.name !== 'baseImage' && !obj.name?.startsWith('trait-')
-      );
+      // Get all drawable objects (exclude base image and trait overlays)
+      const objects = this.canvas.getObjects().filter(obj => {
+        // Include all user-created objects
+        return obj.name !== 'baseImage' && 
+               !obj.name?.startsWith('trait-') &&
+               obj.type !== 'image' || 
+               (obj.type === 'image' && !obj.name?.includes('baseImage') && !obj.name?.startsWith('trait-'));
+      });
+      
+      // Generate hash for comparison
+      const currentHash = this.generateStateHash(objects);
+      
+      // Don't save if state hasn't changed
+      if (currentHash === this.lastStateHash) {
+        return;
+      }
       
       const state: CanvasState = {
         objects: objects.map(obj => {
           try {
-            return obj.toObject(['name', 'selectable', 'evented']);
+            // Include all necessary properties for proper restoration
+            const objData = obj.toObject([
+              'name', 'selectable', 'evented', 'visible', 'opacity',
+              'stroke', 'strokeWidth', 'fill', 'fontSize', 'fontFamily',
+              'fontWeight', 'textAlign', 'charSpacing', 'lineHeight',
+              'rx', 'ry', 'radius', 'x1', 'y1', 'x2', 'y2', 'path'
+            ]);
+            return objData;
           } catch (error) {
             console.warn('Error serializing object:', error);
             return null;
           }
         }).filter(obj => obj !== null),
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        description: description || `Action ${this.history.length + 1}`
       };
 
-      // Only save if the state is actually different from the current one
-      if (this.currentIndex >= 0 && this.history[this.currentIndex]) {
-        const currentState = this.history[this.currentIndex];
-        if (JSON.stringify(currentState.objects) === JSON.stringify(state.objects)) {
-          return; // No changes, don't save
-        }
-      }
-
       // Remove any states after current index (when user made changes after undo)
-      this.history = this.history.slice(0, this.currentIndex + 1);
+      if (this.currentIndex < this.history.length - 1) {
+        this.history = this.history.slice(0, this.currentIndex + 1);
+      }
       
       // Add new state
       this.history.push(state);
       this.currentIndex = this.history.length - 1;
+      this.lastStateHash = currentHash;
 
       // Limit history size
       if (this.history.length > this.maxHistorySize) {
@@ -72,7 +109,7 @@ export class UndoRedoManager {
         this.currentIndex = this.history.length - 1;
       }
 
-      console.log('State saved. History length:', this.history.length, 'Current index:', this.currentIndex);
+      console.log(`State saved: "${state.description}". History length: ${this.history.length}, Current index: ${this.currentIndex}`);
     } catch (error) {
       console.error('Error saving canvas state:', error);
     }
@@ -87,12 +124,16 @@ export class UndoRedoManager {
       }
 
       this.isProcessing = true;
+      console.log(`Restoring state: "${state.description}" with ${state.objects.length} objects`);
 
       try {
-        // Remove all objects except base image and trait images
-        const objectsToRemove = this.canvas.getObjects().filter(obj => 
-          obj.name !== 'baseImage' && !obj.name?.startsWith('trait-')
-        );
+        // Remove all user-created objects (keep base image and trait overlays)
+        const objectsToRemove = this.canvas.getObjects().filter(obj => {
+          return obj.name !== 'baseImage' && 
+                 !obj.name?.startsWith('trait-') &&
+                 (obj.type !== 'image' || 
+                  (obj.type === 'image' && !obj.name?.includes('baseImage') && !obj.name?.startsWith('trait-')));
+        });
         
         objectsToRemove.forEach(obj => {
           this.canvas.remove(obj);
@@ -107,11 +148,17 @@ export class UndoRedoManager {
               try {
                 objects.forEach(obj => {
                   if (obj) {
+                    // Restore all object properties
                     this.canvas.add(obj);
                   }
                 });
+                
+                // Update the state hash
+                this.lastStateHash = this.generateStateHash(validObjects);
+                
                 this.canvas.renderAll();
                 this.isProcessing = false;
+                console.log(`State restored successfully: ${objects.length} objects added`);
                 resolve();
               } catch (error) {
                 console.error('Error adding objects to canvas:', error);
@@ -120,11 +167,13 @@ export class UndoRedoManager {
               }
             }, 'fabric');
           } else {
+            this.lastStateHash = this.generateStateHash([]);
             this.canvas.renderAll();
             this.isProcessing = false;
             resolve();
           }
         } else {
+          this.lastStateHash = this.generateStateHash([]);
           this.canvas.renderAll();
           this.isProcessing = false;
           resolve();
@@ -142,10 +191,11 @@ export class UndoRedoManager {
     if (this.isProcessing) return false;
     
     if (this.currentIndex > 0 && this.history[this.currentIndex - 1]) {
-      console.log('Undoing. Current index:', this.currentIndex, 'Moving to:', this.currentIndex - 1);
+      const previousState = this.history[this.currentIndex - 1];
+      console.log(`Undoing from "${this.history[this.currentIndex].description}" to "${previousState.description}"`);
       this.currentIndex--;
-      await this.restoreState(this.history[this.currentIndex]);
-      console.log('Undo complete. New index:', this.currentIndex, 'Can redo:', this.canRedo());
+      await this.restoreState(previousState);
+      console.log(`Undo complete. New index: ${this.currentIndex}, Can redo: ${this.canRedo()}`);
       return true;
     }
     return false;
@@ -156,10 +206,11 @@ export class UndoRedoManager {
     if (this.isProcessing) return false;
     
     if (this.currentIndex < this.history.length - 1 && this.history[this.currentIndex + 1]) {
-      console.log('Redoing. Current index:', this.currentIndex, 'Moving to:', this.currentIndex + 1);
+      const nextState = this.history[this.currentIndex + 1];
+      console.log(`Redoing from "${this.history[this.currentIndex].description}" to "${nextState.description}"`);
       this.currentIndex++;
-      await this.restoreState(this.history[this.currentIndex]);
-      console.log('Redo complete. New index:', this.currentIndex, 'Can redo:', this.canRedo());
+      await this.restoreState(nextState);
+      console.log(`Redo complete. New index: ${this.currentIndex}, Can redo: ${this.canRedo()}`);
       return true;
     }
     return false;
@@ -181,12 +232,14 @@ export class UndoRedoManager {
   initialize(): void {
     const initialState: CanvasState = {
       objects: [],
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      description: 'Initial state'
     };
     this.history = [initialState];
     this.currentIndex = 0;
     this.isProcessing = false;
-    console.log('UndoRedoManager initialized');
+    this.lastStateHash = this.generateStateHash([]);
+    console.log('UndoRedoManager initialized with initial state');
   }
 
   // Clear all history
@@ -194,6 +247,7 @@ export class UndoRedoManager {
     this.history = [];
     this.currentIndex = -1;
     this.isProcessing = false;
+    this.lastStateHash = '';
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
       this.saveTimeout = null;
@@ -201,12 +255,21 @@ export class UndoRedoManager {
   }
 
   // Get current state info for debugging
-  getStateInfo(): { historyLength: number; currentIndex: number; canUndo: boolean; canRedo: boolean } {
+  getStateInfo(): { historyLength: number; currentIndex: number; canUndo: boolean; canRedo: boolean; currentDescription?: string } {
     return {
       historyLength: this.history.length,
       currentIndex: this.currentIndex,
       canUndo: this.canUndo(),
-      canRedo: this.canRedo()
+      canRedo: this.canRedo(),
+      currentDescription: this.history[this.currentIndex]?.description
     };
+  }
+
+  // Get history for debugging
+  getHistory(): CanvasState[] {
+    return this.history.map(state => ({
+      ...state,
+      objects: `${state.objects.length} objects`
+    })) as any;
   }
 }
