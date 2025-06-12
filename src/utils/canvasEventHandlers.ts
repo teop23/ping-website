@@ -5,7 +5,8 @@ import {
   addRectangle, 
   addCircle, 
   addLine, 
-  addCurvedLine 
+  addCurvedLine,
+  addFill
 } from './drawingTools';
 
 export const setupCanvasEventHandlers = (
@@ -41,6 +42,9 @@ export const setupCanvasEventHandlers = (
         break;
       case 'curve':
         addCurvedLine(pointer.x, pointer.y, canvas, color, brushSize, curvePoints, setCurvePoints, tempCurveLine, setTempCurveLine, setTool);
+        break;
+      case 'fill':
+        addFill(Math.floor(pointer.x), Math.floor(pointer.y), canvas, color);
         break;
     }
   };

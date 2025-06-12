@@ -1,6 +1,6 @@
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff, Eraser } from 'lucide-react';
+import { Upload, Trash2, Undo, RotateCw, MousePointer, Palette, Type, Square, Circle, Minus, Spline, Eye, EyeOff, Eraser, PaintBucket } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import ToolButton from '../ToolButton';
@@ -35,6 +35,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
     { type: 'select' as ToolType, icon: 'MousePointer', label: 'Select' },
     { type: 'brush' as ToolType, icon: 'Palette', label: 'Brush' },
     { type: 'eraser' as ToolType, icon: 'Eraser', label: 'Eraser' },
+    { type: 'fill' as ToolType, icon: 'PaintBucket', label: 'Fill' },
     { type: 'text' as ToolType, icon: 'Type', label: 'Text' },
     { type: 'rectangle' as ToolType, icon: 'Square', label: 'Rectangle' },
     { type: 'circle' as ToolType, icon: 'Circle', label: 'Circle' },
@@ -49,6 +50,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
       MousePointer,
       Palette,
       Eraser,
+      PaintBucket,
       Type,
       Square,
       Circle,
@@ -272,6 +274,15 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Fill Tool Instructions */}
+        {tool === 'fill' && (
+          <div className="space-y-2">
+            <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+              💡 Click on any area to fill it with the selected color. Works best on enclosed shapes and areas.
+            </div>
           </div>
         )}
 

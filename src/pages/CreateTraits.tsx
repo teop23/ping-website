@@ -272,6 +272,9 @@ const CreateTraits: React.FC = () => {
       case 'text':
         canvas.defaultCursor = 'text';
         break;
+      case 'fill':
+        canvas.defaultCursor = 'crosshair';
+        break;
       case 'curve':
         canvas.defaultCursor = 'crosshair';
         break;

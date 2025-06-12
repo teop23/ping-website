@@ -1,7 +1,122 @@
 import { fabric } from 'fabric';
 import { safeRenderAll } from './canvasUtils';
 
-type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve';
+type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve' | 'fill';
+
+// Fill tool implementation using flood fill algorithm
+export const addFill = (
+  x: number,
+  y: number,
+  canvas: fabric.Canvas,
+  fillColor: string
+) => {
+  // Get the canvas context for pixel manipulation
+  const ctx = canvas.getContext();
+  if (!ctx) return;
+
+  // Get canvas dimensions
+  const canvasWidth = canvas.width!;
+  const canvasHeight = canvas.height!;
+
+  // Get image data from canvas
+  const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+  const data = imageData.data;
+
+  // Convert fill color to RGB
+  const fillRGB = hexToRgb(fillColor);
+  if (!fillRGB) return;
+
+  // Get the color at the clicked position
+  const targetColor = getPixelColor(data, x, y, canvasWidth);
+  
+  // Don't fill if clicking on the same color
+  if (colorsEqual(targetColor, fillRGB)) return;
+
+  // Perform flood fill
+  floodFill(data, x, y, canvasWidth, canvasHeight, targetColor, fillRGB);
+
+  // Put the modified image data back to canvas
+  ctx.putImageData(imageData, 0, 0);
+  
+  // Force canvas to re-render
+  safeRenderAll(canvas);
+};
+
+// Helper function to convert hex color to RGB
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+// Helper function to get pixel color at coordinates
+function getPixelColor(data: Uint8ClampedArray, x: number, y: number, width: number): { r: number; g: number; b: number; a: number } {
+  const index = (y * width + x) * 4;
+  return {
+    r: data[index],
+    g: data[index + 1],
+    b: data[index + 2],
+    a: data[index + 3]
+  };
+}
+
+// Helper function to set pixel color at coordinates
+function setPixelColor(data: Uint8ClampedArray, x: number, y: number, width: number, color: { r: number; g: number; b: number }) {
+  const index = (y * width + x) * 4;
+  data[index] = color.r;
+  data[index + 1] = color.g;
+  data[index + 2] = color.b;
+  // Keep original alpha
+}
+
+// Helper function to compare colors
+function colorsEqual(color1: { r: number; g: number; b: number; a?: number }, color2: { r: number; g: number; b: number; a?: number }): boolean {
+  return color1.r === color2.r && color1.g === color2.g && color1.b === color2.b;
+}
+
+// Flood fill algorithm implementation
+function floodFill(
+  data: Uint8ClampedArray,
+  startX: number,
+  startY: number,
+  width: number,
+  height: number,
+  targetColor: { r: number; g: number; b: number; a: number },
+  fillColor: { r: number; g: number; b: number }
+) {
+  const stack: { x: number; y: number }[] = [{ x: startX, y: startY }];
+  const visited = new Set<string>();
+
+  while (stack.length > 0) {
+    const { x, y } = stack.pop()!;
+    
+    // Check bounds
+    if (x < 0 || x >= width || y < 0 || y >= height) continue;
+    
+    // Check if already visited
+    const key = `${x},${y}`;
+    if (visited.has(key)) continue;
+    visited.add(key);
+    
+    // Get current pixel color
+    const currentColor = getPixelColor(data, x, y, width);
+    
+    // Check if pixel matches target color
+    if (!colorsEqual(currentColor, targetColor)) continue;
+    
+    // Fill the pixel
+    setPixelColor(data, x, y, width, fillColor);
+    
+    // Add neighboring pixels to stack
+    stack.push({ x: x + 1, y });
+    stack.push({ x: x - 1, y });
+    stack.push({ x, y: y + 1 });
+    stack.push({ x, y: y - 1 });
+  }
+}
 
 export const addText = (
   x: number,
