@@ -22,9 +22,29 @@ export const addFill = (
     tempCanvas.width = canvasWidth;
     tempCanvas.height = canvasHeight;
 
-    // Render the current canvas to the temporary canvas
-    const canvasElement = canvas.getElement();
-    tempCtx.drawImage(canvasElement, 0, 0);
+    // Set white background first
+    tempCtx.fillStyle = 'white';
+    tempCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Render all visible objects to the temporary canvas
+    const objects = canvas.getObjects();
+    objects.forEach(obj => {
+      if (obj.visible !== false && obj.opacity !== 0) {
+        // Create a temporary canvas for this object
+        const objCanvas = document.createElement('canvas');
+        const objCtx = objCanvas.getContext('2d');
+        if (!objCtx) return;
+        
+        objCanvas.width = canvasWidth;
+        objCanvas.height = canvasHeight;
+        
+        // Render the object to its own canvas
+        obj.render(objCtx);
+        
+        // Draw the object canvas to the main temp canvas
+        tempCtx.drawImage(objCanvas, 0, 0);
+      }
+    });
 
     // Get image data from temporary canvas
     const imageData = tempCtx.getImageData(0, 0, canvasWidth, canvasHeight);
@@ -46,31 +66,25 @@ export const addFill = (
     // Put the modified image data back to temporary canvas
     tempCtx.putImageData(imageData, 0, 0);
 
-    // Create a fabric image from the filled canvas and add it to the main canvas
+    // Create a shape that represents the filled area
     const dataURL = tempCanvas.toDataURL();
     fabric.Image.fromURL(dataURL, (img) => {
-      // Remove any existing fill layers to avoid stacking
-      const existingFillLayers = canvas.getObjects().filter(obj => obj.name === 'fillLayer');
-      existingFillLayers.forEach(layer => canvas.remove(layer));
-
       img.set({
         left: 0,
         top: 0,
-        selectable: false,
-        evented: false,
-        name: 'fillLayer',
-        globalCompositeOperation: 'source-over'
+        selectable: true,
+        evented: true,
+        name: 'fillResult',
+        cornerStyle: 'circle',
+        cornerColor: '#4F46E5',
+        cornerSize: 8,
+        transparentCorners: false,
+        borderColor: '#4F46E5'
       });
 
       canvas.add(img);
-      
-      // Ensure proper layering - keep base image at back, fill layer above it, but below other objects
-      const baseImage = canvas.getObjects().find(obj => obj.name === 'baseImage');
-      if (baseImage) {
-        canvas.sendToBack(baseImage);
-        canvas.bringForward(img, false);
-      }
-      
+      canvas.bringToFront(img);
+      canvas.setActiveObject(img);
       safeRenderAll(canvas);
     });
   } catch (error) {
@@ -123,35 +137,47 @@ function floodFill(
   targetColor: { r: number; g: number; b: number; a: number },
   fillColor: { r: number; g: number; b: number }
 ) {
-  const stack: { x: number; y: number }[] = [{ x: startX, y: startY }];
-  const visited = new Set<string>();
+  // Use a more efficient stack-based flood fill
+  const stack: number[] = [startX, startY];
+  const visited = new Uint8Array(width * height);
+  
+  // Tolerance for color matching (helps with anti-aliasing)
+  const tolerance = 10;
 
   while (stack.length > 0) {
-    const { x, y } = stack.pop()!;
+    const y = stack.pop()!;
+    const x = stack.pop()!;
     
     // Check bounds
     if (x < 0 || x >= width || y < 0 || y >= height) continue;
     
     // Check if already visited
-    const key = `${x},${y}`;
-    if (visited.has(key)) continue;
-    visited.add(key);
+    const index = y * width + x;
+    if (visited[index]) continue;
+    visited[index] = 1;
     
     // Get current pixel color
     const currentColor = getPixelColor(data, x, y, width);
     
-    // Check if pixel matches target color
-    if (!colorsEqual(currentColor, targetColor)) continue;
+    // Check if pixel matches target color (with tolerance)
+    if (!colorMatches(currentColor, targetColor, tolerance)) continue;
     
     // Fill the pixel
     setPixelColor(data, x, y, width, fillColor);
     
     // Add neighboring pixels to stack
-    stack.push({ x: x + 1, y });
-    stack.push({ x: x - 1, y });
-    stack.push({ x, y: y + 1 });
-    stack.push({ x, y: y - 1 });
+    stack.push(x + 1, y);
+    stack.push(x - 1, y);
+    stack.push(x, y + 1);
+    stack.push(x, y - 1);
   }
+}
+
+// Helper function to check if colors match within tolerance
+function colorMatches(color1: { r: number; g: number; b: number; a?: number }, color2: { r: number; g: number; b: number; a?: number }, tolerance: number): boolean {
+  return Math.abs(color1.r - color2.r) <= tolerance &&
+         Math.abs(color1.g - color2.g) <= tolerance &&
+         Math.abs(color1.b - color2.b) <= tolerance;
 }
 
 export const addText = (
