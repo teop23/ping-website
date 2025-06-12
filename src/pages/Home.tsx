@@ -51,6 +51,90 @@ const Home: React.FC = () => {
             delay: 2
           }}
         />
+        <motion.div
+          className="absolute top-60 left-1/3 w-28 h-28 bg-gradient-to-br from-green-400/15 to-emerald-400/15 rounded-full blur-xl"
+          animate={{
+            y: [0, 30, 0],
+            x: [0, -25, 0],
+            scale: [1, 0.8, 1],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 3
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-1/3 w-36 h-36 bg-gradient-to-br from-indigo-400/15 to-purple-400/15 rounded-full blur-xl"
+          animate={{
+            y: [0, -35, 0],
+            x: [0, 15, 0],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 4
+          }}
+        />
+        <motion.div
+          className="absolute top-32 right-1/4 w-22 h-22 bg-gradient-to-br from-pink-400/18 to-rose-400/18 rounded-full blur-xl"
+          animate={{
+            y: [0, 20, 0],
+            x: [0, -10, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 9,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.5
+          }}
+        />
+        <motion.div
+          className="absolute bottom-60 left-16 w-26 h-26 bg-gradient-to-br from-cyan-400/16 to-teal-400/16 rounded-full blur-xl"
+          animate={{
+            y: [0, -18, 0],
+            x: [0, 22, 0],
+            scale: [1, 0.9, 1],
+          }}
+          transition={{
+            duration: 11,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2.5
+          }}
+        />
+        <motion.div
+          className="absolute top-80 right-12 w-30 h-30 bg-gradient-to-br from-violet-400/14 to-purple-400/14 rounded-full blur-xl"
+          animate={{
+            y: [0, 28, 0],
+            x: [0, -20, 0],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{
+            duration: 13,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 3.5
+          }}
+        />
+        <motion.div
+          className="absolute bottom-32 left-2/3 w-24 h-24 bg-gradient-to-br from-amber-400/17 to-yellow-400/17 rounded-full blur-xl"
+          animate={{
+            y: [0, -22, 0],
+            x: [0, 18, 0],
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
+          }}
+        />
       </div>
 
       {/* Main Content */}
