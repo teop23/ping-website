@@ -10,36 +10,72 @@ export const addFill = (
   canvas: fabric.Canvas,
   fillColor: string
 ) => {
-  // Get the canvas context for pixel manipulation
-  const ctx = canvas.getContext();
-  if (!ctx) return;
+  try {
+    // Create a temporary canvas to get the current state
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
 
-  // Get canvas dimensions
-  const canvasWidth = canvas.width!;
-  const canvasHeight = canvas.height!;
+    const canvasWidth = canvas.width!;
+    const canvasHeight = canvas.height!;
+    
+    tempCanvas.width = canvasWidth;
+    tempCanvas.height = canvasHeight;
 
-  // Get image data from canvas
-  const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-  const data = imageData.data;
+    // Render the current canvas to the temporary canvas
+    const canvasElement = canvas.getElement();
+    tempCtx.drawImage(canvasElement, 0, 0);
 
-  // Convert fill color to RGB
-  const fillRGB = hexToRgb(fillColor);
-  if (!fillRGB) return;
+    // Get image data from temporary canvas
+    const imageData = tempCtx.getImageData(0, 0, canvasWidth, canvasHeight);
+    const data = imageData.data;
 
-  // Get the color at the clicked position
-  const targetColor = getPixelColor(data, x, y, canvasWidth);
-  
-  // Don't fill if clicking on the same color
-  if (colorsEqual(targetColor, fillRGB)) return;
+    // Convert fill color to RGB
+    const fillRGB = hexToRgb(fillColor);
+    if (!fillRGB) return;
 
-  // Perform flood fill
-  floodFill(data, x, y, canvasWidth, canvasHeight, targetColor, fillRGB);
+    // Get the color at the clicked position
+    const targetColor = getPixelColor(data, x, y, canvasWidth);
+    
+    // Don't fill if clicking on the same color
+    if (colorsEqual(targetColor, fillRGB)) return;
 
-  // Put the modified image data back to canvas
-  ctx.putImageData(imageData, 0, 0);
-  
-  // Force canvas to re-render
-  safeRenderAll(canvas);
+    // Perform flood fill
+    floodFill(data, x, y, canvasWidth, canvasHeight, targetColor, fillRGB);
+
+    // Put the modified image data back to temporary canvas
+    tempCtx.putImageData(imageData, 0, 0);
+
+    // Create a fabric image from the filled canvas and add it to the main canvas
+    const dataURL = tempCanvas.toDataURL();
+    fabric.Image.fromURL(dataURL, (img) => {
+      // Remove any existing fill layers to avoid stacking
+      const existingFillLayers = canvas.getObjects().filter(obj => obj.name === 'fillLayer');
+      existingFillLayers.forEach(layer => canvas.remove(layer));
+
+      img.set({
+        left: 0,
+        top: 0,
+        selectable: false,
+        evented: false,
+        name: 'fillLayer',
+        globalCompositeOperation: 'source-over'
+      });
+
+      canvas.add(img);
+      
+      // Ensure proper layering - keep base image at back, fill layer above it, but below other objects
+      const baseImage = canvas.getObjects().find(obj => obj.name === 'baseImage');
+      if (baseImage) {
+        canvas.sendToBack(baseImage);
+        canvas.bringForward(img, false);
+      }
+      
+      safeRenderAll(canvas);
+    });
+  } catch (error) {
+    console.error('Fill tool error:', error);
+  }
 };
 
 // Helper function to convert hex color to RGB

@@ -248,6 +248,7 @@ const CreateTraits: React.FC = () => {
       }
     }
 
+    // Disable selection for drawing tools (brush, eraser, fill)
     canvas.selection = tool === 'select';
     canvas.isDrawingMode = tool === 'brush' || tool === 'eraser';
     
@@ -261,26 +262,63 @@ const CreateTraits: React.FC = () => {
       }
     }
 
+    // Set appropriate cursors and disable object interaction for certain tools
     switch (tool) {
       case 'select':
         canvas.defaultCursor = 'default';
+        // Enable object selection and interaction
+        canvas.forEachObject(obj => {
+          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+            obj.selectable = true;
+            obj.evented = true;
+          }
+        });
         break;
       case 'brush':
       case 'eraser':
+      case 'fill':
         canvas.defaultCursor = 'crosshair';
+        // Disable object selection and interaction for drawing tools
+        canvas.discardActiveObject();
+        canvas.forEachObject(obj => {
+          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+            obj.selectable = false;
+            obj.evented = false;
+          }
+        });
         break;
       case 'text':
         canvas.defaultCursor = 'text';
-        break;
-      case 'fill':
-        canvas.defaultCursor = 'crosshair';
+        // Enable limited interaction for text tool
+        canvas.forEachObject(obj => {
+          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+            obj.selectable = obj.type === 'i-text' || obj.type === 'text';
+            obj.evented = obj.type === 'i-text' || obj.type === 'text';
+          }
+        });
         break;
       case 'curve':
         canvas.defaultCursor = 'crosshair';
+        // Enable object selection for curve tool (to select control points)
+        canvas.forEachObject(obj => {
+          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+            obj.selectable = true;
+            obj.evented = true;
+          }
+        });
         break;
       default:
         canvas.defaultCursor = 'crosshair';
+        // Enable object selection for other tools
+        canvas.forEachObject(obj => {
+          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+            obj.selectable = true;
+            obj.evented = true;
+          }
+        });
     }
+    
+    safeRenderAll(canvas);
   }, [tool, canvas, brushSize, color]);
 
   // Update base image visibility
