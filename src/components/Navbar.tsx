@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { SOCIAL_LINKS } from '../utils/constants';
+import pingIcon from '../assets/ping_transparent_icon.png';
 
 // Twitter/X icon component
 const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
@@ -53,13 +54,22 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
         <div className="w-full flex justify-between items-center">
           {/* Logo */}
           <motion.div 
-            className="flex items-center space-x-2 flex-shrink-0"
+            className="flex items-center space-x-3 flex-shrink-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
             whileHover={{ scale: 1.05 }}
           >
-            <a href="/" className="font-bold text-xl sm:text-2xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">PING</a>
+            <a href="/" className="flex items-center space-x-2">
+              <motion.img 
+                src={pingIcon} 
+                alt="PING" 
+                className="w-6 h-6 sm:w-7 sm:h-7 opacity-90"
+                whileHover={{ rotate: [0, -10, 10, 0] }}
+                transition={{ duration: 0.5 }}
+              />
+              <span className="font-bold text-xl sm:text-2xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">PING</span>
+            </a>
           </motion.div>
           
           {/* Center Title - Hidden on mobile when menu is open */}
