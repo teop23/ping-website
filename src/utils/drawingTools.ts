@@ -6,26 +6,24 @@ type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 
 // FloodFill implementation based on the provided code
 const FloodFill = {
   // Compare subsection of array1's values to array2's values, with an optional tolerance
-  withinTolerance: function(array1: Uint8ClampedArray, offset: number, array2: number[], tolerance: number): boolean {
+  withinTolerance: function(array1: Uint8ClampedArray, offset: number, array2: number[], tolerance: number) {
     const length = array2.length;
     let start = offset + length;
     tolerance = tolerance || 0;
 
     // Iterate (in reverse) the items being compared in each array, checking their values are
     // within tolerance of each other
-    let arrayIndex = length - 1;
-    while(start-- && arrayIndex >= 0) {
-      if(Math.abs(array1[start] - array2[arrayIndex]) > tolerance) {
+    while(start-- && length--) {
+      if(Math.abs(array1[start] - array2[length]) > tolerance) {
         return false;
       }
-      arrayIndex--;
     }
 
     return true;
   },
 
   // The actual flood fill implementation
-  fill: function(imageData: Uint8ClampedArray, getPointOffsetFn: (x: number, y: number) => number, point: {x: number, y: number}, color: number[], target: number[], tolerance: number, width: number, height: number): any {
+  fill: function(imageData: Uint8ClampedArray, getPointOffsetFn: (x: number, y: number) => number, point: {x: number, y: number}, color: number[], target: number[], tolerance: number, width: number, height: number) {
     const directions = [[1, 0], [0, 1], [0, -1], [-1, 0]];
     const coords = new Uint8ClampedArray(imageData.length);
     const points = [point];
@@ -164,16 +162,14 @@ function performFloodFill(mouseX: number, mouseY: number, canvas: fabric.Canvas,
     const target = Array.from(imageData.data.slice(targetOffset, targetOffset + 4));
 
     // Check if we're trying to fill with the same color
-    const targetColorArray = Array.from(imageData.data.slice(targetOffset, targetOffset + 4));
-    if (FloodFill.withinTolerance(new Uint8ClampedArray(targetColorArray), 0, parsedColor, 2)) {
+    if (FloodFill.withinTolerance(imageData.data, targetOffset, parsedColor, 2)) {
       console.log('Ignore... same color');
       return;
     }
 
     // Perform flood fill
-    const mutableImageData = new Uint8ClampedArray(imageData.data);
     const data = FloodFill.fill(
-      mutableImageData,
+      new Uint8ClampedArray(Array.from(imageData.data)),
       getPointOffset,
       { x: mouseX, y: mouseY },
       parsedColor,
