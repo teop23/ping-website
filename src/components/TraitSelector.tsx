@@ -84,8 +84,8 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
     <TooltipProvider>
     <Card className="flex flex-row h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
       {/* Left Sidebar - Categories */}
-      <div className="w-24 sm:w-28 flex-shrink-0 border-r border-border bg-gradient-to-b from-muted/50 to-muted/30 max-h-[300px] overflow-hidden">
-        <div className="p-2 space-y-1 h-full overflow-y-auto">
+      <div className="w-24 sm:w-28 flex-shrink-0 border-r border-border bg-gradient-to-b from-muted/50 to-muted/30">
+        <div className="p-2 space-y-1">
           {categories.map((category) => (
             <Button
               key={category.id}
