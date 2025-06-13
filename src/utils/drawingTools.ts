@@ -169,7 +169,7 @@ function performFloodFill(mouseX: number, mouseY: number, canvas: fabric.Canvas,
 
     // Perform flood fill
     const data = FloodFill.fill(
-      new Uint8ClampedArray(imageData.data),
+      new Uint8ClampedArray(Array.from(imageData.data)),
       getPointOffset,
       { x: mouseX, y: mouseY },
       parsedColor,
