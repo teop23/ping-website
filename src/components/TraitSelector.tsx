@@ -130,12 +130,11 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
             </motion.button>
 
             {filteredTraits.map((trait) => {
-              const isSelected = selectedTraits[trait.category]?.name === trait.name && 
-                                selectedTraits[trait.category]?.category === trait.category;
+              const isSelected = selectedTraits[trait.category]?.id === trait.id;
 
               return (
                 <TraitCard
-                  key={`${trait.name}-${trait.category}`}
+                  key={trait.id}
                   trait={trait}
                   isSelected={isSelected}
                   imageSrc={trait.imageSrc}

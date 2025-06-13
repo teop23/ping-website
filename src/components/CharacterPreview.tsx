@@ -50,7 +50,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               img.onerror = reject;
               img.src = imageSrc;
             });
-            newTraitImages.set(`${trait.name}-${trait.category}`, img);
+            newTraitImages.set(trait.id, img);
+            console.log(`✅ Loaded trait image: ${trait.name} (${trait.category}) - ID: ${trait.id}`);
           } catch (error) {
             console.warn(`Failed to load trait image for ${trait.name}:`, error);
           }
@@ -83,12 +84,12 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // First, draw aura traits behind everything
+    // Draw aura traits first (behind everything including base image)
     const auraTrait = selectedTraits['aura'];
     if (auraTrait) {
-      const auraImg = traitImages.get(`${auraTrait.name}-${auraTrait.category}`);
+      const auraImg = traitImages.get(auraTrait.id);
+      console.log(`🌟 Rendering aura: ${auraTrait.name}, Image found: ${!!auraImg}`);
       if (auraImg) {
-        // Scale aura image to match canvas dimensions
         ctx.drawImage(
           auraImg,
           0, 0, // Source position
@@ -104,21 +105,17 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     const x = (canvas.width - scaledWidth) / 2;
     const y = (canvas.height - scaledHeight) / 2;
 
-    // Draw base image
+    // Draw base image (on top of aura)
     ctx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
-    // Draw remaining traits on top of base image (excluding aura which is already drawn)
+    // Draw other traits on top of base image (aura is already drawn behind)
     const traitOrder = ['body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
     
     traitOrder.forEach(category => {
       const trait = selectedTraits[category];
       if (trait) {
-        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
+        const traitImg = traitImages.get(trait.id);
         if (traitImg) {
-          // Scale trait image to match canvas dimensions (same as CreateTraits)
-          const traitScaleX = canvas.width / traitImg.width;
-          const traitScaleY = canvas.height / traitImg.height;
-          
           ctx.drawImage(
             traitImg,
             0, 0, // Source position
@@ -259,12 +256,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       downloadCanvas.width = 1024;
       downloadCanvas.height = 1024;
 
-      // First, draw aura traits behind everything
+      // Draw aura first (behind everything including base image)
       const auraTrait = selectedTraits['aura'];
       if (auraTrait) {
-        const auraImg = traitImages.get(`${auraTrait.name}-${auraTrait.category}`);
+        const auraImg = traitImages.get(auraTrait.id);
         if (auraImg) {
-          // Scale aura to full canvas size
           downloadCtx.drawImage(
             auraImg,
             0, 0,
@@ -280,18 +276,17 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const x = (downloadCanvas.width - scaledWidth) / 2;
       const y = (downloadCanvas.height - scaledHeight) / 2;
 
-      // Draw base image
+      // Draw base image (on top of aura)
       downloadCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
-      // Draw remaining traits on top of base image (excluding aura which is already drawn)
+      // Draw other traits on top of base image (aura already drawn behind)
       const traitOrder = ['body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
       
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];
         if (trait) {
-          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
+          const traitImg = traitImages.get(trait.id);
           if (traitImg) {
-            // Scale trait to full canvas size
             downloadCtx.drawImage(
               traitImg,
               0, 0,
@@ -361,12 +356,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       copyCanvas.width = 1024;
       copyCanvas.height = 1024;
 
-      // First, draw aura traits behind everything
+      // Draw aura first (behind everything including base image)
       const auraTrait = selectedTraits['aura'];
       if (auraTrait) {
-        const auraImg = traitImages.get(`${auraTrait.name}-${auraTrait.category}`);
+        const auraImg = traitImages.get(auraTrait.id);
         if (auraImg) {
-          // Scale aura to full canvas size
           copyCtx.drawImage(
             auraImg,
             0, 0,
@@ -382,18 +376,17 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const x = (copyCanvas.width - scaledWidth) / 2;
       const y = (copyCanvas.height - scaledHeight) / 2;
 
-      // Draw base image
+      // Draw base image (on top of aura)
       copyCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
-      // Draw remaining traits on top of base image (excluding aura which is already drawn)
+      // Draw other traits on top of base image (aura already drawn behind)
       const traitOrder = ['body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
       
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];
         if (trait) {
-          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
+          const traitImg = traitImages.get(trait.id);
           if (traitImg) {
-            // Scale trait to full canvas size
             copyCtx.drawImage(
               traitImg,
               0, 0,
