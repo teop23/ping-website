@@ -3,6 +3,7 @@ import { loadTraitsFromAssets, loadTraitsFromAssetsDynamic, getAvailableCategori
 
 // Default category options (will be updated based on available traits)
 export const defaultCategories: CategoryOption[] = [
+  { id: 'aura', label: 'Aura' },
   { id: 'head', label: 'Head' },
   { id: 'face', label: 'Face' },
   { id: 'mouth', label: 'Mouth' },
