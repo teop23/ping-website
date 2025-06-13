@@ -18,6 +18,11 @@ const PingAPI: React.FC = () => {
   const [response, setResponse] = useState<APIResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [traits, setTraits] = useState<Trait[]>([]);
+  const [showDocs, setShowDocs] = useState(false);
+
+  // Check if this is a documentation request
+  const isDocsRequest = searchParams.get('docs') === 'true' || 
+                       (!searchParams.toString() && window.location.search === '');
 
   // Load available traits
   useEffect(() => {
@@ -61,6 +66,13 @@ const PingAPI: React.FC = () => {
             message: 'Available traits listed successfully',
             availableTraits
           });
+          setIsLoading(false);
+          return;
+        }
+
+        // If this is a docs request, don't generate image
+        if (isDocsRequest) {
+          setShowDocs(true);
           setIsLoading(false);
           return;
         }
@@ -138,7 +150,7 @@ const PingAPI: React.FC = () => {
     };
 
     generateImage();
-  }, [searchParams, traits]);
+  }, [searchParams, traits, isDocsRequest]);
 
   const renderCharacterImage = async (
     selectedTraits: Record<string, Trait | null>,
@@ -230,8 +242,36 @@ const PingAPI: React.FC = () => {
     });
   };
 
-  // Render API response
-  if (isLoading) {
+  // If this is an image generation request and we have a successful response with imageUrl
+  if (!isDocsRequest && !isLoading && response?.success && response.imageUrl) {
+    // Create a blob from the data URL and trigger download/display
+    const dataUrl = response.imageUrl;
+    const format = searchParams.get('format') || 'png';
+    
+    // Convert data URL to blob
+    const byteCharacters = atob(dataUrl.split(',')[1]);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const mimeType = format.toLowerCase() === 'jpg' || format.toLowerCase() === 'jpeg' 
+      ? 'image/jpeg' 
+      : format.toLowerCase() === 'webp' 
+      ? 'image/webp' 
+      : 'image/png';
+    
+    const blob = new Blob([byteArray], { type: mimeType });
+    const blobUrl = URL.createObjectURL(blob);
+    
+    // Redirect to the blob URL to display only the image
+    window.location.href = blobUrl;
+    
+    return null;
+  }
+
+  // Show loading state for image generation
+  if (!isDocsRequest && isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
@@ -242,114 +282,131 @@ const PingAPI: React.FC = () => {
     );
   }
 
-  if (!response) {
+  // Show error for image generation
+  if (!isDocsRequest && response && !response.success) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">Initializing API...</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md">
+            <p className="text-red-800 font-medium">✗ {response.message}</p>
+          </div>
         </div>
       </div>
     );
   }
 
+  // Show documentation interface
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h1 className="text-2xl font-bold mb-6">PING Character API</h1>
           
-          {response.success ? (
+          {response?.success && response.availableTraits ? (
             <div className="space-y-6">
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <p className="text-green-800 font-medium">✓ {response.message}</p>
               </div>
 
-              {response.imageUrl && (
-                <div className="text-center">
-                  <img 
-                    src={response.imageUrl} 
-                    alt="Generated PING Character" 
-                    className="mx-auto border border-gray-200 rounded-lg shadow-md max-w-md"
-                  />
-                  <p className="mt-4 text-sm text-gray-600">
-                    Generated character image
-                  </p>
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Available Traits</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(response.availableTraits).map(([category, traitNames]) => (
+                    <div key={category} className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="font-medium text-gray-900 mb-2 capitalize">
+                        {category.replace('_', ' ')}
+                      </h3>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        {traitNames.map(name => (
+                          <li key={name} className="font-mono">
+                            {name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
-              )}
-
-              {response.availableTraits && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Available Traits</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {Object.entries(response.availableTraits).map(([category, traitNames]) => (
-                      <div key={category} className="bg-gray-50 rounded-lg p-4">
-                        <h3 className="font-medium text-gray-900 mb-2 capitalize">
-                          {category.replace('_', ' ')}
-                        </h3>
-                        <ul className="text-sm text-gray-600 space-y-1">
-                          {traitNames.map(name => (
-                            <li key={name} className="font-mono">
-                              {name}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
           ) : (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-800 font-medium">✗ {response.message}</p>
-            </div>
-          )}
-
-          <div className="mt-8 bg-gray-50 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">API Documentation</h2>
-            
-            <div className="space-y-4 text-sm">
-              <div>
-                <h3 className="font-medium mb-2">Generate Character Image</h3>
-                <code className="bg-gray-200 px-2 py-1 rounded text-xs">
-                  /api?aura=blue-aura&head=cap&face=cool-glasses&size=512&format=png
-                </code>
+            <div className="space-y-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-blue-800 font-medium">
+                  Welcome to the PING Character API! Generate custom character images by adding parameters to the URL.
+                </p>
               </div>
 
-              <div>
-                <h3 className="font-medium mb-2">List Available Traits</h3>
-                <code className="bg-gray-200 px-2 py-1 rounded text-xs">
-                  /api?list=traits
-                </code>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-2">Parameters</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li><strong>Trait Categories:</strong> aura, head, face, mouth, body, right_hand, left_hand, accessory</li>
-                  <li><strong>size:</strong> Image size in pixels (64-2048, default: 512)</li>
-                  <li><strong>format:</strong> Output format (png, jpg, jpeg, webp, default: png)</li>
-                  <li><strong>quality:</strong> Image quality (0.1-1, default: 1)</li>
-                  <li><strong>list:</strong> Set to "traits" to get available traits</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-2">Example URLs</h3>
-                <div className="space-y-2 font-mono text-xs">
-                  <div className="bg-gray-200 p-2 rounded">
-                    /api?head=cap&face=cool-glasses&body=cheese-tee
+              <div className="bg-gray-50 rounded-lg p-6">
+                <h2 className="text-xl font-semibold mb-4">Quick Start</h2>
+                
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <h3 className="font-medium mb-2">Generate Character Image (Returns image only)</h3>
+                    <code className="bg-gray-200 px-2 py-1 rounded text-xs block">
+                      /api?aura=blue-aura&head=cap&face=cool-glasses&size=512&format=png
+                    </code>
                   </div>
-                  <div className="bg-gray-200 p-2 rounded">
-                    /api?aura=fire-aura&head=crown&right_hand=glock&size=1024&format=jpg
+
+                  <div>
+                    <h3 className="font-medium mb-2">List Available Traits (Returns JSON)</h3>
+                    <code className="bg-gray-200 px-2 py-1 rounded text-xs block">
+                      /api?list=traits
+                    </code>
                   </div>
-                  <div className="bg-gray-200 p-2 rounded">
-                    /api?list=traits
+
+                  <div>
+                    <h3 className="font-medium mb-2">View Documentation</h3>
+                    <code className="bg-gray-200 px-2 py-1 rounded text-xs block">
+                      /api?docs=true
+                    </code>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium mb-2">Parameters</h3>
+                    <ul className="space-y-2 text-gray-600">
+                      <li><strong>Trait Categories:</strong> aura, head, face, mouth, body, right_hand, left_hand, accessory</li>
+                      <li><strong>size:</strong> Image size in pixels (64-2048, default: 512)</li>
+                      <li><strong>format:</strong> Output format (png, jpg, jpeg, webp, default: png)</li>
+                      <li><strong>quality:</strong> Image quality (0.1-1, default: 1)</li>
+                      <li><strong>list:</strong> Set to "traits" to get available traits</li>
+                      <li><strong>docs:</strong> Set to "true" to view this documentation</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium mb-2">Example URLs</h3>
+                    <div className="space-y-2 font-mono text-xs">
+                      <div className="bg-gray-200 p-2 rounded">
+                        <a href="/api?head=cap&face=cool-glasses&body=cheese-tee" target="_blank" className="text-blue-600 hover:underline">
+                          /api?head=cap&face=cool-glasses&body=cheese-tee
+                        </a>
+                      </div>
+                      <div className="bg-gray-200 p-2 rounded">
+                        <a href="/api?aura=fire-aura&head=crown&right_hand=glock&size=1024&format=jpg" target="_blank" className="text-blue-600 hover:underline">
+                          /api?aura=fire-aura&head=crown&right_hand=glock&size=1024&format=jpg
+                        </a>
+                      </div>
+                      <div className="bg-gray-200 p-2 rounded">
+                        <a href="/api?list=traits" target="_blank" className="text-blue-600 hover:underline">
+                          /api?list=traits
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+                    <h3 className="font-medium text-yellow-800 mb-2">Important Notes</h3>
+                    <ul className="text-yellow-700 text-sm space-y-1">
+                      <li>• Image generation URLs return only the image file (no HTML wrapper)</li>
+                      <li>• Perfect for embedding in other applications or direct linking</li>
+                      <li>• Use ?docs=true to view this documentation page</li>
+                      <li>• Use ?list=traits to get available trait names in JSON format</li>
+                    </ul>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
