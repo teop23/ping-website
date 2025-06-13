@@ -360,14 +360,17 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         if (trait) {
           const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
-            // Position trait with same offset as base image, but keep original scale
-            const traitX = 0;
-            const traitY = copyCanvas.height * 0.08; // Same offset as base image
+            // Scale and position trait to match base image
+            const traitScale = scale;
+            const traitWidth = traitImg.width * traitScale;
+            const traitHeight = traitImg.height * traitScale;
+            const traitX = (copyCanvas.width - traitWidth) / 2;
+            const traitY = (copyCanvas.height - traitHeight) / 2 + copyCanvas.height * 0.08; // Same offset as base image
             
             copyCtx.drawImage(
               traitImg,
               traitX, traitY,
-              copyCanvas.width, copyCanvas.height - copyCanvas.height * 0.08
+              traitWidth, traitHeight
             );
           }
         }
