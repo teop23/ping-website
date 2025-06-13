@@ -11,8 +11,29 @@ export const addFill = (
   fillColor: string
 ) => {
   try {
+    // Get the pointer position relative to the canvas
+    const canvasElement = canvas.getElement();
+    const rect = canvasElement.getBoundingClientRect();
+    
+    // Convert to canvas coordinates
+    const canvasX = Math.floor(x);
+    const canvasY = Math.floor(y);
+    
     // First, try to find and fill an existing object at the click position
-    const objectAtPoint = canvas.findTarget(new Event('click') as any, false);
+    const objects = canvas.getObjects();
+    let objectAtPoint = null;
+    
+    // Check if we clicked on a shape object
+    for (let i = objects.length - 1; i >= 0; i--) {
+      const obj = objects[i];
+      if (obj.containsPoint({ x: canvasX, y: canvasY }) && 
+          obj.name !== 'baseImage' && 
+          !obj.name?.startsWith('trait-') &&
+          obj.name !== 'fillLayer') {
+        objectAtPoint = obj;
+        break;
+      }
+    }
     
     if (objectAtPoint && objectAtPoint.name !== 'baseImage' && !objectAtPoint.name?.startsWith('trait-')) {
       // Direct object filling - change the fill property of the clicked object
@@ -24,7 +45,7 @@ export const addFill = (
     }
     
     // If no fillable object found, create a flood fill area
-    performFloodFill(x, y, canvas, fillColor);
+    performFloodFill(canvasX, canvasY, canvas, fillColor);
   } catch (error) {
     console.error('Fill tool error:', error);
   }
@@ -32,86 +53,155 @@ export const addFill = (
 
 // Perform flood fill on the canvas
 function performFloodFill(x: number, y: number, canvas: fabric.Canvas, fillColor: string) {
-  // Create a temporary canvas to analyze the current state
-  const tempCanvas = document.createElement('canvas');
-  const tempCtx = tempCanvas.getContext('2d');
-  if (!tempCtx) return;
+  try {
+    // Create a temporary canvas to analyze the current state
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
 
-  const canvasWidth = canvas.width!;
-  const canvasHeight = canvas.height!;
-  
-  tempCanvas.width = canvasWidth;
-  tempCanvas.height = canvasHeight;
+    const canvasWidth = canvas.width!;
+    const canvasHeight = canvas.height!;
+    
+    // Validate coordinates
+    if (x < 0 || x >= canvasWidth || y < 0 || y >= canvasHeight) {
+      console.warn('Fill coordinates out of bounds');
+      return;
+    }
+    
+    tempCanvas.width = canvasWidth;
+    tempCanvas.height = canvasHeight;
 
-  // Set white background
-  tempCtx.fillStyle = 'white';
-  tempCtx.fillRect(0, 0, canvasWidth, canvasHeight);
-  
-  // Render current canvas state to temporary canvas
-  const canvasElement = canvas.getElement();
-  tempCtx.drawImage(canvasElement, 0, 0);
-
-  // Get image data
-  const imageData = tempCtx.getImageData(0, 0, canvasWidth, canvasHeight);
-  const data = imageData.data;
-
-  // Convert fill color to RGB
-  const fillRGB = hexToRgb(fillColor);
-  if (!fillRGB) return;
-
-  // Get the color at the clicked position
-  const targetColor = getPixelColor(data, x, y, canvasWidth);
-  
-  // Don't fill if clicking on the same color or transparent areas
-  if (colorsEqual(targetColor, fillRGB) || targetColor.a < 128) return;
-
-  // Create a new canvas for the fill area only
-  const fillCanvas = document.createElement('canvas');
-  const fillCtx = fillCanvas.getContext('2d');
-  if (!fillCtx) return;
-  
-  fillCanvas.width = canvasWidth;
-  fillCanvas.height = canvasHeight;
-  
-  // Create image data for fill area
-  const fillImageData = fillCtx.createImageData(canvasWidth, canvasHeight);
-  
-  // Perform flood fill to identify the area
-  const filledPixels = floodFillGetArea(data, x, y, canvasWidth, canvasHeight, targetColor);
-  
-  // Fill only the identified pixels with the new color
-  for (const pixel of filledPixels) {
-    const index = (pixel.y * canvasWidth + pixel.x) * 4;
-    fillImageData.data[index] = fillRGB.r;     // R
-    fillImageData.data[index + 1] = fillRGB.g; // G
-    fillImageData.data[index + 2] = fillRGB.b; // B
-    fillImageData.data[index + 3] = 255;       // A (fully opaque)
-  }
-  
-  // Put the fill data to the fill canvas
-  fillCtx.putImageData(fillImageData, 0, 0);
-  
-  // Create a fabric image from the fill area
-  const dataURL = fillCanvas.toDataURL();
-  fabric.Image.fromURL(dataURL, (img) => {
-    img.set({
-      left: 0,
-      top: 0,
-      selectable: true,
-      evented: true,
-      name: 'fillArea',
-      cornerStyle: 'circle',
-      cornerColor: '#4F46E5',
-      cornerSize: 8,
-      transparentCorners: false,
-      borderColor: '#4F46E5'
+    // Set white background
+    tempCtx.fillStyle = 'white';
+    tempCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Render current canvas state to temporary canvas (excluding base image and traits)
+    const objects = canvas.getObjects().filter(obj => 
+      obj.name !== 'baseImage' && 
+      !obj.name?.startsWith('trait-') &&
+      obj.visible !== false
+    );
+    
+    // Create a temporary fabric canvas to render only user objects
+    const tempFabricCanvas = new fabric.Canvas(tempCanvas);
+    tempFabricCanvas.setBackgroundColor('white', () => {});
+    
+    // Add only user-created objects to temp canvas
+    objects.forEach(obj => {
+      const clonedObj = fabric.util.object.clone(obj);
+      tempFabricCanvas.add(clonedObj);
     });
+    
+    tempFabricCanvas.renderAll();
 
-    canvas.add(img);
-    canvas.bringToFront(img);
-    canvas.setActiveObject(img);
-    safeRenderAll(canvas);
-  });
+    // Get image data
+    const imageData = tempCtx.getImageData(0, 0, canvasWidth, canvasHeight);
+    const data = imageData.data;
+
+    // Convert fill color to RGB
+    const fillRGB = hexToRgb(fillColor);
+    if (!fillRGB) return;
+
+    // Get the color at the clicked position
+    const targetColor = getPixelColor(data, x, y, canvasWidth);
+    
+    // Don't fill if clicking on the same color
+    if (colorsEqual(targetColor, fillRGB)) {
+      console.log('Target color is same as fill color, skipping');
+      return;
+    }
+    
+    // Don't fill if clicking on a non-white area (already has content)
+    if (!(targetColor.r === 255 && targetColor.g === 255 && targetColor.b === 255)) {
+      console.log('Clicked on existing content, skipping flood fill');
+      return;
+    }
+
+    // Perform flood fill to identify the area with stricter bounds
+    const filledPixels = floodFillGetArea(data, x, y, canvasWidth, canvasHeight, targetColor);
+    
+    // Only proceed if we have a reasonable number of pixels (not the entire canvas)
+    const maxFillArea = (canvasWidth * canvasHeight) * 0.8; // Max 80% of canvas
+    if (filledPixels.length > maxFillArea) {
+      console.log('Fill area too large, creating a small circle instead');
+      // Create a small filled circle at the click position
+      const circle = new fabric.Circle({
+        left: x - 25,
+        top: y - 25,
+        radius: 25,
+        fill: fillColor,
+        stroke: '#333',
+        strokeWidth: 1,
+        cornerStyle: 'circle',
+        cornerColor: '#4F46E5',
+        cornerSize: 8,
+        transparentCorners: false,
+        borderColor: '#4F46E5',
+        name: 'fillCircle'
+      });
+      
+      canvas.add(circle);
+      canvas.bringToFront(circle);
+      canvas.setActiveObject(circle);
+      safeRenderAll(canvas);
+      return;
+    }
+    
+    if (filledPixels.length === 0) {
+      console.log('No pixels to fill');
+      return;
+    }
+    
+    // Create a new canvas for the fill area only
+    const fillCanvas = document.createElement('canvas');
+    const fillCtx = fillCanvas.getContext('2d');
+    if (!fillCtx) return;
+    
+    fillCanvas.width = canvasWidth;
+    fillCanvas.height = canvasHeight;
+    
+    // Create image data for fill area
+    const fillImageData = fillCtx.createImageData(canvasWidth, canvasHeight);
+    
+    // Fill only the identified pixels with the new color
+    for (const pixel of filledPixels) {
+      const index = (pixel.y * canvasWidth + pixel.x) * 4;
+      fillImageData.data[index] = fillRGB.r;     // R
+      fillImageData.data[index + 1] = fillRGB.g; // G
+      fillImageData.data[index + 2] = fillRGB.b; // B
+      fillImageData.data[index + 3] = 255;       // A (fully opaque)
+    }
+    
+    // Put the fill data to the fill canvas
+    fillCtx.putImageData(fillImageData, 0, 0);
+    
+    // Create a fabric image from the fill area
+    const dataURL = fillCanvas.toDataURL();
+    fabric.Image.fromURL(dataURL, (img) => {
+      img.set({
+        left: 0,
+        top: 0,
+        selectable: true,
+        evented: true,
+        name: 'fillArea',
+        cornerStyle: 'circle',
+        cornerColor: '#4F46E5',
+        cornerSize: 8,
+        transparentCorners: false,
+        borderColor: '#4F46E5'
+      });
+
+      canvas.add(img);
+      canvas.bringToFront(img);
+      canvas.setActiveObject(img);
+      safeRenderAll(canvas);
+    });
+    
+    // Clean up temporary canvas
+    tempFabricCanvas.dispose();
+  } catch (error) {
+    console.error('Flood fill error:', error);
+  }
 }
 
 // Helper function to convert hex color to RGB
@@ -153,10 +243,19 @@ function floodFillGetArea(
   const stack: number[] = [startX, startY];
   const visited = new Uint8Array(width * height);
   
-  // Lower tolerance for more precise filling
-  const tolerance = 5;
+  // Very low tolerance for precise filling
+  const tolerance = 1;
+  
+  // Limit the number of pixels we can fill to prevent filling entire canvas
+  const maxPixels = Math.min(10000, (width * height) * 0.1); // Max 10% of canvas or 10k pixels
 
   while (stack.length > 0) {
+    // Safety check to prevent infinite loops
+    if (filledPixels.length > maxPixels) {
+      console.warn('Fill operation stopped - too many pixels');
+      break;
+    }
+    
     const y = stack.pop()!;
     const x = stack.pop()!;
     
