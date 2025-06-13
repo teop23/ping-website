@@ -231,11 +231,11 @@ const CreateTraits: React.FC = () => {
       if (tool === 'brush') {
         canvas.freeDrawingBrush.color = color;
         // Reset to normal drawing mode
-        canvas.freeDrawingBrush.globalCompositeOperation = 'source-over';
+        (canvas.freeDrawingBrush as any).globalCompositeOperation = 'source-over';
       } else if (tool === 'eraser') {
         // Set eraser to actually erase pixels
-        canvas.freeDrawingBrush.color = 'rgba(0,0,0,1)';
-        canvas.freeDrawingBrush.globalCompositeOperation = 'destination-out';
+        canvas.freeDrawingBrush.color = 'rgba(255,255,255,1)';
+        (canvas.freeDrawingBrush as any).globalCompositeOperation = 'destination-out';
       }
     }
 
