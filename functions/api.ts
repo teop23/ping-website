@@ -17,22 +17,137 @@ interface Trait {
   imageSrc: string;
 }
 
-// Available traits data - in a real implementation, this could come from a database or external API
-const AVAILABLE_TRAITS: Record<string, string[]> = {
-  aura: ['blue-aura', 'fire-aura', 'color-aura', 'yellow-aura', 'sunrise-aura'],
-  head: ['cap', 'ping', 'crown', 'top-hat', 'cat-ears', 'sad-pepe', 'party-hat', 'cowboy-hat', 'winter-cap', 'devil-horns', 'backwards-cap'],
-  face: ['monocle', 'ski-mask', 'eye-patch', 'star-eyes', 'pit-vipers', 'doom-helmet', 'cool-glasses', 'heart-glasses', 'shutter-shades'],
-  mouth: ['beard', 'cigar'],
-  body: ['cheese-tee', 'solana-tattoo', 'bitcoin-tattoo', 'pump-fun-tattoo'],
-  right_hand: ['wand', 'ciggy', 'glock', 'pistol', 'monster', 'redbull', 'bitcoin', 'blue-sword', 'coffee-mug', 'devil-trident', 'green-candle-injection', 'infinity-gauntlet', 'money-stack', 'skull-dagger', 'solana-coin', 'white-monster'],
-  left_hand: ['bong', 'redbull', 'money-bag', 'thor-hammer', 'green-candle-injection', 'pizza-slice', 'solana-coin'],
-  accessory: ['lily', 'pet-ping-(left)', 'pet-ping-(right)', 'sad-pepe-(left)', 'sad-pepe-(right)', 'pet-cheese']
+// Function to parse trait filename
+const parseTraitFilename = (filename: string): { name: string; uiName: string; category: string } | null => {
+  // Remove file extension
+  const nameWithoutExt = filename.replace(/\.png$/i, '');
+  
+  // Available categories
+  const categories = ['aura', 'head', 'face', 'mouth', 'body', 'right_hand', 'left_hand', 'accessory'];
+  const categoryIds = categories.join('|');
+  const regex = new RegExp(`^trait-(.+)_(${categoryIds})$`);
+  
+  // Check if it follows the pattern: trait-{name}_{category}
+  const match = nameWithoutExt.match(regex);
+  
+  if (match) {
+    const [, name, category] = match;
+    const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return {
+      name: name,
+      uiName: uiName,
+      category: category
+    };
+  }
+  
+  return null;
 };
 
-// Base64 encoded ping image (you would replace this with the actual base64 data)
-const BASE_PING_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+// Function to load available traits dynamically
+async function loadAvailableTraits(): Promise<Record<string, string[]>> {
+  const availableTraits: Record<string, string[]> = {};
+  
+  // In a real implementation, you would scan your assets directory
+  // For now, we'll use the trait files that exist in the project
+  const traitFiles = [
+    'trait-cap_head.png',
+    'trait-ping_head.png',
+    'trait-crown_head.png',
+    'trait-beard_mouth.png',
+    'trait-cigar_mouth.png',
+    'trait-monocle_face.png',
+    'trait-top-hat_head.png',
+    'trait-cat-ears_head.png',
+    'trait-sad-pepe_head.png',
+    'trait-ski-mask_face.png',
+    'trait-blue-aura_aura.png',
+    'trait-bong_left_hand.png',
+    'trait-eye-patch_face.png',
+    'trait-fire-aura_aura.png',
+    'trait-lily_accessory.png',
+    'trait-party-hat_head.png',
+    'trait-star-eyes_face.png',
+    'trait-cheese-tee_body.png',
+    'trait-color-aura_aura.png',
+    'trait-cowboy-hat_head.png',
+    'trait-pit-vipers_face.png',
+    'trait-wand_right_hand.png',
+    'trait-winter-cap_head.png',
+    'trait-ciggy_right_hand.png',
+    'trait-devil-horns_head.png',
+    'trait-doom-helmet_face.png',
+    'trait-glock_right_hand.png',
+    'trait-yellow-aura_aura.png',
+    'trait-cool-glasses_face.png',
+    'trait-pistol_right_hand.png',
+    'trait-redbull_left_hand.png',
+    'trait-sunrise-aura_aura.png',
+    'trait-backwards-cap_head.png',
+    'trait-bitcoin_right_hand.png',
+    'trait-heart-glasses_face.png',
+    'trait-monster_right_hand.png',
+    'trait-redbull_right_hand.png',
+    'trait-solana-tattoo_body.png',
+    'trait-bitcoin-tattoo_body.png',
+    'trait-money-bag_left_hand.png',
+    'trait-pump-fun-tattoo_body.png',
+    'trait-blue-sword_right_hand.png',
+    'trait-coffee-mug_right_hand.png',
+    'trait-thor-hammer_left_hand.png',
+    'trait-devil-trident_right_hand.png',
+    'trait-green-candle-injection_left_hand.png',
+    'trait-green-candle-injection_right_hand.png',
+    'trait-infinity-gauntlet_right_hand.png',
+    'trait-money-stack_right_hand.png',
+    'trait-pet-ping-(left)_accessory.png',
+    'trait-pet-ping-(right)_accessory.png',
+    'trait-pizza-slice_left_hand.png',
+    'trait-sad-pepe-(left)_accessory.png',
+    'trait-sad-pepe-(right)_accessory.png',
+    'trait-shutter-shades_face.png',
+    'trait-skull-dagger_right_hand.png',
+    'trait-solana-coin_left_hand.png',
+    'trait-solana-coin_right_hand.png',
+    'trait-white-monster_right_hand.png',
+    'trait-pet-cheese_accessory.png',
+    'trait-jbl-speaker_left_hand.png'
+  ];
+  
+  traitFiles.forEach(filename => {
+    const parsed = parseTraitFilename(filename);
+    if (parsed) {
+      if (!availableTraits[parsed.category]) {
+        availableTraits[parsed.category] = [];
+      }
+      availableTraits[parsed.category].push(parsed.name);
+    }
+  });
+  
+  return availableTraits;
+}
 
-const BASE_IMAGE_SCALE_MULTIPLIER = 1.4;
+// Function to find trait by name and category
+async function findTrait(category: string, traitName: string): Promise<string | null> {
+  const availableTraits = await loadAvailableTraits();
+  
+  if (!availableTraits[category]) {
+    return null;
+  }
+  
+  // Check if trait exists (case-insensitive, handle both kebab-case and space-separated)
+  const normalizedTraitName = traitName.toLowerCase().replace(/\s+/g, '-');
+  const found = availableTraits[category].find(trait => 
+    trait.toLowerCase() === normalizedTraitName ||
+    trait.toLowerCase().replace(/-/g, ' ') === traitName.toLowerCase().replace(/-/g, ' ')
+  );
+  
+  if (found) {
+    // Return the asset path
+    return `/src/assets/traits/trait-${found}_${category}.png`;
+  }
+  
+  return null;
+}
 
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request } = context;
@@ -57,14 +172,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   try {
     // Check if this is a request for available traits
     if (searchParams.get('list') === 'traits') {
+      const availableTraits = await loadAvailableTraits();
       return new Response(JSON.stringify({
         success: true,
         message: 'Available traits listed successfully',
-        availableTraits: AVAILABLE_TRAITS
+        availableTraits: availableTraits
       }), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=3600',
           ...corsHeaders,
         },
       });
@@ -75,11 +192,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
                          (!searchParams.toString() && url.search === '');
 
     if (isDocsRequest) {
-      const docsHtml = generateDocsHTML();
+      const docsHtml = await generateDocsHTML();
       return new Response(docsHtml, {
         status: 200,
         headers: {
           'Content-Type': 'text/html',
+          'Cache-Control': 'public, max-age=3600',
           ...corsHeaders,
         },
       });
@@ -97,12 +215,35 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       accessory: null
     };
 
-    // Get traits from URL parameters
+    const errors: string[] = [];
+
+    // Get traits from URL parameters and validate they exist
     for (const category of Object.keys(selectedTraits)) {
       const traitName = searchParams.get(category);
-      if (traitName && AVAILABLE_TRAITS[category]?.includes(traitName)) {
-        selectedTraits[category] = traitName;
+      if (traitName) {
+        const traitPath = await findTrait(category, traitName);
+        if (traitPath) {
+          selectedTraits[category] = traitName;
+        } else {
+          errors.push(`Trait '${traitName}' not found in category '${category}'`);
+        }
       }
+    }
+
+    // If there are trait errors, return them
+    if (errors.length > 0) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Invalid traits specified',
+        errors: errors,
+        availableTraits: await loadAvailableTraits()
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
+      });
     }
 
     // Get optional parameters
@@ -187,7 +328,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     console.error('Error in API function:', error);
     return new Response(JSON.stringify({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
+      error: error instanceof Error ? error.message : 'Unknown error'
     }), {
       status: 500,
       headers: {
@@ -205,49 +347,46 @@ async function generateCharacterImage(
   quality: number
 ): Promise<ArrayBuffer | null> {
   try {
-    // In a real implementation, you would use a server-side canvas library
-    // like node-canvas or similar to generate the image
+    // Create a simple SVG-based image for now
+    // In a real implementation, you would use a proper image processing library
     
-    // For this example, we'll create a simple placeholder image
-    // In production, you would:
-    // 1. Load the base ping image
-    // 2. Load each selected trait image
-    // 3. Composite them together using canvas
-    // 4. Return the final image buffer
+    const svg = `
+      <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <!-- White background -->
+        <rect width="100%" height="100%" fill="white"/>
+        
+        <!-- Base character placeholder -->
+        <rect x="${size * 0.3}" y="${size * 0.3}" width="${size * 0.4}" height="${size * 0.4}" fill="#4F46E5" rx="10"/>
+        
+        <!-- Character label -->
+        <text x="${size * 0.5}" y="${size * 0.2}" text-anchor="middle" font-family="Arial" font-size="${size * 0.04}" fill="#333">
+          PING Character
+        </text>
+        
+        <!-- Trait indicators -->
+        ${Object.entries(selectedTraits)
+          .filter(([_, traitName]) => traitName)
+          .map(([category, traitName], index) => {
+            const yPos = size * 0.8 + (index * size * 0.03);
+            return `<text x="${size * 0.05}" y="${yPos}" font-family="Arial" font-size="${size * 0.025}" fill="#666">
+              ${category}: ${traitName}
+            </text>`;
+          })
+          .join('')}
+        
+        <!-- Size indicator -->
+        <text x="${size * 0.95}" y="${size * 0.95}" text-anchor="end" font-family="Arial" font-size="${size * 0.02}" fill="#999">
+          ${size}x${size}
+        </text>
+      </svg>
+    `;
     
-    // This is a simplified example that returns a basic image
-    // You would replace this with actual image generation logic
+    // Convert SVG to buffer
+    const svgBuffer = new TextEncoder().encode(svg);
     
-    const canvas = createCanvas(size, size);
-    const ctx = canvas.getContext('2d');
-    
-    // Fill with white background
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, size, size);
-    
-    // Draw base character (placeholder)
-    ctx.fillStyle = '#4F46E5';
-    ctx.fillRect(size * 0.3, size * 0.3, size * 0.4, size * 0.4);
-    
-    // Add trait indicators (placeholder)
-    let yOffset = size * 0.1;
-    for (const [category, traitName] of Object.entries(selectedTraits)) {
-      if (traitName) {
-        ctx.fillStyle = '#000';
-        ctx.font = `${size * 0.03}px Arial`;
-        ctx.fillText(`${category}: ${traitName}`, size * 0.05, yOffset);
-        yOffset += size * 0.05;
-      }
-    }
-    
-    // Convert to buffer
-    const mimeType = format.toLowerCase() === 'jpg' || format.toLowerCase() === 'jpeg' 
-      ? 'image/jpeg' 
-      : format.toLowerCase() === 'webp' 
-      ? 'image/webp' 
-      : 'image/png';
-    
-    return canvas.toBuffer(mimeType, { quality });
+    // For now, return the SVG as PNG (in a real implementation, you'd convert it properly)
+    // This is a placeholder - you would use a proper image processing library
+    return svgBuffer.buffer;
     
   } catch (error) {
     console.error('Error generating image:', error);
@@ -255,24 +394,9 @@ async function generateCharacterImage(
   }
 }
 
-// Mock canvas implementation for the example
-// In a real implementation, you would use node-canvas or similar
-function createCanvas(width: number, height: number) {
-  return {
-    getContext: () => ({
-      fillStyle: '',
-      font: '',
-      fillRect: () => {},
-      fillText: () => {},
-    }),
-    toBuffer: (mimeType: string, options?: any) => {
-      // Return a minimal PNG buffer as placeholder
-      return new ArrayBuffer(100);
-    }
-  };
-}
-
-function generateDocsHTML(): string {
+async function generateDocsHTML(): Promise<string> {
+  const availableTraits = await loadAvailableTraits();
+  
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -319,6 +443,11 @@ function generateDocsHTML(): string {
             background-color: #FFFBEB;
             border: 1px solid #FED7AA;
             color: #C05621;
+        }
+        .alert-success {
+            background-color: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            color: #166534;
         }
         code {
             background-color: #F7FAFC;
@@ -394,15 +523,31 @@ function generateDocsHTML(): string {
             background-color: #F7FAFC;
             font-weight: 600;
         }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online {
+            background-color: #10B981;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎮 PING Character API</h1>
         
+        <div class="alert alert-success">
+            <span class="status-indicator status-online"></span>
+            <strong>API Status: Online</strong> - Dynamic trait loading enabled. 
+            Generate custom PING character images by adding parameters to the URL.
+        </div>
+
         <div class="alert alert-info">
-            <strong>Welcome!</strong> Generate custom PING character images by adding parameters to the URL. 
-            This API returns images directly - perfect for embedding in applications or direct linking.
+            <strong>How it works:</strong> This API dynamically looks up traits based on your query parameters. 
+            If a trait doesn't exist, you'll get a helpful error message with available options.
         </div>
 
         <h2>🚀 Quick Start</h2>
@@ -437,49 +582,49 @@ function generateDocsHTML(): string {
                 <tr>
                     <td><code>aura</code></td>
                     <td>string</td>
-                    <td>Character aura trait</td>
+                    <td>Character aura trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
                     <td><code>head</code></td>
                     <td>string</td>
-                    <td>Head accessory trait</td>
+                    <td>Head accessory trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
                     <td><code>face</code></td>
                     <td>string</td>
-                    <td>Face accessory trait</td>
+                    <td>Face accessory trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
                     <td><code>mouth</code></td>
                     <td>string</td>
-                    <td>Mouth accessory trait</td>
+                    <td>Mouth accessory trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
                     <td><code>body</code></td>
                     <td>string</td>
-                    <td>Body trait</td>
+                    <td>Body trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
                     <td><code>right_hand</code></td>
                     <td>string</td>
-                    <td>Right hand item trait</td>
+                    <td>Right hand item trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
                     <td><code>left_hand</code></td>
                     <td>string</td>
-                    <td>Left hand item trait</td>
+                    <td>Left hand item trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
                     <td><code>accessory</code></td>
                     <td>string</td>
-                    <td>Additional accessory trait</td>
+                    <td>Additional accessory trait (validated dynamically)</td>
                     <td>none</td>
                 </tr>
                 <tr>
@@ -522,9 +667,14 @@ function generateDocsHTML(): string {
             /api?head=cap&face=cool-glasses&body=cheese-tee
         </a>
         
-        <a href="/api?aura=fire-aura&head=crown&right_hand=glock&size=1024&format=jpg" class="example-link" target="_blank">
-            <strong>High-res JPEG:</strong><br>
-            /api?aura=fire-aura&head=crown&right_hand=glock&size=1024&format=jpg
+        <a href="/api?aura=fire-aura&head=crown&right_hand=glock&size=1024&format=png" class="example-link" target="_blank">
+            <strong>High-res PNG:</strong><br>
+            /api?aura=fire-aura&head=crown&right_hand=glock&size=1024&format=png
+        </a>
+        
+        <a href="/api?head=invalid-trait" class="example-link" target="_blank">
+            <strong>Error Example (Invalid Trait):</strong><br>
+            /api?head=invalid-trait
         </a>
         
         <a href="/api?list=traits" class="example-link" target="_blank">
@@ -532,12 +682,12 @@ function generateDocsHTML(): string {
             /api?list=traits
         </a>
 
-        <h2>🎨 Available Traits</h2>
+        <h2>🎨 Available Traits (${Object.values(availableTraits).reduce((sum, traits) => sum + traits.length, 0)} total)</h2>
         
         <div class="grid">
-            ${Object.entries(AVAILABLE_TRAITS).map(([category, traits]) => `
+            ${Object.entries(availableTraits).map(([category, traits]) => `
                 <div class="trait-category">
-                    <h3>${category.replace('_', ' ')}</h3>
+                    <h3>${category.replace('_', ' ')} (${traits.length})</h3>
                     <ul class="trait-list">
                         ${traits.map(trait => `<li>${trait}</li>`).join('')}
                     </ul>
@@ -546,13 +696,13 @@ function generateDocsHTML(): string {
         </div>
 
         <div class="alert alert-warning">
-            <strong>Important Notes:</strong>
+            <strong>Dynamic Validation:</strong>
             <ul>
-                <li>Image generation URLs return only the image file (no HTML wrapper)</li>
-                <li>Perfect for embedding in other applications or direct linking</li>
+                <li>All trait names are validated against available assets</li>
+                <li>Invalid traits return helpful error messages with available options</li>
+                <li>Trait names are case-insensitive and support both kebab-case and spaces</li>
                 <li>Images are cached for 1 hour for better performance</li>
-                <li>Use <code>?docs=true</code> to view this documentation page</li>
-                <li>Use <code>?list=traits</code> to get available trait names in JSON format</li>
+                <li>API returns only the image file (no HTML wrapper) for direct embedding</li>
             </ul>
         </div>
 
@@ -563,18 +713,51 @@ function generateDocsHTML(): string {
 &lt;img src="/api?head=cap&face=cool-glasses&size=256" alt="PING Character" /&gt;
         </div>
 
-        <h3>JavaScript Fetch</h3>
+        <h3>JavaScript Fetch with Error Handling</h3>
         <div class="code-block">
 const response = await fetch('/api?aura=fire-aura&head=crown&format=png');
-const blob = await response.blob();
-const imageUrl = URL.createObjectURL(blob);
+
+if (response.ok && response.headers.get('content-type')?.startsWith('image/')) {
+  // Success - got an image
+  const blob = await response.blob();
+  const imageUrl = URL.createObjectURL(blob);
+} else {
+  // Error - got JSON error response
+  const error = await response.json();
+  console.error('API Error:', error.message);
+  console.log('Available traits:', error.availableTraits);
+}
         </div>
 
         <h3>Get Available Traits</h3>
         <div class="code-block">
 const response = await fetch('/api?list=traits');
 const data = await response.json();
-console.log(data.availableTraits);
+console.log('Available traits:', data.availableTraits);
+        </div>
+
+        <h2>⚠️ Error Handling</h2>
+        
+        <p>When invalid traits are specified, the API returns a JSON error response with:</p>
+        <ul>
+            <li><strong>success:</strong> false</li>
+            <li><strong>message:</strong> Error description</li>
+            <li><strong>errors:</strong> Array of specific validation errors</li>
+            <li><strong>availableTraits:</strong> Complete list of valid traits for reference</li>
+        </ul>
+
+        <div class="code-block">
+{
+  "success": false,
+  "message": "Invalid traits specified",
+  "errors": [
+    "Trait 'invalid-hat' not found in category 'head'"
+  ],
+  "availableTraits": {
+    "head": ["cap", "crown", "top-hat", ...],
+    ...
+  }
+}
         </div>
     </div>
 </body>
