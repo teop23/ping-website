@@ -24,6 +24,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   curvePoints,
   undoRedoManager,
   showBaseLayer,
+  canvas,
   onToggleBaseLayer,
   onUploadImage,
   onDeleteSelected,

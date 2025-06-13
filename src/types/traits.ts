@@ -21,6 +21,7 @@ export interface ToolsPanelProps {
   curvePoints: { x: number; y: number }[];
   undoRedoManager: UndoRedoManager | null;
   showBaseLayer: boolean;
+  canvas: fabric.Canvas | null;
   onToggleBaseLayer: () => void;
   onUploadImage: () => void;
   onDeleteSelected: () => void;

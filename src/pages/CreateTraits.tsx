@@ -383,6 +383,7 @@ const CreateTraits: React.FC = () => {
           curvePoints={curvePoints}
           undoRedoManager={undoRedoManager}
           showBaseLayer={showBaseLayer}
+          canvas={canvas}
           onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
           onUploadImage={() => uploadImage(canvas!)}
           onDeleteSelected={() => deleteSelected(canvas!)}
