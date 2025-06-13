@@ -88,11 +88,6 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
               isActive={location.pathname === '/create-traits'}
               icon={<Palette size={16} />} 
             />
-            <NavItem 
-              label="API" 
-              href="/api" 
-              isActive={location.pathname === '/api'}
-            />
             
             {/* Social Links */}
             <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-border/50">
@@ -179,12 +174,6 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   href="/create-traits" 
                   isActive={location.pathname === '/create-traits'}
                   icon={<Palette size={18} />}
-                  onClick={closeMobileMenu}
-                />
-                <MobileNavItem 
-                  label="API" 
-                  href="/api" 
-                  isActive={location.pathname === '/api'}
                   onClick={closeMobileMenu}
                 />
                 
