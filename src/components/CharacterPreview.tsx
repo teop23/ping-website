@@ -88,7 +88,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     const scaledWidth = baseImage.width * scale;
     const scaledHeight = baseImage.height * scale;
     const x = (canvas.width - scaledWidth) / 2;
-    const y = (canvas.height - scaledHeight) / 2 + canvas.height * 0.08; // Offset down by 8% of canvas height
+    const y = (canvas.height - scaledHeight) / 2;
 
     // Draw base image
     ctx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
@@ -101,17 +101,14 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       if (trait) {
         const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
         if (traitImg) {
-          // Scale and position trait image to match base image positioning
-          const traitScale = scale;
-          const traitWidth = traitImg.width * traitScale;
-          const traitHeight = traitImg.height * traitScale;
-          const traitX = (canvas.width - traitWidth) / 2;
-          const traitY = (canvas.height - traitHeight) / 2 + canvas.height * 0.08; // Same offset as base image
+          // Scale trait image to match canvas dimensions (same as CreateTraits)
+          const traitScaleX = canvas.width / traitImg.width;
+          const traitScaleY = canvas.height / traitImg.height;
           
           ctx.drawImage(
             traitImg,
-            traitX, traitY, // Destination position (same as base image)
-            traitWidth, traitHeight // Destination size (same scale as base image)
+            0, 0, // Source position
+            canvas.width, canvas.height // Destination size (full canvas)
           );
         }
       }
@@ -253,7 +250,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const scaledWidth = baseImage.width * scale;
       const scaledHeight = baseImage.height * scale;
       const x = (downloadCanvas.width - scaledWidth) / 2;
-      const y = (downloadCanvas.height - scaledHeight) / 2 + downloadCanvas.height * 0.08; // Same offset as preview
+      const y = (downloadCanvas.height - scaledHeight) / 2;
 
       // Draw base image
       downloadCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
@@ -266,17 +263,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         if (trait) {
           const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
-            // Scale and position trait to match base image
-            const traitScale = scale;
-            const traitWidth = traitImg.width * traitScale;
-            const traitHeight = traitImg.height * traitScale;
-            const traitX = (downloadCanvas.width - traitWidth) / 2;
-            const traitY = (downloadCanvas.height - traitHeight) / 2 + downloadCanvas.height * 0.08; // Same offset as base image
-            
+            // Scale trait to full canvas size
             downloadCtx.drawImage(
               traitImg,
-              traitX, traitY,
-              traitWidth, traitHeight
+              0, 0,
+              downloadCanvas.width, downloadCanvas.height
             );
           }
         }
@@ -347,7 +338,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const scaledWidth = baseImage.width * scale;
       const scaledHeight = baseImage.height * scale;
       const x = (copyCanvas.width - scaledWidth) / 2;
-      const y = (copyCanvas.height - scaledHeight) / 2 + copyCanvas.height * 0.08; // Same offset as preview
+      const y = (copyCanvas.height - scaledHeight) / 2;
 
       // Draw base image
       copyCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
@@ -360,17 +351,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         if (trait) {
           const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
-            // Scale and position trait to match base image
-            const traitScale = scale;
-            const traitWidth = traitImg.width * traitScale;
-            const traitHeight = traitImg.height * traitScale;
-            const traitX = (copyCanvas.width - traitWidth) / 2;
-            const traitY = (copyCanvas.height - traitHeight) / 2 + copyCanvas.height * 0.08; // Same offset as base image
-            
+            // Scale trait to full canvas size
             copyCtx.drawImage(
               traitImg,
-              traitX, traitY,
-              traitWidth, traitHeight
+              0, 0,
+              copyCanvas.width, copyCanvas.height
             );
           }
         }
