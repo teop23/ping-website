@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Background from './components/Background';
 import Home from './pages/Home';
 import CreateTraits from './pages/CreateTraits';
+import PingAPI from './pages/PingAPI';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create-traits" element={<CreateTraits />} />
+          <Route path="/api" element={<PingAPI />} />
         </Routes>
       </main>
     </div>
