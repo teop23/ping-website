@@ -146,32 +146,6 @@ const CreateTraits: React.FC = () => {
     
     canvas.on('path:created', () => {
       ensureProperLayering(canvas);
-      
-      // Handle eraser tool - convert the path to an eraser
-      if (tool === 'eraser') {
-        const objects = canvas.getObjects();
-        const lastPath = objects[objects.length - 1];
-        if (lastPath && lastPath.type === 'path') {
-          // Create an eraser path that erases to white/transparent
-          // Remove the path and create a proper eraser effect
-          canvas.remove(lastPath);
-          
-          // Create a white path that covers the erased area
-          const eraserPath = new fabric.Path(lastPath.path, {
-            fill: '',
-            stroke: '#FFFFFF',
-            strokeWidth: lastPath.strokeWidth,
-            globalCompositeOperation: 'source-over',
-            selectable: true,
-            evented: true,
-            name: 'eraserPath'
-          });
-          
-          canvas.add(eraserPath);
-          canvas.renderAll();
-        }
-      }
-      
       saveStateDelayed('Path created');
     });
 
@@ -256,9 +230,12 @@ const CreateTraits: React.FC = () => {
       canvas.freeDrawingBrush.width = brushSize;
       if (tool === 'brush') {
         canvas.freeDrawingBrush.color = color;
+        // Reset to normal drawing mode
+        canvas.freeDrawingBrush.globalCompositeOperation = 'source-over';
       } else if (tool === 'eraser') {
-        // Set eraser color to white - the globalCompositeOperation will handle the erasing
-        canvas.freeDrawingBrush.color = '#FFFFFF';
+        // Set eraser to actually erase pixels
+        canvas.freeDrawingBrush.color = 'rgba(0,0,0,1)';
+        canvas.freeDrawingBrush.globalCompositeOperation = 'destination-out';
       }
     }
 
