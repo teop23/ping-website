@@ -349,7 +349,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];
         if (trait) {
-          const traitImg = traitImages.get(trait.id);
+          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
             // Scale trait to full canvas size
             copyCtx.drawImage(

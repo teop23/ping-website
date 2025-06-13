@@ -52,7 +52,7 @@ const Builder: React.FC = () => {
   const handleTraitSelect = (trait: Trait) => {
     setSelectedTraits(prev => {
       // If the trait is already selected, deselect it
-      if (prev[trait.category]?.id === trait.id) {
+      if (prev[trait.category]?.name === trait.name && prev[trait.category]?.category === trait.category) {
         return {
           ...prev,
           [trait.category]: null
