@@ -29,7 +29,20 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
       traitFiles = await loadTraitsFromAssets();
     }
     
+    const traitCountByCategory: Record<string, number> = {};
+
+    for (const trait of traitFiles) {
+      // Count traits per category
+      traitCountByCategory[trait.category] = (traitCountByCategory[trait.category] || 0) + 1;
+    }
+
+    let possibleCombinations = 1;
+    for( const category in traitCountByCategory) {
+      possibleCombinations *= (traitCountByCategory[category] + 1); 
+    }
+
     console.log(`📦 Loaded ${traitFiles.length} trait files`);
+    console.log(`🔢 Possible trait combinations: ${possibleCombinations}`);
     
     // Convert trait files to Trait objects
     loadedTraits = traitFiles.map(traitFile => ({
