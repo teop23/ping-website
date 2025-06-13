@@ -50,8 +50,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               img.onerror = reject;
               img.src = imageSrc;
             });
-            newTraitImages.set(trait.id, img);
-            console.log(`✅ Loaded trait image: ${trait.name} (${trait.category}) - ID: ${trait.id}`);
+            newTraitImages.set(`${trait.name}-${trait.category}`, img);
           } catch (error) {
             console.warn(`Failed to load trait image for ${trait.name}:`, error);
           }
@@ -87,8 +86,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // Draw aura traits first (behind everything including base image)
     const auraTrait = selectedTraits['aura'];
     if (auraTrait) {
-      const auraImg = traitImages.get(auraTrait.id);
-      console.log(`🌟 Rendering aura: ${auraTrait.name}, Image found: ${!!auraImg}`);
+      const auraImg = traitImages.get(`${auraTrait.name}-${auraTrait.category}`);
       if (auraImg) {
         ctx.drawImage(
           auraImg,
@@ -114,7 +112,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     traitOrder.forEach(category => {
       const trait = selectedTraits[category];
       if (trait) {
-        const traitImg = traitImages.get(trait.id);
+        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
         if (traitImg) {
           ctx.drawImage(
             traitImg,
@@ -259,7 +257,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       // Draw aura first (behind everything including base image)
       const auraTrait = selectedTraits['aura'];
       if (auraTrait) {
-        const auraImg = traitImages.get(auraTrait.id);
+        const auraImg = traitImages.get(`${auraTrait.name}-${auraTrait.category}`);
         if (auraImg) {
           downloadCtx.drawImage(
             auraImg,
@@ -285,7 +283,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];
         if (trait) {
-          const traitImg = traitImages.get(trait.id);
+          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
             downloadCtx.drawImage(
               traitImg,
@@ -359,7 +357,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       // Draw aura first (behind everything including base image)
       const auraTrait = selectedTraits['aura'];
       if (auraTrait) {
-        const auraImg = traitImages.get(auraTrait.id);
+        const auraImg = traitImages.get(`${auraTrait.name}-${auraTrait.category}`);
         if (auraImg) {
           copyCtx.drawImage(
             auraImg,
@@ -385,7 +383,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];
         if (trait) {
-          const traitImg = traitImages.get(trait.id);
+          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
             copyCtx.drawImage(
               traitImg,
