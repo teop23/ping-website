@@ -99,7 +99,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     traitOrder.forEach(category => {
       const trait = selectedTraits[category];
       if (trait) {
-        const traitImg = traitImages.get(trait.id);
+        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
         if (traitImg) {
           // Scale trait image to match canvas dimensions (same as CreateTraits)
           const traitScaleX = canvas.width / traitImg.width;
@@ -261,7 +261,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       traitOrder.forEach(category => {
         const trait = selectedTraits[category];
         if (trait) {
-          const traitImg = traitImages.get(trait.id);
+          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
             // Scale trait to full canvas size
             downloadCtx.drawImage(
