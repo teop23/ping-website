@@ -54,7 +54,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           const traitImg = new Image();
           traitImg.onload = () => {
             const uploadedTrait: Trait = {
-              id: `uploaded-${Date.now()}`,
+              id: `uploaded-${category}-${Date.now()}`,
               name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
               category: category as any,
               imageSrc: imageSrc,

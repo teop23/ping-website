@@ -74,7 +74,7 @@ export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
         
         if (parsed) {
           traits.push({
-            id: parsed.name, // Use the parsed name as ID
+            id: `${parsed.name}-${parsed.category}`, // Use name + category as unique ID
             name: parsed.name,
             uiName: parsed.uiName,
             category: parsed.category,

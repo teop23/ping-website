@@ -50,7 +50,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               img.onerror = reject;
               img.src = imageSrc;
             });
-            newTraitImages.set(trait.id, img);
+            newTraitImages.set(`${trait.name}-${trait.category}`, img);
           } catch (error) {
             console.warn(`Failed to load trait image for ${trait.name}:`, error);
           }
