@@ -29,6 +29,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   const [uploadedTraits, setUploadedTraits] = React.useState<Record<string, Trait[]>>({
     head: [],
     face: [],
+    mouth: [],
     body: [],
     right_hand: [],
     left_hand: [],

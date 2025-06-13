@@ -5,6 +5,7 @@ import { loadTraitsFromAssets, loadTraitsFromAssetsDynamic, getAvailableCategori
 export const defaultCategories: CategoryOption[] = [
   { id: 'head', label: 'Head' },
   { id: 'face', label: 'Face' },
+  { id: 'mouth', label: 'Mouth' },
   { id: 'body', label: 'Body' },
   { id: 'right_hand', label: 'Right Hand' },
   { id: 'left_hand', label: 'Left Hand' },

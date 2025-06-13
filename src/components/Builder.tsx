@@ -16,6 +16,7 @@ const Builder: React.FC = () => {
   const [selectedTraits, setSelectedTraits] = useState<Record<string, Trait | null>>({
     head: null,
     face: null,
+    mouth: null,
     body: null,
     right_hand: null,
     left_hand: null,
@@ -73,6 +74,7 @@ const Builder: React.FC = () => {
     setSelectedTraits({
       head: null,
       face: null,
+      mouth: null,
       body: null,
       right_hand: null,
       left_hand: null,

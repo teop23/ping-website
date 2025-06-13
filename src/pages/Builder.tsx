@@ -5,7 +5,7 @@ import TextTools, { TextElement } from '../components/TextTools';
 import { initializeTraits } from '../data/traits';
 import { Trait, CategoryOption } from '../types';
 
-export type CategoryName = 'head' | 'face' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
+export type CategoryName = 'head' | 'face' | 'mouth' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
 
 const Builder: React.FC = () => {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -14,6 +14,7 @@ const Builder: React.FC = () => {
   const [selectedTraits, setSelectedTraits] = useState<Record<string, Trait | null>>({
     head: null,
     face: null,
+    mouth: null,
     body: null,
     right_hand: null,
     left_hand: null,
@@ -71,6 +72,7 @@ const Builder: React.FC = () => {
     setSelectedTraits({
       head: null,
       face: null,
+      mouth: null,
       body: null,
       right_hand: null,
       left_hand: null,
