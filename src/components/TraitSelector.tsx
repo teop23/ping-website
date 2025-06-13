@@ -82,7 +82,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
   return (
     <TooltipProvider>
-    <Card className="flex flex-row h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
+    <Card className="flex flex-row h-[400px] shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
       {/* Left Sidebar - Categories */}
       <div className="w-24 sm:w-28 flex-shrink-0 border-r border-border bg-gradient-to-b from-muted/50 to-muted/30">
         <div className="p-2 space-y-1">
@@ -114,7 +114,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Traits Grid */}
-        <ScrollArea className="flex-1 max-h-[240px]">
+        <ScrollArea className="flex-1 h-full">
           <CardContent className="p-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
             {/* Upload button */}
             <motion.button
