@@ -8,6 +8,13 @@ import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 
+interface UploadedTraitExtended extends Trait {
+  scale?: number;
+  rotation?: number;
+  offsetX?: number;
+  offsetY?: number;
+}
+
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;
   textElements?: TextElement[];
@@ -101,15 +108,32 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       if (trait) {
         const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
         if (traitImg) {
-          // Scale trait image to match canvas dimensions (same as CreateTraits)
-          const traitScaleX = canvas.width / traitImg.width;
-          const traitScaleY = canvas.height / traitImg.height;
+          const uploadedTrait = trait as UploadedTraitExtended;
+          const userScale = uploadedTrait.scale || 1;
+          const userRotation = uploadedTrait.rotation || 0;
+          const userOffsetX = uploadedTrait.offsetX || 0;
+          const userOffsetY = uploadedTrait.offsetY || 0;
           
+          // Save context for transformations
+          ctx.save();
+          
+          // Apply transformations
+          const centerX = canvas.width / 2 + (userOffsetX * canvas.width / 100);
+          const centerY = canvas.height / 2 + (userOffsetY * canvas.height / 100);
+          
+          ctx.translate(centerX, centerY);
+          ctx.rotate((userRotation * Math.PI) / 180);
+          ctx.scale(userScale, userScale);
+          
+          // Draw the trait image centered
           ctx.drawImage(
             traitImg,
-            0, 0, // Source position
-            canvas.width, canvas.height // Destination size (full canvas)
+            -canvas.width / 2, -canvas.height / 2,
+            canvas.width, canvas.height
           );
+          
+          // Restore context
+          ctx.restore();
         }
       }
     });
@@ -263,12 +287,32 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         if (trait) {
           const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
-            // Scale trait to full canvas size
+            const uploadedTrait = trait as UploadedTraitExtended;
+            const userScale = uploadedTrait.scale || 1;
+            const userRotation = uploadedTrait.rotation || 0;
+            const userOffsetX = uploadedTrait.offsetX || 0;
+            const userOffsetY = uploadedTrait.offsetY || 0;
+            
+            // Save context for transformations
+            downloadCtx.save();
+            
+            // Apply transformations
+            const centerX = downloadCanvas.width / 2 + (userOffsetX * downloadCanvas.width / 100);
+            const centerY = downloadCanvas.height / 2 + (userOffsetY * downloadCanvas.height / 100);
+            
+            downloadCtx.translate(centerX, centerY);
+            downloadCtx.rotate((userRotation * Math.PI) / 180);
+            downloadCtx.scale(userScale, userScale);
+            
+            // Draw the trait image centered
             downloadCtx.drawImage(
               traitImg,
-              0, 0,
+              -downloadCanvas.width / 2, -downloadCanvas.height / 2,
               downloadCanvas.width, downloadCanvas.height
             );
+            
+            // Restore context
+            downloadCtx.restore();
           }
         }
       });
@@ -351,12 +395,32 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         if (trait) {
           const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
-            // Scale trait to full canvas size
+            const uploadedTrait = trait as UploadedTraitExtended;
+            const userScale = uploadedTrait.scale || 1;
+            const userRotation = uploadedTrait.rotation || 0;
+            const userOffsetX = uploadedTrait.offsetX || 0;
+            const userOffsetY = uploadedTrait.offsetY || 0;
+            
+            // Save context for transformations
+            copyCtx.save();
+            
+            // Apply transformations
+            const centerX = copyCanvas.width / 2 + (userOffsetX * copyCanvas.width / 100);
+            const centerY = copyCanvas.height / 2 + (userOffsetY * copyCanvas.height / 100);
+            
+            copyCtx.translate(centerX, centerY);
+            copyCtx.rotate((userRotation * Math.PI) / 180);
+            copyCtx.scale(userScale, userScale);
+            
+            // Draw the trait image centered
             copyCtx.drawImage(
               traitImg,
-              0, 0,
+              -copyCanvas.width / 2, -copyCanvas.height / 2,
               copyCanvas.width, copyCanvas.height
             );
+            
+            // Restore context
+            copyCtx.restore();
           }
         }
       });
