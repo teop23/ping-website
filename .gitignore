@@ -26,3 +26,4 @@ dist-ssr
 .bolt/config.json
 .bolt/prompt
 .wrangler
+public/traits-index.json
