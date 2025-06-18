@@ -17,6 +17,9 @@ export const COUNTDOWN_TARGET = 1750280400 * 1000;
 // Show/hide countdown component
 export const SHOW_COUNTDOWN = true;
 
+// Randomizer settings
+export const EMPTY_TRAIT_CHANCE = 0.3; // 30% chance for no trait in a category
+
 // Other constants can be added here
 export const NETWORK = "mainnet";
 export const TOKEN_SYMBOL = "PING";
