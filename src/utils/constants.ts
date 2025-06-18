@@ -12,7 +12,7 @@ export const SOCIAL_LINKS = {
 
 // Countdown target timestamp (Unix timestamp in milliseconds)
 // Example: January 1, 2025, 00:00:00 UTC - edit this to your desired date
-export const COUNTDOWN_TARGET = new Date('2025-01-01T00:00:00Z').getTime();
+export const COUNTDOWN_TARGET = 1750280400 * 1000;
 
 // Other constants can be added here
 export const NETWORK = "mainnet";
