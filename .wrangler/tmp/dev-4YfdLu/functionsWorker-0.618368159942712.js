@@ -78,7 +78,7 @@ function checkURL2(request, init2) {
 __name(checkURL2, "checkURL");
 var urls2;
 var init_checked_fetch = __esm({
-  "../.wrangler/tmp/bundle-EzvU30/checked-fetch.js"() {
+  "../.wrangler/tmp/bundle-80xBYF/checked-fetch.js"() {
     urls2 = /* @__PURE__ */ new Set();
     __name2(checkURL2, "checkURL");
     globalThis.fetch = new Proxy(globalThis.fetch, {
@@ -23750,7 +23750,7 @@ var init_generate = __esm({
       try {
         const url = new URL(request.url);
         const queryParams = Object.fromEntries(url.searchParams.entries());
-        const baseURL = "http://127.0.0.1:8788";
+        const baseURL = "https://pingonsol.com";
         const baseCharacterImage = `${baseURL}/ping.png`;
         const baseImageScaleMultiplier = 1.4;
         const baseImageSize = 512 * baseImageScaleMultiplier;

@@ -5,7 +5,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams.entries());
-    const baseURL = "http://127.0.0.1:8788";
+    const baseURL = "https://pingonsol.com";
     const baseCharacterImage = `${baseURL}/ping.png`;
     const baseImageScaleMultiplier = 1.4;
     const baseImageSize = 512 * baseImageScaleMultiplier;
