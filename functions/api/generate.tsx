@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 export const onRequestGet: APIRoute = async ({ request }) => {
