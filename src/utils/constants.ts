@@ -14,6 +14,9 @@ export const SOCIAL_LINKS = {
 // Example: January 1, 2025, 00:00:00 UTC - edit this to your desired date
 export const COUNTDOWN_TARGET = 1750280400 * 1000;
 
+// Show/hide countdown component
+export const SHOW_COUNTDOWN = true;
+
 // Other constants can be added here
 export const NETWORK = "mainnet";
 export const TOKEN_SYMBOL = "PING";

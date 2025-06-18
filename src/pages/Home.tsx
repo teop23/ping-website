@@ -3,6 +3,7 @@ import React from 'react';
 import Builder from './Builder';
 import ContractAddress from '../components/ContractAddress';
 import Countdown from '../components/Countdown';
+import { SHOW_COUNTDOWN } from '../utils/constants';
 import { Sparkles, Zap, Star, Heart } from 'lucide-react';
 
 const Home: React.FC = () => {
@@ -223,7 +224,7 @@ const Home: React.FC = () => {
         </motion.div>
 
         {/* Countdown Section */}
-        <Countdown />
+        {SHOW_COUNTDOWN && <Countdown />}
 
         {/* Builder Section with Enhanced Container */}
         <div className="w-full max-w-[98vw] sm:max-w-[95vw] md:max-w-6xl relative">
