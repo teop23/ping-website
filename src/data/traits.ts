@@ -1,5 +1,5 @@
-import { Trait, CategoryOption } from '../types';
-import { loadTraitsFromAssets, loadTraitsFromAssetsDynamic, getAvailableCategories } from '../utils/traitLoader';
+import { CategoryOption, Trait } from '../types';
+import { loadTraitsFromAssets, loadTraitsFromAssetsDynamic } from '../utils/traitLoader';
 
 // Default category options (will be updated based on available traits)
 export const defaultCategories: CategoryOption[] = [
@@ -14,7 +14,7 @@ export const defaultCategories: CategoryOption[] = [
 ];
 
 // Base character
-export const baseCharacterImage = './assets/images/ping.png';
+export const baseCharacterImage = '/ping.png';
 
 // Dynamic traits loaded from assets folder
 let loadedTraits: Trait[] = [];
@@ -53,10 +53,6 @@ export const initializeTraits = async (): Promise<{ traits: Trait[], categories:
       category: traitFile.category as any,
       imageSrc: traitFile.imageSrc
     }));
-    
-    // Log categories found for debugging
-    const foundCategories = [...new Set(loadedTraits.map(t => t.category))];
-    console.log('📂 Categories found:', foundCategories);
     
     // Always show all default categories regardless of whether they have traits
     loadedCategories = defaultCategories;

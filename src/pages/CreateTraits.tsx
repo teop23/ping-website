@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fabric } from 'fabric';
-import pingImage from '../assets/images/ping.png';
+import { baseCharacterImage } from '@/data/traits';
 import { ToolType } from '../types/traits';
 import { 
   calculateCanvasSize, 
@@ -90,7 +90,7 @@ const CreateTraits: React.FC = () => {
     });
 
     // Load base character image
-    setupBaseImage(fabricCanvas, pingImage, (img) => {
+    setupBaseImage(fabricCanvas, baseCharacterImage, (img) => {
       setBaseImage(img);
       
       // Initialize undo/redo manager

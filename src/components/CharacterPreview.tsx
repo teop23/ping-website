@@ -1,13 +1,12 @@
+import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
 import { motion } from 'framer-motion';
-import { toPng } from 'html-to-image';
-import { Copy, Download, RotateCcw, Move, Check } from 'lucide-react';
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import pingImage from '../assets/images/ping.png';
+import { Check, Copy, Download, Move, RotateCcw } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { baseCharacterImage } from '@/data/traits';
 import { Trait } from '../types';
+import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
-import { TextElement } from './TextTools';
 
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;
@@ -31,7 +30,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   useEffect(() => {
     const img = new Image();
     img.onload = () => setBaseImage(img);
-    img.src = pingImage;
+    img.src = baseCharacterImage;
   }, []);
 
   // Load trait images when selectedTraits change
