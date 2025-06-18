@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CategoryName } from '@/pages/Builder';
 import { motion } from 'framer-motion';
-import { Check, Upload, Move, RotateCw, ZoomIn, ZoomOut } from 'lucide-react';
+import { Check, Upload } from 'lucide-react';
 import React from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { CategoryOption, Trait } from '../types';
@@ -18,12 +18,6 @@ interface TraitSelectorProps {
   onTraitSelect: (trait: Trait) => void;
 }
 
-interface UploadedTraitExtended extends Trait {
-  scale?: number;
-  rotation?: number;
-  offsetX?: number;
-  offsetY?: number;
-}
 const TraitSelector: React.FC<TraitSelectorProps> = ({
   categories,
   traits,
@@ -32,7 +26,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
   onCategoryChange,
   onTraitSelect
 }) => {
-  const [uploadedTraits, setUploadedTraits] = React.useState<Record<string, UploadedTraitExtended[]>>({
+  const [uploadedTraits, setUploadedTraits] = React.useState<Record<string, Trait[]>>({
     aura: [],
     head: [],
     face: [],
@@ -42,7 +36,6 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
     left_hand: [],
     accessory: []
   });
-  const [editingTrait, setEditingTrait] = React.useState<string | null>(null);
 
   // Filter traits by the selected category, including uploaded traits
   const filteredTraits = [
@@ -62,15 +55,11 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           const imageSrc = e.target?.result as string;
           const traitImg = new Image();
           traitImg.onload = () => {
-            const uploadedTrait: UploadedTraitExtended = {
+            const uploadedTrait: Trait = {
               id: `uploaded-${category}-${Date.now()}`,
               name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
               category: category as any,
               imageSrc: imageSrc,
-              scale: 1,
-              rotation: 0,
-              offsetX: 0,
-              offsetY: 0,
             };
 
             // Add the uploaded trait to our state
@@ -89,52 +78,6 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
       }
     };
     input.click();
-  };
-
-  const updateUploadedTrait = (traitId: string, updates: Partial<UploadedTraitExtended>) => {
-    setUploadedTraits(prev => {
-      const newTraits = { ...prev };
-      for (const category in newTraits) {
-        newTraits[category as keyof typeof newTraits] = newTraits[category as keyof typeof newTraits].map(trait => 
-          trait.id === traitId ? { ...trait, ...updates } : trait
-        );
-      }
-      return newTraits;
-    });
-
-    // Update selected trait if it's currently selected
-    const currentlySelected = Object.values(selectedTraits).find(trait => trait?.id === traitId);
-    if (currentlySelected) {
-      onTraitSelect({ ...currentlySelected, ...updates } as Trait);
-    }
-  };
-
-  const handleScaleChange = (traitId: string, delta: number) => {
-    const trait = Object.values(uploadedTraits).flat().find(t => t.id === traitId) as UploadedTraitExtended;
-    if (trait) {
-      const newScale = Math.max(0.1, Math.min(3, (trait.scale || 1) + delta));
-      updateUploadedTrait(traitId, { scale: newScale });
-    }
-  };
-
-  const handleRotationChange = (traitId: string) => {
-    const trait = Object.values(uploadedTraits).flat().find(t => t.id === traitId) as UploadedTraitExtended;
-    if (trait) {
-      const newRotation = ((trait.rotation || 0) + 90) % 360;
-      updateUploadedTrait(traitId, { rotation: newRotation });
-    }
-  };
-
-  const handleOffsetChange = (traitId: string, deltaX: number, deltaY: number) => {
-    const trait = Object.values(uploadedTraits).flat().find(t => t.id === traitId) as UploadedTraitExtended;
-    if (trait) {
-      const newOffsetX = Math.max(-100, Math.min(100, (trait.offsetX || 0) + deltaX));
-      const newOffsetY = Math.max(-100, Math.min(100, (trait.offsetY || 0) + deltaY));
-      updateUploadedTrait(traitId, { 
-        offsetX: newOffsetX, 
-        offsetY: newOffsetY 
-      });
-    }
   };
 
   return (
@@ -196,15 +139,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                   trait={trait}
                   isSelected={isSelected}
                   imageSrc={trait.imageSrc}
-                  isUploaded={trait.id.startsWith('uploaded-')}
                   onClick={() => onTraitSelect(trait)}
-                  onEdit={trait.id.startsWith('uploaded-') ? () => setEditingTrait(editingTrait === trait.id ? null : trait.id) : undefined}
-                  isEditing={editingTrait === trait.id}
-                  onScaleChange={trait.id.startsWith('uploaded-') ? (delta) => handleScaleChange(trait.id, delta) : undefined}
-                  onRotationChange={trait.id.startsWith('uploaded-') ? () => handleRotationChange(trait.id) : undefined}
-                  onOffsetChange={trait.id.startsWith('uploaded-') ? (deltaX, deltaY) => handleOffsetChange(trait.id, deltaX, deltaY) : undefined}
-                  scale={(trait as UploadedTraitExtended).scale}
-                  rotation={(trait as UploadedTraitExtended).rotation}
                 />
               );
             })}
@@ -228,21 +163,10 @@ interface TraitCardProps {
   trait: Trait;
   isSelected: boolean;
   imageSrc: string;
-  isUploaded?: boolean;
   onClick: () => void;
-  onEdit?: () => void;
-  isEditing?: boolean;
-  onScaleChange?: (delta: number) => void;
-  onRotationChange?: () => void;
-  onOffsetChange?: (deltaX: number, deltaY: number) => void;
-  scale?: number;
-  rotation?: number;
 }
 
-const TraitCard: React.FC<TraitCardProps> = ({ 
-  trait, isSelected, imageSrc, isUploaded, onClick, onEdit, isEditing, 
-  onScaleChange, onRotationChange, onOffsetChange, scale = 1, rotation = 0 
-}) => {
+const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onClick }) => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -255,7 +179,6 @@ const TraitCard: React.FC<TraitCardProps> = ({
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.97 }}
       initial={{ overflow: 'hidden' }}
-      style={{ position: 'relative' }}
     >
       <div className="aspect-square bg-card flex items-center justify-center pb-6">
         <img
@@ -263,9 +186,6 @@ const TraitCard: React.FC<TraitCardProps> = ({
           alt={trait.name}
           className={`w-full h-full object-contain p-2 pb-0 transition-transform duration-200 ${isSelected ? 'scale-95' : ''
             }`}
-          style={{
-            transform: `scale(${scale}) rotate(${rotation}deg)`
-          }}
           onError={(e) => {
             // Fallback to a placeholder if image fails to load
             const target = e.target as HTMLImageElement;
@@ -273,16 +193,6 @@ const TraitCard: React.FC<TraitCardProps> = ({
           }}
         />
       </div>
-
-      {/* Edit button for uploaded images */}
-      {isUploaded && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
-          className="absolute top-2 left-2 bg-blue-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <Move size={12} />
-        </button>
-      )}
 
       {isSelected && (
         <motion.div
@@ -296,60 +206,6 @@ const TraitCard: React.FC<TraitCardProps> = ({
         </motion.div>
       )}
 
-      {/* Edit controls for uploaded images */}
-      {isUploaded && isEditing && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          className="absolute inset-x-0 top-full mt-2 bg-background/95 backdrop-blur-sm border border-border/50 rounded-lg p-2 shadow-lg z-10"
-        >
-          {/* Scale controls */}
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium">Scale:</span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={(e) => { e.stopPropagation(); onScaleChange?.(-0.1); }}
-                className="bg-muted hover:bg-muted/80 rounded p-1"
-              >
-                <ZoomOut size={12} />
-              </button>
-              <span className="text-xs min-w-[3ch] text-center">{(scale * 100).toFixed(0)}%</span>
-              <button
-                onClick={(e) => { e.stopPropagation(); onScaleChange?.(0.1); }}
-                className="bg-muted hover:bg-muted/80 rounded p-1"
-              >
-                <ZoomIn size={12} />
-              </button>
-            </div>
-          </div>
-
-          {/* Rotation control */}
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium">Rotate:</span>
-            <button
-              onClick={(e) => { e.stopPropagation(); onRotationChange?.(); }}
-              className="bg-muted hover:bg-muted/80 rounded p-1"
-            >
-              <RotateCw size={12} />
-            </button>
-          </div>
-
-          {/* Position controls */}
-          <div className="grid grid-cols-3 gap-1">
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(-5, -5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↖</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(0, -5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↑</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(5, -5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↗</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(-5, 0); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">←</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(0, 0); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">⌂</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(5, 0); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">→</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(-5, 5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↙</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(0, 5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↓</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(5, 5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↘</button>
-          </div>
-        </motion.div>
-      )}
-
       {/* Always visible trait name at bottom */}
       <div className="absolute inset-x-0 bottom-0 p-1.5 bg-background/95 backdrop-blur-sm border-t border-border/50">
         <p className="text-xs text-center text-foreground font-medium truncate leading-tight">
@@ -360,7 +216,6 @@ const TraitCard: React.FC<TraitCardProps> = ({
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-xs">
         <p className="text-sm font-medium">{trait.name}</p>
-        {isUploaded && <p className="text-xs text-muted-foreground">Click edit button to resize/move</p>}
       </TooltipContent>
     </Tooltip>
   );
