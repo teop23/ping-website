@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import CharacterPreview from '../components/CharacterPreview';
 import TraitSelector from '../components/TraitSelector';
 import TextTools, { TextElement } from '../components/TextTools';
+import { EMPTY_TRAIT_CHANCE } from '../utils/constants';
 import { initializeTraits } from '../data/traits';
 import { Trait, CategoryOption } from '../types';
-import { Sparkles, Palette } from 'lucide-react';
+import { Sparkles, Palette, Shuffle } from 'lucide-react';
+import { Button } from './ui/button';
 
 export type CategoryName = 'aura' | 'head' | 'face' | 'mouth' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
 
@@ -87,6 +89,30 @@ const Builder: React.FC = () => {
   const handleTextElementsChange = (elements: TextElement[]) => {
     setTextElements(elements);
   };
+
+  const handleRandomize = () => {
+    const newSelectedTraits: Record<string, Trait | null> = {};
+    
+    categories.forEach(category => {
+      // Check if this category should be empty based on EMPTY_TRAIT_CHANCE
+      if (Math.random() < EMPTY_TRAIT_CHANCE) {
+        newSelectedTraits[category.id] = null;
+      } else {
+        // Get traits for this category
+        const categoryTraits = traits.filter(trait => trait.category === category.id);
+        
+        if (categoryTraits.length > 0) {
+          // Select a random trait from this category
+          const randomIndex = Math.floor(Math.random() * categoryTraits.length);
+          newSelectedTraits[category.id] = categoryTraits[randomIndex];
+        } else {
+          newSelectedTraits[category.id] = null;
+        }
+      }
+    });
+    
+    setSelectedTraits(newSelectedTraits);
+  };
   
   if (isLoading) {
     return (
@@ -154,6 +180,17 @@ const Builder: React.FC = () => {
                 <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
                   Your Character
                 </h2>
+                <div className="ml-auto">
+                  <Button
+                    onClick={handleRandomize}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-200"
+                  >
+                    <Shuffle className="w-4 h-4" />
+                    <span className="hidden sm:inline">Randomize</span>
+                  </Button>
+                </div>
               </div>
               
               <CharacterPreview
