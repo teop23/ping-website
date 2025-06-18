@@ -1,0 +1,20 @@
+// vite.config.ts
+import { defineConfig } from "file:///C:/Users/teopi/Desktop/%C2%A0/Workspace/Projects/crypto/token%20websites/ping-website/node_modules/vite/dist/node/index.js";
+import react from "file:///C:/Users/teopi/Desktop/%C2%A0/Workspace/Projects/crypto/token%20websites/ping-website/node_modules/@vitejs/plugin-react/dist/index.mjs";
+import path from "node:path";
+var __vite_injected_original_dirname = "C:\\Users\\teopi\\Desktop\\\xA0\\Workspace\\Projects\\crypto\\token websites\\ping-website";
+var vite_config_default = defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__vite_injected_original_dirname, "./src")
+    }
+  },
+  optimizeDeps: {
+    exclude: ["lucide-react"]
+  }
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCJDOlxcXFxVc2Vyc1xcXFx0ZW9waVxcXFxEZXNrdG9wXFxcXFx1MDBBMFxcXFxXb3Jrc3BhY2VcXFxcUHJvamVjdHNcXFxcY3J5cHRvXFxcXHRva2VuIHdlYnNpdGVzXFxcXHBpbmctd2Vic2l0ZVwiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9maWxlbmFtZSA9IFwiQzpcXFxcVXNlcnNcXFxcdGVvcGlcXFxcRGVza3RvcFxcXFxcdTAwQTBcXFxcV29ya3NwYWNlXFxcXFByb2plY3RzXFxcXGNyeXB0b1xcXFx0b2tlbiB3ZWJzaXRlc1xcXFxwaW5nLXdlYnNpdGVcXFxcdml0ZS5jb25maWcudHNcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfaW1wb3J0X21ldGFfdXJsID0gXCJmaWxlOi8vL0M6L1VzZXJzL3Rlb3BpL0Rlc2t0b3AvJUMyJUEwL1dvcmtzcGFjZS9Qcm9qZWN0cy9jcnlwdG8vdG9rZW4lMjB3ZWJzaXRlcy9waW5nLXdlYnNpdGUvdml0ZS5jb25maWcudHNcIjtpbXBvcnQgeyBkZWZpbmVDb25maWcgfSBmcm9tICd2aXRlJztcclxuaW1wb3J0IHJlYWN0IGZyb20gJ0B2aXRlanMvcGx1Z2luLXJlYWN0JztcclxuaW1wb3J0IHBhdGggZnJvbSAnbm9kZTpwYXRoJztcclxuXHJcbi8vIGh0dHBzOi8vdml0ZWpzLmRldi9jb25maWcvXHJcbmV4cG9ydCBkZWZhdWx0IGRlZmluZUNvbmZpZyh7XHJcbiAgcGx1Z2luczogW3JlYWN0KCldLFxyXG4gIHJlc29sdmU6IHtcclxuICAgIGFsaWFzOiB7XHJcbiAgICAgICdAJzogcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJy4vc3JjJylcclxuICAgIH1cclxuICB9LFxyXG4gIG9wdGltaXplRGVwczoge1xyXG4gICAgZXhjbHVkZTogWydsdWNpZGUtcmVhY3QnXSxcclxuICB9XHJcbn0pO1xyXG4iXSwKICAibWFwcGluZ3MiOiAiO0FBQXViLFNBQVMsb0JBQW9CO0FBQ3BkLE9BQU8sV0FBVztBQUNsQixPQUFPLFVBQVU7QUFGakIsSUFBTSxtQ0FBbUM7QUFLekMsSUFBTyxzQkFBUSxhQUFhO0FBQUEsRUFDMUIsU0FBUyxDQUFDLE1BQU0sQ0FBQztBQUFBLEVBQ2pCLFNBQVM7QUFBQSxJQUNQLE9BQU87QUFBQSxNQUNMLEtBQUssS0FBSyxRQUFRLGtDQUFXLE9BQU87QUFBQSxJQUN0QztBQUFBLEVBQ0Y7QUFBQSxFQUNBLGNBQWM7QUFBQSxJQUNaLFNBQVMsQ0FBQyxjQUFjO0FBQUEsRUFDMUI7QUFDRixDQUFDOyIsCiAgIm5hbWVzIjogW10KfQo=
