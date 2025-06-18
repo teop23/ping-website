@@ -15,13 +15,13 @@ export interface TraitFile {
 export const parseTraitFilename = (filename: string): { name: string; uiName: string; category: string } | null => {
   // Remove file extension
   const nameWithoutExt = filename.replace(/\.png$/i, '');
-  
+
   // Build regex pattern dynamically from defaultCategories
   const categoryIds = defaultCategories.map(cat => cat.id).join('|');
   const regex = new RegExp(`^trait-(.+)_(${categoryIds})$`);
   // Check if it follows the pattern: trait-{name}_{category}
   const match = nameWithoutExt.match(regex);
-  
+
   if (match) {
     const [, name, category] = match;
     const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Convert kebab-case to Title Case
@@ -32,67 +32,45 @@ export const parseTraitFilename = (filename: string): { name: string; uiName: st
       category: category // Keep exact category match from defaultCategories
     };
   }
-  
-  return null;
-};
 
-// Function to test if an image exists and can be loaded
-const testImageLoad = (src: string): Promise<boolean> => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
-  });
+  return null;
 };
 
 // Function to load traits using explicit imports
 export const loadTraitsFromAssets = async (): Promise<TraitFile[]> => {
   const traits: TraitFile[] = [];
-  
+
   // Since we don't know what files exist, we'll return empty array
   // This will be populated when you add actual trait files
-  
+
   return traits;
 };
 
 // Function to load traits using dynamic imports
 export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
-  const traits: TraitFile[] = [];
-  
   try {
-    const traitModules = import.meta.glob('../assets/traits/*.png', { eager: true, import: 'default' }) as Record<string, string>;
-    
-    console.log(`🎨 Found ${Object.keys(traitModules).length} trait files`);
-    
-    Object.entries(traitModules).forEach(([path, url]) => {
-      // Extract filename from path
-      const filename = path.split('/').pop();
-      
-      if (filename) {
-        const parsed = parseTraitFilename(filename);
-        
-        if (parsed) {
-          traits.push({
-            id: `${parsed.name}-${parsed.category}`, // Use name + category as unique ID
-            name: parsed.name,
-            uiName: parsed.uiName,
-            category: parsed.category,
-            imageSrc: url as string
-          });
-        }
+    const res = await fetch('/traits-index.json');
+    const data = await res.json();
+    //log each category and number of traits like this: category1: 5, category2: 3
+    console.log('📂 Categories found:', Object.keys(data).map(cat => `${cat}: ${data[cat].length}`).join(', '));
+    const traits: TraitFile[] = [];
+
+    for (const category in data) {
+      for (const name of data[category]) {
+        const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        traits.push({
+          id: `${name}-${category}`,
+          name,
+          uiName,
+          category,
+          imageSrc: `/traits/trait-${name}_${category}.png`
+        });
       }
-    });
-    
+    }
+    console.log('📦 Loaded traits from dynamic import:', traits.length);
     return traits;
   } catch (error) {
     console.error('Error in dynamic trait loading:', error);
     return [];
   }
-};
-
-// Function to get available categories from loaded traits
-export const getAvailableCategories = (traits: TraitFile[]): string[] => {
-  const categories = new Set(traits.map(trait => trait.category));
-  return Array.from(categories).sort();
 };

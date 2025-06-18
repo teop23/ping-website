@@ -5,13 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:traits": "npm run prebuild && npm run dev",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "pages:dev": "wrangler pages dev dist --compatibility-date=2024-01-01",
-    "pages:deploy": "wrangler pages deploy dist"
+    "pages:dev": "npm run build && wrangler pages dev dist --compatibility-date=2024-01-01",
+    "pages:deploy": "wrangler pages deploy dist",
+    "prebuild": "node scripts/generate-index.mjs"
   },
   "dependencies": {
+    "@cloudflare/pages-plugin-vercel-og": "^0.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-context-menu": "^2.1.5",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -26,6 +29,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@vercel/og": "^0.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "fabric": "^5.3.0",
