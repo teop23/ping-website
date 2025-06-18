@@ -50,7 +50,7 @@ const Countdown: React.FC = () => {
         <div className="flex items-center justify-center">
           <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-6 py-4 shadow-lg">
             <span className="text-xl font-semibold text-white">
-              🚀 Launch Time!
+              🚀 Launching soon!
             </span>
           </div>
         </div>
@@ -68,8 +68,8 @@ const Countdown: React.FC = () => {
       <div className="flex items-center justify-center gap-4">
         {/* Hours */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
-            <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
+          <div className="bg-card rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
+            <div className="text-2xl sm:text-3xl font-bold text-muted-foreground font-mono">
               {formatNumber(timeLeft.hours)}
             </div>
           </div>
@@ -85,8 +85,8 @@ const Countdown: React.FC = () => {
 
         {/* Minutes */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
-            <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
+          <div className="bg-card rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
+            <div className="text-2xl sm:text-3xl font-bold text-muted-foreground font-mono">
               {formatNumber(timeLeft.minutes)}
             </div>
           </div>
@@ -102,8 +102,8 @@ const Countdown: React.FC = () => {
 
         {/* Seconds */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
-            <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
+          <div className="bg-card rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
+            <div className="text-2xl sm:text-3xl font-bold text-muted-foreground font-mono">
               {formatNumber(timeLeft.seconds)}
             </div>
           </div>
