@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import Builder from './Builder';
+import Builder from '../components/Builder';
 import ContractAddress from '../components/ContractAddress';
 import Countdown from '../components/Countdown';
 import { SHOW_COUNTDOWN } from '../utils/constants';
