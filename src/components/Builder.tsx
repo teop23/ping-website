@@ -180,17 +180,6 @@ const Builder: React.FC = () => {
                 <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
                   Your Character
                 </h2>
-                <div className="ml-auto">
-                  <Button
-                    onClick={handleRandomize}
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-200"
-                  >
-                    <Shuffle className="w-4 h-4" />
-                    <span className="hidden sm:inline">Randomize</span>
-                  </Button>
-                </div>
               </div>
               
               <CharacterPreview
@@ -198,6 +187,7 @@ const Builder: React.FC = () => {
                 textElements={textElements}
                 onTextElementsChange={handleTextElementsChange}
                 onReset={handleReset}
+                onRandomize={handleRandomize}
               />
             </div>
           </div>

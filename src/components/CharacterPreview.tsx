@@ -1,6 +1,6 @@
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
 import { motion } from 'framer-motion';
-import { Check, Copy, Download, Move, RotateCcw } from 'lucide-react';
+import { Check, Copy, Download, Move, RotateCcw, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { baseCharacterImage } from '@/data/traits';
 import { Trait } from '../types';
@@ -13,9 +13,10 @@ interface CharacterPreviewProps {
   textElements?: TextElement[];
   onTextElementsChange?: (elements: TextElement[]) => void;
   onReset: () => void;
+  onRandomize?: () => void;
 }
 
-const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, textElements = [], onTextElementsChange, onReset }) => {
+const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, textElements = [], onTextElementsChange, onReset, onRandomize }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -488,6 +489,17 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
             isCopying={isCopying}
           />
         </motion.div>
+        {onRandomize && (
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <ActionButton 
+              icon={<Shuffle size={20} />} 
+              label="Randomize" 
+              onClick={onRandomize} 
+              variant="outline"
+              disabled={isLoading}
+            />
+          </motion.div>
+        )}
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <ActionButton 
             icon={<RotateCcw size={20} />} 
