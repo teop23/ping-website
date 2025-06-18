@@ -47,8 +47,8 @@ const Countdown: React.FC = () => {
         transition={{ delay: 1.3, duration: 0.8 }}
         className="w-full max-w-lg mx-auto"
       >
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl p-4 shadow-lg">
-          <div className="text-center">
+        <div className="flex items-center justify-center">
+          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-6 py-4 shadow-lg">
             <span className="text-xl font-semibold text-white">
               🚀 Launch Time!
             </span>
@@ -65,52 +65,50 @@ const Countdown: React.FC = () => {
       transition={{ delay: 1.3, duration: 0.8 }}
       className="w-full max-w-lg mx-auto"
     >
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl p-4 shadow-lg">
-        <div className="flex items-center justify-center gap-3">
-          {/* Hours */}
-          <div className="text-center">
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 min-w-[60px]">
-              <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
-                {formatNumber(timeLeft.hours)}
-              </div>
-            </div>
-            <div className="text-xs text-white font-medium mt-2 tracking-wider">
-              HOURS
+      <div className="flex items-center justify-center gap-4">
+        {/* Hours */}
+        <div className="text-center">
+          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
+            <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
+              {formatNumber(timeLeft.hours)}
             </div>
           </div>
-
-          {/* Separator */}
-          <div className="text-2xl sm:text-3xl font-bold text-white/80 pb-6">
-            :
+          <div className="text-xs text-muted-foreground font-medium mt-2 tracking-wider">
+            HOURS
           </div>
+        </div>
 
-          {/* Minutes */}
-          <div className="text-center">
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 min-w-[60px]">
-              <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
-                {formatNumber(timeLeft.minutes)}
-              </div>
-            </div>
-            <div className="text-xs text-white font-medium mt-2 tracking-wider">
-              MINUTES
+        {/* Separator */}
+        <div className="text-2xl sm:text-3xl font-bold text-muted-foreground pb-6">
+          :
+        </div>
+
+        {/* Minutes */}
+        <div className="text-center">
+          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
+            <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
+              {formatNumber(timeLeft.minutes)}
             </div>
           </div>
-
-          {/* Separator */}
-          <div className="text-2xl sm:text-3xl font-bold text-white/80 pb-6">
-            :
+          <div className="text-xs text-muted-foreground font-medium mt-2 tracking-wider">
+            MINUTES
           </div>
+        </div>
 
-          {/* Seconds */}
-          <div className="text-center">
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 min-w-[60px]">
-              <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
-                {formatNumber(timeLeft.seconds)}
-              </div>
+        {/* Separator */}
+        <div className="text-2xl sm:text-3xl font-bold text-muted-foreground pb-6">
+          :
+        </div>
+
+        {/* Seconds */}
+        <div className="text-center">
+          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
+            <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
+              {formatNumber(timeLeft.seconds)}
             </div>
-            <div className="text-xs text-white font-medium mt-2 tracking-wider">
-              SECONDS
-            </div>
+          </div>
+          <div className="text-xs text-muted-foreground font-medium mt-2 tracking-wider">
+            SECONDS
           </div>
         </div>
       </div>
