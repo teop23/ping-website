@@ -250,12 +250,11 @@ const TraitCard: React.FC<TraitCardProps> = ({
       className={`relative cursor-pointer rounded-lg overflow-hidden border ${isSelected
         ? 'border-primary ring-2 ring-primary/20'
         : 'border-border hover:border-primary/50'
-        }`}
+        } group`}
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.97 }}
-      initial={{ overflow: 'hidden' }}
-      style={{ position: 'relative' }}
+      style={{ position: 'relative', overflow: 'visible' }}
     >
       <div className="aspect-square bg-card flex items-center justify-center pb-6">
         <img
@@ -277,7 +276,7 @@ const TraitCard: React.FC<TraitCardProps> = ({
       {/* Edit button for uploaded images */}
       {isUploaded && (
         <button
-          onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
+          onClick={(e) => { e.stopPropagation(); onEdit && onEdit(); }}
           className="absolute top-2 left-2 bg-blue-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <Move size={12} />
@@ -302,22 +301,23 @@ const TraitCard: React.FC<TraitCardProps> = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
-          className="absolute inset-x-0 top-full mt-2 bg-background/95 backdrop-blur-sm border border-border/50 rounded-lg p-2 shadow-lg z-10"
+          className="absolute left-0 right-0 top-full mt-2 bg-background/95 backdrop-blur-sm border border-border/50 rounded-lg p-3 shadow-lg z-50 min-w-[200px]"
+          style={{ zIndex: 1000 }}
         >
           {/* Scale controls */}
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium">Scale:</span>
             <div className="flex items-center gap-1">
               <button
-                onClick={(e) => { e.stopPropagation(); onScaleChange?.(-0.1); }}
-                className="bg-muted hover:bg-muted/80 rounded p-1"
+                onClick={(e) => { e.stopPropagation(); onScaleChange && onScaleChange(-0.1); }}
+                className="bg-muted hover:bg-muted/80 rounded p-1 transition-colors"
               >
                 <ZoomOut size={12} />
               </button>
-              <span className="text-xs min-w-[3ch] text-center">{(scale * 100).toFixed(0)}%</span>
+              <span className="text-xs min-w-[4ch] text-center font-mono">{Math.round(scale * 100)}%</span>
               <button
-                onClick={(e) => { e.stopPropagation(); onScaleChange?.(0.1); }}
-                className="bg-muted hover:bg-muted/80 rounded p-1"
+                onClick={(e) => { e.stopPropagation(); onScaleChange && onScaleChange(0.1); }}
+                className="bg-muted hover:bg-muted/80 rounded p-1 transition-colors"
               >
                 <ZoomIn size={12} />
               </button>
@@ -325,27 +325,33 @@ const TraitCard: React.FC<TraitCardProps> = ({
           </div>
 
           {/* Rotation control */}
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium">Rotate:</span>
-            <button
-              onClick={(e) => { e.stopPropagation(); onRotationChange?.(); }}
-              className="bg-muted hover:bg-muted/80 rounded p-1"
-            >
-              <RotateCw size={12} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={(e) => { e.stopPropagation(); onRotationChange && onRotationChange(); }}
+                className="bg-muted hover:bg-muted/80 rounded p-1 transition-colors"
+              >
+                <RotateCw size={12} />
+              </button>
+              <span className="text-xs min-w-[4ch] text-center font-mono">{rotation}°</span>
+            </div>
           </div>
 
           {/* Position controls */}
-          <div className="grid grid-cols-3 gap-1">
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(-5, -5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↖</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(0, -5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↑</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(5, -5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↗</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(-5, 0); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">←</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(0, 0); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">⌂</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(5, 0); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">→</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(-5, 5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↙</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(0, 5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↓</button>
-            <button onClick={(e) => { e.stopPropagation(); onOffsetChange?.(5, 5); }} className="bg-muted hover:bg-muted/80 rounded p-1 text-xs">↘</button>
+          <div>
+            <div className="text-xs font-medium mb-2">Position:</div>
+            <div className="grid grid-cols-3 gap-1">
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(-5, -5); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">↖</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(0, -5); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">↑</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(5, -5); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">↗</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(-5, 0); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">←</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(0, 0); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors bg-primary/20">⌂</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(5, 0); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">→</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(-5, 5); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">↙</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(0, 5); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">↓</button>
+              <button onClick={(e) => { e.stopPropagation(); onOffsetChange && onOffsetChange(5, 5); }} className="bg-muted hover:bg-muted/80 rounded p-2 text-xs transition-colors">↘</button>
+            </div>
           </div>
         </motion.div>
       )}
