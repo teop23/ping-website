@@ -1,6 +1,6 @@
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
 import { motion } from 'framer-motion';
-import { Check, Copy, Download, Move, RotateCcw, Shuffle } from 'lucide-react';
+import { Check, Copy, Download, Move, RotateCcw, Shuffle, Share } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { baseCharacterImage } from '@/data/traits';
 import { Trait } from '../types';
@@ -22,6 +22,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   const overlayRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
   const [traitImages, setTraitImages] = useState<Map<string, HTMLImageElement>>(new Map());
   const [isDragging, setIsDragging] = useState<string | null>(null);
@@ -411,6 +412,51 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     }
   };
 
+  const generateApiUrl = () => {
+    const baseUrl = 'https://pingonsol.com/api/generate';
+    const params = new URLSearchParams();
+    
+    // Add selected traits as query parameters
+    Object.entries(selectedTraits).forEach(([category, trait]) => {
+      if (trait) {
+        params.append(category, trait.name);
+      }
+    });
+    
+    return `${baseUrl}?${params.toString()}`;
+  };
+
+  const handleShareOnX = () => {
+    setIsSharing(true);
+    
+    try {
+      const apiUrl = generateApiUrl();
+      const tweetText = "Just created my custom PING character! 🎨✨";
+      const hashtags = "PING,Solana,NFT,Crypto,Meme,CustomCharacter";
+      const url = "https://pingonsol.com";
+      
+      // Construct the Twitter share URL
+      const twitterUrl = new URL('https://twitter.com/intent/tweet');
+      twitterUrl.searchParams.set('text', tweetText);
+      twitterUrl.searchParams.set('hashtags', hashtags);
+      twitterUrl.searchParams.set('url', url);
+      
+      // Add the custom character image
+      if (apiUrl.includes('?')) {
+        twitterUrl.searchParams.set('image', apiUrl);
+      }
+      
+      // Open Twitter in a new window
+      window.open(twitterUrl.toString(), '_blank', 'width=550,height=420');
+      
+      // Reset sharing state after a delay
+      setTimeout(() => setIsSharing(false), 2000);
+    } catch (error) {
+      console.error('Error sharing on X:', error);
+      setIsSharing(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
       <div className="w-full aspect-square relative max-w-[500px]" ref={containerRef}>
@@ -500,6 +546,15 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
             />
           </motion.div>
         )}
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ActionButton 
+            icon={<Share size={20} />} 
+            label={isSharing ? "Sharing..." : "Share on X"} 
+            onClick={handleShareOnX} 
+            variant="outline"
+            disabled={isLoading || isSharing}
+          />
+        </motion.div>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <ActionButton 
             icon={<RotateCcw size={20} />} 
