@@ -52,7 +52,7 @@ const Roadmap: React.FC = () => {
       case 'upcoming':
         return 'from-gray-500/10 to-gray-500/10 border-gray-500/20';
       case 'future':
-        return 'from-gray-300/5 to-gray-200/5 border-gray-300/10';
+        return 'from-gray-400/3 to-gray-300/3 border-gray-400/5';
     }
   };
 
@@ -65,7 +65,7 @@ const Roadmap: React.FC = () => {
       case 'upcoming':
         return 'bg-gray-300';
       case 'future':
-        return 'bg-gray-100';
+        return 'bg-gray-200';
     }
   };
 
@@ -141,7 +141,7 @@ const Roadmap: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative flex items-start gap-6 sm:gap-8 ${step.status === 'future' ? 'opacity-20' : ''}`}
+                className={`relative flex items-start gap-6 sm:gap-8 ${step.status === 'future' ? 'opacity-15' : ''}`}
               >
                 {/* Timeline Node */}
                 <div className="relative z-10 flex-shrink-0">
@@ -170,7 +170,7 @@ const Roadmap: React.FC = () => {
                   <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden`}>
                     <CardContent className="p-4 sm:p-6">
                       <div className="flex items-start justify-between gap-4 mb-3">
-                        <h3 className={`text-lg sm:text-xl font-bold ${step.status === 'future' ? 'text-gray-300 blur-sm select-none' : 'text-foreground'}`}>
+                        <h3 className={`text-lg sm:text-xl font-bold ${step.status === 'future' ? 'text-gray-400 select-none' : 'text-foreground'}`}>
                           {step.title}
                         </h3>
                         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-background/50 backdrop-blur-sm border border-border/50">
@@ -180,7 +180,7 @@ const Roadmap: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      <p className={`text-sm sm:text-base leading-relaxed ${step.status === 'future' ? 'text-gray-300 blur-sm select-none font-mono' : 'text-muted-foreground'}`}>
+                      <p className={`text-sm sm:text-base leading-relaxed ${step.status === 'future' ? 'text-gray-400 select-none font-mono' : 'text-muted-foreground'}`}>
                         {step.description}
                       </p>
                       
@@ -215,8 +215,8 @@ const Roadmap: React.FC = () => {
                       {/* Future phase indicator */}
                       {step.status === 'future' && (
                         <div className="mt-4 flex items-center gap-2">
-                          <Circle className="w-4 h-4 text-gray-300" />
-                          <span className="text-sm font-medium text-gray-400">Coming Soon</span>
+                          <Circle className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm font-medium text-gray-500">Coming Soon</span>
                         </div>
                       )}
                     </CardContent>
