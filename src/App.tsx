@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import Background from './components/Background';
 import Navbar from './components/Navbar';
 import CreateTraits from './pages/CreateTraits';
+import WatermarkTool from './pages/WatermarkTool';
 import Home from './pages/Home';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create-traits" element={<CreateTraits />} />
+          <Route path="/watermark" element={<WatermarkTool />} />
         </Routes>
       </main>
     </div>

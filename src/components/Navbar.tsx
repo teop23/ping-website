@@ -77,6 +77,9 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             {location.pathname === '/create-traits' && (
               <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Create PING Traits</h1>
             )}
+            {location.pathname === '/watermark' && (
+              <h1 className="text-sm sm:text-lg md:text-xl font-semibold">PING Watermark Tool</h1>
+            )}
           </div>
           
           {/* Desktop Navigation */}
@@ -88,6 +91,11 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
               href="/create-traits" 
               isActive={location.pathname === '/create-traits'}
               icon={<Palette size={16} />} 
+            />
+            <NavItem 
+              label="Watermark" 
+              href="/watermark" 
+              isActive={location.pathname === '/watermark'}
             />
             
             {/* Social Links */}
@@ -180,6 +188,12 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   href="/create-traits" 
                   isActive={location.pathname === '/create-traits'}
                   icon={<Palette size={18} />}
+                  onClick={closeMobileMenu}
+                />
+                <MobileNavItem 
+                  label="Watermark Tool" 
+                  href="/watermark" 
+                  isActive={location.pathname === '/watermark'}
                   onClick={closeMobileMenu}
                 />
                 
