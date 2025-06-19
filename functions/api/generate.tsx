@@ -5,9 +5,16 @@ export const onRequestGet: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams.entries());
+    //one param might be type, filter out any non-trait params
+    const traitParams = Object.fromEntries(
+      Object.entries(queryParams).filter(([key]) => key !== 'type')
+    );
+    const isBanner = queryParams.type === 'banner';
     const baseURL = "https://pingonsol.com";
     const baseCharacterImage = `${baseURL}/ping.png`;
     const baseImageScaleMultiplier = 1.4;
+    const baseContainerWidth = isBanner ? 1200 : 512;
+    const baseContainerHeight = isBanner ? 630 : 512;
     const baseImageSize = 512 * baseImageScaleMultiplier;
     const baseImageOffset = -1 * (baseImageSize - 512) / 2;
     const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
@@ -20,7 +27,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const traitSelectionsByCategory: { category: string; trait: string }[] = [];
 
     // ✅ Validate all query parameter keys (categories)
-    for (const [category, trait] of Object.entries(queryParams)) {
+    for (const [category, trait] of Object.entries(traitParams)) {
       if (!validCategories.includes(category)) {
         return new Response(`Invalid category "${category}". Valid categories are: ${validCategories.join(', ')}`, {
           status: 400,
@@ -47,8 +54,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     return new ImageResponse(
       <div
         style={{
-          width: 512,
-          height: 512,
+          width: baseContainerWidth,
+          height: baseContainerHeight,
           display: 'flex',
           position: 'relative',
         }}
