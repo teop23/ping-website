@@ -9,7 +9,7 @@ import { SOCIAL_LINKS } from '../utils/constants';
 import pingIcon from '../assets/ping_transparent_icon.png';
 
 // Twitter/X icon component
-const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
+export const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
   <svg
     width={size}
     height={size}

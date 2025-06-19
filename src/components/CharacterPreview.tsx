@@ -7,7 +7,7 @@ import { Trait } from '../types';
 import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-
+import { TwitterIcon } from './Navbar';
 interface CharacterPreviewProps {
   selectedTraits: Record<string, Trait | null>;
   textElements?: TextElement[];
@@ -550,8 +550,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         )}
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <ActionButton 
-            icon={<Share size={20} />} 
-            label={isSharing ? "Sharing..." : "Share on X"} 
+            icon={<TwitterIcon />} 
+            label={isSharing ? "Sharing..." : "Tweet"} 
             onClick={handleShareOnX} 
             variant="outline"
             disabled={isLoading || isSharing}
