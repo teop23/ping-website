@@ -36,27 +36,21 @@ export const ROADMAP_STEPS = [
   {
     id: "phase-2", 
     title: "Phase 2: Community Growth",
-    description: "Expand trait library, implement trait marketplace, and grow social media presence.",
+    description: "Expand trait library, establish daily community spaces. Create tools to easily share user-created content that will make $PING go viral on X.",
     status: "in-progress" as const
   },
   {
     id: "phase-3",
-    title: "Phase 3: Advanced Features", 
-    description: "Add NFT minting, character animations, and community-driven trait creation tools.",
+    title: "Phase 3: Advanced Features and Partnerships", 
+    description: "Integrate other social media platforms, create partnerships with major crypto platforms and artists",
     status: "upcoming" as const
   },
   {
     id: "phase-4",
-    title: "Phase 4: Ecosystem Expansion",
-    description: "Partner integrations, mobile app, and gamification features for the PING universe.",
+    title: "Phase 4: To Be Revealed", 
+    description: "",
     status: "upcoming" as const
   },
-  {
-    id: "phase-5",
-    title: "Phase 5: Metaverse Ready",
-    description: "3D character models, virtual world integration, and cross-platform compatibility.",
-    status: "upcoming" as const
-  }
 ];
 
 export type RoadmapStatus = "completed" | "in-progress" | "upcoming";

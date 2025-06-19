@@ -161,12 +161,12 @@ const Roadmap: React.FC = () => {
                             <motion.div
                               className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full"
                               initial={{ width: 0 }}
-                              whileInView={{ width: "65%" }}
+                              whileInView={{ width: "70%" }}
                               viewport={{ once: true }}
                               transition={{ duration: 1, delay: 0.5 }}
                             />
                           </div>
-                          <span className="text-xs text-muted-foreground mt-1 block">65% Complete</span>
+                          <span className="text-xs text-muted-foreground mt-1 block">In Progress</span>
                         </div>
                       )}
 
@@ -185,40 +185,6 @@ const Roadmap: React.FC = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-center mt-12 sm:mt-16"
-        >
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 blur-3xl -z-10 scale-110" />
-            <Card className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 shadow-xl">
-              <CardContent className="p-6 sm:p-8">
-                <h3 className="text-xl sm:text-2xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                  Join the Journey
-                </h3>
-                <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">
-                  Be part of the PING community and help shape the future of our ecosystem. 
-                  Follow our progress and contribute to the roadmap!
-                </p>
-                <div className="flex flex-wrap justify-center gap-3">
-                  <motion.a
-                    href="#"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Rocket className="w-4 h-4" />
-                    Get Involved
-                  </motion.a>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
