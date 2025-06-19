@@ -9,7 +9,7 @@ import { Sparkles, Zap, Star, Heart } from 'lucide-react';
 
 const Home: React.FC = () => {
   return (
-    <div className="relative h-full overflow-hidden">
+    <div className="relative min-h-screen overflow-x-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Orbs */}
@@ -140,117 +140,120 @@ const Home: React.FC = () => {
         />
       </div>
 
-      {/* Main Content */}
-      <motion.div
-        className="relative h-full z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6"
-        initial={{ opacity: 0, filter: "blur(10px)" }}
-        animate={{ opacity: 1, filter: "blur(0px)" }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      >
+      {/* Main Content Container */}
+      <div className="relative z-10">
         {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-center space-y-2 sm:space-y-4 w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2"
-        >
-          {/* Main Title with Enhanced Styling */}
-          <div className="relative">
-            <motion.h1
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
+        <section className="min-h-screen flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6">
+          <motion.div
+            className="relative h-full z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6"
+            initial={{ opacity: 0, filter: "blur(10px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            {/* Hero Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="text-center space-y-2 sm:space-y-4 w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2"
+            >
+              {/* Main Title with Enhanced Styling */}
+              <div className="relative">
+                <motion.h1
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                >
+                  Create Your PING
+                </motion.h1>
+
+                {/* Glow effect behind title */}
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 blur-3xl -z-10 scale-110" />
+              </div>
+
+              {/* Subtitle with Animation */}
+              <motion.p
+                className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.8 }}
+              >
+                Customize your unique PING character with different traits and join the{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 font-semibold">
+                  community
+                </span>
+              </motion.p>
+
+              {/* Feature Pills */}
+              <motion.div
+                className="flex flex-wrap justify-center gap-2 mt-3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.8 }}
+              >
+                {[
+                  { icon: <Sparkles size={16} />, text: "Unique Traits" },
+                  { icon: <Zap size={16} />, text: "Instant Creation" },
+                  { icon: <Heart size={16} />, text: "Community Driven" }
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature.text}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border border-border/50 rounded-full text-xs sm:text-sm font-medium shadow-lg"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.1 + index * 0.1, duration: 0.6 }}
+                  >
+                    <span className="text-primary">{feature.icon}</span>
+                    {feature.text}
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Contract Address Section with Enhanced Styling */}
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+              className="relative"
             >
-              Create Your PING
-              <br />
+              <ContractAddress />
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-600/10 blur-2xl -z-10 scale-110" />
+            </motion.div>
 
-            </motion.h1>
+            {/* Countdown Section */}
+            {SHOW_COUNTDOWN && <Countdown />}
 
-            {/* Glow effect behind title */}
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 blur-3xl -z-10 scale-110" />
-          </div>
+            {/* Builder Section with Enhanced Container */}
+            <div className="w-full max-w-[98vw] sm:max-w-[95vw] md:max-w-6xl relative">
+              {/* Background decoration */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
 
-          {/* Subtitle with Animation */}
-          <motion.p
-            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.8 }}
-          >
-            Customize your unique PING character with different traits and join the{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 font-semibold">
-              community
-            </span>
-          </motion.p>
-
-          {/* Feature Pills */}
-          <motion.div
-            className="flex flex-wrap justify-center gap-2 mt-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.8 }}
-          >
-            {[
-              { icon: <Sparkles size={16} />, text: "Unique Traits" },
-              { icon: <Zap size={16} />, text: "Instant Creation" },
-              { icon: <Heart size={16} />, text: "Community Driven" }
-            ].map((feature, index) => (
               <motion.div
-                key={feature.text}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border border-border/50 rounded-full text-xs sm:text-sm font-medium shadow-lg"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.1 + index * 0.1, duration: 0.6 }}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.4, duration: 0.8 }}
+                className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-2 sm:p-4 md:p-6 shadow-2xl"
               >
-                <span className="text-primary">{feature.icon}</span>
-                {feature.text}
+                {/* Decorative corner elements */}
+                <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
+                <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
+                <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
+                <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
+
+                <Builder />
               </motion.div>
-            ))}
+            </div>
           </motion.div>
-        </motion.div>
+        </section>
 
-        {/* Contract Address Section with Enhanced Styling */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="relative"
-        >
-          <ContractAddress />
-          {/* Subtle glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-600/10 blur-2xl -z-10 scale-110" />
-        </motion.div>
-
-        {/* Countdown Section */}
-        {SHOW_COUNTDOWN && <Countdown />}
-
-        {/* Builder Section with Enhanced Container */}
-        <div className="w-full max-w-[98vw] sm:max-w-[95vw] md:max-w-6xl relative">
-          {/* Background decoration */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.8 }}
-            className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-2 sm:p-4 md:p-6 shadow-2xl"
-          >
-            {/* Decorative corner elements */}
-            <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
-            <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
-            <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
-            <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
-
-            <Builder />
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Roadmap Section */}
-      <Roadmap />
+        {/* Roadmap Section */}
+        <Roadmap />
+      </div>
     </div>
   );
 };

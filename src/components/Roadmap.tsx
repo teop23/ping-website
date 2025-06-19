@@ -39,7 +39,7 @@ const Roadmap: React.FC = () => {
   };
 
   return (
-    <section id="roadmap" className="relative py-16 sm:py-20 md:py-24">
+    <section id="roadmap" className="relative py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-muted/20">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
