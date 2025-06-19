@@ -414,7 +414,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   };
 
   const generateApiUrl = () => {
-    const baseUrl = 'https://pingonsol.com/api/generate';
+    const baseUrl = 'https://pingonsol.com/og';
     const params = new URLSearchParams();
     
     // Add selected traits as query parameters
@@ -424,6 +424,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       }
     });
     const paramsString = params.size > 0 ? `?${params.toString()}` : '';
+    console.log('Generated API URL:', `${baseUrl}${paramsString}`);
     return `${baseUrl}${paramsString}`;
   };
 
