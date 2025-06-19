@@ -8,20 +8,20 @@ import { Card, CardContent } from './ui/card';
 const FUTURE_PHASES = [
   {
     id: "phase-5",
-    title: "Phase 5: ████████",
-    description: "██████ ███ ██████ ████ ████████ ███████ ████ ██████ ███████ ████████ ███ ████ ██████...",
+    title: "",
+    description: "",
     status: "future" as const
   },
   {
     id: "phase-6", 
-    title: "Phase 6: ████████",
-    description: "███ ███████ █████████ ████ ████████ ███ ██████ ████████ ███████ ████ ███████...",
+    title: "",
+    description: "",
     status: "future" as const
   },
   {
     id: "phase-7",
-    title: "Phase 7: ████████", 
-    description: "████ █████ ███ ████ ███████ ████████ ███ ██████ ████ ███████ ████████ ███...",
+    title: "",
+    description: "",
     status: "future" as const
   }
 ];
@@ -52,7 +52,7 @@ const Roadmap: React.FC = () => {
       case 'upcoming':
         return 'from-gray-500/10 to-gray-500/10 border-gray-500/20';
       case 'future':
-        return 'from-gray-400/3 to-gray-300/3 border-gray-400/5';
+        return 'from-gray-700 to-gray-800 border-gray-600';
     }
   };
 
@@ -141,7 +141,7 @@ const Roadmap: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative flex items-start gap-6 sm:gap-8 ${step.status === 'future' ? 'opacity-15' : ''}`}
+                className="relative flex items-start gap-6 sm:gap-8"
               >
                 {/* Timeline Node */}
                 <div className="relative z-10 flex-shrink-0">
@@ -169,21 +169,40 @@ const Roadmap: React.FC = () => {
                 >
                   <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden`}>
                     <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-start justify-between gap-4 mb-3">
-                        <h3 className={`text-lg sm:text-xl font-bold ${step.status === 'future' ? 'text-gray-400 select-none' : 'text-foreground'}`}>
-                          {step.title}
-                        </h3>
-                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-background/50 backdrop-blur-sm border border-border/50">
-                          {getStatusIcon(step.status)}
-                          <span className="text-xs sm:text-sm font-medium capitalize">
-                            {step.status.replace('-', ' ')}
-                          </span>
-                        </div>
-                      </div>
-                      <p className={`text-sm sm:text-base leading-relaxed ${step.status === 'future' ? 'text-gray-400 select-none font-mono' : 'text-muted-foreground'}`}>
-                        {step.description}
-                      </p>
-                      
+                      {step.status === 'future' ? (
+                        // Future phase layout with rectangle outlines
+                        <>
+                          <div className="flex items-start justify-between gap-4 mb-3">
+                            <div className="h-6 sm:h-7 w-32 sm:w-40 bg-transparent border-2 border-gray-500 rounded"></div>
+                            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-600/50 backdrop-blur-sm border border-gray-500/50">
+                              {getStatusIcon(step.status)}
+                              <span className="text-xs sm:text-sm font-medium capitalize text-gray-300">
+                                {step.status.replace('-', ' ')}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="h-16 sm:h-20 w-full bg-transparent border-2 border-gray-500 rounded"></div>
+                        </>
+                      ) : (
+                        // Regular phase layout
+                        <>
+                          <div className="flex items-start justify-between gap-4 mb-3">
+                            <h3 className="text-lg sm:text-xl font-bold text-foreground">
+                              {step.title}
+                            </h3>
+                            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-background/50 backdrop-blur-sm border border-border/50">
+                              {getStatusIcon(step.status)}
+                              <span className="text-xs sm:text-sm font-medium capitalize">
+                                {step.status.replace('-', ' ')}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-sm sm:text-base leading-relaxed text-muted-foreground">
+                            {step.description}
+                          </p>
+                        </>
+                      )}
+
                       {/* Progress indicator for in-progress items */}
                       {step.status === 'in-progress' && (
                         <div className="mt-4">
@@ -206,17 +225,11 @@ const Roadmap: React.FC = () => {
 
                       {/* Completion indicator */}
                       {step.status === 'completed' && (
-                        <div className="mt-4 flex items-center gap-2">
-                          <Target className="w-4 h-4 text-green-500" />
-                          <span className="text-sm font-medium text-green-600">Completed</span>
-                        </div>
-                      )}
-
-                      {/* Future phase indicator */}
-                      {step.status === 'future' && (
-                        <div className="mt-4 flex items-center gap-2">
-                          <Circle className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm font-medium text-gray-500">Coming Soon</span>
+                        <div className="mt-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Target className="w-4 h-4 text-green-500" />
+                            <span className="text-sm font-medium text-green-600">Completed</span>
+                          </div>
                         </div>
                       )}
                     </CardContent>
