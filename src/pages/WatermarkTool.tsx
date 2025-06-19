@@ -15,7 +15,6 @@ const WatermarkTool: React.FC = () => {
   const [watermarkImage, setWatermarkImage] = useState<fabric.Image | null>(null);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.8);
-  const [watermarkSize, setWatermarkSize] = useState(100);
 
   // Initialize canvas
   useEffect(() => {
@@ -91,14 +90,9 @@ const WatermarkTool: React.FC = () => {
         scaleImageToFit(img, canvas.width!, canvas.height!);
         
         img.set({
-          selectable: true,
-          evented: true,
+          selectable: false,
+          evented: false,
           name: 'uploadedImage',
-          cornerStyle: 'circle',
-          cornerColor: '#4F46E5',
-          cornerSize: 8,
-          transparentCorners: false,
-          borderColor: '#4F46E5'
         });
 
         canvas.add(img);
@@ -125,15 +119,13 @@ const WatermarkTool: React.FC = () => {
         canvas.remove(watermarkImage);
       }
 
-      const scale = watermarkSize / 100; // Convert percentage to scale
-      
       img.set({
         left: canvas.width! * 0.8, // Position in bottom right
         top: canvas.height! * 0.8,
         originX: 'center',
         originY: 'center',
-        scaleX: scale,
-        scaleY: scale,
+        scaleX: 0.3,
+        scaleY: 0.3,
         opacity: watermarkOpacity,
         selectable: true,
         evented: true,
@@ -161,21 +153,14 @@ const WatermarkTool: React.FC = () => {
     }
   };
 
-  const updateWatermarkSize = (size: number) => {
-    setWatermarkSize(size);
-    if (watermarkImage) {
-      const scale = size / 100;
-      watermarkImage.set({ scaleX: scale, scaleY: scale });
-      safeRenderAll(canvas!);
-    }
-  };
-
   const resetWatermarkPosition = () => {
     if (watermarkImage && canvas) {
       watermarkImage.set({
         left: canvas.width! * 0.8,
         top: canvas.height! * 0.8,
-        angle: 0
+        angle: 0,
+        scaleX: 0.3,
+        scaleY: 0.3
       });
       safeRenderAll(canvas);
     }
@@ -267,21 +252,6 @@ const WatermarkTool: React.FC = () => {
                     />
                   </div>
 
-                  {/* Size Control */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium">
-                      Size: {watermarkSize}%
-                    </label>
-                    <input
-                      type="range"
-                      min="20"
-                      max="200"
-                      step="10"
-                      value={watermarkSize}
-                      onChange={(e) => updateWatermarkSize(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
                 </div>
 
                 {/* Action Buttons */}
@@ -314,7 +284,7 @@ const WatermarkTool: React.FC = () => {
                     <p>• Drag the PING logo to reposition</p>
                     <p>• Use corner handles to resize</p>
                     <p>• Rotate using the top handle</p>
-                    <p>• Adjust opacity and size with sliders</p>
+                    <p>• Adjust opacity with slider</p>
                   </div>
                 </div>
               </>
