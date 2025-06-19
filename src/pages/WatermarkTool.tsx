@@ -78,7 +78,20 @@ const WatermarkTool: React.FC = () => {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !canvas) return;
+    if (!file) return;
+    
+    // Check if canvas is ready, if not wait for it
+    if (!canvas) {
+      console.warn('Canvas not ready, retrying...');
+      setTimeout(() => {
+        if (canvas) {
+          handleImageUpload(event);
+        } else {
+          console.error('Canvas still not ready after timeout');
+        }
+      }, 100);
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -253,6 +266,10 @@ const WatermarkTool: React.FC = () => {
   };
 
   const triggerFileUpload = () => {
+    if (!canvas) {
+      console.warn('Canvas not ready for upload');
+      return;
+    }
     fileInputRef.current?.click();
   };
 
@@ -290,9 +307,10 @@ const WatermarkTool: React.FC = () => {
                 onClick={triggerFileUpload}
                 variant="outline"
                 className="w-full"
+                disabled={!canvas}
               >
                 <Upload size={16} className="mr-2" />
-                Choose Image
+                {!canvas ? 'Loading...' : 'Choose Image'}
               </Button>
               {!isImageUploaded && (
                 <p className="text-xs text-muted-foreground">
@@ -428,9 +446,10 @@ const WatermarkTool: React.FC = () => {
                 onClick={triggerFileUpload}
                 size="lg"
                 className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700"
+                disabled={!canvas}
               >
                 <Upload size={20} className="mr-2" />
-                Choose Image
+                {!canvas ? 'Loading Canvas...' : 'Choose Image'}
               </Button>
             </div>
           ) : (
