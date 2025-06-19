@@ -167,7 +167,7 @@ const Roadmap: React.FC = () => {
                   whileHover={{ y: -2 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden ${step.status === 'future' ? 'blur-sm' : ''}`}>
+                  <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden ${step.status === 'future' ? 'opacity-30' : ''}`}>
                     <CardContent className="p-4 sm:p-6">
                       {step.status === 'future' ? (
                         // Future phase layout with rectangle outlines
