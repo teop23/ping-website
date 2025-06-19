@@ -168,7 +168,6 @@ const Roadmap: React.FC = () => {
                   transition={{ duration: 0.2 }}
                 >
                   <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden ${step.status === 'future' ? 'blur-sm' : ''}`}>
-                  <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden ${step.status === 'future' ? 'blur-[1px]' : ''}`}>
                     <CardContent className="p-4 sm:p-6">
                       {step.status === 'future' ? (
                         // Future phase layout with rectangle outlines
