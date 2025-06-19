@@ -112,9 +112,6 @@ const WatermarkTool: React.FC = () => {
     };
     
     reader.readAsDataURL(file);
-    
-    // Reset the input value so the same file can be uploaded again
-    event.target.value = '';
   };
 
   const addWatermark = () => {
