@@ -19,6 +19,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const baseImageSize = 512 * baseImageScaleMultiplier;
     const baseImageTopOffset = isBanner ? (baseContainerHeight / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
     const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
+    const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
+    const traitImageLeftOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0;
     const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
     // Load the traits index JSON from the public directory
     const traitsIndexUrl = new URL('/traits-index.json', request.url);
@@ -76,7 +78,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             src={src}
             width="512"
             height="512"
-            style={{ position: 'absolute', top: 0, left: 0 }}
+            style={{ position: 'absolute', top: traitImageTopOffset, left: traitImageLeftOffset }}
           />
         ))}
       </div>,
