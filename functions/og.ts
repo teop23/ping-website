@@ -1,6 +1,6 @@
 export async function onRequest(context) {
     const url = new URL(context.request.url);
-    const imageUrl = `https://pingonsol.com/api/generate${url.search}`; // dynamic image
+    const imageUrl = `https://pingonsol.com/api/generate${url.search}&type=banner`; // dynamic image
 
     const userAgent = context.request.headers.get("user-agent") || "";
 
