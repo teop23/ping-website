@@ -146,18 +146,18 @@ const Roadmap: React.FC = () => {
                 {/* Timeline Node */}
                 <div className="relative z-10 flex-shrink-0">
                   <motion.div
-                    className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-background border-4 border-background shadow-lg flex items-center justify-center"
+                    className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-background border-4 border-background shadow-lg flex items-center justify-center ${step.status === 'future' ? getProgressiveOpacity(index, allSteps) : ''}`}
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center ${step.status === 'future' ? getProgressiveOpacity(index, allSteps) : ''}`}>
                       {getStatusIcon(step.status)}
                     </div>
                   </motion.div>
                   
                   {/* Connector to next step */}
                   {index < allSteps.length - 1 && (
-                    <div className={`absolute top-8 sm:top-12 left-1/2 transform -translate-x-1/2 w-0.5 h-8 sm:h-12 ${getConnectorColor(step.status)}`}></div>
+                    <div className={`absolute top-8 sm:top-12 left-1/2 transform -translate-x-1/2 w-0.5 h-8 sm:h-12 ${getConnectorColor(step.status)} ${step.status === 'future' ? getProgressiveOpacity(index, allSteps) : ''}`}></div>
                   )}
                 </div>
 
