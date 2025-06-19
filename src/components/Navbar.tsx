@@ -77,9 +77,6 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             {location.pathname === '/create-traits' && (
               <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Create PING Traits</h1>
             )}
-            {location.pathname === '/watermark' && (
-              <h1 className="text-sm sm:text-lg md:text-xl font-semibold">PING Watermark Tool</h1>
-            )}
           </div>
           
           {/* Desktop Navigation */}
@@ -99,7 +96,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             />
             
             {/* Social Links */}
-            <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-border/50">
+            <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-border">
               <SocialLink 
                 href={SOCIAL_LINKS.TWITTER}
                 icon={<TwitterIcon size={18} />}
