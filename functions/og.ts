@@ -12,7 +12,7 @@ export async function onRequest(context) {
         <title>Share Preview</title>
 
         <!-- Twitter Card + Open Graph -->
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Check out my custom image!" />
         <meta name="twitter:description" content="Dynamic image generated just for you." />
         <meta name="twitter:image" content="${imageUrl}" />
