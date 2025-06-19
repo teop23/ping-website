@@ -59,7 +59,7 @@ export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
       for (const name of data[category]) {
         const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         traits.push({
-          id: `${name}-${category}`,
+          id: `${name}_${category}`,
           name,
           uiName,
           category,

@@ -41,6 +41,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const newTraitImages = new Map<string, HTMLImageElement>();
       
       for (const [category, trait] of Object.entries(selectedTraits)) {
+        console.log('selectedTraits', selectedTraits);
         if (trait) {
           const imageSrc = trait.imageSrc;
           
@@ -419,11 +420,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // Add selected traits as query parameters
     Object.entries(selectedTraits).forEach(([category, trait]) => {
       if (trait) {
-        params.append(category, trait.name);
+        params.append(category, trait.id.slice(0, trait.id.lastIndexOf('_' + category)));
       }
     });
-    
-    return `${baseUrl}?${params.toString()}`;
+    const paramsString = params.size > 0 ? `?${params.toString()}` : '';
+    return `${baseUrl}${paramsString}`;
   };
 
   const handleShareOnX = () => {
@@ -439,7 +440,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const twitterUrl = new URL('https://twitter.com/intent/tweet');
       twitterUrl.searchParams.set('text', tweetText);
       twitterUrl.searchParams.set('hashtags', hashtags);
-      twitterUrl.searchParams.set('url', url);
+      twitterUrl.searchParams.set('url', apiUrl);
       
       // Add the custom character image
       if (apiUrl.includes('?')) {
@@ -447,7 +448,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       }
       
       // Open Twitter in a new window
-      window.open(twitterUrl.toString(), '_blank', 'width=550,height=420');
+      window.open(twitterUrl.toString(), '_blank');
       
       // Reset sharing state after a delay
       setTimeout(() => setIsSharing(false), 2000);
