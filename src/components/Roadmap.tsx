@@ -4,8 +4,33 @@ import { CheckCircle, Clock, Circle, Zap, Target, Rocket } from 'lucide-react';
 import { ROADMAP_STEPS, type RoadmapStatus } from '../utils/constants';
 import { Card, CardContent } from './ui/card';
 
+// Additional greyed out phases for future anticipation
+const FUTURE_PHASES = [
+  {
+    id: "phase-5",
+    title: "Phase 5: ???",
+    description: "Something big is coming...",
+    status: "future" as const
+  },
+  {
+    id: "phase-6", 
+    title: "Phase 6: ???",
+    description: "The journey continues...",
+    status: "future" as const
+  },
+  {
+    id: "phase-7",
+    title: "Phase 7: ???", 
+    description: "Stay tuned for more updates...",
+    status: "future" as const
+  }
+];
+
+// Extended status type to include future phases
+type ExtendedRoadmapStatus = RoadmapStatus | "future";
+
 const Roadmap: React.FC = () => {
-  const getStatusIcon = (status: RoadmapStatus) => {
+  const getStatusIcon = (status: ExtendedRoadmapStatus) => {
     switch (status) {
       case 'completed':
         return <CheckCircle className="w-6 h-6 text-green-500" />;
@@ -13,10 +38,12 @@ const Roadmap: React.FC = () => {
         return <Clock className="w-6 h-6 text-blue-500" />;
       case 'upcoming':
         return <Circle className="w-6 h-6 text-gray-400" />;
+      case 'future':
+        return <Circle className="w-6 h-6 text-gray-300" />;
     }
   };
 
-  const getStatusColor = (status: RoadmapStatus) => {
+  const getStatusColor = (status: ExtendedRoadmapStatus) => {
     switch (status) {
       case 'completed':
         return 'from-green-500/20 to-emerald-500/20 border-green-500/30';
@@ -24,10 +51,12 @@ const Roadmap: React.FC = () => {
         return 'from-blue-500/20 to-indigo-500/20 border-blue-500/30';
       case 'upcoming':
         return 'from-gray-500/10 to-gray-500/10 border-gray-500/20';
+      case 'future':
+        return 'from-gray-400/5 to-gray-400/5 border-gray-400/10';
     }
   };
 
-  const getConnectorColor = (status: RoadmapStatus) => {
+  const getConnectorColor = (status: ExtendedRoadmapStatus) => {
     switch (status) {
       case 'completed':
         return 'bg-green-500';
@@ -35,8 +64,13 @@ const Roadmap: React.FC = () => {
         return 'bg-gradient-to-b from-green-500 to-blue-500';
       case 'upcoming':
         return 'bg-gray-300';
+      case 'future':
+        return 'bg-gray-200';
     }
   };
+
+  // Combine all roadmap steps
+  const allSteps = [...ROADMAP_STEPS, ...FUTURE_PHASES];
 
   return (
     <section id="roadmap" className="relative py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-muted/20">
@@ -96,18 +130,18 @@ const Roadmap: React.FC = () => {
         {/* Roadmap Timeline */}
         <div className="relative">
           {/* Timeline Line */}
-          <div className="absolute left-4 sm:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-500 via-blue-500 to-gray-300"></div>
+          <div className="absolute left-4 sm:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-500 via-blue-500 via-gray-300 to-gray-200"></div>
 
           {/* Roadmap Steps */}
           <div className="space-y-8 sm:space-y-12">
-            {ROADMAP_STEPS.map((step, index) => (
+            {allSteps.map((step, index) => (
               <motion.div
                 key={step.id}
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="relative flex items-start gap-6 sm:gap-8"
+                className={`relative flex items-start gap-6 sm:gap-8 ${step.status === 'future' ? 'opacity-40' : ''}`}
               >
                 {/* Timeline Node */}
                 <div className="relative z-10 flex-shrink-0">
@@ -122,7 +156,7 @@ const Roadmap: React.FC = () => {
                   </motion.div>
                   
                   {/* Connector to next step */}
-                  {index < ROADMAP_STEPS.length - 1 && (
+                  {index < allSteps.length - 1 && (
                     <div className={`absolute top-8 sm:top-12 left-1/2 transform -translate-x-1/2 w-0.5 h-8 sm:h-12 ${getConnectorColor(step.status)}`}></div>
                   )}
                 </div>
@@ -136,7 +170,7 @@ const Roadmap: React.FC = () => {
                   <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden`}>
                     <CardContent className="p-4 sm:p-6">
                       <div className="flex items-start justify-between gap-4 mb-3">
-                        <h3 className="text-lg sm:text-xl font-bold text-foreground">
+                        <h3 className={`text-lg sm:text-xl font-bold ${step.status === 'future' ? 'text-gray-400' : 'text-foreground'}`}>
                           {step.title}
                         </h3>
                         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-background/50 backdrop-blur-sm border border-border/50">
@@ -146,7 +180,7 @@ const Roadmap: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                      <p className={`text-sm sm:text-base leading-relaxed ${step.status === 'future' ? 'text-gray-400' : 'text-muted-foreground'}`}>
                         {step.description}
                       </p>
                       
@@ -175,6 +209,14 @@ const Roadmap: React.FC = () => {
                         <div className="mt-4 flex items-center gap-2">
                           <Target className="w-4 h-4 text-green-500" />
                           <span className="text-sm font-medium text-green-600">Completed</span>
+                        </div>
+                      )}
+
+                      {/* Future phase indicator */}
+                      {step.status === 'future' && (
+                        <div className="mt-4 flex items-center gap-2">
+                          <Circle className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm font-medium text-gray-500">Coming Soon</span>
                         </div>
                       )}
                     </CardContent>
