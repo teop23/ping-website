@@ -2,7 +2,7 @@
 export const CONTRACT_ADDRESS = "EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump"; // Example Solana address
 
 // Buy link for the token
-export const BUY_LINK = "https://pump.fun/coin/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump";
+export const BUY_LINK = "https://jup.ag/swap/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump-So11111111111111111111111111111111111111112";
 
 // Social media links
 export const SOCIAL_LINKS = {
