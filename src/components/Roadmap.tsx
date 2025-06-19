@@ -167,7 +167,7 @@ const Roadmap: React.FC = () => {
                   whileHover={{ y: -2 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden ${step.status === 'future' ? 'opacity-30' : ''}`}>
+                  <Card className={`bg-gradient-to-br ${getStatusColor(step.status)} backdrop-blur-sm shadow-xl border-2 overflow-hidden ${step.status === 'future' ? getProgressiveOpacity(index, allSteps) : ''}`}>
                     <CardContent className="p-4 sm:p-6">
                       {step.status === 'future' ? (
                         // Future phase layout with rectangle outlines
@@ -243,6 +243,22 @@ const Roadmap: React.FC = () => {
       </div>
     </section>
   );
+};
+
+// Helper function to calculate progressive opacity for future phases
+const getProgressiveOpacity = (index: number, allSteps: any[]) => {
+  // Find the index of the first future phase
+  const firstFutureIndex = allSteps.findIndex(step => step.status === 'future');
+  
+  if (index < firstFutureIndex) return '';
+  
+  // Calculate how many future phases down this is (0-based)
+  const futurePhasePosition = index - firstFutureIndex;
+  
+  // Progressive opacity: 30%, 20%, 10%
+  const opacities = ['opacity-30', 'opacity-20', 'opacity-10'];
+  
+  return opacities[futurePhasePosition] || 'opacity-5';
 };
 
 export default Roadmap;
