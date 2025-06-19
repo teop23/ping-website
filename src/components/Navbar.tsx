@@ -82,6 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
+            <NavItem label="Roadmap" href="#roadmap" />
             <NavItem 
               label="Create Traits" 
               href="/create-traits" 
@@ -167,6 +168,11 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   label="Home" 
                   href="/" 
                   isActive={location.pathname === '/'} 
+                  onClick={closeMobileMenu}
+                />
+                <MobileNavItem 
+                  label="Roadmap" 
+                  href="#roadmap" 
                   onClick={closeMobileMenu}
                 />
                 <MobileNavItem 

@@ -3,6 +3,7 @@ import React from 'react';
 import Builder from '../components/Builder';
 import ContractAddress from '../components/ContractAddress';
 import Countdown from '../components/Countdown';
+import Roadmap from '../components/Roadmap';
 import { SHOW_COUNTDOWN } from '../utils/constants';
 import { Sparkles, Zap, Star, Heart } from 'lucide-react';
 
@@ -247,6 +248,9 @@ const Home: React.FC = () => {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Roadmap Section */}
+      <Roadmap />
     </div>
   );
 };
