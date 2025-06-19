@@ -41,7 +41,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const newTraitImages = new Map<string, HTMLImageElement>();
       
       for (const [category, trait] of Object.entries(selectedTraits)) {
-        console.log('selectedTraits', selectedTraits);
         if (trait) {
           const imageSrc = trait.imageSrc;
           
@@ -424,7 +423,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       }
     });
     const paramsString = params.size > 0 ? `?${params.toString()}` : '';
-    console.log('Generated API URL:', `${baseUrl}${paramsString}`);
     return `${baseUrl}${paramsString}`;
   };
 

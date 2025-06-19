@@ -10,7 +10,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       Object.entries(queryParams).filter(([key]) => key !== 'type')
     );
     const isBanner = queryParams.type === 'banner';
-    console.log(isBanner ? 'Generating banner image' : 'Generating profile image');
     const baseURL = "https://pingonsol.com";
     const baseCharacterImage = `${baseURL}/ping.png`;
     const baseImageScaleMultiplier = 1.4;
