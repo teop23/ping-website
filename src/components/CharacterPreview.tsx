@@ -433,8 +433,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     
     try {
       const apiUrl = generateApiUrl();
-      const tweetText = "Just created my custom PING character! 🎨✨";
-      const hashtags = "PING,Solana,NFT,Crypto,Meme,CustomCharacter";
+      const tweetText = "Just created my custom $PING!\nCreate your own at:\n";
+      const hashtags = "PING,Solana,Crypto";
       const url = "https://pingonsol.com";
       
       // Construct the Twitter share URL
