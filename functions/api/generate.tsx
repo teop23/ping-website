@@ -43,10 +43,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       return `${baseURL}/traits/${traitKey}.png`;
     });
 
-    if (selectedTraits.length === 0) {
-      return new Response('No valid traits provided in query.', { status: 400 });
-    }
-
     // 🖼️ Generate the composited image
     return new ImageResponse(
       <div
