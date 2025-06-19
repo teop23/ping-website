@@ -42,7 +42,7 @@ export const ROADMAP_STEPS = [
   {
     id: "phase-3",
     title: "Phase 3: Advanced Features and Partnerships", 
-    description: "Integrate other social media platforms, create partnerships with major crypto platforms and artists",
+    description: "Integrate other social media platforms, create partnerships with major crypto platforms and artists. Incorporate features suggested by the community(Improve Ping Website and API).",
     status: "upcoming" as const
   },
   {
