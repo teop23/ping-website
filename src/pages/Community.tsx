@@ -134,7 +134,7 @@ const pingMemes = [
 ];
 
 type ViewMode = 'grid' | 'list';
-type SortBy = 'newest' | 'popular' | 'trending';
+type SortBy = 'newest' | 'oldest';
 
 const Community: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
@@ -178,9 +178,8 @@ const Community: React.FC = () => {
                 onChange={(e) => setSortBy(e.target.value as SortBy)}
                 className="px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <option value="newest">Newest</option>
-                <option value="popular">Most Popular</option>
-                <option value="trending">Trending</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
               </select>
             </div>
           </div>
