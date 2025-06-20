@@ -8,13 +8,59 @@ export const communityPings = [
   {
     creator: 'itsvibekilla',
     imageUrl: 'https://pbs.twimg.com/media/GtxGPZZXcAA1jdy?format=jpg&name=small',
-    createdAt: '2024-01-14'
+    createdAt: '2024-06-19'
   },
   {
     creator: '0x34kik',
     imageUrl: 'https://pbs.twimg.com/media/GtxEEraXUAE79G8?format=jpg&name=small',
-    createdAt: '2024-01-13'
+    createdAt: '2024-06-19'
   },
+  {
+    creator: 'backroomsonbase',
+    imageUrl: 'https://pbs.twimg.com/media/GtxBnw9WUAAWrw0?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'SquionINK',
+    imageUrl: 'https://pbs.twimg.com/media/GtxB7U-WEAA7RhM?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'latiniron',
+    imageUrl: 'https://pbs.twimg.com/media/GtzNjo3W4AAy_Nd?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'FIFACOINSOLANA',
+    imageUrl: 'https://pbs.twimg.com/media/GtxBkFWXEAEfwxF?format=png&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'SaltyDan2023',
+    imageUrl: 'https://pbs.twimg.com/media/GtxCF6pW0AA6bAa?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'JasonBourn56653',
+    imageUrl: 'https://pbs.twimg.com/media/GtxBy7HXEAAfVUl?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'gromadaz',
+    imageUrl: 'https://pbs.twimg.com/media/GtxSqQ2XAAAvcgW?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'Jackmeta_x',
+    imageUrl: 'https://pbs.twimg.com/media/GtxL4F3XEAELbY8?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+  {
+    creator: 'zecocooper',
+    imageUrl: 'https://pbs.twimg.com/media/GtxVWiDWAAE0qfd?format=jpg&name=small',
+    createdAt: '2024-06-19'
+  },
+
 ];
 
 // Ping Memes Data

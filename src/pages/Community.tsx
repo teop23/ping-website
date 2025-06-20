@@ -53,7 +53,7 @@ const Community: React.FC = () => {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
         >
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Filter size={16} className="text-muted-foreground" />
               <select
@@ -65,7 +65,7 @@ const Community: React.FC = () => {
                 <option value="oldest">Oldest First</option>
               </select>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex items-center gap-2">
             <Button
@@ -173,11 +173,11 @@ interface PingCardProps {
 const PingCard: React.FC<PingCardProps> = ({ ping }) => {
   return (
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md">
-      <div className="relative aspect-square">
+      <div className="flex flex-row justify-center items-center relative aspect-square">
         <img
           src={ping.imageUrl}
-          alt={ping.title}
-          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
+          alt={`PING by ${ping.creator}`}
+          className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
         />
         {/* Subtle overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
