@@ -7,7 +7,8 @@ export const BUY_LINK = "https://jup.ag/swap/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaL
 // Social media links
 export const SOCIAL_LINKS = {
   TWITTER: "https://x.com/i/communities/1933201526584963118",
-  TELEGRAM: "https://t.me/pingtoken"
+  TELEGRAM: "https://t.me/pingtoken",
+  DEXSCREENER: "https://dexscreener.com/solana/placeholder" // You can change this later
 };
 
 // Countdown target timestamp (Unix timestamp in milliseconds)

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { SOCIAL_LINKS } from '../utils/constants';
 import pingIcon from '../assets/ping_transparent_icon.png';
+import { DexScreenerLogo } from '../utils/icons';
 
 // Twitter/X icon component
 export const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
@@ -166,6 +167,11 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 icon={<TelegramIcon size={18} />}
                 label="Telegram"
               />
+              <SocialLink 
+                href={SOCIAL_LINKS.DEXSCREENER}
+                icon={<DexScreenerLogo size={18} />}
+                label="DexScreener"
+              />
             </div>
           </div>
 
@@ -278,6 +284,12 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                       href={SOCIAL_LINKS.TELEGRAM}
                       icon={<TelegramIcon size={20} />}
                       label="Telegram"
+                      isMobile
+                    />
+                    <SocialLink 
+                      href={SOCIAL_LINKS.DEXSCREENER}
+                      icon={<DexScreenerLogo size={20} />}
+                      label="DexScreener"
                       isMobile
                     />
                   </div>
