@@ -112,7 +112,7 @@ const Community: React.FC = () => {
               )}>
                 {sortedCommunityPings.map((ping, index) => (
                   <motion.div
-                    key={ping.id}
+                    key={`ping-${index}-${ping.creator}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.6 }}
@@ -180,23 +180,9 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
       </div>
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-sm mb-1 truncate">{ping.title}</h3>
+      <CardContent className="p-2 bg-secondary">
         <p className="text-xs text-muted-foreground mb-2">by {ping.creator}</p>
         <div className="flex flex-wrap gap-1">
-          {ping.traits.slice(0, 2).map((trait) => (
-            <span
-              key={trait}
-              className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
-            >
-              {trait}
-            </span>
-          ))}
-          {ping.traits.length > 2 && (
-            <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">
-              +{ping.traits.length - 2}
-            </span>
-          )}
         </div>
       </CardContent>
     </Card>

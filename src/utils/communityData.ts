@@ -1,65 +1,25 @@
 // Community Pings Data
 export const communityPings = [
   {
-    id: '1',
-    title: 'Cool Cyber Ping',
-    creator: 'CryptoPing123',
-    imageUrl: 'https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 42,
-    shares: 15,
-    traits: ['cyber-helmet', 'neon-aura', 'laser-sword'],
-    createdAt: '2024-01-15'
+    creator: 'thatHVACtech',
+    imageUrl: 'https://pbs.twimg.com/media/GtxdNeSXcAAACYt?format=jpg&name=small',
+    createdAt: '2024-06-19'
   },
   {
-    id: '2',
-    title: 'Wizard Ping Master',
-    creator: 'MagicPinger',
-    imageUrl: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 38,
-    shares: 12,
-    traits: ['wizard-hat', 'magic-wand', 'mystical-aura'],
+    creator: 'itsvibekilla',
+    imageUrl: 'https://pbs.twimg.com/media/GtxGPZZXcAA1jdy?format=jpg&name=small',
     createdAt: '2024-01-14'
   },
   {
-    id: '3',
-    title: 'Pirate Captain Ping',
-    creator: 'SeaPinger',
-    imageUrl: 'https://images.pexels.com/photos/1181533/pexels-photo-1181533.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 56,
-    shares: 23,
-    traits: ['pirate-hat', 'eye-patch', 'sword'],
+    creator: '0x34kik',
+    imageUrl: 'https://pbs.twimg.com/media/GtxEEraXUAE79G8?format=jpg&name=small',
     createdAt: '2024-01-13'
   },
   {
-    id: '4',
-    title: 'Space Explorer Ping',
-    creator: 'CosmicPing',
-    imageUrl: 'https://images.pexels.com/photos/2582928/pexels-photo-2582928.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 71,
-    shares: 31,
-    traits: ['space-helmet', 'jetpack', 'star-aura'],
-    createdAt: '2024-01-12'
+    creator: '',
+    imageUrl: '',
+    createdAt: '2024-01-13'
   },
-  {
-    id: '5',
-    title: 'Ninja Stealth Ping',
-    creator: 'ShadowPinger',
-    imageUrl: 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 49,
-    shares: 18,
-    traits: ['ninja-mask', 'katana', 'shadow-aura'],
-    createdAt: '2024-01-11'
-  },
-  {
-    id: '6',
-    title: 'Royal King Ping',
-    creator: 'RoyalPinger',
-    imageUrl: 'https://images.pexels.com/photos/1181298/pexels-photo-1181298.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 63,
-    shares: 27,
-    traits: ['crown', 'royal-cape', 'golden-aura'],
-    createdAt: '2024-01-10'
-  }
 ];
 
 // Ping Memes Data
