@@ -66,62 +66,38 @@ export const communityPings = [
 // Ping Memes Data
 export const pingMemes = [
   {
-    id: '1',
     title: 'When PING hits $1',
-    creator: 'MemeKing',
-    imageUrl: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 156,
-    shares: 89,
+    imageUrl: '/memes/ping-hits-1-dollar.jpg',
     type: 'meme' as const,
     createdAt: '2024-01-15'
   },
   {
-    id: '2',
     title: 'PING vs Other Tokens',
-    creator: 'CryptoMemer',
-    imageUrl: 'https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 203,
-    shares: 124,
+    imageUrl: '/memes/ping-vs-other-tokens.jpg',
     type: 'meme' as const,
     createdAt: '2024-01-14'
   },
   {
-    id: '3',
     title: 'Me buying more PING',
-    creator: 'DiamondHands',
-    imageUrl: 'https://images.pexels.com/photos/1181533/pexels-photo-1181533.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 178,
-    shares: 95,
+    imageUrl: '/memes/buying-more-ping.jpg',
     type: 'meme' as const,
     createdAt: '2024-01-13'
   },
   {
-    id: '4',
     title: 'PING Community be like',
-    creator: 'PingLover',
-    imageUrl: 'https://images.pexels.com/photos/2582928/pexels-photo-2582928.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 134,
-    shares: 67,
+    imageUrl: '/memes/ping-community.jpg',
     type: 'meme' as const,
     createdAt: '2024-01-12'
   },
   {
-    id: '5',
     title: 'HODL PING Forever',
-    creator: 'CryptoHodler',
-    imageUrl: 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 245,
-    shares: 156,
+    imageUrl: '/memes/hodl-ping-forever.jpg',
     type: 'meme' as const,
     createdAt: '2024-01-11'
   },
   {
-    id: '6',
     title: 'PING to the Moon',
-    creator: 'MoonPinger',
-    imageUrl: 'https://images.pexels.com/photos/1181298/pexels-photo-1181298.jpeg?auto=compress&cs=tinysrgb&w=400',
-    likes: 189,
-    shares: 112,
+    imageUrl: '/memes/ping-to-the-moon.jpg',
     type: 'meme' as const,
     createdAt: '2024-01-10'
   }

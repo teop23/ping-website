@@ -140,7 +140,7 @@ const Community: React.FC = () => {
               )}>
                 {sortedPingMemes.map((meme, index) => (
                   <motion.div
-                    key={meme.id}
+                    key={`meme-${index}-${meme.title}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.6 }}
@@ -263,7 +263,7 @@ const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
         
         <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
         <p className="text-xs text-muted-foreground">
-          by <span className="font-medium text-primary/80">{meme.creator}</span>
+          {new Date(meme.createdAt).toLocaleDateString()}
         </p>
       </CardContent>
     </Card>
@@ -284,7 +284,7 @@ const MemeListItem: React.FC<MemeCardProps> = ({ meme }) => {
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
             <p className="text-xs text-muted-foreground">
-              by <span className="font-medium text-primary/80">{meme.creator}</span>
+              {new Date(meme.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
