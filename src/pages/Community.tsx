@@ -172,15 +172,20 @@ interface PingCardProps {
 
 const PingCard: React.FC<PingCardProps> = ({ ping }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md">
       <div className="relative aspect-square">
         <img
           src={ping.imageUrl}
           alt={ping.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
         />
+        {/* Subtle overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
-      <CardContent className="p-2 bg-secondary">
+      <CardContent className="p-4 bg-gradient-to-br from-white to-gray-50/50 border-t border-gray-100/50 relative">
+        {/* Subtle top border accent */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        
         <p className="text-xs text-muted-foreground mb-2">
           by{' '}
           {ping.creator ? (
@@ -188,7 +193,7 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
               href={`https://x.com/${ping.creator}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium"
+              className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium hover:underline decoration-primary/30 underline-offset-2"
             >
               @{ping.creator}
             </a>
@@ -196,8 +201,6 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
             'Anonymous'
           )}
         </p>
-        <div className="flex flex-wrap gap-1">
-        </div>
       </CardContent>
     </Card>
   );
@@ -206,13 +209,13 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
 // Ping List Item Component
 const PingListItem: React.FC<PingCardProps> = ({ ping }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md hover:shadow-primary/5">
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
           <img
             src={ping.imageUrl}
             alt={`PING by ${ping.creator}`}
-            className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+            className="w-16 h-16 object-cover rounded-lg flex-shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-sm"
           />
           <div className="flex-1 min-w-0">
             <p className="text-xs text-muted-foreground mb-2">
@@ -222,7 +225,7 @@ const PingListItem: React.FC<PingCardProps> = ({ ping }) => {
                   href={`https://x.com/${ping.creator}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium"
+                  className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium hover:underline decoration-primary/30 underline-offset-2"
                 >
                   @{ping.creator}
                 </a>
@@ -244,17 +247,24 @@ interface MemeCardProps {
 
 const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md">
       <div className="relative aspect-square">
         <img
           src={meme.imageUrl}
           alt={meme.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
         />
+        {/* Subtle overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
-      <CardContent className="p-4">
+      <CardContent className="p-4 bg-gradient-to-br from-white to-gray-50/50 border-t border-gray-100/50 relative">
+        {/* Subtle top border accent */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        
         <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
-        <p className="text-xs text-muted-foreground">by {meme.creator}</p>
+        <p className="text-xs text-muted-foreground">
+          by <span className="font-medium text-primary/80">{meme.creator}</span>
+        </p>
       </CardContent>
     </Card>
   );
@@ -263,17 +273,19 @@ const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
 // Meme List Item Component
 const MemeListItem: React.FC<MemeCardProps> = ({ meme }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md hover:shadow-primary/5">
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
           <img
             src={meme.imageUrl}
             alt={meme.title}
-            className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+            className="w-16 h-16 object-cover rounded-lg flex-shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-sm"
           />
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
-            <p className="text-xs text-muted-foreground">by {meme.creator}</p>
+            <p className="text-xs text-muted-foreground">
+              by <span className="font-medium text-primary/80">{meme.creator}</span>
+            </p>
           </div>
         </div>
       </CardContent>
