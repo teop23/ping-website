@@ -15,11 +15,6 @@ export const communityPings = [
     imageUrl: 'https://pbs.twimg.com/media/GtxEEraXUAE79G8?format=jpg&name=small',
     createdAt: '2024-01-13'
   },
-  {
-    creator: '',
-    imageUrl: '',
-    createdAt: '2024-01-13'
-  },
 ];
 
 // Ping Memes Data

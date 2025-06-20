@@ -181,7 +181,21 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
         />
       </div>
       <CardContent className="p-2 bg-secondary">
-        <p className="text-xs text-muted-foreground mb-2">by {ping.creator}</p>
+        <p className="text-xs text-muted-foreground mb-2">
+          by{' '}
+          {ping.creator ? (
+            <a
+              href={`https://x.com/${ping.creator}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium"
+            >
+              @{ping.creator}
+            </a>
+          ) : (
+            'Anonymous'
+          )}
+        </p>
         <div className="flex flex-wrap gap-1">
         </div>
       </CardContent>
@@ -197,22 +211,25 @@ const PingListItem: React.FC<PingCardProps> = ({ ping }) => {
         <div className="flex items-center gap-4">
           <img
             src={ping.imageUrl}
-            alt={ping.title}
+            alt={`PING by ${ping.creator}`}
             className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
           />
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm mb-1 truncate">{ping.title}</h3>
-            <p className="text-xs text-muted-foreground mb-2">by {ping.creator}</p>
-            <div className="flex flex-wrap gap-1">
-              {ping.traits.slice(0, 3).map((trait) => (
-                <span
-                  key={trait}
-                  className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
+            <p className="text-xs text-muted-foreground mb-2">
+              by{' '}
+              {ping.creator ? (
+                <a
+                  href={`https://x.com/${ping.creator}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium"
                 >
-                  {trait}
-                </span>
-              ))}
-            </div>
+                  @{ping.creator}
+                </a>
+              ) : (
+                'Anonymous'
+              )}
+            </p>
           </div>
         </div>
       </CardContent>
