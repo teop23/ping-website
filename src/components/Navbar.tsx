@@ -97,6 +97,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
             <NavItem label="Roadmap" href="#roadmap" />
+            <NavItem label="Community" href="/community" isActive={location.pathname === '/community'} />
             
             {/* Tools Dropdown */}
             <div className="relative">
@@ -236,6 +237,12 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 <MobileNavItem 
                   label="Roadmap" 
                   href="#roadmap" 
+                  onClick={closeMobileMenu}
+                />
+                <MobileNavItem 
+                  label="Community" 
+                  href="/community" 
+                  isActive={location.pathname === '/community'}
                   onClick={closeMobileMenu}
                 />
                 
