@@ -248,11 +248,11 @@ interface MemeCardProps {
 const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
   return (
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md">
-      <div className="relative aspect-square">
+      <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100">
         <img
           src={meme.imageUrl}
           alt={meme.title}
-          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
+          className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500 ease-out"
         />
         {/* Subtle overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -276,11 +276,13 @@ const MemeListItem: React.FC<MemeCardProps> = ({ meme }) => {
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md hover:shadow-primary/5">
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
           <img
             src={meme.imageUrl}
             alt={meme.title}
-            className="w-16 h-16 object-cover rounded-lg flex-shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-sm"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
           />
+          </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
             <p className="text-xs text-muted-foreground">
