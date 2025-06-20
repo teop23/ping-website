@@ -140,6 +140,24 @@ const Community: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortBy, setSortBy] = useState<SortBy>('newest');
 
+  // Sort function
+  const sortItems = <T extends { createdAt: string }>(items: T[]): T[] => {
+    return [...items].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      
+      if (sortBy === 'newest') {
+        return dateB - dateA; // Newest first (descending)
+      } else {
+        return dateA - dateB; // Oldest first (ascending)
+      }
+    });
+  };
+
+  // Get sorted data
+  const sortedCommunityPings = sortItems(communityPings);
+  const sortedPingMemes = sortItems(pingMemes);
+
   return (
     <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -227,7 +245,7 @@ const Community: React.FC = () => {
                   ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                   : "space-y-4"
               )}>
-                {communityPings.map((ping, index) => (
+                {sortedCommunityPings.map((ping, index) => (
                   <motion.div
                     key={ping.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -255,7 +273,7 @@ const Community: React.FC = () => {
                   ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                   : "space-y-4"
               )}>
-                {pingMemes.map((meme, index) => (
+                {sortedPingMemes.map((meme, index) => (
                   <motion.div
                     key={meme.id}
                     initial={{ opacity: 0, y: 20 }}
