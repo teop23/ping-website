@@ -3,62 +3,62 @@ export const communityPings = [
   {
     creator: 'thatHVACtech',
     imageUrl: 'https://pbs.twimg.com/media/GtxdNeSXcAAACYt?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'itsvibekilla',
     imageUrl: 'https://pbs.twimg.com/media/GtxGPZZXcAA1jdy?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: '0x34kik',
     imageUrl: 'https://pbs.twimg.com/media/GtxEEraXUAE79G8?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'backroomsonbase',
     imageUrl: 'https://pbs.twimg.com/media/GtxBnw9WUAAWrw0?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'SquionINK',
     imageUrl: 'https://pbs.twimg.com/media/GtxB7U-WEAA7RhM?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'latiniron',
     imageUrl: 'https://pbs.twimg.com/media/GtzNjo3W4AAy_Nd?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'FIFACOINSOLANA',
     imageUrl: 'https://pbs.twimg.com/media/GtxBkFWXEAEfwxF?format=png&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'SaltyDan2023',
     imageUrl: 'https://pbs.twimg.com/media/GtxCF6pW0AA6bAa?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'JasonBourn56653',
     imageUrl: 'https://pbs.twimg.com/media/GtxBy7HXEAAfVUl?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'gromadaz',
     imageUrl: 'https://pbs.twimg.com/media/GtxSqQ2XAAAvcgW?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'Jackmeta_x',
     imageUrl: 'https://pbs.twimg.com/media/GtxL4F3XEAELbY8?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
   {
     creator: 'zecocooper',
     imageUrl: 'https://pbs.twimg.com/media/GtxVWiDWAAE0qfd?format=jpg&name=small',
-    createdAt: '2024-06-19'
+    createdAt: '2025-06-19'
   },
 
 ];
@@ -66,40 +66,76 @@ export const communityPings = [
 // Ping Memes Data
 export const pingMemes = [
   {
-    title: 'When PING hits $1',
-    imageUrl: '/memes/ping-hits-1-dollar.jpg',
+    title: 'Ping Driving With the Gang',
+    imageUrl: '/memes/ping-driving-with-gang.jpg',
     type: 'meme' as const,
-    createdAt: '2024-01-15'
+    createdAt: '2025-06-19'
   },
   {
-    title: 'PING vs Other Tokens',
-    imageUrl: '/memes/ping-vs-other-tokens.jpg',
+    title: 'Ping Fighting In the War',
+    imageUrl: '/memes/ping-fighting-in-the-war.jpg',
     type: 'meme' as const,
-    createdAt: '2024-01-14'
+    createdAt: '2025-06-19'
   },
   {
-    title: 'Me buying more PING',
-    imageUrl: '/memes/buying-more-ping.jpg',
+    title: 'Ping Freezing the Chart',
+    imageUrl: '/memes/ping-froze-the-chart.jpg',
     type: 'meme' as const,
-    createdAt: '2024-01-13'
+    createdAt: '2025-06-19'
   },
   {
-    title: 'PING Community be like',
-    imageUrl: '/memes/ping-community.jpg',
+    title: 'CyberPing 2077',
+    imageUrl: '/memes/CyberPing-2077.jpeg',
     type: 'meme' as const,
-    createdAt: '2024-01-12'
+    createdAt: '2025-06-19'
   },
   {
-    title: 'HODL PING Forever',
-    imageUrl: '/memes/hodl-ping-forever.jpg',
+    title: 'Ping Ice Magazine',
+    imageUrl: '/memes/ping-iice-magazine.jpg',
     type: 'meme' as const,
-    createdAt: '2024-01-11'
+    createdAt: '2025-06-19'
   },
   {
-    title: 'PING to the Moon',
-    imageUrl: '/memes/ping-to-the-moon.jpg',
+    title: 'Ping Driving',
+    imageUrl: '/memes/ping-driving.jpg',
     type: 'meme' as const,
-    createdAt: '2024-01-10'
+    createdAt: '2025-06-19'
+  },
+  {
+    title: 'Ping Driving APC',
+    imageUrl: '/memes/ping-driving-apc.jpg',
+    type: 'meme' as const,
+    createdAt: '2025-06-19'
+  },
+  {
+    title: 'Ping Boxing',
+    imageUrl: '/memes/ping-boxing.jpg',
+    type: 'meme' as const,
+    createdAt: '2025-06-19'
+  },
+  {
+    title: 'Ping DJ',
+    imageUrl: '/memes/ping-dj.jpeg',
+    type: 'meme' as const,
+    createdAt: '2025-06-19'
+  },
+  {
+    title: 'Ping Band',
+    imageUrl: '/memes/ping-band.jpg',
+    type: 'meme' as const,
+    createdAt: '2025-06-19'
+  },
+  {
+    title: 'Ping DJ Flyer',
+    imageUrl: '/memes/ping-club-flyer.jpg',
+    type: 'meme' as const,
+    createdAt: '2025-06-19'
+  },
+  {
+    title: 'Ping Taking a Bath',
+    imageUrl: '/memes/ping-taking-bath.jpg',
+    type: 'meme' as const,
+    createdAt: '2025-06-19'
   }
 ];
 
