@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Palette, Menu, X } from 'lucide-react';
+import { Palette, Menu, X, ChevronDown, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
@@ -39,6 +39,7 @@ interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -47,6 +48,16 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
+
+  const toggleToolsDropdown = () => {
+    setIsToolsDropdownOpen(!isToolsDropdownOpen);
+  };
+
+  const closeToolsDropdown = () => {
+    setIsToolsDropdownOpen(false);
+  };
+
+  const isToolsActive = location.pathname === '/create-traits' || location.pathname === '/watermark';
 
   return (
     <>
@@ -77,23 +88,70 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             {location.pathname === '/create-traits' && (
               <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Create PING Traits</h1>
             )}
+            {location.pathname === '/watermark' && (
+              <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Watermark Tool</h1>
+            )}
           </div>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
             <NavItem label="Roadmap" href="#roadmap" />
-            <NavItem 
-              label="Create Traits" 
-              href="/create-traits" 
-              isActive={location.pathname === '/create-traits'}
-              icon={<Palette size={16} />} 
-            />
-            <NavItem 
-              label="Watermark" 
-              href="/watermark" 
-              isActive={location.pathname === '/watermark'}
-            />
+            
+            {/* Tools Dropdown */}
+            <div className="relative">
+              <Button
+                variant={isToolsActive ? "secondary" : "ghost"}
+                className="transition-all duration-200 flex items-center gap-2"
+                onClick={toggleToolsDropdown}
+                onBlur={(e) => {
+                  // Only close if the blur is not moving to a child element
+                  if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                    setTimeout(closeToolsDropdown, 150);
+                  }
+                }}
+              >
+                <Wrench size={16} />
+                Tools
+                <ChevronDown 
+                  size={14} 
+                  className={cn(
+                    "transition-transform duration-200",
+                    isToolsDropdownOpen ? "rotate-180" : ""
+                  )}
+                />
+              </Button>
+
+              <AnimatePresence>
+                {isToolsDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-lg border border-border/50 rounded-lg shadow-lg z-50"
+                    onMouseLeave={closeToolsDropdown}
+                  >
+                    <div className="p-2 space-y-1">
+                      <DropdownItem
+                        label="Create Traits"
+                        href="/create-traits"
+                        icon={<Palette size={16} />}
+                        isActive={location.pathname === '/create-traits'}
+                        onClick={closeToolsDropdown}
+                      />
+                      <DropdownItem
+                        label="Watermark Tool"
+                        href="/watermark"
+                        icon={<img src={pingIcon} alt="Watermark" className="w-4 h-4" />}
+                        isActive={location.pathname === '/watermark'}
+                        onClick={closeToolsDropdown}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             
             {/* Social Links */}
             <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-border">
@@ -180,19 +238,25 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   href="#roadmap" 
                   onClick={closeMobileMenu}
                 />
-                <MobileNavItem 
-                  label="Create Traits" 
-                  href="/create-traits" 
-                  isActive={location.pathname === '/create-traits'}
-                  icon={<Palette size={18} />}
-                  onClick={closeMobileMenu}
-                />
-                <MobileNavItem 
-                  label="Watermark Tool" 
-                  href="/watermark" 
-                  isActive={location.pathname === '/watermark'}
-                  onClick={closeMobileMenu}
-                />
+                
+                {/* Mobile Tools Section */}
+                <div className="pt-2 mt-2 border-t border-border/50">
+                  <div className="text-xs font-medium text-muted-foreground mb-2 px-3">Tools</div>
+                  <MobileNavItem 
+                    label="Create Traits" 
+                    href="/create-traits" 
+                    isActive={location.pathname === '/create-traits'}
+                    icon={<Palette size={18} />}
+                    onClick={closeMobileMenu}
+                  />
+                  <MobileNavItem 
+                    label="Watermark Tool" 
+                    href="/watermark" 
+                    isActive={location.pathname === '/watermark'}
+                    icon={<img src={pingIcon} alt="Watermark" className="w-4 h-4" />}
+                    onClick={closeMobileMenu}
+                  />
+                </div>
                 
                 {/* Mobile Social Links */}
                 <div className="pt-2 mt-2 border-t border-border/50">
@@ -274,6 +338,41 @@ const NavItem: React.FC<NavItemProps> = ({ label, href, isActive = false, icon, 
         {label}
       </motion.a>
     </Button>
+  );
+};
+
+interface DropdownItemProps {
+  label: string;
+  href: string;
+  icon?: React.ReactNode;
+  isActive?: boolean;
+  onClick?: () => void;
+}
+
+const DropdownItem: React.FC<DropdownItemProps> = ({ label, href, icon, isActive = false, onClick }) => {
+  return (
+    <motion.a
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-3 p-2 rounded-md transition-colors duration-200 w-full text-sm",
+        isActive 
+          ? "bg-primary/10 text-primary border border-primary/20" 
+          : "hover:bg-muted text-muted-foreground hover:text-foreground"
+      )}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      {icon}
+      <span className="font-medium">{label}</span>
+      {isActive && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="ml-auto w-2 h-2 bg-primary rounded-full"
+        />
+      )}
+    </motion.a>
   );
 };
 
