@@ -140,21 +140,6 @@ const Community: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortBy, setSortBy] = useState<SortBy>('newest');
 
-  const handleLike = (id: string, type: 'ping' | 'meme') => {
-    // Handle like functionality
-    console.log(`Liked ${type} with id: ${id}`);
-  };
-
-  const handleShare = (id: string, type: 'ping' | 'meme') => {
-    // Handle share functionality
-    console.log(`Shared ${type} with id: ${id}`);
-  };
-
-  const handleDownload = (id: string) => {
-    // Handle download functionality
-    console.log(`Downloaded ping with id: ${id}`);
-  };
-
   return (
     <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -253,16 +238,10 @@ const Community: React.FC = () => {
                     {viewMode === 'grid' ? (
                       <PingCard
                         ping={ping}
-                        onLike={() => handleLike(ping.id, 'ping')}
-                        onShare={() => handleShare(ping.id, 'ping')}
-                        onDownload={() => handleDownload(ping.id)}
                       />
                     ) : (
                       <PingListItem
                         ping={ping}
-                        onLike={() => handleLike(ping.id, 'ping')}
-                        onShare={() => handleShare(ping.id, 'ping')}
-                        onDownload={() => handleDownload(ping.id)}
                       />
                     )}
                   </motion.div>
@@ -287,14 +266,10 @@ const Community: React.FC = () => {
                     {viewMode === 'grid' ? (
                       <MemeCard
                         meme={meme}
-                        onLike={() => handleLike(meme.id, 'meme')}
-                        onShare={() => handleShare(meme.id, 'meme')}
                       />
                     ) : (
                       <MemeListItem
                         meme={meme}
-                        onLike={() => handleLike(meme.id, 'meme')}
-                        onShare={() => handleShare(meme.id, 'meme')}
                       />
                     )}
                   </motion.div>
@@ -311,12 +286,9 @@ const Community: React.FC = () => {
 // Ping Card Component
 interface PingCardProps {
   ping: typeof communityPings[0];
-  onLike: () => void;
-  onShare: () => void;
-  onDownload: () => void;
 }
 
-const PingCard: React.FC<PingCardProps> = ({ ping, onLike, onShare, onDownload }) => {
+const PingCard: React.FC<PingCardProps> = ({ ping }) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
       <div className="relative aspect-square">
@@ -325,24 +297,6 @@ const PingCard: React.FC<PingCardProps> = ({ ping, onLike, onShare, onDownload }
           alt={ping.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button size="sm" variant="secondary" onClick={onLike} className="h-8 px-2">
-                <Heart size={14} className="mr-1" />
-                {ping.likes}
-              </Button>
-              <Button size="sm" variant="secondary" onClick={onShare} className="h-8 px-2">
-                <Share2 size={14} className="mr-1" />
-                {ping.shares}
-              </Button>
-            </div>
-            <Button size="sm" variant="secondary" onClick={onDownload} className="h-8 px-2">
-              <Download size={14} />
-            </Button>
-          </div>
-        </div>
       </div>
       <CardContent className="p-4">
         <h3 className="font-semibold text-sm mb-1 truncate">{ping.title}</h3>
@@ -368,7 +322,7 @@ const PingCard: React.FC<PingCardProps> = ({ ping, onLike, onShare, onDownload }
 };
 
 // Ping List Item Component
-const PingListItem: React.FC<PingCardProps> = ({ ping, onLike, onShare, onDownload }) => {
+const PingListItem: React.FC<PingCardProps> = ({ ping }) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
       <CardContent className="p-4">
@@ -392,19 +346,6 @@ const PingListItem: React.FC<PingCardProps> = ({ ping, onLike, onShare, onDownlo
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button size="sm" variant="outline" onClick={onLike}>
-              <Heart size={14} className="mr-1" />
-              {ping.likes}
-            </Button>
-            <Button size="sm" variant="outline" onClick={onShare}>
-              <Share2 size={14} className="mr-1" />
-              {ping.shares}
-            </Button>
-            <Button size="sm" variant="outline" onClick={onDownload}>
-              <Download size={14} />
-            </Button>
-          </div>
         </div>
       </CardContent>
     </Card>
@@ -414,11 +355,9 @@ const PingListItem: React.FC<PingCardProps> = ({ ping, onLike, onShare, onDownlo
 // Meme Card Component
 interface MemeCardProps {
   meme: typeof pingMemes[0];
-  onLike: () => void;
-  onShare: () => void;
 }
 
-const MemeCard: React.FC<MemeCardProps> = ({ meme, onLike, onShare }) => {
+const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
       <div className="relative aspect-square">
@@ -427,24 +366,6 @@ const MemeCard: React.FC<MemeCardProps> = ({ meme, onLike, onShare }) => {
           alt={meme.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button size="sm" variant="secondary" onClick={onLike} className="h-8 px-2">
-                <Heart size={14} className="mr-1" />
-                {meme.likes}
-              </Button>
-              <Button size="sm" variant="secondary" onClick={onShare} className="h-8 px-2">
-                <Share2 size={14} className="mr-1" />
-                {meme.shares}
-              </Button>
-            </div>
-            <Button size="sm" variant="secondary" className="h-8 px-2">
-              <ExternalLink size={14} />
-            </Button>
-          </div>
-        </div>
       </div>
       <CardContent className="p-4">
         <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
@@ -455,7 +376,7 @@ const MemeCard: React.FC<MemeCardProps> = ({ meme, onLike, onShare }) => {
 };
 
 // Meme List Item Component
-const MemeListItem: React.FC<MemeCardProps> = ({ meme, onLike, onShare }) => {
+const MemeListItem: React.FC<MemeCardProps> = ({ meme }) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
       <CardContent className="p-4">
@@ -468,19 +389,6 @@ const MemeListItem: React.FC<MemeCardProps> = ({ meme, onLike, onShare }) => {
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
             <p className="text-xs text-muted-foreground">by {meme.creator}</p>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button size="sm" variant="outline" onClick={onLike}>
-              <Heart size={14} className="mr-1" />
-              {meme.likes}
-            </Button>
-            <Button size="sm" variant="outline" onClick={onShare}>
-              <Share2 size={14} className="mr-1" />
-              {meme.shares}
-            </Button>
-            <Button size="sm" variant="outline">
-              <ExternalLink size={14} />
-            </Button>
           </div>
         </div>
       </CardContent>
