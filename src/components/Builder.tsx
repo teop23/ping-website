@@ -127,12 +127,12 @@ const Builder: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-full min-h-[600px] p-4">
+    <div className="w-full h-full min-h-[700px] p-4">
       <div className="flex flex-row gap-6 w-full h-full">
         {/* Left side - Character Preview + Text Tools */}
-        <div className="w-1/2 flex flex-col gap-4 min-h-0 min-h-[560px]">
+        <div className="w-1/2 flex flex-col gap-4 min-h-[650px]">
           {/* Character Preview - Takes 70% of left side height */}
-          <div className="flex-[7] min-h-0 min-h-[350px]">
+          <div className="flex-[7] min-h-[450px]">
             <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
               <div className="flex items-center gap-2 flex-shrink-0">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
@@ -143,7 +143,7 @@ const Builder: React.FC = () => {
                 </h2>
               </div>
 
-              <div className="flex-1 min-h-0">
+              <div className="flex-1 min-h-[400px]">
                 <CharacterPreview
                   selectedTraits={selectedTraits}
                   textElements={textElements}
@@ -156,7 +156,7 @@ const Builder: React.FC = () => {
           </div>
 
           {/* Text Tools - Takes 30% of left side height */}
-          <div className="flex-[3] min-h-0 min-h-[180px]">
+          <div className="flex-[3] min-h-[180px]">
             <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
               <div className="flex items-center gap-2 mb-3 flex-shrink-0">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
@@ -167,7 +167,7 @@ const Builder: React.FC = () => {
                 </h2>
               </div>
 
-              <div className="flex-1 min-h-0">
+              <div className="flex-1 min-h-[120px]">
                 <TextTools onTextElementsChange={handleTextElementsChange} />
               </div>
             </div>
@@ -175,7 +175,7 @@ const Builder: React.FC = () => {
         </div>
 
         {/* Right side - Choose Traits (full height) */}
-        <div className="w-1/2 h-full min-h-0 min-h-[560px]">
+        <div className="w-1/2 h-full min-h-[650px]">
           <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl flex flex-col">
             <div className="flex items-center gap-2 mb-3 flex-shrink-0">
               <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
@@ -186,7 +186,7 @@ const Builder: React.FC = () => {
               </h2>
             </div>
 
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-[580px]">
               <TraitSelector
                 categories={categories}
                 traits={traits}
