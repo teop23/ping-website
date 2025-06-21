@@ -129,25 +129,25 @@ const Builder: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-full p-[0.5vw] sm:p-[1vw] lg:p-[1.5vw] flex flex-col">
+    <div className="w-full h-full p-1 sm:p-2 lg:p-4 flex flex-col">
       {/* Mobile Layout - Stack vertically */}
-      <div className="flex flex-col lg:flex-row gap-[1.5vw] sm:gap-[2vw] lg:gap-[3vw] w-full h-full">
+      <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6 w-full h-full">
         
         {/* Character Preview - Full width on mobile, half on desktop */}
         <div className="w-full lg:w-1/2 h-[40vh] sm:h-[45vh] lg:h-full order-1 lg:order-1 flex-shrink-0">
-          <div className="h-full flex flex-col gap-[1vh] bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-[1vw] sm:p-[1.5vw] lg:p-[2vw] shadow-xl">
+          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl">
             <div className="flex items-center justify-between flex-shrink-0">
-              <div className="flex items-center gap-[1vw]">
-                <div className="w-[3vw] h-[3vw] sm:w-[4vw] sm:h-[4vw] lg:w-[2vw] lg:h-[2vw] bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-[1.5vw] h-[1.5vw] sm:w-[2vw] sm:h-[2vw] lg:w-[1vw] lg:h-[1vw] text-white" />
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <h2 className="text-[3vw] sm:text-[2.5vw] lg:text-[1.2vw] font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
                   Your Character
                 </h2>
               </div>
             </div>
 
-            <div className="flex-1 min-h-[25vh] lg:min-h-[45vh]">
+            <div className="flex-1 min-h-[250px] lg:min-h-[520px]">
               <CharacterPreview
                 selectedTraits={selectedTraits}
                 textElements={textElements}
@@ -161,13 +161,13 @@ const Builder: React.FC = () => {
 
         {/* Trait Selector - Full width on mobile, half on desktop */}
         <div className="w-full lg:w-1/2 flex-1 lg:h-full order-2 lg:order-2">
-          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-[1vw] sm:p-[1.5vw] lg:p-[2vw] shadow-xl flex flex-col min-h-[55vh] lg:min-h-[50vh]">
-            <div className="flex items-center justify-between mb-[1vh] sm:mb-[1.5vh] flex-shrink-0">
-              <div className="flex items-center gap-[1vw]">
-                <div className="w-[3vw] h-[3vw] sm:w-[4vw] sm:h-[4vw] lg:w-[2vw] lg:h-[2vw] bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Palette className="w-[1.5vw] h-[1.5vw] sm:w-[2vw] sm:h-[2vw] lg:w-[1vw] lg:h-[1vw] text-white" />
+          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl flex flex-col min-h-[55vh] lg:min-h-[580px]">
+            <div className="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Palette className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <h2 className="text-[3vw] sm:text-[2.5vw] lg:text-[1.2vw] font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
                   Choose Traits
                 </h2>
               </div>
@@ -177,15 +177,15 @@ const Builder: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsTextModalOpen(true)}
-                className="flex items-center gap-[0.5vw] sm:gap-[1vw] hover:bg-primary/10 hover:border-primary/50 text-[2.5vw] sm:text-[2vw] lg:text-[0.9vw] px-[1vw] sm:px-[1.5vw]"
+                className="flex items-center gap-1 sm:gap-2 hover:bg-primary/10 hover:border-primary/50 text-xs sm:text-sm px-2 sm:px-3"
               >
-                <Type className="w-[1.5vw] h-[1.5vw] sm:w-[2vw] sm:h-[2vw] lg:w-[1vw] lg:h-[1vw]" />
+                <Type className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Text Tools</span>
                 <span className="sm:hidden">Text</span>
               </Button>
             </div>
 
-            <div className="flex-1 min-h-[45vh] lg:min-h-[40vh] overflow-hidden">
+            <div className="flex-1 min-h-[45vh] lg:min-h-[500px] overflow-hidden">
               <TraitSelector
                 categories={categories}
                 traits={traits}
