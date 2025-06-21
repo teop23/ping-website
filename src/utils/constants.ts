@@ -1,3 +1,5 @@
+import { RoadmapStep } from "@/components/Roadmap";
+
 // Contract addresses and other constants
 export const CONTRACT_ADDRESS = "EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump"; // Example Solana address
 export const SOLSCAN_LINK = "https://solscan.io/token/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump";
@@ -27,7 +29,7 @@ export const TOKEN_SYMBOL = "PING";
 export const TOKEN_NAME = "PING Token";
 
 // Roadmap configuration
-export const ROADMAP_STEPS = [
+export const ROADMAP_STEPS: RoadmapStep[] = [
   {
     id: "phase-1",
     title: "Phase 1: Foundation",
@@ -35,20 +37,20 @@ export const ROADMAP_STEPS = [
     status: "completed" as const
   },
   {
-    id: "phase-2", 
+    id: "phase-2",
     title: "Phase 2: Community Growth",
     description: "Expand trait library, establish daily community spaces. Create tools to easily share user-created content that will make $PING go viral on X.",
     status: "in-progress" as const
   },
   {
     id: "phase-3",
-    title: "Phase 3: Advanced Features and Partnerships", 
+    title: "Phase 3: Advanced Features and Partnerships",
     description: "Integrate other social media platforms, create partnerships with major crypto platforms and artists. Incorporate features suggested by the community(Improve Ping Website and API).",
     status: "upcoming" as const
   },
   {
     id: "phase-4",
-    title: "Phase 4: To Be Revealed", 
+    title: "Phase 4: To Be Revealed",
     description: "",
     status: "upcoming" as const
   },

@@ -1,15 +1,15 @@
 import { motion } from 'framer-motion';
+import { Heart, Sparkles, Zap } from 'lucide-react';
 import React from 'react';
 import Builder from '../components/Builder';
 import ContractAddress from '../components/ContractAddress';
 import Countdown from '../components/Countdown';
 import Roadmap from '../components/Roadmap';
 import { SHOW_COUNTDOWN } from '../utils/constants';
-import { Sparkles, Zap, Star, Heart } from 'lucide-react';
 
 const Home: React.FC = () => {
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="flex flex-col">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Orbs */}

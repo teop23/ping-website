@@ -70,8 +70,6 @@ const Background: React.FC = () => {
           blob.x, blob.y, blob.radius
         );
         
-        // Create HSL color with the blob's hue
-        const color = `hsl(${blob.hue}, 70%, 60%)`;
         blobGradient.addColorStop(0, `hsla(${blob.hue}, 70%, 60%, ${blob.opacity})`);
         blobGradient.addColorStop(0.6, `hsla(${blob.hue}, 70%, 60%, ${blob.opacity * 0.3})`);
         blobGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');

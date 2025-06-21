@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Type, Plus, Trash2 } from 'lucide-react';
-import { HexColorPicker } from 'react-colorful';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
 import { motion } from 'framer-motion';
+import { Plus, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { HexColorPicker } from 'react-colorful';
+import { Button } from './ui/button';
+import { CardContent } from './ui/card';
 
 interface TextElement {
   id: string;
