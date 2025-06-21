@@ -240,7 +240,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Scrollable Traits Grid */}
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
             <div className="p-2">
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
@@ -275,7 +275,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
                 {/* Show message if no traits available */}
                 {filteredTraits.length === 0 && (
-                  <div className="col-span-full text-center py-4 text-muted-foreground">
+                  <div className="col-span-full text-center py-8 text-muted-foreground">
                     {searchQuery ? (
                       <div>
                         <p className="text-sm font-medium">No traits found</p>
