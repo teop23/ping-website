@@ -129,7 +129,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col h-full bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-lg overflow-hidden">
+      <div className="flex flex-col h-full bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-lg">
         
         {/* Search Section */}
         <div className="p-2 bg-gradient-to-r from-background/80 to-muted/40 border-b border-border/50 flex-shrink-0">
@@ -201,7 +201,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           </div>
           
           {selectedTraits.length > 0 ? (
-            <div className="max-h-16 sm:max-h-12 overflow-y-auto">
+            <div className="max-h-20 overflow-y-auto">
               <div className="flex flex-wrap gap-1">
                 {selectedTraits.map((trait) => (
                   <motion.div
@@ -211,7 +211,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                     exit={{ opacity: 0, scale: 0.8 }}
                     className="flex items-center gap-1 px-1 sm:px-1.5 py-0.5 bg-primary/15 border border-primary/30 rounded text-xs group hover:bg-primary/20 transition-colors"
                   >
-                    <span className="font-medium text-primary text-xs truncate max-w-[60px] sm:max-w-none">{trait.name}</span>
+                    <span className="font-medium text-primary text-xs">{trait.name}</span>
                     <button
                       onClick={() => onTraitRemove(trait)}
                       className="text-primary/70 hover:text-primary transition-colors group-hover:scale-110"
@@ -240,10 +240,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Scrollable Traits Grid */}
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
             <div className="p-2">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-1.5 sm:gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
                 {/* Upload button - only show when filtering by specific category */}
                 {selectedCategoryFilter !== 'all' && !searchQuery && (
                   <motion.button
@@ -253,8 +253,8 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                     whileTap={{ scale: 0.98 }}
                   >
                     <div className="aspect-square bg-card/50 flex flex-col items-center justify-center gap-1 text-muted-foreground group-hover:text-primary transition-colors">
-                      <Upload size={12} className="text-primary/60 group-hover:text-primary transition-colors" />
-                      <span className="text-xs font-medium hidden sm:block">Upload</span>
+                      <Upload size={14} className="text-primary/60 group-hover:text-primary transition-colors" />
+                      <span className="text-xs font-medium">Upload</span>
                     </div>
                   </motion.button>
                 )}
