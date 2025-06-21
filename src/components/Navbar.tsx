@@ -320,13 +320,15 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, icon, label, isMobile = f
         "transition-colors duration-200 hover:text-primary",
         isMobile 
           ? "flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted text-muted-foreground" 
-          : "text-muted-foreground hover:text-primary"
+          : "w-8 h-8 flex items-center justify-center rounded-lg bg-muted/50 hover:bg-muted border border-border/50 hover:border-border text-muted-foreground hover:text-primary shadow-sm hover:shadow-md"
       )}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       title={label}
     >
-      {icon}
+      <div className={isMobile ? "" : "flex items-center justify-center"}>
+        {icon}
+      </div>
       {isMobile && <span className="text-xs font-medium">{label}</span>}
     </motion.a>
   );
