@@ -8,10 +8,10 @@ import Home from './pages/Home';
 
 function App() {
   return (
-    <div className="relative h-screen text-foreground flex flex-col ">
+    <div className="h-screen text-foreground flex flex-col">
       <Background />
-      <Navbar className="h-16" />
-      <main className="flex flex-col flex-grow">
+      <Navbar className="flex-shrink-0" />
+      <main className="flex-1 min-h-0">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/community" element={<Community />} />
