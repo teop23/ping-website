@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Type, X } from 'lucide-react';
+import { Plus, Trash2, Type, X, Move } from 'lucide-react';
 import React, { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { Button } from './ui/button';
