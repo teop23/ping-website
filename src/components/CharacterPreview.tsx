@@ -510,10 +510,10 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         </div>
 
         {/* Action Buttons - Fixed at bottom */}
-        <div className="flex flex-wrap justify-center gap-1 sm:gap-2 p-1 sm:p-2 flex-shrink-0">
+        <div className="flex flex-wrap justify-center gap-[0.5vw] sm:gap-[1vw] p-[0.5vw] sm:p-[1vw] flex-shrink-0">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
-              icon={<Download size={16} />}
+              icon={<Download className="w-[2vw] h-[2vw] sm:w-[1.5vw] sm:h-[1.5vw] lg:w-[1vw] lg:h-[1vw]" />}
               label="Download"
               onClick={handleDownload}
               variant="default"
@@ -522,7 +522,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
-              icon={isCopying ? <Check size={16} /> : <Copy size={16} />}
+              icon={isCopying ? <Check className="w-[2vw] h-[2vw] sm:w-[1.5vw] sm:h-[1.5vw] lg:w-[1vw] lg:h-[1vw]" /> : <Copy className="w-[2vw] h-[2vw] sm:w-[1.5vw] sm:h-[1.5vw] lg:w-[1vw] lg:h-[1vw]" />}
               label="Copy"
               onClick={handleCopy}
               variant="secondary"
@@ -533,7 +533,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           {onRandomize && (
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <ActionButton
-                icon={<Shuffle size={16} />}
+                icon={<Shuffle className="w-[2vw] h-[2vw] sm:w-[1.5vw] sm:h-[1.5vw] lg:w-[1vw] lg:h-[1vw]" />}
                 label="Randomize"
                 onClick={onRandomize}
                 variant="secondary"
@@ -571,7 +571,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
       variant={variant}
       onClick={onClick}
       size="sm"
-      className={`flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 ${isCopying
+      className={`flex items-center gap-[0.5vw] sm:gap-[1vw] transition-all duration-300 text-[2.5vw] sm:text-[2vw] lg:text-[0.8vw] px-[1vw] sm:px-[1.5vw] ${isCopying
         ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
         : ''
         }`}
