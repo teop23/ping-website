@@ -483,12 +483,12 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
   return (
     <>
-      <div className="self-center w-full aspect-square relative max-w-[500px]" ref={containerRef}>
+      <div className="w-full h-full flex items-center justify-center" ref={containerRef}>
         <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
-          <CardContent className="h-full p-0 flex items-center justify-center">
+          <CardContent className="w-full h-full p-0 flex items-center justify-center">
             <canvas
               ref={canvasRef}
-              className="w-full h-full object-contain"
+              className="max-w-full max-h-full object-contain"
               style={{ imageRendering: 'crisp-edges' }}
             />
 
@@ -538,7 +538,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         </Card>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 px-2">
+      <div className="flex flex-wrap justify-center gap-2 px-2 flex-shrink-0">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <ActionButton
             icon={<Download size={20} />}
@@ -578,15 +578,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
             disabled={isLoading || isSharing}
           />
         </motion.div>
-        {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton
-            icon={<RotateCcw size={20} />}
-            label="Reset"
-            onClick={onReset}
-            variant="outline"
-            disabled={isLoading}
-          />
-        </motion.div> */}
       </div>
     </>
   );

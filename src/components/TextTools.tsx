@@ -58,15 +58,8 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
   };
 
   return (
-    <Card className="w-full shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 overflow-hidden">
-      <CardHeader className="pb-3 px-4 pt-4">
-        <CardTitle className="flex items-center gap-2 text-sm font-semibold sr-only">
-          <Type size={16} className="text-primary" />
-          Text Tools
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className="px-4 pb-4 space-y-2">
+    <div className="w-full h-full flex flex-col">
+      <CardContent className="flex-1 min-h-0 p-0 space-y-2 overflow-y-auto">
         {/* Compact Add Text Section */}
         <div className="space-y-1.5">
           {/* Text Input Row */}
@@ -205,7 +198,7 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
           </div>
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 };
 
