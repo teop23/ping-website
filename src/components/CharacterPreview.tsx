@@ -1,5 +1,6 @@
 import { baseCharacterImage } from '@/data/traits';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
+import { AnimatePresence } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Check, Copy, Download, Move, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -497,7 +498,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         {/* Text overlay for draggable text elements */}
         <div
           ref={overlayRef}
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none z-20"
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         >
@@ -505,7 +506,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
             <div
               key={textElement.id}
               className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'}`}
-              style={{
+              style={textElement.text.trim() ? {
                 left: `${textElement.x * 100}%`,
                 top: `${textElement.y * 100}%`,
                 transform: 'translate(-50%, -50%)',
@@ -514,7 +515,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
                 fontFamily: 'Inter, Arial, sans-serif',
                 textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
                 fontWeight: '500',
-              }}
+              } : { display: 'none' }}
               onMouseDown={(e) => handleMouseDown(e, textElement.id)}
             >
               {/* Drag handle - visible on hover */}
@@ -524,9 +525,9 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               </div>
 
               {/* Text content */}
-              <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
+              {textElement.text.trim() && <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
                 {textElement.text}
-              </span>
+              </span>}
 
               {/* Selection indicator */}
               {isDragging === textElement.id && (
