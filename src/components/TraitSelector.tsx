@@ -243,7 +243,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
             <div className="p-2">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-1.5 sm:gap-2">
                 {/* Upload button - only show when filtering by specific category */}
                 {selectedCategoryFilter !== 'all' && !searchQuery && (
                   <motion.button
