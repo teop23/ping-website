@@ -23,6 +23,7 @@ const Builder: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Load traits on component mount
   useEffect(() => {
@@ -49,6 +50,8 @@ const Builder: React.FC = () => {
   
   const handleCategoryChange = (category: CategoryName) => {
     setSelectedCategory(category);
+    // Clear search when category is manually selected
+    setSearchQuery('');
   };
   
   const handleTraitSelect = (trait: Trait) => {
@@ -82,6 +85,13 @@ const Builder: React.FC = () => {
     });
   };
 
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    // Clear category selection when searching
+    if (query.trim()) {
+      // Don't change selectedCategory to maintain UI state, but the search will override category filtering
+    }
+  };
   const handleTextElementsChange = (elements: TextElement[]) => {
     setTextElements(elements);
   };
@@ -115,6 +125,8 @@ const Builder: React.FC = () => {
             traits={traits}
             selectedCategory={selectedCategory}
             selectedTraits={selectedTraits}
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
             onCategoryChange={handleCategoryChange}
             onTraitSelect={handleTraitSelect}
           />
