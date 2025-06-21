@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
-import { Palette, Sparkles, Type } from 'lucide-react';
+import { Palette, Sparkles, Type, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
-import TextTools, { TextElement } from '../components/TextTools';
+import TextToolsModal, { TextElement } from '../components/TextToolsModal';
 import TraitSelector from '../components/TraitSelector';
 import { initializeTraits } from '../data/traits';
 import { CategoryOption, Trait } from '../types';
 import { EMPTY_TRAIT_CHANCE } from '../utils/constants';
+import { Button } from './ui/button';
 
 const Builder: React.FC = () => {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -15,6 +16,7 @@ const Builder: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isTextModalOpen, setIsTextModalOpen] = useState(false);
 
   // Load traits on component mount
   useEffect(() => {
@@ -129,55 +131,82 @@ const Builder: React.FC = () => {
   return (
     <div className="w-full h-full min-h-[700px] p-4">
       <div className="flex flex-row gap-6 w-full h-full">
-        {/* Left side - Character Preview + Text Tools */}
-        <div className="w-1/2 flex flex-col gap-4 min-h-[650px]">
-          {/* Character Preview - Takes 70% of left side height */}
-          <div className="flex-[7] min-h-[450px]">
-            <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                  Your Character
-                </h2>
+        {/* Left side - Character Preview (Full Height) */}
+        <div className="w-1/2 min-h-[650px]">
+          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
               </div>
-
-              <div className="flex-1 min-h-[400px]">
-                <CharacterPreview
-                  selectedTraits={selectedTraits}
-                  textElements={textElements}
-                  onTextElementsChange={handleTextElementsChange}
-                  onReset={handleReset}
-                  onRandomize={handleRandomize}
-                />
-              </div>
+              <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                Your Character
+              </h2>
             </div>
-          </div>
 
-          {/* Text Tools - Takes 30% of left side height */}
-          <div className="flex-[3] min-h-[180px]">
-            <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-              <div className="flex items-center gap-2 mb-3 flex-shrink-0">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Type className="w-4 h-4 text-white" />
-                </div>
-                <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                  Text Tools
-                </h2>
-              </div>
-
-              <div className="flex-1 min-h-[120px]">
-                <TextTools onTextElementsChange={handleTextElementsChange} />
-              </div>
+            <div className="flex-1 min-h-[580px]">
+              <CharacterPreview
+                selectedTraits={selectedTraits}
+                textElements={textElements}
+                onTextElementsChange={handleTextElementsChange}
+                onReset={handleReset}
+                onRandomize={handleRandomize}
+              />
             </div>
           </div>
         </div>
 
-        {/* Right side - Choose Traits (full height) */}
+        {/* Right side - Choose Traits + Text Tools Button */}
         <div className="w-1/2 h-full min-h-[650px]">
           <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl flex flex-col">
-            <div className="flex items-center gap-2 mb-3 flex-shrink-0">
+            <div className="flex items-center justify-between mb-3 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Palette className="w-4 h-4 text-white" />
+                </div>
+                <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                  Choose Traits
+                </h2>
+              </div>
+              
+              {/* Text Tools Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsTextModalOpen(true)}
+                className="flex items-center gap-2 hover:bg-primary/10 hover:border-primary/50"
+              >
+                <Type className="w-4 h-4" />
+                Text Tools
+              </Button>
+            </div>
+
+            <div className="flex-1 min-h-[580px]">
+              <TraitSelector
+                categories={categories}
+                traits={traits}
+                selectedTraits={selectedTraits}
+                searchQuery={searchQuery}
+                onSearchChange={handleSearchChange}
+                onTraitSelect={handleTraitSelect}
+                onTraitRemove={handleTraitRemove}
+                onClearAll={handleClearAll}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Text Tools Modal */}
+      <TextToolsModal
+        isOpen={isTextModalOpen}
+        onClose={() => setIsTextModalOpen(false)}
+        onTextElementsChange={handleTextElementsChange}
+      />
+    </div>
+  );
+};
+
+export default Builder;
               <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                 <Palette className="w-4 h-4 text-white" />
               </div>
