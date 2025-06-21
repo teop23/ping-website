@@ -39,11 +39,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   useEffect(() => {
     const loadTraitImages = async () => {
       const newTraitImages = new Map<string, HTMLImageElement>();
-      
+
       for (const trait of selectedTraits) {
         if (trait) {
           const imageSrc = trait.imageSrc;
-          
+
           try {
             const img = new Image();
             await new Promise((resolve, reject) => {
@@ -57,7 +57,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           }
         }
       }
-      
+
       setTraitImages(newTraitImages);
     };
 
@@ -96,7 +96,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
     // Draw traits in the same order as CreateTraits: body → face → head → accessory
     const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
-    
+
     // Group selected traits by category and draw in order
     const traitsByCategory = selectedTraits.reduce((acc, trait) => {
       if (!acc[trait.category]) {
@@ -128,18 +128,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         ctx.fillStyle = textElement.color;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        
+
         const x = textElement.x * canvas.width;
         const y = textElement.y * canvas.height;
-        
+
         // Add text shadow for better visibility
         ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
         ctx.shadowBlur = 2;
         ctx.shadowOffsetX = 1;
         ctx.shadowOffsetY = 1;
-        
+
         ctx.fillText(textElement.text, x, y);
-        
+
         // Reset shadow
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
@@ -175,7 +175,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
     const currentX = textElement.x * rect.width;
     const currentY = textElement.y * rect.height;
-    
+
     setDragOffset({
       x: e.clientX - currentX,
       y: e.clientY - currentY
@@ -240,7 +240,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
   const handleDownload = async () => {
     if (!baseImage) return;
-    
+
     setIsLoading(true);
     try {
       // Create a high-resolution canvas for download
@@ -264,7 +264,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
       // Draw traits in order
       const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
-      
+
       // Group selected traits by category and draw in order
       const traitsByCategory = selectedTraits.reduce((acc, trait) => {
         if (!acc[trait.category]) {
@@ -296,18 +296,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           downloadCtx.fillStyle = textElement.color;
           downloadCtx.textAlign = 'center';
           downloadCtx.textBaseline = 'middle';
-          
+
           const x = textElement.x * downloadCanvas.width;
           const y = textElement.y * downloadCanvas.height;
-          
+
           // Add text shadow for better visibility
           downloadCtx.shadowColor = 'rgba(0, 0, 0, 0.3)';
           downloadCtx.shadowBlur = 4;
           downloadCtx.shadowOffsetX = 2;
           downloadCtx.shadowOffsetY = 2;
-          
+
           downloadCtx.fillText(textElement.text, x, y);
-          
+
           // Reset shadow
           downloadCtx.shadowColor = 'transparent';
           downloadCtx.shadowBlur = 0;
@@ -336,7 +336,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
   const handleCopy = async () => {
     if (!baseImage) return;
-    
+
     setIsCopying(true);
     setIsLoading(true);
     try {
@@ -361,7 +361,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
       // Draw traits in order
       const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
-      
+
       // Group selected traits by category and draw in order
       const traitsByCategory = selectedTraits.reduce((acc, trait) => {
         if (!acc[trait.category]) {
@@ -393,18 +393,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           copyCtx.fillStyle = textElement.color;
           copyCtx.textAlign = 'center';
           copyCtx.textBaseline = 'middle';
-          
+
           const x = textElement.x * copyCanvas.width;
           const y = textElement.y * copyCanvas.height;
-          
+
           // Add text shadow for better visibility
           copyCtx.shadowColor = 'rgba(0, 0, 0, 0.3)';
           copyCtx.shadowBlur = 4;
           copyCtx.shadowOffsetX = 2;
           copyCtx.shadowOffsetY = 2;
-          
+
           copyCtx.fillText(textElement.text, x, y);
-          
+
           // Reset shadow
           copyCtx.shadowColor = 'transparent';
           copyCtx.shadowBlur = 0;
@@ -439,7 +439,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   const generateApiUrl = () => {
     const baseUrl = 'https://pingonsol.com/og';
     const params = new URLSearchParams();
-    
+
     // Add selected traits as query parameters
     selectedTraits.forEach((trait) => {
       if (trait) {
@@ -452,27 +452,27 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
   const handleShareOnX = () => {
     setIsSharing(true);
-    
+
     try {
       const apiUrl = generateApiUrl();
       const tweetText = "Just created my custom $PING!\nCreate your own at:\n";
       const hashtags = "PING,Solana,Crypto";
       const url = "https://pingonsol.com";
-      
+
       // Construct the Twitter share URL
       const twitterUrl = new URL('https://twitter.com/intent/tweet');
       twitterUrl.searchParams.set('text', tweetText);
       twitterUrl.searchParams.set('hashtags', hashtags);
       twitterUrl.searchParams.set('url', apiUrl);
-      
+
       // Add the custom character image
       if (apiUrl.includes('?')) {
         twitterUrl.searchParams.set('image', apiUrl);
       }
-      
+
       // Open Twitter in a new window
       window.open(twitterUrl.toString(), '_blank');
-      
+
       // Reset sharing state after a delay
       setTimeout(() => setIsSharing(false), 2000);
     } catch (error) {
@@ -482,18 +482,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="w-full aspect-square relative max-w-[500px]" ref={containerRef}>
+    <>
+      <div className="self-center w-full aspect-square relative max-w-[500px]" ref={containerRef}>
         <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
           <CardContent className="h-full p-0 flex items-center justify-center">
-            <canvas 
+            <canvas
               ref={canvasRef}
               className="w-full h-full object-contain"
               style={{ imageRendering: 'crisp-edges' }}
             />
-            
+
             {/* Text overlay for draggable text elements */}
-            <div 
+            <div
               ref={overlayRef}
               className="absolute inset-0 pointer-events-none"
               onMouseMove={handleMouseMove}
@@ -502,9 +502,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               {textElements.map((textElement) => (
                 <div
                   key={textElement.id}
-                  className={`absolute pointer-events-auto cursor-move select-none group ${
-                    isDragging === textElement.id ? 'z-50' : 'z-10'
-                  }`}
+                  className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'
+                    }`}
                   style={{
                     left: `${textElement.x * 100}%`,
                     top: `${textElement.y * 100}%`,
@@ -522,12 +521,12 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
                     <Move size={12} className="inline mr-1" />
                     Drag to move
                   </div>
-                  
+
                   {/* Text content */}
                   <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
                     {textElement.text}
                   </span>
-                  
+
                   {/* Selection indicator */}
                   {isDragging === textElement.id && (
                     <div className="absolute inset-0 border-2 border-blue-400 border-dashed rounded animate-pulse pointer-events-none" />
@@ -538,22 +537,22 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           </CardContent>
         </Card>
       </div>
-      
-      <div className="flex flex-wrap justify-center gap-4 mt-6 px-2">
+
+      <div className="flex flex-wrap justify-center gap-4 px-2">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton 
-            icon={<Download size={20} />} 
-            label="Download" 
-            onClick={handleDownload} 
+          <ActionButton
+            icon={<Download size={20} />}
+            label="Download"
+            onClick={handleDownload}
             variant="default"
             disabled={isLoading}
           />
         </motion.div>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton 
-            icon={isCopying ? <Check size={20} /> : <Copy size={20} />} 
-            label="Copy" 
-            onClick={handleCopy} 
+          <ActionButton
+            icon={isCopying ? <Check size={20} /> : <Copy size={20} />}
+            label="Copy"
+            onClick={handleCopy}
             variant="secondary"
             disabled={isLoading}
             isCopying={isCopying}
@@ -561,35 +560,35 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         </motion.div>
         {onRandomize && (
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <ActionButton 
-              icon={<Shuffle size={20} />} 
-              label="Randomize" 
-              onClick={onRandomize} 
-              variant="outline"
+            <ActionButton
+              icon={<Shuffle size={20} />}
+              label="Randomize"
+              onClick={onRandomize}
+              variant="secondary"
               disabled={isLoading}
             />
           </motion.div>
         )}
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton 
-            icon={<TwitterIcon />} 
-            label={isSharing ? "Sharing..." : "Tweet"} 
-            onClick={handleShareOnX} 
-            variant="outline"
+          <ActionButton
+            icon={<TwitterIcon />}
+            label={isSharing ? "Sharing..." : "Tweet"}
+            onClick={handleShareOnX}
+            variant="secondary"
             disabled={isLoading || isSharing}
           />
         </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton 
-            icon={<RotateCcw size={20} />} 
-            label="Reset" 
-            onClick={onReset} 
+        {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ActionButton
+            icon={<RotateCcw size={20} />}
+            label="Reset"
+            onClick={onReset}
             variant="outline"
             disabled={isLoading}
           />
-        </motion.div>
+        </motion.div> */}
       </div>
-    </div>
+    </>
   );
 };
 
@@ -607,19 +606,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
     <Button
       variant={variant}
       onClick={onClick}
-      className={`flex items-center gap-2 transition-all duration-300 ${
-        isCopying 
-          ? 'bg-green-600 hover:bg-green-600 text-white border-green-600' 
-          : ''
-      }`}
+      className={`flex items-center gap-2 transition-all duration-300 ${isCopying
+        ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
+        : ''
+        }`}
       disabled={disabled}
     >
       <motion.div
         animate={isCopying ? {
           scale: [1, 1.2, 1]
         } : {}}
-        transition={{ 
-          duration: 0.3, 
+        transition={{
+          duration: 0.3,
           ease: "easeInOut"
         }}
       >

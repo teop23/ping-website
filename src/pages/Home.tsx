@@ -230,7 +230,7 @@ const Home: React.FC = () => {
               {SHOW_COUNTDOWN && <Countdown />}
 
               {/* Builder Section with Enhanced Container */}
-              <div className="w-full max-w-[70vw] relative">
+              <div className="w-full max-w-[70vw] h-[60vh] relative">
                 {/* Background decoration */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
 
@@ -238,7 +238,7 @@ const Home: React.FC = () => {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.4, duration: 0.8 }}
-                  className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-4 md:p-6 lg:p-8 shadow-2xl"
+                  className="size-full relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-2xl p-4 md:p-6 lg:p-8 shadow-2xl"
                 >
                   {/* Decorative corner elements */}
                   <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
