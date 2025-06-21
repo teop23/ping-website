@@ -483,62 +483,144 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
   return (
     <>
-      <div className="w-full h-full flex items-center justify-center" ref={containerRef}>
-        <Card className="h-full relative overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-xl">
-          <CardContent className="w-full h-full p-0 flex items-center justify-center">
+      <div className="w-full h-full flex flex-col" ref={containerRef}>
+        {/* Canvas Container - Takes most of the space */}
+        <div className="flex-1 min-h-0 flex items-center justify-center p-4">
+          <div className="w-full h-full max-w-full max-h-full bg-gradient-to-br from-white to-gray-50 shadow-xl rounded-lg border overflow-hidden flex items-center justify-center">
             <canvas
               ref={canvasRef}
-              className="max-w-full max-h-full object-contain"
+              className="block"
               style={{ imageRendering: 'crisp-edges' }}
             />
+          </div>
+        </div>
 
-            {/* Text overlay for draggable text elements */}
+        {/* Text overlay for draggable text elements */}
+        <div
+          ref={overlayRef}
+          className="absolute inset-0 pointer-events-none"
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+        >
+          {textElements.map((textElement) => (
             <div
-              ref={overlayRef}
-              className="absolute inset-0 pointer-events-none"
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
+              key={textElement.id}
+              className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'
+                }`}
+              style={{
+                left: `${textElement.x * 100}%`,
+                top: `${textElement.y * 100}%`,
+                transform: 'translate(-50%, -50%)',
+                fontSize: `${textElement.fontSize * (containerRef.current?.clientWidth || 500) / 500}px`,
+                color: textElement.color,
+                fontFamily: 'Inter, Arial, sans-serif',
+                textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
+                fontWeight: '500',
+              }}
+              onMouseDown={(e) => handleMouseDown(e, textElement.id)}
             >
-              {textElements.map((textElement) => (
-                <div
-                  key={textElement.id}
-                  className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'
-                    }`}
-                  style={{
-                    left: `${textElement.x * 100}%`,
-                    top: `${textElement.y * 100}%`,
-                    transform: 'translate(-50%, -50%)',
-                    fontSize: `${textElement.fontSize * (containerRef.current?.clientWidth || 500) / 500}px`,
-                    color: textElement.color,
-                    fontFamily: 'Inter, Arial, sans-serif',
-                    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
-                    fontWeight: '500',
-                  }}
-                  onMouseDown={(e) => handleMouseDown(e, textElement.id)}
-                >
-                  {/* Drag handle - visible on hover */}
-                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/70 text-white px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none">
-                    <Move size={12} className="inline mr-1" />
-                    Drag to move
-                  </div>
+              {/* Drag handle - visible on hover */}
+              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/70 text-white px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none">
+                <Move size={12} className="inline mr-1" />
+                Drag to move
+              </div>
 
-                  {/* Text content */}
-                  <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
-                    {textElement.text}
-                  </span>
+              {/* Text content */}
+              <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
+                {textElement.text}
+              </span>
 
-                  {/* Selection indicator */}
-                  {isDragging === textElement.id && (
-                    <div className="absolute inset-0 border-2 border-blue-400 border-dashed rounded animate-pulse pointer-events-none" />
-                  )}
-                </div>
-              ))}
+              {/* Selection indicator */}
+              {isDragging === textElement.id && (
+                <div className="absolute inset-0 border-2 border-blue-400 border-dashed rounded animate-pulse pointer-events-none" />
+              )}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          ))}
+        </div>
 
-      <div className="flex flex-wrap justify-center gap-2 px-2 flex-shrink-0">
+        {/* Action Buttons - Fixed at bottom */}
+        <div className="flex flex-wrap justify-center gap-2 p-2 flex-shrink-0">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <ActionButton
+              icon={<Download size={18} />}
+              label="Download"
+              onClick={handleDownload}
+              variant="default"
+              disabled={isLoading}
+            />
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <ActionButton
+              icon={isCopying ? <Check size={18} /> : <Copy size={18} />}
+              label="Copy"
+              onClick={handleCopy}
+              variant="secondary"
+              disabled={isLoading}
+              isCopying={isCopying}
+            />
+          </motion.div>
+          {onRandomize && (
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <ActionButton
+                icon={<Shuffle size={18} />}
+                label="Randomize"
+                onClick={onRandomize}
+                variant="secondary"
+                disabled={isLoading}
+              />
+            </motion.div>
+          )}
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <ActionButton
+              icon={<TwitterIcon />}
+              label={isSharing ? "Sharing..." : "Tweet"}
+              onClick={handleShareOnX}
+              variant="secondary"
+              disabled={isLoading || isSharing}
+            />
+          </motion.div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+interface ActionButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  variant: 'default' | 'secondary' | 'outline';
+  disabled?: boolean;
+  isCopying?: boolean;
+}
+
+const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, variant, disabled, isCopying }) => {
+  return (
+    <Button
+      variant={variant}
+      onClick={onClick}
+      size="sm"
+      className={`flex items-center gap-1 transition-all duration-300 text-xs px-2 py-1 ${isCopying
+        ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
+        : ''
+        }`}
+      disabled={disabled}
+    >
+      <motion.div
+        animate={isCopying ? {
+          scale: [1, 1.2, 1]
+        } : {}}
+        transition={{
+          duration: 0.3,
+          ease: "easeInOut"
+        }}
+      >
+        {icon}
+      </motion.div>
+      <span>{isCopying ? 'Copied!' : label}</span>
+    </Button>
+  );
+};
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <ActionButton
             icon={<Download size={20} />}

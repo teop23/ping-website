@@ -37,28 +37,16 @@ export const calculateCanvasSize = (container?: HTMLElement | null): number => {
     }
   }
   
-  // Calculate based on available container space
-  const containerWidth = container.clientWidth - 64; // Account for padding
-  const containerHeight = container.clientHeight - 64;
+  // Calculate based on available container space with proper padding
+  const containerWidth = container.clientWidth - 32; // Account for card padding
+  const containerHeight = container.clientHeight - 32;
   
-  // For mobile layout (single column), we need to account for the fact that
-  // the canvas container shares vertical space with other elements
-  const isMobile = window.innerWidth < 1024; // lg breakpoint
+  // Use the smaller dimension to ensure square canvas fits
+  const availableSize = Math.min(containerWidth, containerHeight);
   
-  let availableSize;
-  if (isMobile) {
-    // On mobile, prioritize fitting within the viewport width
-    // and limit height to ensure it doesn't overflow
-    const maxHeight = Math.min(containerHeight, window.innerHeight * 0.4);
-    availableSize = Math.min(containerWidth, maxHeight);
-  } else {
-    // On desktop, use the smaller of width/height as before
-    availableSize = Math.min(containerWidth, containerHeight);
-  }
-  
-  // Set reasonable min/max bounds
-  const minSize = isMobile ? 300 : 500;
-  const maxSize = isMobile ? 500 : 1200;
+  // Set reasonable min/max bounds based on screen size
+  const minSize = window.innerWidth < 768 ? 200 : 300;
+  const maxSize = window.innerWidth < 768 ? 400 : 600;
   
   return Math.max(minSize, Math.min(maxSize, availableSize));
 };
