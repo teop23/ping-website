@@ -129,38 +129,38 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col h-full bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-xl overflow-hidden">
+      <div className="flex flex-col h-[600px] bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-lg overflow-hidden">
         
         {/* Search Section */}
         <div className="p-4 bg-gradient-to-r from-background/80 to-muted/40 border-b border-border/50 flex-shrink-0">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
             <input
               type="text"
               placeholder="Search traits..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-11 pr-10 py-3 text-sm border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-ring bg-background/90 backdrop-blur-sm"
+              className="w-full pl-10 pr-10 py-2 text-sm border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/90 backdrop-blur-sm"
             />
             {searchQuery && (
               <button
                 onClick={clearSearch}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             )}
           </div>
         </div>
 
         {/* Category Filters */}
-        <div className="p-4 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
+        <div className="p-3 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => handleCategoryFilterClick('all')}
-              className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
                 selectedCategoryFilter === 'all'
-                  ? 'bg-primary text-primary-foreground shadow-lg scale-105'
+                  ? 'bg-primary text-primary-foreground shadow-md scale-105'
                   : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105'
               }`}
             >
@@ -170,9 +170,9 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
               <button
                 key={category.id}
                 onClick={() => handleCategoryFilterClick(category.id)}
-                className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
                   selectedCategoryFilter === category.id
-                    ? 'bg-primary text-primary-foreground shadow-lg scale-105'
+                    ? 'bg-primary text-primary-foreground shadow-md scale-105'
                     : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105'
                 }`}
               >
@@ -182,50 +182,54 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           </div>
         </div>
 
-        {/* Selected Traits Section */}
-        {selectedTraits.length > 0 && (
-          <div className="p-4 bg-gradient-to-r from-primary/5 to-purple-600/5 border-b border-border/50 flex-shrink-0">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-foreground">
-                Selected Traits ({selectedTraits.length})
-              </h4>
+        {/* Selected Traits Section - Always visible but compact */}
+        <div className="p-3 bg-gradient-to-r from-primary/5 to-purple-600/5 border-b border-border/50 flex-shrink-0">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-semibold text-foreground">
+              Selected ({selectedTraits.length})
+            </h4>
+            {selectedTraits.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onClearAll}
-                className="h-8 px-3 text-xs hover:bg-destructive/10 hover:text-destructive"
+                className="h-6 px-2 text-xs hover:bg-destructive/10 hover:text-destructive"
               >
                 Clear All
               </Button>
-            </div>
-            
-            <div className="max-h-20 overflow-y-auto">
-              <div className="flex flex-wrap gap-2">
+            )}
+          </div>
+          
+          {selectedTraits.length > 0 ? (
+            <div className="max-h-16 overflow-y-auto">
+              <div className="flex flex-wrap gap-1">
                 {selectedTraits.map((trait) => (
                   <motion.div
                     key={`selected-${trait.id}-${trait.category}`}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-primary/15 border border-primary/30 rounded-full text-xs group hover:bg-primary/20 transition-colors"
+                    className="flex items-center gap-1 px-2 py-1 bg-primary/15 border border-primary/30 rounded-md text-xs group hover:bg-primary/20 transition-colors"
                   >
-                    <span className="font-medium text-primary">{trait.name}</span>
+                    <span className="font-medium text-primary text-xs">{trait.name}</span>
                     <button
                       onClick={() => onTraitRemove(trait)}
                       className="text-primary/70 hover:text-primary transition-colors group-hover:scale-110"
                     >
-                      <X size={14} />
+                      <X size={12} />
                     </button>
                   </motion.div>
                 ))}
               </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-xs text-muted-foreground">No traits selected</p>
+          )}
+        </div>
 
         {/* Traits Grid Header */}
-        <div className="p-4 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
-          <h3 className="text-sm font-semibold text-foreground">
+        <div className="p-3 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
+          <h3 className="text-xs font-semibold text-foreground">
             {searchQuery 
               ? `Search Results (${filteredTraits.length})` 
               : selectedCategoryFilter === 'all'
@@ -233,26 +237,23 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                 : `${categories.find(c => c.id === selectedCategoryFilter)?.label || 'Traits'} (${filteredTraits.length})`
             }
           </h3>
-          {searchQuery && (
-            <p className="text-xs text-muted-foreground mt-1">Searching across all categories</p>
-          )}
         </div>
 
         {/* Scrollable Traits Grid */}
         <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
-            <div className="p-4">
-              <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="p-3">
+              <div className="grid grid-cols-3 gap-3">
                 {/* Upload button - only show when filtering by specific category */}
                 {selectedCategoryFilter !== 'all' && !searchQuery && (
                   <motion.button
-                    className="relative cursor-pointer rounded-xl overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background/80 to-muted/40 transition-all duration-200 group"
+                    className="relative cursor-pointer rounded-lg overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background/80 to-muted/40 transition-all duration-200 group"
                     onClick={() => handleUpload(selectedCategoryFilter)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <div className="aspect-square bg-card/50 flex flex-col items-center justify-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                      <Upload size={28} className="text-primary/60 group-hover:text-primary transition-colors" />
+                    <div className="aspect-square bg-card/50 flex flex-col items-center justify-center gap-1 text-muted-foreground group-hover:text-primary transition-colors">
+                      <Upload size={20} className="text-primary/60 group-hover:text-primary transition-colors" />
                       <span className="text-xs font-medium">Upload</span>
                     </div>
                   </motion.button>
@@ -274,21 +275,21 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
                 {/* Show message if no traits available */}
                 {filteredTraits.length === 0 && (
-                  <div className="col-span-full text-center py-16 text-muted-foreground">
+                  <div className="col-span-full text-center py-8 text-muted-foreground">
                     {searchQuery ? (
                       <div>
-                        <p className="text-base font-medium">No traits found</p>
-                        <p className="text-sm mt-2">Try searching with different terms</p>
+                        <p className="text-sm font-medium">No traits found</p>
+                        <p className="text-xs mt-1">Try different search terms</p>
                       </div>
                     ) : selectedCategoryFilter === 'all' ? (
                       <div>
-                        <p className="text-base font-medium">No traits available</p>
-                        <p className="text-sm mt-2">Upload some traits to get started</p>
+                        <p className="text-sm font-medium">No traits available</p>
+                        <p className="text-xs mt-1">Upload some traits to get started</p>
                       </div>
                     ) : (
                       <div>
-                        <p className="text-base font-medium">No traits in this category</p>
-                        <p className="text-sm mt-2">Upload your first trait using the upload button!</p>
+                        <p className="text-sm font-medium">No traits in this category</p>
+                        <p className="text-xs mt-1">Upload your first trait!</p>
                       </div>
                     )}
                   </div>
@@ -314,9 +315,9 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
     <Tooltip>
       <TooltipTrigger asChild>
         <motion.div
-          className={`relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-200 group ${isSelected
-            ? 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-xl'
-            : 'border-border/50 hover:border-primary/50 hover:shadow-lg bg-card/50'
+          className={`relative cursor-pointer rounded-lg overflow-hidden border transition-all duration-200 group ${isSelected
+            ? 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-lg'
+            : 'border-border/50 hover:border-primary/50 hover:shadow-md bg-card/50'
             }`}
           onClick={onClick}
           whileHover={{ scale: 1.03 }}
@@ -326,31 +327,31 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
             <img
               src={imageSrc}
               alt={trait.name}
-              className={`w-full h-full object-contain p-3 transition-transform duration-200 ${isSelected ? 'scale-95' : 'group-hover:scale-105'
+              className={`w-full h-full object-contain p-2 transition-transform duration-200 ${isSelected ? 'scale-95' : 'group-hover:scale-105'
                 }`}
               onError={(e) => {
                 // Fallback to a placeholder if image fails to load
                 const target = e.target as HTMLImageElement;
-                target.src = `https://via.placeholder.com/120x120/9CA3AF/ffffff?text=${encodeURIComponent(trait.name)}`;
+                target.src = `https://via.placeholder.com/100x100/9CA3AF/ffffff?text=${encodeURIComponent(trait.name)}`;
               }}
             />
             
             {/* Selection indicator */}
             {isSelected && (
               <motion.div
-                className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-2 shadow-lg"
+                className="absolute top-1 right-1 bg-primary text-primary-foreground rounded-full p-1 shadow-lg"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.5 }}
                 transition={{ duration: 0.2 }}
               >
-                <Check size={14} />
+                <Check size={12} />
               </motion.div>
             )}
           </div>
 
           {/* Trait info at bottom */}
-          <div className="absolute inset-x-0 bottom-0 p-2 bg-background/95 backdrop-blur-sm border-t border-border/50">
+          <div className="absolute inset-x-0 bottom-0 p-1.5 bg-background/95 backdrop-blur-sm border-t border-border/50">
             <p className="text-xs text-center text-foreground font-medium truncate leading-tight">
               {trait.name}
             </p>
