@@ -81,19 +81,6 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             </a>
           </motion.div>
           
-          {/* Center Title - Hidden on mobile when menu is open */}
-          <div className={cn(
-            "absolute left-1/2 transform -translate-x-1/2 transition-opacity duration-300",
-            isMobileMenuOpen ? "opacity-0 pointer-events-none" : "opacity-100"
-          )}>
-            {location.pathname === '/create-traits' && (
-              <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Create PING Traits</h1>
-            )}
-            {location.pathname === '/watermark' && (
-              <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Watermark Tool</h1>
-            )}
-          </div>
-          
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <NavItem label="Home" href="/" isActive={location.pathname === '/'} />

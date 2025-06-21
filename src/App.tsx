@@ -8,7 +8,7 @@ import Home from './pages/Home';
 
 function App() {
   return (
-    <div className="h-screen text-foreground flex flex-col">
+    <>
       <Background />
       <Navbar className="flex-shrink-0" />
       <Routes>
@@ -17,7 +17,7 @@ function App() {
         <Route path="/create-traits" element={<CreateTraits />} />
         <Route path="/watermark" element={<WatermarkTool />} />
       </Routes>
-    </div>
+    </>
   );
 }
 

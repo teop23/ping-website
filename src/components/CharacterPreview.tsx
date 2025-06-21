@@ -1,13 +1,12 @@
+import { baseCharacterImage } from '@/data/traits';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
 import { motion } from 'framer-motion';
-import { Check, Copy, Download, Move, RotateCcw, Shuffle, Share } from 'lucide-react';
+import { Check, Copy, Download, Move, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { baseCharacterImage } from '@/data/traits';
 import { Trait } from '../types';
+import { TwitterIcon } from './Navbar';
 import { TextElement } from './TextTools';
 import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
-import { TwitterIcon } from './Navbar';
 
 interface CharacterPreviewProps {
   selectedTraits: Trait[];
@@ -458,7 +457,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const apiUrl = generateApiUrl();
       const tweetText = "Just created my custom $PING!\nCreate your own at:\n";
       const hashtags = "PING,Solana,Crypto";
-      const url = "https://pingonsol.com";
 
       // Construct the Twitter share URL
       const twitterUrl = new URL('https://twitter.com/intent/tweet');
