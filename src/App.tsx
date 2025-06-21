@@ -11,14 +11,12 @@ function App() {
     <div className="h-screen text-foreground flex flex-col">
       <Background />
       <Navbar className="flex-shrink-0" />
-      <main className="flex-1 min-h-0">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/create-traits" element={<CreateTraits />} />
-          <Route path="/watermark" element={<WatermarkTool />} />
-        </Routes>
-      </main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/create-traits" element={<CreateTraits />} />
+        <Route path="/watermark" element={<WatermarkTool />} />
+      </Routes>
     </div>
   );
 }
