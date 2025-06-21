@@ -127,11 +127,11 @@ const Builder: React.FC = () => {
   }
   
   return (
-    <div className="flex items-start justify-center max-w-[1600px] mx-auto px-4 py-6">
-      <div className="flex flex-col lg:flex-row gap-8 w-full">
+    <div className="w-full h-full overflow-hidden">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full h-full max-w-none mx-auto px-2 sm:px-4 py-4">
         {/* Character Preview Section - Left Side */}
         <motion.div 
-          className="w-full lg:w-[600px] lg:flex-shrink-0 space-y-6"
+          className="w-full lg:w-[45%] lg:flex-shrink-0 space-y-4 min-w-0"
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
@@ -141,7 +141,7 @@ const Builder: React.FC = () => {
             {/* Decorative background */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-600/5 to-pink-600/10 rounded-2xl blur-xl -z-10 scale-105" />
             
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 lg:p-6 shadow-xl">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
@@ -170,7 +170,7 @@ const Builder: React.FC = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/5 to-indigo-600/10 rounded-2xl blur-xl -z-10 scale-105" />
             
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 lg:p-6 shadow-xl">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                   <Type className="w-4 h-4 text-white" />
@@ -187,7 +187,7 @@ const Builder: React.FC = () => {
         
         {/* Controls Section - Right Side */}
         <motion.div 
-          className="w-full lg:w-[500px] lg:flex-shrink-0"
+          className="w-full lg:w-[55%] lg:flex-shrink-0 min-w-0"
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
@@ -196,7 +196,7 @@ const Builder: React.FC = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-primary/5 to-blue-600/10 rounded-2xl blur-xl -z-10 scale-105" />
             
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 lg:p-6 shadow-xl h-[600px] lg:h-[700px] overflow-hidden">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                   <Palette className="w-4 h-4 text-white" />

@@ -58,39 +58,39 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
   };
 
   return (
-    <Card className="w-full shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95">
+    <Card className="w-full shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 overflow-hidden">
       <CardHeader className="pb-3 px-4 pt-4">
-        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold sr-only">
           <Type size={16} className="text-primary" />
           Text Tools
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="px-4 pb-4 space-y-3">
+      <CardContent className="px-4 pb-4 space-y-2">
         {/* Compact Add Text Section */}
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {/* Text Input Row */}
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1 block">Text & Color</label>
+            <label className="text-xs font-medium text-muted-foreground mb-0.5 block">Text & Color</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={newText}
                 onChange={(e) => setNewText(e.target.value)}
                 placeholder="Add text..."
-                className="flex-1 px-2 py-1.5 text-sm border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring min-w-0"
+                className="flex-1 px-2 py-1 text-sm border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring min-w-0"
                 onKeyPress={(e) => e.key === 'Enter' && addTextElement()}
               />
               <div className="relative">
                 <button
-                  className="w-8 h-8 rounded-md border border-input flex-shrink-0 hover:border-ring transition-colors"
+                  className="w-7 h-7 rounded-md border border-input flex-shrink-0 hover:border-ring transition-colors"
                   style={{ backgroundColor: textColor }}
                   onClick={() => setShowColorPicker(!showColorPicker)}
                 />
                 {showColorPicker && (
                   <div className="absolute z-20 mt-1 right-0">
                     <div className="p-2 bg-background rounded-lg shadow-lg border">
-                      <div className="w-48">
+                      <div className="w-40">
                         <HexColorPicker color={textColor} onChange={setTextColor} />
                       </div>
                       <div className="mt-2">
@@ -137,12 +137,12 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
 
           {/* Size and Add Button Row */}
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1 block">Size</label>
+            <label className="text-xs font-medium text-muted-foreground mb-0.5 block">Size</label>
             <div className="flex gap-2">
               <select
                 value={fontSize}
                 onChange={(e) => setFontSize(Number(e.target.value))}
-                className="flex-1 px-2 py-1.5 text-sm border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring bg-background"
+                className="flex-1 px-2 py-1 text-sm border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring bg-background"
               >
                 <option value={12}>12px</option>
                 <option value={14}>14px</option>
@@ -159,7 +159,7 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                 onClick={addTextElement}
                 disabled={!newText.trim()}
                 size="sm"
-                className="px-3 h-8 flex-shrink-0"
+                className="px-2 h-7 flex-shrink-0 text-xs"
               >
                 <Plus size={14} className="mr-1" />
                 Add
@@ -170,22 +170,22 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
 
         {/* Text Elements List */}
         {textElements.length > 0 && (
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             <label className="text-xs font-medium text-muted-foreground">Added Text</label>
-            <div className="space-y-1 max-h-24 overflow-y-auto">
+            <div className="space-y-0.5 max-h-20 overflow-y-auto">
               {textElements.map((element) => (
                 <motion.div
                   key={element.id}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
-                  className="flex items-center gap-2 p-1.5 bg-muted/30 rounded-md border"
+                  className="flex items-center gap-1.5 p-1 bg-muted/30 rounded border"
                 >
                   <input
                     type="text"
                     value={element.text}
                     onChange={(e) => updateTextElement(element.id, { text: e.target.value })}
-                    className="flex-1 bg-transparent text-xs font-medium focus:outline-none min-w-0 px-1"
+                    className="flex-1 bg-transparent text-xs font-medium focus:outline-none min-w-0 px-0.5"
                     style={{ color: element.color }}
                   />
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
@@ -195,9 +195,9 @@ const TextTools: React.FC<TextToolsProps> = ({ onTextElementsChange }) => {
                     variant="ghost"
                     size="icon"
                     onClick={() => removeTextElement(element.id)}
-                    className="h-5 w-5 text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                    className="h-4 w-4 text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
                   >
-                    <Trash2 size={10} />
+                    <Trash2 size={8} />
                   </Button>
                 </motion.div>
               ))}
