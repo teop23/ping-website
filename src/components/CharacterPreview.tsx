@@ -510,10 +510,10 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         </div>
 
         {/* Action Buttons - Fixed at bottom */}
-        <div className="flex flex-wrap justify-center gap-2 p-2 flex-shrink-0">
+        <div className="flex flex-wrap justify-center gap-1 sm:gap-2 p-2 flex-shrink-0">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
-              icon={<Download size={18} />}
+              icon={<Download size={16} />}
               label="Download"
               onClick={handleDownload}
               variant="default"
@@ -522,7 +522,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
-              icon={isCopying ? <Check size={18} /> : <Copy size={18} />}
+              icon={isCopying ? <Check size={16} /> : <Copy size={16} />}
               label="Copy"
               onClick={handleCopy}
               variant="secondary"
@@ -533,7 +533,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           {onRandomize && (
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <ActionButton
-                icon={<Shuffle size={18} />}
+                icon={<Shuffle size={16} />}
                 label="Randomize"
                 onClick={onRandomize}
                 variant="secondary"
@@ -570,7 +570,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
     <Button
       variant={variant}
       onClick={onClick}
-      className={`flex items-center gap-2 transition-all duration-300 ${isCopying
+      size="sm"
+      className={`flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 ${isCopying
         ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
         : ''
         }`}
@@ -587,7 +588,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
       >
         {icon}
       </motion.div>
-      <span>{isCopying ? 'Copied!' : label}</span>
+      <span className="hidden sm:inline">{isCopying ? 'Copied!' : label}</span>
+      <span className="sm:hidden">{isCopying ? 'OK' : label.split(' ')[0]}</span>
     </Button>
   );
 };

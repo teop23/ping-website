@@ -132,22 +132,22 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
       <div className="flex flex-col h-full bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-lg overflow-hidden">
         
         {/* Search Section */}
-        <div className="p-2 sm:p-3 bg-gradient-to-r from-background/80 to-muted/40 border-b border-border/50 flex-shrink-0">
+        <div className="p-2 bg-gradient-to-r from-background/80 to-muted/40 border-b border-border/50 flex-shrink-0">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={14} />
             <input
               type="text"
               placeholder="Search traits..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-8 pr-8 py-1.5 text-sm border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/90 backdrop-blur-sm"
+              className="w-full pl-7 pr-7 py-1.5 text-xs sm:text-sm border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/90 backdrop-blur-sm"
             />
             {searchQuery && (
               <button
                 onClick={clearSearch}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             )}
           </div>
@@ -155,10 +155,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
         {/* Category Filters */}
         <div className="p-2 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             <button
               onClick={() => handleCategoryFilterClick('all')}
-              className={`px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+              className={`px-1.5 sm:px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
                 selectedCategoryFilter === 'all'
                   ? 'bg-primary text-primary-foreground shadow-md scale-105'
                   : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105'
@@ -170,7 +170,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
               <button
                 key={category.id}
                 onClick={() => handleCategoryFilterClick(category.id)}
-                className={`px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+                className={`px-1.5 sm:px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
                   selectedCategoryFilter === category.id
                     ? 'bg-primary text-primary-foreground shadow-md scale-105'
                     : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105'
@@ -185,7 +185,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         {/* Selected Traits Section - Always visible but compact */}
         <div className="p-2 bg-gradient-to-r from-primary/5 to-purple-600/5 border-b border-border/50 flex-shrink-0">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-semibold text-foreground">
+            <h4 className="text-xs sm:text-sm font-semibold text-foreground">
               Selected ({selectedTraits.length})
             </h4>
             {selectedTraits.length > 0 && (
@@ -201,7 +201,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           </div>
           
           {selectedTraits.length > 0 ? (
-            <div className="max-h-12 overflow-y-auto">
+            <div className="max-h-16 sm:max-h-12 overflow-y-auto">
               <div className="flex flex-wrap gap-1">
                 {selectedTraits.map((trait) => (
                   <motion.div
@@ -209,9 +209,9 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="flex items-center gap-1 px-1.5 py-0.5 bg-primary/15 border border-primary/30 rounded text-xs group hover:bg-primary/20 transition-colors"
+                    className="flex items-center gap-1 px-1 sm:px-1.5 py-0.5 bg-primary/15 border border-primary/30 rounded text-xs group hover:bg-primary/20 transition-colors"
                   >
-                    <span className="font-medium text-primary text-xs">{trait.name}</span>
+                    <span className="font-medium text-primary text-xs truncate max-w-[60px] sm:max-w-none">{trait.name}</span>
                     <button
                       onClick={() => onTraitRemove(trait)}
                       className="text-primary/70 hover:text-primary transition-colors group-hover:scale-110"
@@ -229,7 +229,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
         {/* Traits Grid Header */}
         <div className="p-2 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
-          <h3 className="text-xs font-semibold text-foreground">
+          <h3 className="text-xs sm:text-sm font-semibold text-foreground">
             {searchQuery 
               ? `Search Results (${filteredTraits.length})` 
               : selectedCategoryFilter === 'all'
@@ -240,10 +240,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Scrollable Traits Grid */}
-        <div className="flex-1 min-h-0 max-h-[480px]">
+        <div className="flex-1 min-h-0 max-h-[300px] sm:max-h-[400px] lg:max-h-[480px]">
           <ScrollArea className="h-full">
             <div className="p-2">
-              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-1.5 sm:gap-2">
                 {/* Upload button - only show when filtering by specific category */}
                 {selectedCategoryFilter !== 'all' && !searchQuery && (
                   <motion.button
@@ -253,8 +253,8 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                     whileTap={{ scale: 0.98 }}
                   >
                     <div className="aspect-square bg-card/50 flex flex-col items-center justify-center gap-1 text-muted-foreground group-hover:text-primary transition-colors">
-                      <Upload size={16} className="text-primary/60 group-hover:text-primary transition-colors" />
-                      <span className="text-xs font-medium">Upload</span>
+                      <Upload size={12} className="text-primary/60 group-hover:text-primary transition-colors" />
+                      <span className="text-xs font-medium hidden sm:block">Upload</span>
                     </div>
                   </motion.button>
                 )}
