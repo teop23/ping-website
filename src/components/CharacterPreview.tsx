@@ -9,7 +9,7 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { TwitterIcon } from './Navbar';
 interface CharacterPreviewProps {
-  selectedTraits: Record<string, Trait | null>;
+  selectedTraits: Trait[];
   textElements?: TextElement[];
   onTextElementsChange?: (elements: TextElement[]) => void;
   onReset: () => void;
@@ -40,7 +40,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     const loadTraitImages = async () => {
       const newTraitImages = new Map<string, HTMLImageElement>();
       
-      for (const [category, trait] of Object.entries(selectedTraits)) {
+      for (const trait of selectedTraits) {
         if (trait) {
           const imageSrc = trait.imageSrc;
           
@@ -97,22 +97,28 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // Draw traits in the same order as CreateTraits: body → face → head → accessory
     const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
     
+    // Group selected traits by category and draw in order
+    const traitsByCategory = selectedTraits.reduce((acc, trait) => {
+      if (!acc[trait.category]) {
+        acc[trait.category] = [];
+      }
+      acc[trait.category].push(trait);
+      return acc;
+    }, {} as Record<string, Trait[]>);
+
     traitOrder.forEach(category => {
-      const trait = selectedTraits[category];
-      if (trait) {
+      const categoryTraits = traitsByCategory[category] || [];
+      categoryTraits.forEach(trait => {
         const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
         if (traitImg) {
           // Scale trait image to match canvas dimensions (same as CreateTraits)
-          const traitScaleX = canvas.width / traitImg.width;
-          const traitScaleY = canvas.height / traitImg.height;
-          
           ctx.drawImage(
             traitImg,
             0, 0, // Source position
             canvas.width, canvas.height // Destination size (full canvas)
           );
         }
-      }
+      });
     });
 
     // Draw text elements
@@ -259,9 +265,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       // Draw traits in order
       const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
       
+      // Group selected traits by category and draw in order
+      const traitsByCategory = selectedTraits.reduce((acc, trait) => {
+        if (!acc[trait.category]) {
+          acc[trait.category] = [];
+        }
+        acc[trait.category].push(trait);
+        return acc;
+      }, {} as Record<string, Trait[]>);
+
       traitOrder.forEach(category => {
-        const trait = selectedTraits[category];
-        if (trait) {
+        const categoryTraits = traitsByCategory[category] || [];
+        categoryTraits.forEach(trait => {
           const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
             // Scale trait to full canvas size
@@ -271,7 +286,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               downloadCanvas.width, downloadCanvas.height
             );
           }
-        }
+        });
       });
 
       // Draw text elements on download canvas
@@ -347,9 +362,18 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       // Draw traits in order
       const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
       
+      // Group selected traits by category and draw in order
+      const traitsByCategory = selectedTraits.reduce((acc, trait) => {
+        if (!acc[trait.category]) {
+          acc[trait.category] = [];
+        }
+        acc[trait.category].push(trait);
+        return acc;
+      }, {} as Record<string, Trait[]>);
+
       traitOrder.forEach(category => {
-        const trait = selectedTraits[category];
-        if (trait) {
+        const categoryTraits = traitsByCategory[category] || [];
+        categoryTraits.forEach(trait => {
           const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
           if (traitImg) {
             // Scale trait to full canvas size
@@ -359,7 +383,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               copyCanvas.width, copyCanvas.height
             );
           }
-        }
+        });
       });
 
       // Draw text elements on copy canvas
@@ -417,7 +441,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     const params = new URLSearchParams();
     
     // Add selected traits as query parameters
-    Object.entries(selectedTraits).forEach(([category, trait]) => {
+    selectedTraits.forEach((trait) => {
       if (trait) {
         params.append(category, trait.id.slice(0, trait.id.lastIndexOf('_' + category)));
       }
