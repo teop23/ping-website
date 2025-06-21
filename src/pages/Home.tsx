@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Heart, Sparkles, Zap } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Builder from '../components/Builder';
 import ContractAddress from '../components/ContractAddress';
 import Countdown from '../components/Countdown';
@@ -8,6 +8,22 @@ import Roadmap from '../components/Roadmap';
 import { SHOW_COUNTDOWN } from '../utils/constants';
 
 const Home: React.FC = () => {
+  // Handle direct navigation to hash fragments (e.g., /#roadmap)
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      // Remove the # from the hash
+      const elementId = hash.substring(1);
+      // Wait a bit for the page to fully render
+      setTimeout(() => {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 500); // Increased delay to ensure all animations are complete
+    }
+  }, []);
+
   return (
     <div className="flex flex-col">
       {/* Animated Background Elements */}
