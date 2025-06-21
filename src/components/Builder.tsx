@@ -129,21 +129,37 @@ const Builder: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-full min-h-[700px] p-4">
-      <div className="flex flex-row gap-6 w-full h-full">
-        {/* Left side - Character Preview (Full Height) */}
-        <div className="w-1/2 min-h-[650px]">
-          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+    <div className="w-full h-full min-h-[700px] p-2 sm:p-4">
+      {/* Mobile Layout - Stack vertically */}
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full h-full">
+        
+        {/* Character Preview - Full width on mobile, half on desktop */}
+        <div className="w-full lg:w-1/2 order-1 lg:order-1">
+          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 shadow-xl">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                </div>
+                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                  Your Character
+                </h2>
               </div>
-              <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                Your Character
-              </h2>
+              
+              {/* Text Tools Button - Mobile */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsTextModalOpen(true)}
+                className="flex items-center gap-1 sm:gap-2 hover:bg-primary/10 hover:border-primary/50 text-xs sm:text-sm px-2 sm:px-3"
+              >
+                <Type className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Text Tools</span>
+                <span className="sm:hidden">Text</span>
+              </Button>
             </div>
 
-            <div className="flex-1 min-h-[580px]">
+            <div className="flex-1 min-h-[300px] sm:min-h-[400px] lg:min-h-[580px]">
               <CharacterPreview
                 selectedTraits={selectedTraits}
                 textElements={textElements}
@@ -155,32 +171,21 @@ const Builder: React.FC = () => {
           </div>
         </div>
 
-        {/* Right side - Choose Traits + Text Tools Button */}
-        <div className="w-1/2 h-full min-h-[650px]">
-          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl flex flex-col">
+        {/* Trait Selector - Full width on mobile, half on desktop */}
+        <div className="w-full lg:w-1/2 order-2 lg:order-2">
+          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 shadow-xl flex flex-col">
             <div className="flex items-center justify-between mb-3 flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Palette className="w-4 h-4 text-white" />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Palette className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
                   Choose Traits
                 </h2>
               </div>
-              
-              {/* Text Tools Button */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsTextModalOpen(true)}
-                className="flex items-center gap-2 hover:bg-primary/10 hover:border-primary/50"
-              >
-                <Type className="w-4 h-4" />
-                Text Tools
-              </Button>
             </div>
 
-            <div className="flex-1 min-h-[580px]">
+            <div className="flex-1 min-h-[300px] sm:min-h-[400px] lg:min-h-[580px]">
               <TraitSelector
                 categories={categories}
                 traits={traits}
