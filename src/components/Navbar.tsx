@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Palette, Menu, X, ChevronDown, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -39,6 +39,7 @@ interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 
 const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
 
@@ -56,6 +57,26 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
 
   const closeToolsDropdown = () => {
     setIsToolsDropdownOpen(false);
+  };
+
+  const handleRoadmapClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      // Already on home page, just scroll to roadmap
+      const roadmapElement = document.getElementById('roadmap');
+      if (roadmapElement) {
+        roadmapElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Navigate to home page first, then scroll to roadmap
+      navigate('/');
+      setTimeout(() => {
+        const roadmapElement = document.getElementById('roadmap');
+        if (roadmapElement) {
+          roadmapElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
   };
 
   const isToolsActive = location.pathname === '/create-traits' || location.pathname === '/watermark';
@@ -84,7 +105,12 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
-            <NavItem label="Roadmap" href="/#roadmap" />
+            <button
+              onClick={handleRoadmapClick}
+              className="transition-all duration-200 hover:text-primary font-medium"
+            >
+              Roadmap
+            </button>
             <NavItem label="Community" href="/community" isActive={location.pathname === '/community'} />
             
             {/* Tools Dropdown */}
@@ -227,11 +253,15 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   isActive={location.pathname === '/'} 
                   onClick={closeMobileMenu}
                 />
-                <MobileNavItem 
-                  label="Roadmap"
-                  href="/#roadmap"
-                  onClick={closeMobileMenu}
-                />
+                <button
+                  onClick={(e) => {
+                    handleRoadmapClick(e);
+                    closeMobileMenu();
+                  }}
+                  className="flex items-center gap-3 p-3 rounded-lg transition-colors duration-200 w-full text-muted-foreground hover:text-foreground hover:bg-muted"
+                >
+                  <span className="font-medium">Roadmap</span>
+                </button>
                 <MobileNavItem 
                   label="Community" 
                   href="/community" 
