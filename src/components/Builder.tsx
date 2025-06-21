@@ -84,7 +84,7 @@ const Builder: React.FC = () => {
   
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center max-w-[1400px] mx-auto px-2 sm:px-4 py-12">
+      <div className="flex items-center justify-center w-full h-full py-12">
         <motion.div 
           className="text-center"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -127,21 +127,22 @@ const Builder: React.FC = () => {
   }
   
   return (
-    <div className="w-full h-full overflow-hidden">
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full h-full max-w-none mx-auto px-2 sm:px-4 py-4">
-        {/* Character Preview Section - Left Side */}
+    <div className="w-full h-full p-4">
+      {/* Main flex row container */}
+      <div className="flex flex-row gap-6 w-full h-full">
+        
+        {/* Left side - Character Preview + Text Tools */}
         <motion.div 
-          className="w-full lg:w-[45%] lg:flex-shrink-0 space-y-4 min-w-0"
+          className="w-1/2 flex flex-col gap-6"
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
         >
           {/* Character Preview */}
           <div className="relative">
-            {/* Decorative background */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-600/5 to-pink-600/10 rounded-2xl blur-xl -z-10 scale-105" />
             
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 lg:p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
@@ -161,7 +162,7 @@ const Builder: React.FC = () => {
             </div>
           </div>
           
-          {/* Text Tools - Under Character Preview */}
+          {/* Text Tools */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,7 +171,7 @@ const Builder: React.FC = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/5 to-indigo-600/10 rounded-2xl blur-xl -z-10 scale-105" />
             
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 lg:p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                   <Type className="w-4 h-4 text-white" />
@@ -185,18 +186,17 @@ const Builder: React.FC = () => {
           </motion.div>
         </motion.div>
         
-        {/* Controls Section - Right Side */}
+        {/* Right side - Choose Traits (full height) */}
         <motion.div 
-          className="w-full lg:w-[55%] lg:flex-shrink-0 min-w-0"
+          className="w-1/2 h-full"
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
         >
-          {/* Trait Selector - Full Height */}
-          <div className="relative">
+          <div className="relative h-full">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-primary/5 to-blue-600/10 rounded-2xl blur-xl -z-10 scale-105" />
             
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-3 sm:p-4 lg:p-6 shadow-xl h-[600px] lg:h-[700px] overflow-hidden">
+            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl h-full flex flex-col">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                   <Palette className="w-4 h-4 text-white" />
@@ -206,16 +206,18 @@ const Builder: React.FC = () => {
                 </h2>
               </div>
               
-              <TraitSelector
-                categories={categories}
-                traits={traits}
-                selectedTraits={selectedTraits}
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                onTraitSelect={handleTraitSelect}
-                onTraitRemove={handleTraitRemove}
-                onClearAll={handleClearAll}
-              />
+              <div className="flex-1 min-h-0">
+                <TraitSelector
+                  categories={categories}
+                  traits={traits}
+                  selectedTraits={selectedTraits}
+                  searchQuery={searchQuery}
+                  onSearchChange={handleSearchChange}
+                  onTraitSelect={handleTraitSelect}
+                  onTraitRemove={handleTraitRemove}
+                  onClearAll={handleClearAll}
+                />
+              </div>
             </div>
           </div>
         </motion.div>
