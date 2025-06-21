@@ -129,13 +129,13 @@ const Builder: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-full p-1 sm:p-2 lg:p-4">
+    <div className="w-full h-full p-1 sm:p-2 lg:p-4 flex flex-col">
       {/* Mobile Layout - Stack vertically */}
-      <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 lg:gap-6 w-full h-full">
+      <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6 w-full h-full">
         
         {/* Character Preview - Full width on mobile, half on desktop */}
-        <div className="w-full lg:w-1/2 h-[45vh] sm:h-[50vh] lg:h-full order-1 lg:order-1">
-          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl min-h-[350px] lg:min-h-[580px]">
+        <div className="w-full lg:w-1/2 h-[40vh] sm:h-[45vh] lg:h-full order-1 lg:order-1 flex-shrink-0">
+          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl">
             <div className="flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
@@ -147,7 +147,7 @@ const Builder: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex-1 min-h-[300px] lg:min-h-[520px]">
+            <div className="flex-1 min-h-[250px] lg:min-h-[520px]">
               <CharacterPreview
                 selectedTraits={selectedTraits}
                 textElements={textElements}
@@ -160,8 +160,8 @@ const Builder: React.FC = () => {
         </div>
 
         {/* Trait Selector - Full width on mobile, half on desktop */}
-        <div className="w-full lg:w-1/2 flex-1 lg:h-full order-2 lg:order-2 min-h-[60vh] lg:min-h-0">
-          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl flex flex-col min-h-[480px] lg:min-h-[580px]">
+        <div className="w-full lg:w-1/2 flex-1 lg:h-full order-2 lg:order-2">
+          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl flex flex-col min-h-[55vh] lg:min-h-[580px]">
             <div className="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
@@ -185,7 +185,7 @@ const Builder: React.FC = () => {
               </Button>
             </div>
 
-            <div className="flex-1 min-h-[400px] lg:min-h-[500px]">
+            <div className="flex-1 min-h-[45vh] lg:min-h-[500px] overflow-hidden">
               <TraitSelector
                 categories={categories}
                 traits={traits}
