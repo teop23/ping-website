@@ -145,18 +145,6 @@ const Builder: React.FC = () => {
                   Your Character
                 </h2>
               </div>
-              
-              {/* Text Tools Button - Mobile */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsTextModalOpen(true)}
-                className="flex items-center gap-1 sm:gap-2 hover:bg-primary/10 hover:border-primary/50 text-xs sm:text-sm px-2 sm:px-3"
-              >
-                <Type className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Text Tools</span>
-                <span className="sm:hidden">Text</span>
-              </Button>
             </div>
 
             <div className="flex-1 min-h-[300px] sm:min-h-[400px] lg:min-h-[580px]">
@@ -183,6 +171,18 @@ const Builder: React.FC = () => {
                   Choose Traits
                 </h2>
               </div>
+              
+              {/* Text Tools Button - Right side */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsTextModalOpen(true)}
+                className="flex items-center gap-1 sm:gap-2 hover:bg-primary/10 hover:border-primary/50 text-xs sm:text-sm px-2 sm:px-3"
+              >
+                <Type className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Text Tools</span>
+                <span className="sm:hidden">Text</span>
+              </Button>
             </div>
 
             <div className="flex-1 min-h-[300px] sm:min-h-[400px] lg:min-h-[580px]">

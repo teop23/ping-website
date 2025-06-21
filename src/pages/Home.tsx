@@ -230,7 +230,7 @@ const Home: React.FC = () => {
               {SHOW_COUNTDOWN && <Countdown />}
 
               {/* Builder Section with Enhanced Container */}
-              <div className="w-full max-w-[95vw] sm:max-w-[85vw] lg:max-w-[70vw] h-[70vh] sm:h-[60vh] min-h-[600px] sm:min-h-[750px] relative">
+              <div className="w-full max-w-[95vw] sm:max-w-[85vw] lg:max-w-[70vw] h-[70vh] sm:h-[60vh] min-h-[600px] sm:min-h-[750px] relative mb-8 sm:mb-12">
                 {/* Background decoration */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
 
