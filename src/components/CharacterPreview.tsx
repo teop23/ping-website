@@ -8,6 +8,7 @@ import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { TwitterIcon } from './Navbar';
+
 interface CharacterPreviewProps {
   selectedTraits: Trait[];
   textElements?: TextElement[];
@@ -443,7 +444,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // Add selected traits as query parameters
     selectedTraits.forEach((trait) => {
       if (trait) {
-        params.append(category, trait.id.slice(0, trait.id.lastIndexOf('_' + category)));
+        params.append(trait.category, trait.id.slice(0, trait.id.lastIndexOf('_' + trait.category)));
       }
     });
     const paramsString = params.size > 0 ? `?${params.toString()}` : '';
@@ -505,8 +506,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           {textElements.map((textElement) => (
             <div
               key={textElement.id}
-              className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'
-                }`}
+              className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'}`}
               style={{
                 left: `${textElement.x * 100}%`,
                 top: `${textElement.y * 100}%`,
@@ -580,86 +580,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
             />
           </motion.div>
         </div>
-      </div>
-    </>
-  );
-};
-
-interface ActionButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-  variant: 'default' | 'secondary' | 'outline';
-  disabled?: boolean;
-  isCopying?: boolean;
-}
-
-const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, variant, disabled, isCopying }) => {
-  return (
-    <Button
-      variant={variant}
-      onClick={onClick}
-      size="sm"
-      className={`flex items-center gap-1 transition-all duration-300 text-xs px-2 py-1 ${isCopying
-        ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
-        : ''
-        }`}
-      disabled={disabled}
-    >
-      <motion.div
-        animate={isCopying ? {
-          scale: [1, 1.2, 1]
-        } : {}}
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut"
-        }}
-      >
-        {icon}
-      </motion.div>
-      <span>{isCopying ? 'Copied!' : label}</span>
-    </Button>
-  );
-};
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton
-            icon={<Download size={20} />}
-            label="Download"
-            onClick={handleDownload}
-            variant="default"
-            disabled={isLoading}
-          />
-        </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton
-            icon={isCopying ? <Check size={20} /> : <Copy size={20} />}
-            label="Copy"
-            onClick={handleCopy}
-            variant="secondary"
-            disabled={isLoading}
-            isCopying={isCopying}
-          />
-        </motion.div>
-        {onRandomize && (
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <ActionButton
-              icon={<Shuffle size={20} />}
-              label="Randomize"
-              onClick={onRandomize}
-              variant="secondary"
-              disabled={isLoading}
-            />
-          </motion.div>
-        )}
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <ActionButton
-            icon={<TwitterIcon />}
-            label={isSharing ? "Sharing..." : "Tweet"}
-            onClick={handleShareOnX}
-            variant="secondary"
-            disabled={isLoading || isSharing}
-          />
-        </motion.div>
       </div>
     </>
   );
