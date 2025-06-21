@@ -129,7 +129,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col h-[600px] bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-lg overflow-hidden">
+      <div className="flex flex-col h-full bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-lg overflow-hidden">
         
         {/* Search Section */}
         <div className="p-4 bg-gradient-to-r from-background/80 to-muted/40 border-b border-border/50 flex-shrink-0">
@@ -239,11 +239,11 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           </h3>
         </div>
 
-        {/* Scrollable Traits Grid */}
+        {/* Scrollable Traits Grid - Takes remaining space */}
         <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
             <div className="p-3">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 {/* Upload button - only show when filtering by specific category */}
                 {selectedCategoryFilter !== 'all' && !searchQuery && (
                   <motion.button
