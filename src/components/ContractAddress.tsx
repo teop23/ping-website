@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Copy, Check, ExternalLink, ShoppingCart } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from './ui/card';
+import { Check, Copy, ExternalLink, ShoppingCart } from 'lucide-react';
+import React, { useState } from 'react';
+import { BUY_LINK, CONTRACT_ADDRESS, SOLSCAN_LINK } from '../utils/constants';
 import { Button } from './ui/button';
-import { CONTRACT_ADDRESS, BUY_LINK } from '../utils/constants';
+import { Card, CardContent } from './ui/card';
 
 const ContractAddress: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
@@ -20,7 +20,7 @@ const ContractAddress: React.FC = () => {
 
   const handleViewOnExplorer = () => {
     // Open Solana explorer with the contract address
-    window.open(`https://explorer.solana.com/address/${CONTRACT_ADDRESS}`, '_blank');
+    window.open(SOLSCAN_LINK, '_blank');
   };
 
   const handleBuyToken = () => {
@@ -45,54 +45,53 @@ const ContractAddress: React.FC = () => {
           <div className="space-y-3">
             {/* Contract Address Section */}
             <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50">
-            <div className="flex-1 min-w-0">
-              <div className="font-mono text-sm text-foreground">
-                <span className="hidden sm:inline whitespace-nowrap">{CONTRACT_ADDRESS}</span>
-                <span className="sm:hidden break-all">{formatAddress(CONTRACT_ADDRESS)}</span>
+              <div className="flex-1 min-w-0">
+                <div className="font-mono text-sm text-foreground">
+                  <span className="hidden sm:inline whitespace-nowrap">{CONTRACT_ADDRESS}</span>
+                  <span className="sm:hidden break-all">{formatAddress(CONTRACT_ADDRESS)}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-1 flex-shrink-0">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleCopy}
+                    className={`h-8 w-8 transition-all duration-300 ${isCopied
+                      ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
+                      : 'hover:bg-primary/10 hover:border-primary/50'
+                      }`}
+                    title="Copy contract address"
+                  >
+                    <motion.div
+                      animate={isCopied ? {
+                        scale: [1, 1.2, 1]
+                      } : {}}
+                      transition={{
+                        duration: 0.3,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      {isCopied ? <Check size={14} /> : <Copy size={14} />}
+                    </motion.div>
+                  </Button>
+                </motion.div>
+
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleViewOnExplorer}
+                    className="h-8 w-8 hover:bg-primary/10 hover:border-primary/50"
+                    title="View on Solana Explorer"
+                  >
+                    <ExternalLink size={14} />
+                  </Button>
+                </motion.div>
               </div>
             </div>
-            
-            <div className="flex gap-1 flex-shrink-0">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCopy}
-                  className={`h-8 w-8 transition-all duration-300 ${
-                    isCopied 
-                      ? 'bg-green-600 hover:bg-green-600 text-white border-green-600' 
-                      : 'hover:bg-primary/10 hover:border-primary/50'
-                  }`}
-                  title="Copy contract address"
-                >
-                  <motion.div
-                    animate={isCopied ? {
-                      scale: [1, 1.2, 1]
-                    } : {}}
-                    transition={{ 
-                      duration: 0.3, 
-                      ease: "easeInOut"
-                    }}
-                  >
-                    {isCopied ? <Check size={14} /> : <Copy size={14} />}
-                  </motion.div>
-                </Button>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleViewOnExplorer}
-                  className="h-8 w-8 hover:bg-primary/10 hover:border-primary/50"
-                  title="View on Solana Explorer"
-                >
-                  <ExternalLink size={14} />
-                </Button>
-              </motion.div>
-            </div>
-          </div>
-            
+
             {/* Buy Button Section */}
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
@@ -104,7 +103,7 @@ const ContractAddress: React.FC = () => {
               </Button>
             </motion.div>
           </div>
-          
+
           {isCopied && (
             <motion.div
               initial={{ opacity: 0, y: 5 }}

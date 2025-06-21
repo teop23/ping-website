@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { SOCIAL_LINKS } from '../utils/constants';
 import pingIcon from '../assets/ping_transparent_icon.png';
+import { DexScreenerLogo } from '../utils/icons';
 
 // Twitter/X icon component
 export const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
@@ -166,6 +167,11 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 icon={<TelegramIcon size={18} />}
                 label="Telegram"
               />
+              <SocialLink 
+                href={SOCIAL_LINKS.DEXSCREENER}
+                icon={<DexScreenerLogo size={18} />}
+                label="DexScreener"
+              />
             </div>
           </div>
 
@@ -280,6 +286,12 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                       label="Telegram"
                       isMobile
                     />
+                    <SocialLink 
+                      href={SOCIAL_LINKS.DEXSCREENER}
+                      icon={<DexScreenerLogo size={20} />}
+                      label="DexScreener"
+                      isMobile
+                    />
                   </div>
                 </div>
               </div>
@@ -308,13 +320,15 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, icon, label, isMobile = f
         "transition-colors duration-200 hover:text-primary",
         isMobile 
           ? "flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted text-muted-foreground" 
-          : "text-muted-foreground hover:text-primary"
+          : "w-8 h-8 flex items-center justify-center rounded-lg bg-muted/50 hover:bg-muted border border-border/50 hover:border-border text-muted-foreground hover:text-primary shadow-sm hover:shadow-md"
       )}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       title={label}
     >
-      {icon}
+      <div className={isMobile ? "" : "flex items-center justify-center"}>
+        {icon}
+      </div>
       {isMobile && <span className="text-xs font-medium">{label}</span>}
     </motion.a>
   );

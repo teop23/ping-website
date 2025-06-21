@@ -1,13 +1,14 @@
 // Contract addresses and other constants
 export const CONTRACT_ADDRESS = "EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump"; // Example Solana address
-
+export const SOLSCAN_LINK = "https://solscan.io/token/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump";
 // Buy link for the token
 export const BUY_LINK = "https://jup.ag/swap/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump-So11111111111111111111111111111111111111112";
 
 // Social media links
 export const SOCIAL_LINKS = {
   TWITTER: "https://x.com/i/communities/1933201526584963118",
-  TELEGRAM: "https://t.me/pingtoken"
+  TELEGRAM: "https://t.me/pingtoken",
+  DEXSCREENER: "https://dexscreener.com/solana/6awkhGgNxpbhF9XZVstdLrG4PUhzwvj8YnEqHCy3nVZV" // You can change this later
 };
 
 // Countdown target timestamp (Unix timestamp in milliseconds)
