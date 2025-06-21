@@ -130,7 +130,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
   return (
     <TooltipProvider>
-      <Card className="flex flex-col h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
+      <Card className="flex flex-col shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto h-[600px] max-h-[600px] overflow-hidden">
         {/* Search Bar */}
         <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20 flex-shrink-0">
           <div className="relative mb-3">
@@ -222,28 +222,28 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           )}
         </div>
 
-        <div className="flex flex-row flex-1 min-h-0">
-          {/* Main Content - Traits Grid */}
-          <div className="flex-1 flex flex-col min-w-0">
-            {/* Header */}
-            <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20 flex-shrink-0">
-              <h3 className="text-sm font-semibold text-foreground">
-                {searchQuery 
-                  ? `Search Results (${filteredTraits.length})` 
-                  : selectedCategoryFilter === 'all'
-                    ? `All Traits (${filteredTraits.length})`
-                    : `${categories.find(c => c.id === selectedCategoryFilter)?.label || 'Traits'} (${filteredTraits.length})`
-                }
-              </h3>
-              {searchQuery && (
-                <p className="text-xs text-muted-foreground mt-1">Searching across all categories</p>
-              )}
-            </div>
+        {/* Main Content - Traits Grid */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          {/* Header */}
+          <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20 flex-shrink-0">
+            <h3 className="text-sm font-semibold text-foreground">
+              {searchQuery 
+                ? `Search Results (${filteredTraits.length})` 
+                : selectedCategoryFilter === 'all'
+                  ? `All Traits (${filteredTraits.length})`
+                  : `${categories.find(c => c.id === selectedCategoryFilter)?.label || 'Traits'} (${filteredTraits.length})`
+              }
+            </h3>
+            {searchQuery && (
+              <p className="text-xs text-muted-foreground mt-1">Searching across all categories</p>
+            )}
+          </div>
 
-            {/* Traits Grid with Scroll */}
-            <div className="flex-1 min-h-0">
-              <ScrollArea className="h-full">
-                <CardContent className="p-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {/* Traits Grid with Scroll - This is the key fix */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <ScrollArea className="h-full w-full">
+              <div className="p-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {/* Upload button - only show when filtering by specific category */}
                   {selectedCategoryFilter !== 'all' && !searchQuery && (
                     <motion.button
@@ -288,9 +288,9 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                       )}
                     </div>
                   )}
-                </CardContent>
-              </ScrollArea>
-            </div>
+                </div>
+              </div>
+            </ScrollArea>
           </div>
         </div>
       </Card>
