@@ -240,7 +240,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Scrollable Traits Grid */}
-        <div className="flex-1 min-h-0 max-h-[40vh] sm:max-h-[45vh] lg:max-h-[35vh] overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <ScrollArea className="h-full">
             <div className="p-2">
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
