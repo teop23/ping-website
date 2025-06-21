@@ -207,31 +207,3 @@ const Builder: React.FC = () => {
 };
 
 export default Builder;
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <Palette className="w-4 h-4 text-white" />
-              </div>
-              <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                Choose Traits
-              </h2>
-            </div>
-
-            <div className="flex-1 min-h-[580px]">
-              <TraitSelector
-                categories={categories}
-                traits={traits}
-                selectedTraits={selectedTraits}
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                onTraitSelect={handleTraitSelect}
-                onTraitRemove={handleTraitRemove}
-                onClearAll={handleClearAll}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Builder;
