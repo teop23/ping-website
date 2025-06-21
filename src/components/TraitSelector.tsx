@@ -163,7 +163,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           </h3>
           {searchQuery && (
             <p className="text-xs text-muted-foreground mt-1">Searching across all categories</p>
-          </h3>
+          )}
         </div>
 
         {/* Traits Grid */}

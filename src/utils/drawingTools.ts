@@ -7,7 +7,7 @@ type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 
 const FloodFill = {
   // Compare subsection of array1's values to array2's values, with an optional tolerance
   withinTolerance: function(array1: Uint8ClampedArray, offset: number, array2: number[], tolerance: number) {
-    const length = array2.length;
+    let length = array2.length;
     let start = offset + length;
     tolerance = tolerance || 0;
 
