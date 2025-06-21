@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from 'framer-motion';
-import { Check, Upload, Search, X, Filter } from 'lucide-react';
+import { Check, Upload, Search, X } from 'lucide-react';
 import React from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { CategoryOption, Trait } from '../types';
@@ -120,11 +120,19 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
     }
   };
 
+  const handleCategoryFilterClick = (categoryId: string) => {
+    setSelectedCategoryFilter(categoryId);
+    // Clear search when selecting a category filter
+    if (categoryId !== 'all' && searchQuery) {
+      onSearchChange('');
+    }
+  };
+
   return (
     <TooltipProvider>
       <Card className="flex flex-col h-[calc(100vh-16rem)] sm:h-auto shadow-lg border-2 border-border/50 bg-gradient-to-br from-card to-card/95 max-w-[500px] mx-auto">
         {/* Search Bar */}
-        <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20">
+        <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20 flex-shrink-0">
           <div className="relative mb-3">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
             <input
@@ -144,29 +152,39 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
             )}
           </div>
 
-          {/* Category Filter */}
-          <div className="flex items-center gap-2 mb-2">
-            <Filter size={14} className="text-muted-foreground" />
-            <select
-              value={selectedCategoryFilter}
-              onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-              className="flex-1 px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring bg-background"
+          {/* Category Filter Badges */}
+          <div className="flex flex-wrap gap-1 mb-3">
+            <button
+              onClick={() => handleCategoryFilterClick('all')}
+              className={`px-3 py-1 text-xs font-medium rounded-full transition-all duration-200 ${
+                selectedCategoryFilter === 'all'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+              }`}
             >
-              <option value="all">All Categories</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
+              All
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => handleCategoryFilterClick(category.id)}
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-all duration-200 ${
+                  selectedCategoryFilter === category.id
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+                }`}
+              >
+                {category.label}
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* Selected Traits Counter and Clear Button */}
-          {selectedTraits.length > 0 && (
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">
-                {selectedTraits.length} trait{selectedTraits.length !== 1 ? 's' : ''} selected
-              </span>
+        {/* Selected Traits Display - Always Visible */}
+        <div className="p-3 border-b border-border bg-muted/20 flex-shrink-0">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-semibold text-muted-foreground">Selected Traits</h4>
+            {selectedTraits.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -175,14 +193,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
               >
                 Clear All
               </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Selected Traits Display */}
-        {selectedTraits.length > 0 && (
-          <div className="p-3 border-b border-border bg-muted/20">
-            <h4 className="text-xs font-semibold text-muted-foreground mb-2">Selected Traits</h4>
+            )}
+          </div>
+          
+          {selectedTraits.length > 0 ? (
             <div className="flex flex-wrap gap-1">
               {selectedTraits.map((trait) => (
                 <motion.div
@@ -203,14 +217,16 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                 </motion.div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-xs text-muted-foreground">No traits selected</p>
+          )}
+        </div>
 
         <div className="flex flex-row flex-1 min-h-0">
           {/* Main Content - Traits Grid */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Header */}
-            <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20">
+            <div className="p-3 border-b border-border bg-gradient-to-r from-background to-muted/20 flex-shrink-0">
               <h3 className="text-sm font-semibold text-foreground">
                 {searchQuery 
                   ? `Search Results (${filteredTraits.length})` 
@@ -224,55 +240,57 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
               )}
             </div>
 
-            {/* Traits Grid */}
-            <ScrollArea className="flex-1">
-              <CardContent className="p-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {/* Upload button - only show when filtering by specific category */}
-                {selectedCategoryFilter !== 'all' && !searchQuery && (
-                  <motion.button
-                    className="relative cursor-pointer rounded-lg overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background to-muted/50"
-                    onClick={() => handleUpload(selectedCategoryFilter)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <div className="aspect-square bg-card flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                      <Upload size={20} className="text-primary/60" />
-                      <span className="text-xs">Upload</span>
+            {/* Traits Grid with Scroll */}
+            <div className="flex-1 min-h-0">
+              <ScrollArea className="h-full">
+                <CardContent className="p-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {/* Upload button - only show when filtering by specific category */}
+                  {selectedCategoryFilter !== 'all' && !searchQuery && (
+                    <motion.button
+                      className="relative cursor-pointer rounded-lg overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background to-muted/50"
+                      onClick={() => handleUpload(selectedCategoryFilter)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <div className="aspect-square bg-card flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                        <Upload size={20} className="text-primary/60" />
+                        <span className="text-xs">Upload</span>
+                      </div>
+                    </motion.button>
+                  )}
+
+                  {filteredTraits.map((trait) => {
+                    const isSelected = isTraitSelected(trait);
+
+                    return (
+                      <TraitCard
+                        key={`${trait.id}-${trait.category}`}
+                        trait={trait}
+                        isSelected={isSelected}
+                        imageSrc={trait.imageSrc}
+                        onClick={() => handleTraitClick(trait)}
+                      />
+                    );
+                  })}
+
+                  {/* Show message if no traits available */}
+                  {filteredTraits.length === 0 && (
+                    <div className="col-span-full text-center py-6 text-muted-foreground">
+                      {searchQuery ? (
+                        <p className="text-sm">No traits found matching "{searchQuery}"</p>
+                      ) : selectedCategoryFilter === 'all' ? (
+                        <p className="text-sm">No traits available</p>
+                      ) : (
+                        <>
+                          <p className="text-sm">No traits available for this category</p>
+                          <p className="text-xs mt-2">Upload your first trait using the upload button above!</p>
+                        </>
+                      )}
                     </div>
-                  </motion.button>
-                )}
-
-                {filteredTraits.map((trait) => {
-                  const isSelected = isTraitSelected(trait);
-
-                  return (
-                    <TraitCard
-                      key={`${trait.id}-${trait.category}`}
-                      trait={trait}
-                      isSelected={isSelected}
-                      imageSrc={trait.imageSrc}
-                      onClick={() => handleTraitClick(trait)}
-                    />
-                  );
-                })}
-
-                {/* Show message if no traits available */}
-                {filteredTraits.length === 0 && (
-                  <div className="col-span-full text-center py-6 text-muted-foreground">
-                    {searchQuery ? (
-                      <p className="text-sm">No traits found matching "{searchQuery}"</p>
-                    ) : selectedCategoryFilter === 'all' ? (
-                      <p className="text-sm">No traits available</p>
-                    ) : (
-                      <>
-                        <p className="text-sm">No traits available for this category</p>
-                        <p className="text-xs mt-2">Upload your first trait using the upload button above!</p>
-                      </>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </ScrollArea>
+                  )}
+                </CardContent>
+              </ScrollArea>
+            </div>
           </div>
         </div>
       </Card>
