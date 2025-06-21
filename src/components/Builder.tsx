@@ -172,7 +172,7 @@ const Builder: React.FC = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-primary/5 to-blue-600/10 rounded-2xl blur-xl -z-10 scale-105" />
             
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
+            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl shadow-xl overflow-hidden">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
                   <Palette className="w-4 h-4 text-white" />
@@ -182,16 +182,18 @@ const Builder: React.FC = () => {
                 </h2>
               </div>
               
-              <TraitSelector
-                categories={categories}
-                traits={traits}
-                selectedTraits={selectedTraits}
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                onTraitSelect={handleTraitSelect}
-                onTraitRemove={handleTraitRemove}
-                onClearAll={handleClearAll}
-              />
+              <div className="h-[600px]">
+                <TraitSelector
+                  categories={categories}
+                  traits={traits}
+                  selectedTraits={selectedTraits}
+                  searchQuery={searchQuery}
+                  onSearchChange={handleSearchChange}
+                  onTraitSelect={handleTraitSelect}
+                  onTraitRemove={handleTraitRemove}
+                  onClearAll={handleClearAll}
+                />
+              </div>
             </div>
           </div>
           
