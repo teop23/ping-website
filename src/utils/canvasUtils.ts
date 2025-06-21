@@ -29,11 +29,11 @@ export const calculateCanvasSize = (container?: HTMLElement | null): number => {
     
     if (width < 768) {
       // On mobile, use most of the available space but ensure it's square
-      return Math.min(availableSize * 0.8, 400);
+      return Math.min(availableSize * 0.8, 350);
     } else if (width < 1024) {
-      return Math.min(availableSize * 0.7, 600);
+      return Math.min(availableSize * 0.6, 450);
     } else {
-      return Math.min(availableSize * 0.6, 800);
+      return Math.min(availableSize * 0.5, 500);
     }
   }
   
@@ -45,8 +45,8 @@ export const calculateCanvasSize = (container?: HTMLElement | null): number => {
   const availableSize = Math.min(containerWidth, containerHeight);
   
   // Set reasonable min/max bounds based on screen size
-  const minSize = window.innerWidth < 768 ? 200 : 300;
-  const maxSize = window.innerWidth < 768 ? 400 : 600;
+  const minSize = window.innerWidth < 768 ? 250 : 300;
+  const maxSize = window.innerWidth < 768 ? 350 : 500;
   
   return Math.max(minSize, Math.min(maxSize, availableSize));
 };
