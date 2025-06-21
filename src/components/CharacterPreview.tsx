@@ -457,10 +457,10 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
   return (
     <>
-      <div className="w-full h-full min-h-[400px] flex flex-col" ref={containerRef}>
+      <div className="w-full h-full flex flex-col overflow-hidden" ref={containerRef}>
         {/* Canvas Container - Takes most of the space */}
-        <div className="flex-1 min-h-[300px] flex items-center justify-center p-4">
-          <div className="w-full h-full min-h-[280px] max-w-full max-h-full bg-gradient-to-br from-white to-gray-50 shadow-xl rounded-lg border flex items-center justify-center">
+        <div className="flex-1 min-h-0 flex items-center justify-center p-2 sm:p-4">
+          <div className="w-full h-full max-w-full max-h-full bg-gradient-to-br from-white to-gray-50 shadow-xl rounded-lg border flex items-center justify-center">
             <canvas
               ref={canvasRef}
               className="block max-w-full max-h-full"
@@ -510,7 +510,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         </div>
 
         {/* Action Buttons - Fixed at bottom */}
-        <div className="flex flex-wrap justify-center gap-1 sm:gap-2 p-2 flex-shrink-0">
+        <div className="flex flex-wrap justify-center gap-1 sm:gap-2 p-1 sm:p-2 flex-shrink-0">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
               icon={<Download size={16} />}
