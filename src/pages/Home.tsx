@@ -230,7 +230,7 @@ const Home: React.FC = () => {
               {SHOW_COUNTDOWN && <Countdown />}
 
               {/* Builder Section with Enhanced Container */}
-              <div className="w-full max-w-[95vw] sm:max-w-[85vw] lg:max-w-[70vw] h-[95vh] sm:h-[80vh] lg:h-[70vh] min-h-[600px] max-h-[900px] relative mb-8 sm:mb-12 lg:mb-16">
+              <div className="w-full max-w-[95vw] sm:max-w-[85vw] lg:max-w-[70vw] h-[120vh] sm:h-[100vh] lg:h-[60vh] min-h-[800px] lg:min-h-[750px] relative mb-8 sm:mb-12 lg:mb-16">
                 {/* Background decoration */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
 
@@ -238,13 +238,13 @@ const Home: React.FC = () => {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.4, duration: 0.8 }}
-                  className="size-full relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-6 lg:p-8 shadow-2xl"
+                  className="size-full relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-xl sm:rounded-2xl lg:rounded-2xl p-2 sm:p-4 lg:p-6 xl:p-8 shadow-2xl"
                 >
                   {/* Decorative corner elements */}
-                  <div className="hidden sm:block absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
-                  <div className="hidden sm:block absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
-                  <div className="hidden sm:block absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
-                  <div className="hidden sm:block absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
+                  <div className="hidden lg:block absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
+                  <div className="hidden lg:block absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
+                  <div className="hidden lg:block absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
+                  <div className="hidden lg:block absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
 
                   <Builder />
                 </motion.div>
