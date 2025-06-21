@@ -499,14 +499,12 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         <div
           ref={overlayRef}
           className="absolute inset-0 pointer-events-none z-20"
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
         >
-          {textElements.map((textElement) => (
+          {textElements.filter(element => element.text.trim()).map((textElement) => (
             <div
               key={textElement.id}
               className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'}`}
-              style={textElement.text.trim() ? {
+              style={{
                 left: `${textElement.x * 100}%`,
                 top: `${textElement.y * 100}%`,
                 transform: 'translate(-50%, -50%)',
@@ -515,7 +513,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
                 fontFamily: 'Inter, Arial, sans-serif',
                 textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
                 fontWeight: '500',
-              } : { display: 'none' }}
+              }}
               onMouseDown={(e) => handleMouseDown(e, textElement.id)}
             >
               {/* Drag handle - visible on hover */}
@@ -525,9 +523,9 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               </div>
 
               {/* Text content */}
-              {textElement.text.trim() && <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
+              <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
                 {textElement.text}
-              </span>}
+              </span>
 
               {/* Selection indicator */}
               {isDragging === textElement.id && (
