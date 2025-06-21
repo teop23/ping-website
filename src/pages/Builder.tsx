@@ -5,22 +5,10 @@ import TextTools, { TextElement } from '../components/TextTools';
 import { initializeTraits } from '../data/traits';
 import { Trait, CategoryOption } from '../types';
 
-export type CategoryName = 'aura' | 'head' | 'face' | 'mouth' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
-
 const Builder: React.FC = () => {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [traits, setTraits] = useState<Trait[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryName>('head');
-  const [selectedTraits, setSelectedTraits] = useState<Record<string, Trait | null>>({
-    aura: null,
-    head: null,
-    face: null,
-    mouth: null,
-    body: null,
-    right_hand: null,
-    left_hand: null,
-    accessory: null
-  });
+  const [selectedTraits, setSelectedTraits] = useState<Trait[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,11 +21,6 @@ const Builder: React.FC = () => {
         const { traits: loadedTraits, categories: loadedCategories } = await initializeTraits();
         setTraits(loadedTraits);
         setCategories(loadedCategories);
-        
-        // Set the first available category as selected
-        if (loadedCategories.length > 0) {
-          setSelectedCategory(loadedCategories[0].id as CategoryName);
-        }
       } catch (error) {
         console.error('Error loading traits:', error);
       } finally {
@@ -48,50 +31,30 @@ const Builder: React.FC = () => {
     loadTraits();
   }, []);
   
-  const handleCategoryChange = (category: CategoryName) => {
-    setSelectedCategory(category);
-    // Clear search when category is manually selected
-    setSearchQuery('');
-  };
-  
   const handleTraitSelect = (trait: Trait) => {
-    setSelectedTraits(prev => {
-      // If the trait is already selected, deselect it
-      if (prev[trait.category]?.name === trait.name && prev[trait.category]?.category === trait.category) {
-        return {
-          ...prev,
-          [trait.category]: null
-        };
-      }
-      
-      // Otherwise, select the new trait
-      return {
-        ...prev,
-        [trait.category]: trait
-      };
-    });
+    setSelectedTraits(prev => [...prev, trait]);
+  };
+
+  const handleTraitRemove = (trait: Trait) => {
+    setSelectedTraits(prev => 
+      prev.filter(selected => 
+        !(selected.id === trait.id && selected.category === trait.category)
+      )
+    );
   };
   
   const handleReset = () => {
-    setSelectedTraits({
-      aura: null,
-      head: null,
-      face: null,
-      mouth: null,
-      body: null,
-      right_hand: null,
-      left_hand: null,
-      accessory: null
-    });
+    setSelectedTraits([]);
   };
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    // Clear category selection when searching
-    if (query.trim()) {
-      // Don't change selectedCategory to maintain UI state, but the search will override category filtering
-    }
   };
+
+  const handleClearAll = () => {
+    setSelectedTraits([]);
+  };
+
   const handleTextElementsChange = (elements: TextElement[]) => {
     setTextElements(elements);
   };
@@ -123,12 +86,12 @@ const Builder: React.FC = () => {
           <TraitSelector
             categories={categories}
             traits={traits}
-            selectedCategory={selectedCategory}
             selectedTraits={selectedTraits}
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
-            onCategoryChange={handleCategoryChange}
             onTraitSelect={handleTraitSelect}
+            onTraitRemove={handleTraitRemove}
+            onClearAll={handleClearAll}
           />
           
           <TextTools onTextElementsChange={handleTextElementsChange} />
