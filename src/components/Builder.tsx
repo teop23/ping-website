@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Palette, Sparkles } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
 import TextTools, { TextElement } from '../components/TextTools';
 import TraitSelector from '../components/TraitSelector';
@@ -84,7 +84,7 @@ const Builder: React.FC = () => {
   
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center px-2 sm:px-4 py-12">
+      <div className="flex items-center justify-center max-w-[1400px] mx-auto px-2 sm:px-4 py-12">
         <motion.div 
           className="text-center"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -127,91 +127,95 @@ const Builder: React.FC = () => {
   }
   
   return (
-    <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-12 w-full min-h-[600px]">
-      {/* Character Preview Section */}
-      <motion.div 
-        className="w-full lg:w-[500px] lg:ml-auto lg:flex-shrink-0 space-y-6"
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.2, duration: 0.8 }}
-      >
-        {/* Character Preview */}
-        <div className="relative">
-          {/* Decorative background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-600/5 to-pink-600/10 rounded-2xl blur-xl -z-10 scale-105" />
+    <div className="flex items-start justify-center max-w-[1800px] mx-auto px-6 py-8">
+      {/* Main Container - Rectangle with more space */}
+      <div className="w-full bg-gradient-to-br from-background/95 to-background/85 backdrop-blur-xl border border-border/50 rounded-2xl p-8 shadow-2xl">
+        <div className="flex flex-col lg:flex-row gap-8 h-full">
           
-          <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+          {/* Left Side - Character Preview + Text Tools */}
+          <motion.div 
+            className="w-full lg:w-[600px] lg:flex-shrink-0 space-y-6"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+          >
+            {/* Character Preview */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-600/5 to-pink-600/10 rounded-2xl blur-xl -z-10 scale-105" />
+              
+              <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                  <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                    Your Character
+                  </h2>
+                </div>
+                
+                <CharacterPreview
+                  selectedTraits={selectedTraits}
+                  textElements={textElements}
+                  onTextElementsChange={handleTextElementsChange}
+                  onReset={handleReset}
+                  onRandomize={handleRandomize}
+                />
               </div>
-              <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                Your Character
-              </h2>
             </div>
-            
-            <CharacterPreview
-              selectedTraits={selectedTraits}
-              textElements={textElements}
-              onTextElementsChange={handleTextElementsChange}
-              onReset={handleReset}
-              onRandomize={handleRandomize}
-            />
-          </div>
-        </div>
 
-        {/* Text Tools */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="relative"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/5 to-indigo-600/10 rounded-2xl blur-xl -z-10 scale-105" />
-          
-          <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-            <TextTools onTextElementsChange={handleTextElementsChange} />
-          </div>
-        </motion.div>
-      </motion.div>
-      
-      {/* Controls Section - Trait Selector takes full height */}
-      <motion.div 
-        className="w-full lg:w-[600px] lg:mr-auto lg:flex-shrink-0 pb-4 sm:pb-6 flex flex-col"
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
-      >
-        {/* Trait Selector - Full height */}
-        <div className="relative flex-1 flex flex-col min-h-[600px]">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-primary/5 to-blue-600/10 rounded-2xl blur-xl -z-10 scale-105" />
-          
-          <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl flex-1 flex flex-col">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <Palette className="w-4 h-4 text-white" />
+            {/* Text Tools */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/5 to-indigo-600/10 rounded-2xl blur-xl -z-10 scale-105" />
+              
+              <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
+                <TextTools onTextElementsChange={handleTextElementsChange} />
               </div>
-              <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                Choose Traits
-              </h2>
+            </motion.div>
+          </motion.div>
+          
+          {/* Right Side - Trait Selector (Full Height) */}
+          <motion.div 
+            className="w-full lg:w-[700px] lg:flex-shrink-0 flex flex-col"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+          >
+            <div className="relative flex-1 flex flex-col">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-primary/5 to-blue-600/10 rounded-2xl blur-xl -z-10 scale-105" />
+              
+              <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-xl flex-1 flex flex-col">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                    <Palette className="w-4 h-4 text-white" />
+                  </div>
+                  <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                    Choose Traits
+                  </h2>
+                </div>
+                
+                {/* Trait Selector takes remaining space */}
+                <div className="flex-1 min-h-0">
+                  <TraitSelector
+                    categories={categories}
+                    traits={traits}
+                    selectedTraits={selectedTraits}
+                    searchQuery={searchQuery}
+                    onSearchChange={handleSearchChange}
+                    onTraitSelect={handleTraitSelect}
+                    onTraitRemove={handleTraitRemove}
+                    onClearAll={handleClearAll}
+                  />
+                </div>
+              </div>
             </div>
-            
-            {/* Trait Selector takes remaining space */}
-            <div className="flex-1 min-h-0">
-              <TraitSelector
-                categories={categories}
-                traits={traits}
-                selectedTraits={selectedTraits}
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                onTraitSelect={handleTraitSelect}
-                onTraitRemove={handleTraitRemove}
-                onClearAll={handleClearAll}
-              />
-            </div>
-          </div>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
