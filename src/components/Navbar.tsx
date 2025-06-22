@@ -62,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
 
   return (
     <>
-      <nav className={cn("bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-4 sm:px-6 md:px-12 relative flex items-center shadow-sm z-50", className)} {...props}>
+      <nav className={cn("h-14 bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-4 py-2 sm:px-6 md:px-12 relative flex items-center shadow-sm z-50", className)} {...props}>
         <div className="w-full flex justify-between items-center">
           {/* Logo */}
           <motion.div 
@@ -81,23 +81,10 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             </a>
           </motion.div>
           
-          {/* Center Title - Hidden on mobile when menu is open */}
-          <div className={cn(
-            "absolute left-1/2 transform -translate-x-1/2 transition-opacity duration-300",
-            isMobileMenuOpen ? "opacity-0 pointer-events-none" : "opacity-100"
-          )}>
-            {location.pathname === '/create-traits' && (
-              <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Create PING Traits</h1>
-            )}
-            {location.pathname === '/watermark' && (
-              <h1 className="text-sm sm:text-lg md:text-xl font-semibold">Watermark Tool</h1>
-            )}
-          </div>
-          
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
-            <NavItem label="Roadmap" href="#roadmap" />
+            <NavItem label="Roadmap" href="/#roadmap" />
             <NavItem label="Community" href="/community" isActive={location.pathname === '/community'} />
             
             {/* Tools Dropdown */}
@@ -241,8 +228,8 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   onClick={closeMobileMenu}
                 />
                 <MobileNavItem 
-                  label="Roadmap" 
-                  href="#roadmap" 
+                  label="Roadmap"
+                  href="/#roadmap"
                   onClick={closeMobileMenu}
                 />
                 <MobileNavItem 

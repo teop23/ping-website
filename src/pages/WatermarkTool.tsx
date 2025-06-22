@@ -27,7 +27,7 @@ const WatermarkTool: React.FC = () => {
 
     const resizeObserver = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      const size = Math.floor(Math.min(width, height) * 0.8); 
+      const size = Math.floor(Math.min(width, height) * 0.8);
       setContainerSize(size);
     });
 
@@ -39,7 +39,7 @@ const WatermarkTool: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!canvasRef.current ) return;
+    if (!canvasRef.current) return;
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: containerSize,
       height: containerSize,
@@ -261,7 +261,7 @@ const WatermarkTool: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex flex-col lg:flex-row">
+    <div className="h-[calc(100vh-56px)] flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex flex-col lg:flex-row">
       {/* Left Sidebar - Controls */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}

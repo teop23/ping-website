@@ -1,32 +1,23 @@
 import { motion } from 'framer-motion';
-import { Palette, Sparkles } from 'lucide-react';
+import { Palette, Sparkles, Type, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
-import TextTools, { TextElement } from '../components/TextTools';
+import TextToolsModal, { TextElement } from '../components/TextToolsModal';
 import TraitSelector from '../components/TraitSelector';
 import { initializeTraits } from '../data/traits';
 import { CategoryOption, Trait } from '../types';
 import { EMPTY_TRAIT_CHANCE } from '../utils/constants';
-
-export type CategoryName = 'aura' | 'head' | 'face' | 'mouth' | 'body' | 'right_hand' | 'left_hand' | 'accessory';
+import { Button } from './ui/button';
 
 const Builder: React.FC = () => {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [traits, setTraits] = useState<Trait[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryName>('head');
-  const [selectedTraits, setSelectedTraits] = useState<Record<string, Trait | null>>({
-    aura: null,
-    head: null,
-    face: null,
-    mouth: null,
-    body: null,
-    right_hand: null,
-    left_hand: null,
-    accessory: null
-  });
+  const [selectedTraits, setSelectedTraits] = useState<Trait[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isTextModalOpen, setIsTextModalOpen] = useState(false);
+
   // Load traits on component mount
   useEffect(() => {
     const loadTraits = async () => {
@@ -35,94 +26,74 @@ const Builder: React.FC = () => {
         const { traits: loadedTraits, categories: loadedCategories } = await initializeTraits();
         setTraits(loadedTraits);
         setCategories(loadedCategories);
-        
-        // Set the first available category as selected
-        if (loadedCategories.length > 0) {
-          setSelectedCategory(loadedCategories[0].id as CategoryName);
-        }
       } catch (error) {
         console.error('Error loading traits:', error);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     loadTraits();
   }, []);
-  
-  const handleCategoryChange = (category: CategoryName) => {
-    setSelectedCategory(category);
-  };
-  
+
   const handleTraitSelect = (trait: Trait) => {
-    setSelectedTraits(prev => {
-      // If the trait is already selected, deselect it
-      if (prev[trait.category]?.id === trait.id) {
-        return {
-          ...prev,
-          [trait.category]: null
-        };
-      }
-      
-      // Otherwise, select the new trait
-      return {
-        ...prev,
-        [trait.category]: trait
-      };
-    });
+    setSelectedTraits(prev => [...prev, trait]);
   };
-  
+
+  const handleTraitRemove = (trait: Trait) => {
+    setSelectedTraits(prev =>
+      prev.filter(selected =>
+        !(selected.id === trait.id && selected.category === trait.category)
+      )
+    );
+  };
+
   const handleReset = () => {
-    setSelectedTraits({
-      aura: null,
-      head: null,
-      face: null,
-      mouth: null,
-      body: null,
-      right_hand: null,
-      left_hand: null,
-      accessory: null
-    });
+    setSelectedTraits([]);
   };
 
   const handleTextElementsChange = (elements: TextElement[]) => {
     setTextElements(elements);
   };
 
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleClearAll = () => {
+    setSelectedTraits([]);
+  };
+
   const handleRandomize = () => {
-    const newSelectedTraits: Record<string, Trait | null> = {};
-    
+    const newSelectedTraits: Trait[] = [];
+
     categories.forEach(category => {
       // Check if this category should be empty based on EMPTY_TRAIT_CHANCE
-      if (Math.random() < EMPTY_TRAIT_CHANCE) {
-        newSelectedTraits[category.id] = null;
-      } else {
+      if (Math.random() >= EMPTY_TRAIT_CHANCE) {
         // Get traits for this category
         const categoryTraits = traits.filter(trait => trait.category === category.id);
-        
+
         if (categoryTraits.length > 0) {
           // Select a random trait from this category
           const randomIndex = Math.floor(Math.random() * categoryTraits.length);
-          newSelectedTraits[category.id] = categoryTraits[randomIndex];
-        } else {
-          newSelectedTraits[category.id] = null;
+          newSelectedTraits.push(categoryTraits[randomIndex]);
         }
       }
     });
-    
+
     setSelectedTraits(newSelectedTraits);
   };
-  
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center max-w-[1400px] mx-auto px-2 sm:px-4 py-12">
-        <motion.div 
+      <div className="flex items-center justify-center w-full h-full py-12">
+        <motion.div
           className="text-center"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <motion.div 
+          <motion.div
             className="relative mx-auto mb-6"
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -136,7 +107,7 @@ const Builder: React.FC = () => {
               <Sparkles className="w-6 h-6 text-primary" />
             </motion.div>
           </motion.div>
-          <motion.h3 
+          <motion.h3
             className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 mb-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -144,7 +115,7 @@ const Builder: React.FC = () => {
           >
             Loading Traits...
           </motion.h3>
-          <motion.p 
+          <motion.p
             className="text-muted-foreground"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -156,31 +127,27 @@ const Builder: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
-    <div className="flex items-start justify-center max-w-[1400px] mx-auto px-1 sm:px-2 py-2">
-      <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-12 w-full">
-        {/* Character Preview Section */}
-        <motion.div 
-          className="w-full lg:w-[500px] lg:ml-auto lg:flex-shrink-0"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-        >
-          <div className="relative">
-            {/* Decorative background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-600/5 to-pink-600/10 rounded-2xl blur-xl -z-10 scale-105" />
-            
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
+    <div className="w-full h-full p-1 sm:p-2 lg:p-4">
+      {/* Mobile Layout - Stack vertically */}
+      <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 lg:gap-6 w-full h-full">
+        
+        {/* Character Preview - Full width on mobile, half on desktop */}
+        <div className="w-full lg:w-1/2 h-1/2 lg:h-full order-1 lg:order-1">
+          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl min-h-[350px] lg:min-h-[580px]">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
                   Your Character
                 </h2>
               </div>
-              
+            </div>
+
+            <div className="flex-1 min-h-[300px] lg:min-h-[520px]">
               <CharacterPreview
                 selectedTraits={selectedTraits}
                 textElements={textElements}
@@ -190,55 +157,56 @@ const Builder: React.FC = () => {
               />
             </div>
           </div>
-        </motion.div>
-        
-        {/* Controls Section */}
-        <motion.div 
-          className="w-full lg:w-[400px] lg:mr-auto lg:flex-shrink-0 pb-4 sm:pb-6 space-y-4"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-        >
-          {/* Trait Selector */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-primary/5 to-blue-600/10 rounded-2xl blur-xl -z-10 scale-105" />
-            
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Palette className="w-4 h-4 text-white" />
+        </div>
+
+        {/* Trait Selector - Full width on mobile, half on desktop */}
+        <div className="w-full lg:w-1/2 h-1/2 lg:h-full flex-1 order-2 lg:order-2 lg:min-h-0">
+          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl flex flex-col">
+            <div className="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Palette className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <h2 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
                   Choose Traits
                 </h2>
               </div>
               
+              {/* Text Tools Button - Right side */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsTextModalOpen(true)}
+                className="flex items-center gap-1 sm:gap-2 hover:bg-primary/10 hover:border-primary/50 text-xs sm:text-sm px-2 sm:px-3"
+              >
+                <Type className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Text Tools</span>
+                <span className="sm:hidden">Text</span>
+              </Button>
+            </div>
+
+            <div className="flex-grow overflow-hidden">
               <TraitSelector
                 categories={categories}
                 traits={traits}
-                selectedCategory={selectedCategory}
                 selectedTraits={selectedTraits}
-                onCategoryChange={handleCategoryChange}
+                searchQuery={searchQuery}
+                onSearchChange={handleSearchChange}
                 onTraitSelect={handleTraitSelect}
+                onTraitRemove={handleTraitRemove}
+                onClearAll={handleClearAll}
               />
             </div>
           </div>
-          
-          {/* Text Tools */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/5 to-indigo-600/10 rounded-2xl blur-xl -z-10 scale-105" />
-            
-            <div className="bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-xl">
-              <TextTools onTextElementsChange={handleTextElementsChange} />
-            </div>
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
+
+      {/* Text Tools Modal */}
+      <TextToolsModal
+        isOpen={isTextModalOpen}
+        onClose={() => setIsTextModalOpen(false)}
+        onTextElementsChange={handleTextElementsChange}
+      />
     </div>
   );
 };

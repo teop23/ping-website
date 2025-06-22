@@ -24,7 +24,7 @@ const Community: React.FC = () => {
   const sortedPingMemes = sortItems(pingMemes, sortBy);
 
   return (
-    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0">
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <motion.div

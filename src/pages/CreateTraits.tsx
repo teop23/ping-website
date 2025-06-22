@@ -334,7 +334,7 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex flex-col lg:flex-row">
+    <div className="h-[calc(100vh-56px)] flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex flex-col lg:flex-row">
       {/* Left Sidebar - Tools */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}

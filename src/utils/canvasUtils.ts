@@ -25,40 +25,28 @@ export const calculateCanvasSize = (container?: HTMLElement | null): number => {
     // Fallback based on window size - ensure square canvas
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const availableSize = Math.min(width, height);
+    const availableSize = Math.min(width * 0.8, height * 0.6);
     
     if (width < 768) {
       // On mobile, use most of the available space but ensure it's square
-      return Math.min(availableSize * 0.8, 400);
+      return Math.max(250, Math.min(availableSize * 0.7, 320));
     } else if (width < 1024) {
-      return Math.min(availableSize * 0.7, 600);
+      return Math.max(300, Math.min(availableSize * 0.6, 400));
     } else {
-      return Math.min(availableSize * 0.6, 800);
+      return Math.max(350, Math.min(availableSize * 0.5, 450));
     }
   }
   
-  // Calculate based on available container space
-  const containerWidth = container.clientWidth - 64; // Account for padding
-  const containerHeight = container.clientHeight - 64;
+  // Calculate based on available container space with proper padding
+  const containerWidth = container.clientWidth - 48; // Account for card padding + margins
+  const containerHeight = container.clientHeight - 80; // Account for header + padding + buttons
   
-  // For mobile layout (single column), we need to account for the fact that
-  // the canvas container shares vertical space with other elements
-  const isMobile = window.innerWidth < 1024; // lg breakpoint
+  // Use the smaller dimension to ensure square canvas fits
+  const availableSize = Math.min(containerWidth, containerHeight);
   
-  let availableSize;
-  if (isMobile) {
-    // On mobile, prioritize fitting within the viewport width
-    // and limit height to ensure it doesn't overflow
-    const maxHeight = Math.min(containerHeight, window.innerHeight * 0.4);
-    availableSize = Math.min(containerWidth, maxHeight);
-  } else {
-    // On desktop, use the smaller of width/height as before
-    availableSize = Math.min(containerWidth, containerHeight);
-  }
-  
-  // Set reasonable min/max bounds
-  const minSize = isMobile ? 300 : 500;
-  const maxSize = isMobile ? 500 : 1200;
+  // Set reasonable min/max bounds based on screen size
+  const minSize = window.innerWidth < 768 ? 250 : 320;
+  const maxSize = window.innerWidth < 768 ? 320 : 450;
   
   return Math.max(minSize, Math.min(maxSize, availableSize));
 };

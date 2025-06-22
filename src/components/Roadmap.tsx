@@ -1,11 +1,18 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, Circle, Zap, Target, Rocket } from 'lucide-react';
+import { CheckCircle, Circle, Clock, Rocket, Target, Zap } from 'lucide-react';
+import React from 'react';
 import { ROADMAP_STEPS, type RoadmapStatus } from '../utils/constants';
 import { Card, CardContent } from './ui/card';
 
+export type RoadmapStep = {
+  id: string;
+  title: string;
+  description: string;
+  status: RoadmapStatus | "future"; // Extended to include future phases
+};
+
 // Additional greyed out phases for future anticipation
-const FUTURE_PHASES = [
+const FUTURE_PHASES: RoadmapStep[] = [
   {
     id: "phase-5",
     title: "",
@@ -13,7 +20,7 @@ const FUTURE_PHASES = [
     status: "future" as const
   },
   {
-    id: "phase-6", 
+    id: "phase-6",
     title: "",
     description: "",
     status: "future" as const
@@ -130,7 +137,7 @@ const Roadmap: React.FC = () => {
         {/* Roadmap Timeline */}
         <div className="relative">
           {/* Timeline Line */}
-          <div className="absolute left-4 sm:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-500 via-blue-500 via-gray-300 to-gray-200"></div>
+          <div className="absolute left-4 sm:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-500 via-blue-500 to-gray-200"></div>
 
           {/* Roadmap Steps */}
           <div className="space-y-8 sm:space-y-12">
@@ -154,7 +161,7 @@ const Roadmap: React.FC = () => {
                       {getStatusIcon(step.status)}
                     </div>
                   </motion.div>
-                  
+
                   {/* Connector to next step */}
                   {index < allSteps.length - 1 && (
                     <div className={`absolute top-8 sm:top-12 left-1/2 transform -translate-x-1/2 w-0.5 h-8 sm:h-12 ${getConnectorColor(step.status)} ${step.status === 'future' ? getProgressiveOpacity(index, allSteps) : ''}`}></div>
@@ -246,18 +253,18 @@ const Roadmap: React.FC = () => {
 };
 
 // Helper function to calculate progressive opacity for future phases
-const getProgressiveOpacity = (index: number, allSteps: any[]) => {
+const getProgressiveOpacity = (index: number, allSteps: RoadmapStep[]) => {
   // Find the index of the first future phase
   const firstFutureIndex = allSteps.findIndex(step => step.status === 'future');
-  
+
   if (index < firstFutureIndex) return '';
-  
+
   // Calculate how many future phases down this is (0-based)
   const futurePhasePosition = index - firstFutureIndex;
-  
+
   // Progressive opacity: 30%, 20%, 10%
   const opacities = ['opacity-30', 'opacity-20', 'opacity-10'];
-  
+
   return opacities[futurePhasePosition] || 'opacity-5';
 };
 

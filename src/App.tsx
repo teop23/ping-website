@@ -8,18 +8,16 @@ import Home from './pages/Home';
 
 function App() {
   return (
-    <div className="relative h-screen text-foreground flex flex-col ">
+    <>
       <Background />
-      <Navbar className="h-16" />
-      <main className="flex flex-col flex-grow">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/create-traits" element={<CreateTraits />} />
-          <Route path="/watermark" element={<WatermarkTool />} />
-        </Routes>
-      </main>
-    </div>
+      <Navbar className="flex-shrink-0" />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/create-traits" element={<CreateTraits />} />
+        <Route path="/watermark" element={<WatermarkTool />} />
+      </Routes>
+    </>
   );
 }
 
