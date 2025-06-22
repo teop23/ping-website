@@ -67,7 +67,6 @@ export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
         });
       }
     }
-    console.log('📦 Loaded traits from dynamic import:', traits.length);
     return traits;
   } catch (error) {
     console.error('Error in dynamic trait loading:', error);
