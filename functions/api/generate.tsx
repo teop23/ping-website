@@ -7,7 +7,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const queryParams = Object.fromEntries(url.searchParams.entries());
     //one param might be type, filter out any non-trait params
     const traitParams = Object.fromEntries(
-      Object.entries(queryParams).filter(([key]) => key !== 'type')
+      Object.entries(queryParams).filter(([key]) => key !== 'type' && key !== 'ts')
     );
     const isBanner = queryParams.type === 'banner';
     const baseURL = "https://pingonsol.com";
