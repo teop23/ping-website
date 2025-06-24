@@ -56,11 +56,11 @@ const SpacesToast: React.FC = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 100, scale: 0.95 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="fixed bottom-6 right-6 z-50 max-w-md w-80"
+          className="fixed bottom-6 right-6 z-50 w-96"
         >
-          <div className="bg-black text-white rounded-2xl shadow-2xl border border-gray-800 overflow-hidden backdrop-blur-sm">
+          <div className="bg-black text-white rounded-xl shadow-2xl border border-gray-800 overflow-hidden backdrop-blur-sm w-full">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 pt-3 pb-1">
+            <div className="flex items-center justify-between px-4 py-2">
               <div className="flex items-center gap-2">
                 {/* Pulsating REC indicator */}
                 <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ const SpacesToast: React.FC = () => {
                 <h3 className="font-bold text-white text-sm mb-1">
                   Twitter Spaces is live
                 </h3>
-                <p className="text-gray-300 text-xs line-clamp-1">
+                <p className="text-gray-300 text-xs">
                   {spacesData.name}
                 </p>
               </div>
@@ -102,7 +102,7 @@ const SpacesToast: React.FC = () => {
               {/* Action Button */}
               <button
                 onClick={handleOpenSpaces}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 px-4 font-semibold text-sm transition-colors duration-200 flex items-center justify-center gap-2"
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2 px-4 font-semibold text-sm transition-colors duration-200 flex items-center justify-center gap-2"
               >
                 Join Spaces
                 <ExternalLink size={14} />
