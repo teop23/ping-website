@@ -80,7 +80,7 @@ const CreateTraits: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvasSize = calculateCanvasSize(canvasRef.current?.parentElement);
+    const canvasSize = 1000;
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: canvasSize,
