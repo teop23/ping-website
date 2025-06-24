@@ -11,7 +11,15 @@ const SpacesToast: React.FC = () => {
   // Poll the API every 30 seconds
   useEffect(() => {
     const checkSpacesStatus = async () => {
-      const data = await fetchSpacesStatus();
+      console.log('here');
+      //const data = await fetchSpacesStatus();
+      setIsVisible(true);
+      setSpacesData({
+        live: true,
+        name: 'Example Spaces',
+        link: 'https://twitter.com/example_spaces',
+      });
+      return;
       if (data) {
         setSpacesData(data);
         // Show toast if spaces are live and not manually dismissed
@@ -56,22 +64,22 @@ const SpacesToast: React.FC = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 100, scale: 0.95 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="fixed bottom-6 right-6 z-50 min-w-[420px] max-w-[420px]"
-          style={{ width: '420px' }}
+          className="fixed bottom-6 right-6 z-50"
+          style={{ width: '280px' }}
         >
-          <div className="bg-black text-white rounded-xl shadow-2xl border border-gray-800 overflow-hidden backdrop-blur-sm">
+          <div className="bg-black text-white  p-2 rounded-xl shadow-2xl border border-gray-800 overflow-hidden backdrop-blur-sm">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-2">
+            <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
                 {/* Pulsating REC indicator */}
                 <div className="flex items-center gap-2">
                   <motion.div
-                    animate={{ 
+                    animate={{
                       scale: [1, 1.2, 1],
                       opacity: [0.8, 1, 0.8]
                     }}
-                    transition={{ 
-                      duration: 1.5, 
+                    transition={{
+                      duration: 1.5,
                       repeat: Infinity,
                       ease: "easeInOut"
                     }}
@@ -80,7 +88,7 @@ const SpacesToast: React.FC = () => {
                   <span className="text-red-500 font-semibold text-sm">LIVE</span>
                 </div>
               </div>
-              
+
               <button
                 onClick={handleDismiss}
                 className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-gray-800"
@@ -90,7 +98,7 @@ const SpacesToast: React.FC = () => {
             </div>
 
             {/* Content */}
-            <div className="px-5 pb-3">
+            <div className="px-1">
               <div className="mb-2">
                 <h3 className="font-bold text-white text-sm mb-1">
                   Twitter Spaces is live
@@ -105,13 +113,13 @@ const SpacesToast: React.FC = () => {
                 onClick={handleOpenSpaces}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2.5 px-4 font-semibold text-sm transition-colors duration-200 flex items-center justify-center gap-2"
               >
-                Join Spaces
+                Join Space
                 <ExternalLink size={14} />
               </button>
             </div>
 
             {/* Bottom accent line */}
-            <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+            {/*<div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />*/}
           </div>
         </motion.div>
       )}
