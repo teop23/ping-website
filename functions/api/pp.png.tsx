@@ -60,8 +60,11 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                 />
             </div>,
             {
-                width: 512,
-                height: 512,
+                width: baseContainerWidth,
+                height: baseContainerHeight,
+                headers: {
+                    'Content-Type': 'image/png',
+                }
             }
         );
     } catch (err) {
