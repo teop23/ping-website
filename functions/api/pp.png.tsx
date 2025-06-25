@@ -5,7 +5,17 @@ import type { APIRoute } from 'astro';
 export const onRequestPost: APIRoute = async ({ request }) => {
   try {
     const arrayBuffer = await request.arrayBuffer();
-    const userImageUrl = `data:image/jpeg;base64,${Buffer.from(arrayBuffer).toString('base64')}`;
+    // Convert ArrayBuffer to base64 (browser/edge compatible)
+    function arrayBufferToBase64(buffer: ArrayBuffer) {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+    const userImageUrl = `data:image/jpeg;base64,${arrayBufferToBase64(arrayBuffer)}`;
 
     // These should point to your base image endpoints
     const basePingImage = "https://pingonsol.com/ping.png";
