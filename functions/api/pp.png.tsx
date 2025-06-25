@@ -7,6 +7,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     try {
         const baseImageScaleMultiplier = 1.4;
         const baseImageSize = 512 * baseImageScaleMultiplier;
+        const baseContainerHeight = 512;
+        const baseContainerWidth = 512;
         const url = new URL(request.url);
         const userPhotoUrl = url.searchParams.get("photo");
 
@@ -15,33 +17,35 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         }
         const basePingImage = "https://pingonsol.com/ping.png";
         const blankShirtTrait = "https://pingonsol.com/traits/trait-blank-tee_body.png";
+        const baseImageTopOffset = (-1 * (baseImageSize - 512) / 2);
+        const baseImageLeftOffset = (-1 * (baseImageSize - 512) / 2);
+        const traitImageTopOffset = 0;
+        const traitImageLeftOffset = 0;
 
         return new ImageResponse(
             <div
                 style={{
-                    width: 512,
-                    height: 512,
-                    display: "flex",
-                    position: "relative",
+                    width: baseContainerWidth,
+                    height: baseContainerHeight,
+                    display: 'flex',
+                    position: 'relative',
+                    backgroundColor: "#fff",
                 }}
             >
-                {/* Base Ping character */}
                 <img
+                    key="base-character"
                     src={basePingImage}
                     width={baseImageSize}
                     height={baseImageSize}
-                    style={{ position: "absolute", top: 0, left: 0 }}
+                    style={{ position: 'absolute', top: baseImageTopOffset, left: baseImageLeftOffset }}
                 />
-
-                {/* Shirt with blank space */}
                 <img
+                    key={'pfp'}
                     src={blankShirtTrait}
-                    width={512}
-                    height={512}
-                    style={{ position: "absolute", top: 0, left: 0 }}
+                    width="512"
+                    height="512"
+                    style={{ position: 'absolute', top: traitImageTopOffset, left: traitImageLeftOffset }}
                 />
-
-                {/* Circular cropped user photo */}
                 <img
                     src={userPhotoUrl}
                     width={128}
