@@ -64,6 +64,7 @@ export const onRequestPost: APIRoute = async ({ request }) => {
       }
     );
   } catch (err) {
+    console.error('Error generating image:', err);
     return new Response(err, { status: 500 });
   }
 };
