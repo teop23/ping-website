@@ -5,6 +5,8 @@ import * as React from 'react';
 
 export const onRequestGet: APIRoute = async ({ request }) => {
     try {
+        const baseImageScaleMultiplier = 1.4;
+        const baseImageSize = 512 * baseImageScaleMultiplier;
         const url = new URL(request.url);
         const userPhotoUrl = url.searchParams.get("photo");
 
@@ -26,8 +28,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                 {/* Base Ping character */}
                 <img
                     src={basePingImage}
-                    width={512}
-                    height={512}
+                    width={baseImageSize}
+                    height={baseImageSize}
                     style={{ position: "absolute", top: 0, left: 0 }}
                 />
 
@@ -46,7 +48,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                     height={128}
                     style={{
                         position: "absolute",
-                        top: 270,  // 🔧 Adjust Y position
+                        top: 180,  // 🔧 Adjust Y position
                         left: 190, // 🔧 Adjust X position
                         borderRadius: "50%",
                         objectFit: "cover",
