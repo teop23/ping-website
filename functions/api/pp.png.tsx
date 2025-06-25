@@ -21,6 +21,9 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const baseImageLeftOffset = (-1 * (baseImageSize - 512) / 2);
         const traitImageTopOffset = 0;
         const traitImageLeftOffset = 0;
+        const pfpImageSize = 120;
+        const pfpImageLeftOffset = (baseContainerWidth / 2) - (pfpImageSize / 2);
+        const pfpImageTopOffset = 242;
 
         return new ImageResponse(
             <div
@@ -48,12 +51,12 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                 />
                 <img
                     src={userPhotoUrl}
-                    width={128}
-                    height={128}
+                    width={pfpImageSize}
+                    height={pfpImageSize}
                     style={{
                         position: "absolute",
-                        top: 180,  // 🔧 Adjust Y position
-                        left: 190, // 🔧 Adjust X position
+                        top: pfpImageTopOffset,
+                        left: pfpImageLeftOffset,
                         borderRadius: "50%",
                         objectFit: "cover",
                     }}
