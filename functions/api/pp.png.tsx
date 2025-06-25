@@ -64,6 +64,6 @@ export const onRequestPost: APIRoute = async ({ request }) => {
       }
     );
   } catch (err) {
-    return new Response(`Internal Server Error: ${err}`, { status: 500 });
+    return new Response(err, { status: 500 });
   }
 };
