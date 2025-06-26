@@ -22,8 +22,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
         const traitImageLeftOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0;
         const pfpImageSize = 120;
-        const pfpImageLeftOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0 + (baseContainerWidth / 2) - (pfpImageSize / 2);
-        const pfpImageTopOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0 + 242;
+        const pfpImageLeftOffset = (baseContainerWidth / 2) - (pfpImageSize / 2);
+        const pfpImageTopOffset = (isBanner ? (baseContainerHeight / 2 - 256) : 0) + 242;
 
         return new ImageResponse(
             <div
