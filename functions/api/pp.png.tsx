@@ -1,4 +1,3 @@
-// File: functions/api/generate/pp.png.tsx
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import * as React from 'react';
@@ -11,19 +10,20 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const baseContainerWidth = 512;
         const url = new URL(request.url);
         const userPhotoUrl = url.searchParams.get("photo");
-
+        const isBanner = url.searchParams.get("type") === "banner";
+        console.log(isBanner, "isBanner");
         if (!userPhotoUrl) {
             return new Response("Missing photo URL parameter", { status: 400 });
         }
         const basePingImage = "https://pingonsol.com/ping.png";
         const blankShirtTrait = "https://pingonsol.com/traits/trait-blank-tee_body.png";
-        const baseImageTopOffset = (-1 * (baseImageSize - 512) / 2);
-        const baseImageLeftOffset = (-1 * (baseImageSize - 512) / 2);
-        const traitImageTopOffset = 0;
-        const traitImageLeftOffset = 0;
+        const baseImageTopOffset = isBanner ? (baseContainerHeight / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
+        const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
+        const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
+        const traitImageLeftOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0;
         const pfpImageSize = 120;
-        const pfpImageLeftOffset = (baseContainerWidth / 2) - (pfpImageSize / 2);
-        const pfpImageTopOffset = 242;
+        const pfpImageLeftOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0 + (baseContainerWidth / 2) - (pfpImageSize / 2);
+        const pfpImageTopOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0 + 242;
 
         return new ImageResponse(
             <div
