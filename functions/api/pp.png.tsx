@@ -6,8 +6,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     try {
         const baseImageScaleMultiplier = 1.4;
         const baseImageSize = 512 * baseImageScaleMultiplier;
-        const baseContainerHeight = 512;
-        const baseContainerWidth = 512;
         const url = new URL(request.url);
         const userPhotoUrl = url.searchParams.get("photo");
         const isBanner = url.searchParams.get("type") === "banner";
@@ -17,6 +15,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         }
         const basePingImage = "https://pingonsol.com/ping.png";
         const blankShirtTrait = "https://pingonsol.com/traits/trait-blank-tee_body.png";
+        const baseContainerWidth = isBanner ? 1200 : 512;
+        const baseContainerHeight = isBanner ? 630 : 512;
         const baseImageTopOffset = isBanner ? (baseContainerHeight / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
         const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
         const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
