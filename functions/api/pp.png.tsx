@@ -17,6 +17,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const blankShirtTrait = "https://pingonsol.com/traits/trait-blank-tee_body.png";
         const baseContainerWidth = isBanner ? 1200 : 512;
         const baseContainerHeight = isBanner ? 630 : 512;
+        console.log("baseContainerWidth", baseContainerWidth, "baseContainerHeight", baseContainerHeight);
         const baseImageTopOffset = isBanner ? (baseContainerHeight / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
         const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
         const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
@@ -24,7 +25,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const pfpImageSize = 120;
         const pfpImageLeftOffset = (baseContainerWidth / 2) - (pfpImageSize / 2);
         const pfpImageTopOffset = (isBanner ? (baseContainerHeight / 2 - 256) : 0) + 242;
-
+        console.log("pfpImageTopOffset", pfpImageTopOffset, "pfpImageLeftOffset", pfpImageLeftOffset);
         return new ImageResponse(
             <div
                 style={{
