@@ -412,7 +412,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   };
 
   const generateApiUrl = () => {
-    const baseUrl = 'https://pingonsol.com/og';
+    const baseUrl = 'https://pingonsol.com/api/og';
     const params = new URLSearchParams();
 
     // Add selected traits as query parameters

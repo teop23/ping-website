@@ -1,6 +1,14 @@
 export async function onRequest(context) {
     const url = new URL(context.request.url);
-    const imageUrl = `https://pingonsol.com/api/from_x_handle.png${url.search}&type=banner`;
+    const handle = context.params.handle || '';
+    if(!handle) {
+        return new Response('Missing X(Twitter) handle', { status: 400 });
+    }
+    const getImageUrl = (handle) => {
+        return `https://pingonsol.com/api/image/shirt_by_x.png?handle=${handle}&type=banner`;
+    }
+
+    const imageUrl = getImageUrl(handle);
 
     const userAgent = context.request.headers.get("user-agent") || "";
 

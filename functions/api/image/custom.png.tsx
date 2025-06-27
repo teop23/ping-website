@@ -28,6 +28,24 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
     const validCategories = Object.keys(traitsIndex);
     const traitSelectionsByCategory: { category: string; trait: string }[] = [];
+    const getRandomBGColor = () => {
+      const colors = {
+        electricBlue: "#00FFFF",
+        neonPurple: "#9D00FF",
+        hotPink: "#FF007F",
+        acidGreen: "#B0FF00",
+        lavaOrange: "#FF4500",
+        cyberYellow: "#FFD300",
+        magentaShock: "#FF00FF",
+        aquaMint: "#00FFCC",
+        ultraviolet: "#5F00BA",
+        coralFlash: "#FF5E5B"
+      };
+
+      const colorKeys = Object.keys(colors);
+      const randomIndex = Math.floor(Math.random() * colorKeys.length);
+      return colors[colorKeys[randomIndex]];
+    }
 
     // ✅ Validate all query parameter keys (categories)
     for (const [category, trait] of Object.entries(traitParams)) {
@@ -61,7 +79,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           height: baseContainerHeight,
           display: 'flex',
           position: 'relative',
-          backgroundColor: "#fff",
+          backgroundColor: getRandomBGColor(),
         }}
       >
         <img
