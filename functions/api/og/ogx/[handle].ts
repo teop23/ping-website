@@ -12,10 +12,10 @@ export async function onRequest(context) {
 
     const userAgent = context.request.headers.get("user-agent") || "";
 
-    // const isBot = /Twitterbot|Slackbot|Discordbot|facebookexternalhit|TelegramBot/i.test(userAgent);
-    // if (!isBot) {
-    //     return Response.redirect("https://pingonsol.com/", 302);
-    // }
+    const isBot = /Twitterbot|Slackbot|Discordbot|facebookexternalhit|TelegramBot/i.test(userAgent);
+    if (!isBot) {
+        return Response.redirect("https://pingonsol.com/", 302);
+    }
     return new Response(
         `
       <!DOCTYPE html>

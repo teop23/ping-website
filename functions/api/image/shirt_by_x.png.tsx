@@ -24,9 +24,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     }
 
     try {
-        // Example using unavatar.io (no API key required)
-        const avatarURL = `https://unavatar.io/twitter/${handle}`;
-
         const userInfoEndpoint = `https://twittermedia.b-cdn.net/x-id/?id=${handle}`;
 
         const response = await fetch(userInfoEndpoint, {
