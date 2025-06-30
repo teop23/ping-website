@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Palette, Menu, X, ChevronDown, Wrench } from 'lucide-react';
+import { Palette, Menu, X, ChevronDown, Wrench, Code } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
