@@ -244,6 +244,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   href="/community" 
                   isActive={location.pathname === '/community'}
                   onClick={closeMobileMenu}
+                />
                 {/* Mobile Tools Section */}
                 <div className="pt-2 mt-2 border-t border-border/50">
                   <div className="text-xs font-medium text-muted-foreground mb-2 px-3">Tools</div>
