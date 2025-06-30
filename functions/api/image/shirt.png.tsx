@@ -84,9 +84,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             {
                 width: baseContainerWidth,
                 height: baseContainerHeight,
-                headers: {
-                    'Content-Type': 'image/png',
-                }
             }
         );
     } catch (err) {
