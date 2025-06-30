@@ -16,8 +16,8 @@ const SpacesToast: React.FC = () => {
       setIsVisible(true);
       setSpacesData({
         live: true,
-        name: 'Example Spaces',
-        link: 'https://twitter.com/example_spaces',
+        name: '$PING Daily Space #13',
+        link: 'https://x.com/i/spaces/1ypJdZwjVlYKW',
       });
       return;
       if (data) {
