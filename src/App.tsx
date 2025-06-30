@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import CreateTraits from './pages/CreateTraits';
 import Community from './pages/Community';
 import WatermarkTool from './pages/WatermarkTool';
+import Docs from './pages/Docs';
 import Home from './pages/Home';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/create-traits" element={<CreateTraits />} />
         <Route path="/watermark" element={<WatermarkTool />} />
+        <Route path="/docs" element={<Docs />} />
       </Routes>
     </>
   );
