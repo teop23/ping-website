@@ -86,7 +86,6 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
             <NavItem label="Home" href="/" isActive={location.pathname === '/'} />
             <NavItem label="Roadmap" href="/#roadmap" />
             <NavItem label="Community" href="/community" isActive={location.pathname === '/community'} />
-            <NavItem label="API Docs" href="/docs" isActive={location.pathname === '/docs'} />
             
             {/* Tools Dropdown */}
             <div className="relative">
@@ -135,6 +134,13 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                         href="/watermark"
                         icon={<img src={pingIcon} alt="Watermark" className="w-4 h-4" />}
                         isActive={location.pathname === '/watermark'}
+                        onClick={closeToolsDropdown}
+                      />
+                      <DropdownItem
+                        label="API Docs"
+                        href="/docs"
+                        icon={<Code size={16} />}
+                        isActive={location.pathname === '/docs'}
                         onClick={closeToolsDropdown}
                       />
                     </div>
@@ -238,14 +244,6 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                   href="/community" 
                   isActive={location.pathname === '/community'}
                   onClick={closeMobileMenu}
-                />
-                <MobileNavItem 
-                  label="API Docs" 
-                  href="/docs" 
-                  isActive={location.pathname === '/docs'}
-                  onClick={closeMobileMenu}
-                />
-                
                 {/* Mobile Tools Section */}
                 <div className="pt-2 mt-2 border-t border-border/50">
                   <div className="text-xs font-medium text-muted-foreground mb-2 px-3">Tools</div>
@@ -261,6 +259,13 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                     href="/watermark" 
                     isActive={location.pathname === '/watermark'}
                     icon={<img src={pingIcon} alt="Watermark" className="w-4 h-4" />}
+                    onClick={closeMobileMenu}
+                  />
+                  <MobileNavItem 
+                    label="API Docs" 
+                    href="/docs" 
+                    isActive={location.pathname === '/docs'}
+                    icon={<Code size={16} />}
                     onClick={closeMobileMenu}
                   />
                 </div>
