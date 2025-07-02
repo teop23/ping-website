@@ -13,9 +13,9 @@ const SpacesToast: React.FC = () => {
     const checkSpacesStatus = async () => {
       console.log('here');
       //const data = await fetchSpacesStatus();
-      setIsVisible(true);
+      setIsVisible(false);
       setSpacesData({
-        live: true,
+        live: false,
         name: '$PING Daily Space #14',
         link: 'https://x.com/i/spaces/1MnGnwdaorkJO',
       });
