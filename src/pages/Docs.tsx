@@ -108,6 +108,25 @@ const Docs: React.FC = () => {
               onCopy={() => copyToClipboard('https://pingonsol.com/api/image/custom.png?head=backwards-cap&face=pit-vipers')}
             />
           </motion.div>
+          {/* Generate Random Character */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <EndpointCard
+              icon={<Image className="w-5 h-5" />}
+              title="Generate Random Character"
+              endpoint="GET /api/image/random.png"
+              description="Generate a random PING character image"
+              parameters={[
+                { name: "t", type: "string", description: "Timestamp - used to invalidate Cloudflare cache(if there is any)" },
+              ]}
+              example="https://pingonsol.com/api/image/random.png?t=1700000000"
+              responseExample="Returns a PNG image of the PING character with random traits"
+              onCopy={() => copyToClipboard('https://pingonsol.com/api/image/random.png?t=1700000000')}
+            />
+          </motion.div>
 
           {/* Generate Social Media Preview */}
           <motion.div
