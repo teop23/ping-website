@@ -82,6 +82,14 @@
     --duration-normal: 250ms;
     --duration-slow: 400ms;
 
+    /* ---- Selection and focus ----
+       These are their own tokens on purpose. They used to reference
+       --bg-ground and --brand directly, which is fine on a dark ground and
+       silently unreadable on a light one. */
+    --selection-bg: var(--brand);
+    --selection-ink: var(--bg-ground);
+    --focus-ring: var(--brand);
+
     /* ---- Semantic z-index. No 9999 anywhere. ---- */
     --z-dropdown: 1000;
     --z-sticky: 1100;
@@ -124,25 +132,21 @@
   }
 
   ::selection {
-    background: oklch(var(--brand));
-    color: oklch(var(--bg-ground));
+    background: oklch(var(--selection-bg));
+    color: oklch(var(--selection-ink));
   }
 
   /* On a lime surface the rule above paints lime on lime and the highlight
      vanishes, which reads as "this text is not selectable". Invert it there. */
-  .surface-brand ::selection {
-    background: oklch(var(--bg-ground));
-    color: oklch(var(--brand));
-  }
-
+  .surface-brand ::selection,
   .surface-brand::selection {
-    background: oklch(var(--bg-ground));
-    color: oklch(var(--brand));
+    background: oklch(var(--selection-ink));
+    color: oklch(var(--selection-bg));
   }
 
   /* Never remove focus without replacing it. */
   :focus-visible {
-    outline: 2px solid oklch(var(--brand));
+    outline: 2px solid oklch(var(--focus-ring));
     outline-offset: 2px;
     border-radius: 2px;
   }
