@@ -1,17 +1,24 @@
 // Shared helpers for the Pages Functions. Files prefixed with _ are not routed.
 
+/**
+ * Backgrounds for generated character images.
+ *
+ * These were ten neon colours left over from the Solana site, none of which
+ * belonged to the palette. A shared card is usually the first thing anyone
+ * sees of the project, so it now draws from the same tints the site does.
+ */
 const BG_COLORS = [
-  '#00FFFF', // electricBlue
-  '#9D00FF', // neonPurple
-  '#FF007F', // hotPink
-  '#B0FF00', // acidGreen
-  '#FF4500', // lavaOrange
-  '#FFD300', // cyberYellow
-  '#FF00FF', // magentaShock
-  '#00FFCC', // aquaMint
-  '#5F00BA', // ultraviolet
-  '#FF5E5B', // coralFlash
+  '#1c180d',
+  '#CCFF00',
 ];
+
+/** Palette for the site's own share card, mirroring the theme it ships with. */
+export const OG_THEME = {
+  background: '#1c180d',
+  ink: '#FFFFFF',
+  accent: '#CCFF00',
+  accentInk: '#1c180d',
+};
 
 // FNV-1a. Small, fast, and gives the same number for the same string every time.
 export const hashString = (input: string): number => {
