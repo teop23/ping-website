@@ -1,52 +1,37 @@
-export async function onRequest(context) {
-    const url = new URL(context.request.url);
-    const handle = context.params.handle || '';
-    if(!handle) {
-        return new Response('Missing X(Twitter) handle', { status: 400 });
-    }
-    const getImageUrl = (handle) => {
-        return `https://pingonsol.com/api/image/shirt_by_x.png?handle=${handle}&type=banner`;
-    }
+import { BOT_USER_AGENT, renderOgPage } from '../../../_lib';
 
-    const imageUrl = getImageUrl(handle);
+interface OgContext {
+  request: Request;
+  params: Record<string, string | string[]>;
+}
 
-    const userAgent = context.request.headers.get("user-agent") || "";
+export async function onRequest(context: OgContext) {
+  const url = new URL(context.request.url);
+  const SITE_URL = url.origin;
+  const raw = context.params.handle;
+  const handle = (Array.isArray(raw) ? raw[0] : raw) || '';
 
-    const isBot = /Twitterbot|Slackbot|Discordbot|facebookexternalhit|TelegramBot/i.test(userAgent);
-    if (!isBot) {
-        return Response.redirect("https://pingonsol.com/", 302);
-    }
-    return new Response(
-        `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Share Preview</title>
+  if (!handle) {
+    return new Response('Missing X (Twitter) handle', { status: 400 });
+  }
 
-        <!-- Twitter Card + Open Graph -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Check out my custom image!" />
-        <meta name="twitter:description" content="Dynamic image generated just for you." />
-        <meta name="twitter:image" content="${imageUrl}" />
+  // Handles are [A-Za-z0-9_], max 15. Rejecting anything else keeps junk out of
+  // the upstream lookup and out of the markup.
+  if (!/^[A-Za-z0-9_]{1,15}$/.test(handle)) {
+    return new Response('Invalid X (Twitter) handle', { status: 400 });
+  }
 
-        <meta property="og:title" content="Check out my custom image!" />
-        <meta property="og:description" content="Dynamic image generated just for you." />
-        <meta property="og:image" content="${imageUrl}" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="${url.href}" />
-      </head>
-      <body>
-        <img src="${imageUrl}" alt="Generated Image" style="max-width: 100%;" />
-      </body>
-      </html>
-    `,
-        {
-            headers: {
-                "Content-Type": "text/html;charset=UTF-8",
-                "Cache-Control": "public, max-age=600",
-            },
-        }
-    );
+  const imageUrl = `${SITE_URL}/api/image/shirt_by_x.png?handle=${encodeURIComponent(handle)}&type=banner`;
+
+  const userAgent = context.request.headers.get('user-agent') || '';
+  if (!BOT_USER_AGENT.test(userAgent)) {
+    return Response.redirect(SITE_URL, 302);
+  }
+
+  return renderOgPage({
+    imageUrl,
+    pageUrl: url.href,
+    title: `@${handle} is wearing the PING tee`,
+    description: 'Put your own profile picture on a PING at pingonsol.com',
+  });
 }

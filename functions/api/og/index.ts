@@ -1,44 +1,31 @@
-export async function onRequest(context) {
-    const url = new URL(context.request.url);
-    const imageUrl = `https://pingonsol.com/api/image/custom.png${url.search}&type=banner`; // dynamic image
+import { BOT_USER_AGENT, renderOgPage, titleFromTraits } from '../../_lib';
 
-    const userAgent = context.request.headers.get("user-agent") || "";
+interface OgContext {
+  request: Request;
+  params: Record<string, string | string[]>;
+}
 
-    const isBot = /Twitterbot|Slackbot|Discordbot|facebookexternalhit|TelegramBot/i.test(userAgent);
-    if (!isBot) {
-        return Response.redirect("https://pingonsol.com/", 302);
-    }
-    return new Response(
-        `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Share Preview</title>
+export async function onRequest(context: OgContext) {
+  const url = new URL(context.request.url);
+  const SITE_URL = url.origin;
 
-        <!-- Twitter Card + Open Graph -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Check out my custom image!" />
-        <meta name="twitter:description" content="Dynamic image generated just for you." />
-        <meta name="twitter:image" content="${imageUrl}" />
+  // url.search is '' when no traits are picked, which used to produce
+  // 'custom.png&type=banner' with no '?' at all and a broken card.
+  const imageParams = new URLSearchParams(url.searchParams);
+  imageParams.set('type', 'banner');
+  const imageUrl = `${SITE_URL}/api/image/custom.png?${imageParams.toString()}`;
 
-        <meta property="og:title" content="Check out my custom image!" />
-        <meta property="og:description" content="Dynamic image generated just for you." />
-        <meta property="og:image" content="${imageUrl}" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="${url.href}" />
-      </head>
-      <body>
-        <img src="${imageUrl}" alt="Generated Image" style="max-width: 100%;" />
-      </body>
-      </html>
-    `,
-        {
-            headers: {
-                "Content-Type": "text/html;charset=UTF-8",
-                "Cache-Control": "public, max-age=600",
-            },
-        }
-    );
+  const userAgent = context.request.headers.get('user-agent') || '';
+  if (!BOT_USER_AGENT.test(userAgent)) {
+    // Keep the trait params so a human following the link lands on the same
+    // character the card showed them, instead of an empty builder.
+    return Response.redirect(`${SITE_URL}/${url.search}`, 302);
+  }
+
+  return renderOgPage({
+    imageUrl,
+    pageUrl: url.href,
+    title: titleFromTraits(url.searchParams),
+    description: 'Build your own PING at pingonsol.com',
+  });
 }

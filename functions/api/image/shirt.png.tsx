@@ -1,5 +1,6 @@
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
+import { pickBgColor } from '../../_lib';
 import * as React from 'react';
 
 export const onRequestGet: APIRoute = async ({ request }) => {
@@ -13,8 +14,9 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         if (!userPhotoUrl) {
             return new Response("Missing photo URL parameter", { status: 400 });
         }
-        const basePingImage = "https://pingonsol.com/ping.png";
-        const blankShirtTrait = "https://pingonsol.com/traits/trait-blank-tee_body.png";
+        const baseURL = url.origin;
+        const basePingImage = `${baseURL}/ping.png`;
+        const blankShirtTrait = `${baseURL}/traits/trait-blank-tee_body.png`;
         const baseContainerWidth = isBanner ? 1200 : 512;
         const baseContainerHeight = isBanner ? 630 : 512;
         console.log("baseContainerWidth", baseContainerWidth, "baseContainerHeight", baseContainerHeight);
@@ -26,24 +28,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const pfpImageLeftOffset = (baseContainerWidth / 2) - (pfpImageSize / 2);
         const pfpImageTopOffset = (isBanner ? (baseContainerHeight / 2 - 256) : 0) + 242;
         console.log("pfpImageTopOffset", pfpImageTopOffset, "pfpImageLeftOffset", pfpImageLeftOffset);
-        const getRandomBGColor = () => {
-            const colors = {
-                electricBlue: "#00FFFF",
-                neonPurple: "#9D00FF",
-                hotPink: "#FF007F",
-                acidGreen: "#B0FF00",
-                lavaOrange: "#FF4500",
-                cyberYellow: "#FFD300",
-                magentaShock: "#FF00FF",
-                aquaMint: "#00FFCC",
-                ultraviolet: "#5F00BA",
-                coralFlash: "#FF5E5B"
-            };
-
-            const colorKeys = Object.keys(colors);
-            const randomIndex = Math.floor(Math.random() * colorKeys.length);
-            return colors[colorKeys[randomIndex]];
-        }
         return new ImageResponse(
             <div
                 style={{
@@ -51,7 +35,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                     height: baseContainerHeight,
                     display: 'flex',
                     position: 'relative',
-                    backgroundColor: getRandomBGColor(),
+                    backgroundColor: pickBgColor(userPhotoUrl),
                 }}
             >
                 <img

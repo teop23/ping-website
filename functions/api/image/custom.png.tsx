@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
+import { pickBgColor, seedFromParams } from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
@@ -10,7 +11,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       Object.entries(queryParams).filter(([key]) => key !== 'type' && key !== 'ts')
     );
     const isBanner = queryParams.type === 'banner';
-    const baseURL = "https://pingonsol.com";
+    const baseURL = new URL(request.url).origin;
     const baseCharacterImage = `${baseURL}/ping.png`;
     const baseImageScaleMultiplier = 1.4;
     const baseContainerWidth = isBanner ? 1200 : 512;
@@ -28,24 +29,9 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
     const validCategories = Object.keys(traitsIndex);
     const traitSelectionsByCategory: { category: string; trait: string }[] = [];
-    const getRandomBGColor = () => {
-      const colors = {
-        electricBlue: "#00FFFF",
-        neonPurple: "#9D00FF",
-        hotPink: "#FF007F",
-        acidGreen: "#B0FF00",
-        lavaOrange: "#FF4500",
-        cyberYellow: "#FFD300",
-        magentaShock: "#FF00FF",
-        aquaMint: "#00FFCC",
-        ultraviolet: "#5F00BA",
-        coralFlash: "#FF5E5B"
-      };
-
-      const colorKeys = Object.keys(colors);
-      const randomIndex = Math.floor(Math.random() * colorKeys.length);
-      return colors[colorKeys[randomIndex]];
-    }
+    // Seeded on the traits alone, so the square and the banner of one character
+    // match, and a card Twitter scraped matches what the user later opens.
+    const bgColor = pickBgColor(seedFromParams(url.searchParams, ['type', 'ts']));
 
     // ✅ Validate all query parameter keys (categories)
     for (const [category, trait] of Object.entries(traitParams)) {
@@ -79,7 +65,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           height: baseContainerHeight,
           display: 'flex',
           position: 'relative',
-          backgroundColor: getRandomBGColor(),
+          backgroundColor: bgColor,
         }}
       >
         <img
@@ -102,9 +88,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       {
         width: baseContainerWidth,
         height: baseContainerHeight,
-        headers: {
-          'Content-Type': 'image/png',
-        }
       }
     );
   } catch (err) {

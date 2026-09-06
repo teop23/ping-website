@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
+import { noStore, pickBgColor } from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
     try {
         const url = new URL(request.url);
         const isBanner = url.searchParams.get('type') === 'banner';
-        const baseURL = "https://pingonsol.com";
+        const baseURL = new URL(request.url).origin;
         const baseCharacterImage = `${baseURL}/ping.png`;
         const baseImageScaleMultiplier = 1.4;
         const baseContainerWidth = isBanner ? 1200 : 512;
@@ -23,24 +24,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
         const validCategories = Object.keys(traitsIndex);
         const traitSelectionsByCategory: { category: string; trait: string }[] = [];
-        const getRandomBGColor = () => {
-            const colors = {
-                electricBlue: "#00FFFF",
-                neonPurple: "#9D00FF",
-                hotPink: "#FF007F",
-                acidGreen: "#B0FF00",
-                lavaOrange: "#FF4500",
-                cyberYellow: "#FFD300",
-                magentaShock: "#FF00FF",
-                aquaMint: "#00FFCC",
-                ultraviolet: "#5F00BA",
-                coralFlash: "#FF5E5B"
-            };
-
-            const colorKeys = Object.keys(colors);
-            const randomIndex = Math.floor(Math.random() * colorKeys.length);
-            return colors[colorKeys[randomIndex]];
-        }
+        // Output differs every call anyway, so seed the colour off the roll.
+        const bgColor = pickBgColor(String(Math.random()));
 
         //select random traits for each category
         for (const category of validCategories) {
@@ -60,14 +45,14 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         traitSelectionsByCategory.sort((a, b) => traitOrder.indexOf(a.category) - traitOrder.indexOf(b.category));
 
         // 🖼️ Generate the composited image
-        return new ImageResponse(
+        return noStore(new ImageResponse(
             <div
                 style={{
                     width: baseContainerWidth,
                     height: baseContainerHeight,
                     display: 'flex',
                     position: 'relative',
-                    backgroundColor: getRandomBGColor(),
+                    backgroundColor: bgColor,
                 }}
             >
                 <img
@@ -90,11 +75,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             {
                 width: baseContainerWidth,
                 height: baseContainerHeight,
-                headers: {
-                    'Content-Type': 'image/png',
-                }
             }
-        );
+        ));
     } catch (err) {
         return new Response(`Internal error: ${err}`, { status: 500 });
     }

@@ -15,7 +15,7 @@ type TwitterUserInfo = {
 };
 
 export const onRequestGet: APIRoute = async ({ request }) => {
-    const { searchParams } = new URL(request.url);
+    const { searchParams, origin } = new URL(request.url);
     const handle = searchParams.get('handle');
     const type = searchParams.get('type') || '';
 
@@ -45,7 +45,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             return new Response('Twitter profile picture not found', { status: 404 });
         }
 
-        const redirectUrl = `https://pingonsol.com/api/image/shirt.png?${type ? `type=${type}&` : ''}photo=${encodeURIComponent(twitterPPUrl)}`;
+        const redirectUrl = `${origin}/api/image/shirt.png?${type ? `type=${type}&` : ''}photo=${encodeURIComponent(twitterPPUrl)}`;
         return Response.redirect(redirectUrl, 307); // Temporary redirect with method preserved
     } catch (err) {
         return new Response(`Error resolving handle: ${err}`, { status: 500 });
