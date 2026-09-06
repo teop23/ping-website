@@ -32,6 +32,6 @@ export async function onRequest(context: OgContext) {
     imageUrl,
     pageUrl: url.href,
     title: `@${handle} is wearing the PING tee`,
-    description: 'Put your own profile picture on a PING at pingonsol.com',
+    description: `Put your own profile picture on a PING at ${url.host}`,
   });
 }
