@@ -1,4 +1,5 @@
 import { baseCharacterImage } from '@/data/traits';
+import { TRAIT_RENDER_ORDER } from '@/data/traitOrder';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
 import { motion } from 'framer-motion';
 import { Check, Copy, Download, Move, Shuffle } from 'lucide-react';
@@ -93,8 +94,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // Draw base image
     ctx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
-    // Draw traits in the same order as CreateTraits: body → face → head → accessory
-    const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
+    const traitOrder = TRAIT_RENDER_ORDER;
 
     // Group selected traits by category and draw in order
     const traitsByCategory = selectedTraits.reduce((acc, trait) => {
@@ -215,7 +215,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       downloadCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
       // Draw traits in order
-      const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
+      const traitOrder = TRAIT_RENDER_ORDER;
 
       // Group selected traits by category and draw in order
       const traitsByCategory = selectedTraits.reduce((acc, trait) => {
@@ -312,7 +312,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       copyCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
 
       // Draw traits in order
-      const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
+      const traitOrder = TRAIT_RENDER_ORDER;
 
       // Group selected traits by category and draw in order
       const traitsByCategory = selectedTraits.reduce((acc, trait) => {

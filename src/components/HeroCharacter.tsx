@@ -1,6 +1,8 @@
 import { useReducedMotion } from 'framer-motion';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { baseCharacterImage } from '../data/traits';
+import { TRAIT_RENDER_ORDER } from '../data/traitOrder';
+import { TraitCategory } from '../types';
 
 /**
  * The hero's proof: real characters, composited live from the same trait PNGs
@@ -11,20 +13,7 @@ import { baseCharacterImage } from '../data/traits';
  * generator works. This is the generator, running.
  */
 
-/** Painted back to front. Same order as functions/api/image/custom.png.tsx. */
-const TRAIT_ORDER = [
-  'aura',
-  'body',
-  'face',
-  'mouth',
-  'head',
-  'right_hand',
-  'left_hand',
-  'accessory',
-] as const;
-
-type Category = (typeof TRAIT_ORDER)[number];
-type Combo = Partial<Record<Category, string>>;
+type Combo = Partial<Record<TraitCategory, string>>;
 
 /** Every entry verified against public/traits at build time. */
 const COMBOS: Combo[] = [
@@ -47,12 +36,12 @@ const HOLD_MS = 1900;
 const DISSOLVE_MS = 600;
 
 const layersFor = (combo: Combo): string[] =>
-  TRAIT_ORDER.filter((category) => combo[category]).map(
+  TRAIT_RENDER_ORDER.filter((category) => combo[category]).map(
     (category) => `/traits/trait-${combo[category]}_${category}.png`
   );
 
 const describe = (combo: Combo): string => {
-  const names = TRAIT_ORDER.filter((c) => combo[c]).map((c) =>
+  const names = TRAIT_RENDER_ORDER.filter((c) => combo[c]).map((c) =>
     (combo[c] as string).replace(/-/g, ' ')
   );
   return `PING character wearing ${names.join(', ')}`;

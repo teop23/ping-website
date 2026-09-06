@@ -1,3 +1,4 @@
+import { TRAIT_RENDER_ORDER } from '../data/traitOrder';
 import { CategoryOption, TraitCategory } from '../types';
 
 /**
@@ -69,6 +70,18 @@ export const loadManifest = async (): Promise<TraitManifest | null> => {
     const manifest: TraitManifest = await response.json();
     if (!Array.isArray(manifest.traits) || !Array.isArray(manifest.renderOrder)) {
       throw new Error('manifest is missing traits or renderOrder');
+    }
+
+    const expected = TRAIT_RENDER_ORDER.join(',');
+    const actual = manifest.renderOrder.join(',');
+    if (expected !== actual) {
+      console.error(
+        `Trait paint order disagrees with the manifest.
+  app:      ${expected}
+  manifest: ${actual}
+` +
+          'Reconcile src/data/traitOrder.ts, scripts/generate-index.mjs and functions/_lib.ts.'
+      );
     }
 
     cached = manifest;

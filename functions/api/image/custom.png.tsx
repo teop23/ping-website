@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
-import { pickBgColor, seedFromParams } from '../../_lib';
+import { TRAIT_ORDER, pickBgColor, seedFromParams } from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
@@ -21,7 +21,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
     const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
     const traitImageLeftOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0;
-    const traitOrder = ['aura', 'body', 'face', 'mouth', 'head', 'right_hand', 'left_hand', 'accessory'];
+    const traitOrder = TRAIT_ORDER;
     // Load the traits index JSON from the public directory
     const traitsIndexUrl = new URL('/traits-index.json', request.url);
     const traitsIndexRes = await fetch(traitsIndexUrl.href);
