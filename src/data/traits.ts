@@ -1,7 +1,11 @@
 import { CategoryOption, Trait } from '../types';
-import { loadTraitsFromAssets, loadTraitsFromAssetsDynamic } from '../utils/traitLoader';
+import { loadTraitsFromManifest } from '../utils/traitLoader';
 
-// Default category options (will be updated based on available traits)
+/**
+ * Fallback category list, used only if the manifest fails to load so the
+ * builder still renders empty tabs instead of nothing. The manifest generated
+ * by scripts/generate-index.mjs is the real source of truth.
+ */
 export const defaultCategories: CategoryOption[] = [
   { id: 'aura', label: 'Aura' },
   { id: 'head', label: 'Head' },
@@ -10,61 +14,38 @@ export const defaultCategories: CategoryOption[] = [
   { id: 'body', label: 'Body' },
   { id: 'right_hand', label: 'Right Hand' },
   { id: 'left_hand', label: 'Left Hand' },
-  { id: 'accessory', label: 'Accessory' }
+  { id: 'accessory', label: 'Accessory' },
 ];
 
-// Base character
 export const baseCharacterImage = '/ping.png';
 
-// Dynamic traits loaded from assets folder
 let loadedTraits: Trait[] = [];
 let loadedCategories: CategoryOption[] = defaultCategories;
 
-// Function to load traits dynamically
-export const initializeTraits = async (): Promise<{ traits: Trait[], categories: CategoryOption[] }> => {
-  try {
-    // Try dynamic loading first, fall back to manual loading
-    let traitFiles = await loadTraitsFromAssetsDynamic();
-    
-    // If dynamic loading fails or returns empty, try manual loading
-    if (traitFiles.length === 0) {
-      traitFiles = await loadTraitsFromAssets();
-    }
-    
-    const traitCountByCategory: Record<string, number> = {};
+export const initializeTraits = async (): Promise<{
+  traits: Trait[];
+  categories: CategoryOption[];
+}> => {
+  const { traits: traitFiles, categories } = await loadTraitsFromManifest();
 
-    for (const trait of traitFiles) {
-      // Count traits per category
-      traitCountByCategory[trait.category] = (traitCountByCategory[trait.category] || 0) + 1;
-    }
-
-    let possibleCombinations = 1;
-    for( const category in traitCountByCategory) {
-      possibleCombinations *= (traitCountByCategory[category] + 1); 
-    }
-
-    console.log(`📦 Loaded ${traitFiles.length} trait files`);
-    console.log(`🔢 Possible trait combinations: ${possibleCombinations}`);
-    
-    // Convert trait files to Trait objects
-    loadedTraits = traitFiles.map(traitFile => ({
-      id: traitFile.id,
-      name: traitFile.uiName, // Use the UI-friendly name
-      category: traitFile.category as any,
-      imageSrc: traitFile.imageSrc
-    }));
-    
-    // Always show all default categories regardless of whether they have traits
-    loadedCategories = defaultCategories;
-    
-    return { traits: loadedTraits, categories: loadedCategories };
-  } catch (error) {
-    console.error('Error initializing traits:', error);
-    // Fall back to defaults
+  if (traitFiles.length === 0) {
+    console.warn('Trait manifest empty or unavailable; falling back to empty categories.');
     return { traits: [], categories: defaultCategories };
   }
+
+  loadedTraits = traitFiles.map((file) => ({
+    id: file.id,
+    name: file.uiName,
+    category: file.category as Trait['category'],
+    imageSrc: file.imageSrc,
+  }));
+
+  // Every category stays visible even when it has no traits, so the tab row
+  // does not reflow as the library grows.
+  loadedCategories = categories.length > 0 ? categories : defaultCategories;
+
+  return { traits: loadedTraits, categories: loadedCategories };
 };
 
-// Export current traits and categories (will be empty until initialized)
 export const traits: Trait[] = loadedTraits;
 export const categories: CategoryOption[] = loadedCategories;

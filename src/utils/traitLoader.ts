@@ -1,75 +1,118 @@
-import { defaultCategories } from '../data/traits';
+import { CategoryOption, TraitCategory } from '../types';
 
-// Utility to load traits from the assets/traits folder
-// File naming convention: trait-{trait-name}_{category}.png
+/**
+ * Reads the trait manifest produced by scripts/generate-index.mjs.
+ *
+ * This used to re-derive the trait system from filenames at runtime: a regex
+ * built from a hardcoded category list, plus its own kebab-to-title transform.
+ * That list and the paint order were duplicated across ten files, so adding a
+ * category meant finding all ten. The manifest is now the single source, and
+ * the build refuses to emit one from malformed assets.
+ */
 
 export interface TraitFile {
   id: string;
   name: string;
+  /** Human-readable, e.g. "Cowboy Hat". */
   uiName: string;
   category: string;
   imageSrc: string;
+  width: number;
+  height: number;
 }
 
-// Function to extract trait info from filename
-export const parseTraitFilename = (filename: string): { name: string; uiName: string; category: string } | null => {
-  // Remove file extension
-  const nameWithoutExt = filename.replace(/\.png$/i, '');
+interface ManifestTrait {
+  id: string;
+  name: string;
+  label: string;
+  category: string;
+  file: string;
+  width: number;
+  height: number;
+  bytes: number;
+}
 
-  // Build regex pattern dynamically from defaultCategories
-  const categoryIds = defaultCategories.map(cat => cat.id).join('|');
-  const regex = new RegExp(`^trait-(.+)_(${categoryIds})$`);
-  // Check if it follows the pattern: trait-{name}_{category}
-  const match = nameWithoutExt.match(regex);
+interface TraitManifest {
+  version: number;
+  generatedAt: string;
+  /** Back to front. Not the same as the UI ordering of categories. */
+  renderOrder: string[];
+  categories: { id: string; label: string; count: number }[];
+  traits: ManifestTrait[];
+}
 
-  if (match) {
-    const [, name, category] = match;
-    const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Convert kebab-case to Title Case
-    console.log(`Parsed trait: ${name} (UI: ${uiName}, Category: ${category})`);
-    return {
-      name: name, // Keep original kebab-case for ID matching
-      uiName: uiName, // Human-readable name for UI
-      category: category // Keep exact category match from defaultCategories
-    };
-  }
+const KNOWN_CATEGORIES: TraitCategory[] = [
+  'aura',
+  'head',
+  'face',
+  'mouth',
+  'body',
+  'right_hand',
+  'left_hand',
+  'accessory',
+];
 
-  return null;
-};
+const isKnownCategory = (value: string): value is TraitCategory =>
+  (KNOWN_CATEGORIES as string[]).includes(value);
 
-// Function to load traits using explicit imports
-export const loadTraitsFromAssets = async (): Promise<TraitFile[]> => {
-  const traits: TraitFile[] = [];
+const MANIFEST_URL = '/traits-manifest.json';
 
-  // Since we don't know what files exist, we'll return empty array
-  // This will be populated when you add actual trait files
+let cached: TraitManifest | null = null;
 
-  return traits;
-};
+export const loadManifest = async (): Promise<TraitManifest | null> => {
+  if (cached) return cached;
 
-// Function to load traits using dynamic imports
-export const loadTraitsFromAssetsDynamic = async (): Promise<TraitFile[]> => {
   try {
-    const res = await fetch('/traits-index.json');
-    const data = await res.json();
-    //log each category and number of traits like this: category1: 5, category2: 3
-    console.log('📂 Categories found:', Object.keys(data).map(cat => `${cat}: ${data[cat].length}`).join(', '));
-    const traits: TraitFile[] = [];
+    const response = await fetch(MANIFEST_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    for (const category in data) {
-      for (const name of data[category]) {
-        const uiName = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        traits.push({
-          id: `${name}_${category}`,
-          name,
-          uiName,
-          category,
-          imageSrc: `/traits/trait-${name}_${category}.png`
-        });
-      }
+    const manifest: TraitManifest = await response.json();
+    if (!Array.isArray(manifest.traits) || !Array.isArray(manifest.renderOrder)) {
+      throw new Error('manifest is missing traits or renderOrder');
     }
-    return traits;
+
+    cached = manifest;
+    return manifest;
   } catch (error) {
-    console.error('Error in dynamic trait loading:', error);
-    return [];
+    console.error('Failed to load trait manifest:', error);
+    return null;
   }
 };
+
+const toTraitFile = (trait: ManifestTrait): TraitFile => ({
+  id: trait.id,
+  name: trait.name,
+  uiName: trait.label,
+  category: trait.category,
+  imageSrc: trait.file,
+  width: trait.width,
+  height: trait.height,
+});
+
+export const loadTraitsFromManifest = async (): Promise<{
+  traits: TraitFile[];
+  categories: CategoryOption[];
+  renderOrder: string[];
+}> => {
+  const manifest = await loadManifest();
+
+  if (!manifest) {
+    return { traits: [], categories: [], renderOrder: [] };
+  }
+
+  const unknown = manifest.categories.filter((c) => !isKnownCategory(c.id)).map((c) => c.id);
+  if (unknown.length > 0) {
+    console.warn(`Trait manifest lists unknown categories, ignoring: ${unknown.join(', ')}`);
+  }
+
+  return {
+    traits: manifest.traits.filter((t) => isKnownCategory(t.category)).map(toTraitFile),
+    categories: manifest.categories
+      .filter((c): c is { id: TraitCategory; label: string; count: number } => isKnownCategory(c.id))
+      .map(({ id, label }) => ({ id, label })),
+    renderOrder: manifest.renderOrder,
+  };
+};
+
+/** Paint order, for anything compositing layers. Empty until the manifest loads. */
+export const getRenderOrder = (): string[] => cached?.renderOrder ?? [];

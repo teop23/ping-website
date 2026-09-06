@@ -27,3 +27,7 @@ dist-ssr
 .bolt/prompt
 .wrangler
 public/traits-index.json
+public/traits-manifest.json
+
+# Machine-local Claude Code permissions
+.claude/settings.local.json
