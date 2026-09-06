@@ -5,16 +5,18 @@
 /*
   PING design tokens.
 
-  Committed dark. The scene: a trader on a phone at night, twelve tabs deep in
-  Pons listings, deciding in seconds whether this one is worth a second look.
-  Every surface in that context is dark; a light theme would be the odd one out,
-  so there is no light theme, only one palette built properly.
+  Light cream variant, after theory.fund. There is one palette, not a light and
+  a dark mode: the whole ramp below is the theme.
 
-  Palette anchors are Robinhood's own brand values, exact:
-    #110E08  warm near-black
-    #CCFF00  acid lime
-  Everything else is a neutral ramp tinted to that same warm hue (~85 deg), which
-  is what keeps this from reading as the neutral-black launchpad default.
+    #F3F1EA  the page
+    #CCFF00  acid lime, Robinhood's exact brand value
+
+  Lime is the constraint that shapes everything else here. It measures 1.04:1
+  against the cream, so it can only ever be a fill behind dark text; anywhere it
+  would have acted as text, --accent-ink stands in for it.
+
+  Every pairing these tokens are used in is asserted in index.contrast.test.ts.
+  Change a value here and that test tells you what else moved.
 
   Values are stored as bare OKLCH components so Tailwind can inject alpha via
   <alpha-value>. Do not wrap them in oklch() here.
@@ -47,6 +49,11 @@
     --ink: 21.36% 0.0198 160.28;       /* #111C16 - 15.46 worst surface */
     --ink-muted: 44.29% 0.0208 158.43; /* #4A574F -  6.71 worst surface */
     --ink-faint: 51.43% 0.0201 158.62; /* #5E6B63 -  4.94 worst surface */
+
+    /* Text that sits ON the accent rather than on a surface. This was only a
+       Tailwind alias, so the palette had no way to check it and the contrast
+       test could not see it at all. */
+    --ink-inverse: var(--ink);
 
     /* ---- State. Never the only channel carrying meaning ---- */
     --positive: 45% 0.13 149.08;       /* darkened to read on a light ground */

@@ -209,12 +209,12 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="flex items-center gap-1 px-1 sm:px-1.5 py-0.5 bg-primary/15 border border-primary/30 rounded text-micro group hover:bg-primary/20 transition-colors"
+                    className="group flex items-center gap-1 rounded border border-hairline bg-raised px-1 py-0.5 text-micro transition-colors sm:px-1.5"
                   >
-                    <span className="font-medium text-primary text-micro">{trait.name}</span>
+                    <span className="text-micro font-medium text-ink">{trait.name}</span>
                     <button
                       onClick={() => onTraitRemove(trait)}
-                      className="text-primary/70 hover:text-primary transition-colors group-hover:scale-110"
+                      className="text-ink-muted transition-colors hover:text-ink group-hover:scale-110"
                     >
                       <X size={10} />
                     </button>
