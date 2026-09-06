@@ -29,7 +29,7 @@ const Footer: React.FC = () => (
     <div className="container py-12">
       <div className="flex flex-col gap-10 md:flex-row md:justify-between">
         <div className="max-w-sm">
-          <span className="type-display font-display text-xl font-extrabold text-ink">PING</span>
+          <span className="type-display font-display text-h3 font-extrabold text-ink">PING</span>
           <p className="mt-3 text-meta text-ink-muted">
             A character generator, an open image API, and a token on {CHAIN_NAME}.
           </p>

@@ -27,13 +27,13 @@ const SaveControls: React.FC<SaveControlsProps> = ({
   return (
     <Card className="p-4">
       <div className="space-y-4">
-        <h3 className="text-base font-semibold">Save & Export</h3>
+        <h3 className="text-body font-semibold">Save & Export</h3>
         <input
           type="text"
           value={traitName}
           onChange={(e) => setTraitName(e.target.value)}
           placeholder="Enter trait name..."
-          className="w-full px-3 py-2 text-sm border border-hairline rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 text-meta border border-hairline rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         <div className="flex flex-col space-y-2">
           <Button
@@ -49,7 +49,7 @@ const SaveControls: React.FC<SaveControlsProps> = ({
             <Button
               onClick={onDownloadTrait}
               variant="outline"
-              className="flex-1 h-10 text-xs px-2"
+              className="flex-1 h-10 text-micro px-2"
               size="sm"
             >
               <Download size={16} className="mr-2" />
@@ -59,7 +59,7 @@ const SaveControls: React.FC<SaveControlsProps> = ({
             <div className="flex items-center p-0.5 bg-panel rounded-lg h-10 flex-shrink-0">
               <button
                 onClick={() => setDownloadMode('trait')}
-                className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
+                className={`px-2 py-1.5 text-micro font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
                   downloadMode === 'trait'
                     ? 'bg-panel text-ink shadow-sm border border-hairline'
                     : 'text-ink-muted hover:text-ink'
@@ -70,7 +70,7 @@ const SaveControls: React.FC<SaveControlsProps> = ({
               </button>
               <button
                 onClick={() => setDownloadMode('character')}
-                className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
+                className={`px-2 py-1.5 text-micro font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
                   downloadMode === 'character'
                     ? 'bg-panel text-ink shadow-sm border border-hairline'
                     : 'text-ink-muted hover:text-ink'

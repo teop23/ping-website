@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 alt="PING" 
                 className="w-6 h-6 sm:w-7 sm:h-7 opacity-90"
               />
-              <span className="type-display font-display text-xl font-extrabold text-ink sm:text-2xl">PING</span>
+              <span className="type-display font-display text-h3 font-extrabold text-ink sm:text-h3">PING</span>
             </a>
           </motion.div>
           
@@ -254,7 +254,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 />
                 {/* Mobile Tools Section */}
                 <div className="pt-2 mt-2 border-t border-border/50">
-                  <div className="text-xs font-medium text-muted-foreground mb-2 px-3">Tools</div>
+                  <div className="text-micro font-medium text-muted-foreground mb-2 px-3">Tools</div>
                   <MobileNavItem 
                     label="Create Traits" 
                     href="/create-traits" 
@@ -344,7 +344,7 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, icon, label, isMobile = f
       <div className={isMobile ? "" : "flex items-center justify-center"}>
         {icon}
       </div>
-      {isMobile && <span className="text-xs font-medium">{label}</span>}
+      {isMobile && <span className="text-micro font-medium">{label}</span>}
     </motion.a>
   );
 };
@@ -391,7 +391,7 @@ const DropdownItem: React.FC<DropdownItemProps> = ({ label, href, icon, isActive
       href={href}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 p-2 rounded-md transition-colors duration-200 w-full text-sm",
+        "flex items-center gap-3 p-2 rounded-md transition-colors duration-200 w-full text-meta",
         isActive 
           ? "bg-primary/10 text-primary border border-primary/20" 
           : "hover:bg-muted text-muted-foreground hover:text-foreground"

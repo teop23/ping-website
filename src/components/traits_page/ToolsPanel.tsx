@@ -65,7 +65,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   return (
     <Card className="h-full overflow-hidden flex flex-col">
       <CardHeader>
-        <h3 className="text-base sm:text-lg font-semibold">Tools</h3>
+        <h3 className="text-body sm:text-lead font-semibold">Tools</h3>
       </CardHeader>
       <CardContent className="space-y-2 sm:space-y-3 flex-1 overflow-y-auto">
         {/* Tool Selection */}
@@ -83,7 +83,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
 
         {/* Color Picker */}
         <div className="space-y-1">
-          <label className="text-xs sm:text-sm font-medium">Color</label>
+          <label className="text-micro sm:text-meta font-medium">Color</label>
           <div className="relative">
             <button
               className="w-full h-6 sm:h-8 rounded-md border border-hairline"
@@ -95,7 +95,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                 <div className="rounded-lg border border-hairline bg-panel p-3 shadow-panel">
                   <HexColorPicker color={color} onChange={setColor} />
                   <div className="mt-3 mb-2">
-                    <label className="block text-xs font-medium text-ink-muted mb-1">Hex Color</label>
+                    <label className="block text-micro font-medium text-ink-muted mb-1">Hex Color</label>
                     <input
                       type="text"
                       value={color}
@@ -121,12 +121,12 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                         }
                       }}
                       placeholder="#000000"
-                      className="w-full px-2 py-1 text-xs border border-hairline rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
+                      className="w-full px-2 py-1 text-micro border border-hairline rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
                       maxLength={7}
                     />
                   </div>
                   <button
-                    className="mt-2 w-full px-3 py-1 text-sm bg-panel rounded"
+                    className="mt-2 w-full px-3 py-1 text-meta bg-panel rounded"
                     onClick={() => setShowColorPicker(false)}
                   >
                     Close
@@ -140,7 +140,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
         {/* Brush Size */}
         {(tool === 'brush' || tool === 'eraser' || tool === 'line' || tool === 'curve') && (
           <div className="space-y-1">
-            <label className="text-xs sm:text-sm font-medium">
+            <label className="text-micro sm:text-meta font-medium">
               {tool === 'eraser' ? 'Eraser' : 'Brush'} Size: {brushSize}px
             </label>
             <input
@@ -161,7 +161,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               💡 Click anywhere on canvas to add text
             </div>
             <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium">Text Size: {textSize}px</label>
+              <label className="text-micro sm:text-meta font-medium">Text Size: {textSize}px</label>
               <input
                 type="range"
                 min="12"
@@ -172,7 +172,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium">Text Color</label>
+              <label className="text-micro sm:text-meta font-medium">Text Color</label>
               <div className="relative">
                 <button
                   className="w-full h-6 sm:h-8 rounded border border-hairline"
@@ -184,7 +184,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                     <div className="rounded-lg border border-hairline bg-panel p-3 shadow-panel">
                       <HexColorPicker color={textColor} onChange={setTextColor} />
                       <div className="mt-3 mb-2">
-                        <label className="block text-xs font-medium text-ink-muted mb-1">Hex Color</label>
+                        <label className="block text-micro font-medium text-ink-muted mb-1">Hex Color</label>
                         <input
                           type="text"
                           value={textColor}
@@ -210,12 +210,12 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                             }
                           }}
                           placeholder="#000000"
-                          className="w-full px-2 py-1 text-xs border border-hairline rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
+                          className="w-full px-2 py-1 text-micro border border-hairline rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
                           maxLength={7}
                         />
                       </div>
                       <button
-                        className="mt-2 w-full px-3 py-1 text-sm bg-panel rounded"
+                        className="mt-2 w-full px-3 py-1 text-meta bg-panel rounded"
                         onClick={() => setShowTextColorPicker(false)}
                       >
                         Close
@@ -226,7 +226,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               </div>
             </div>
             <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium">Font Weight</label>
+              <label className="text-micro sm:text-meta font-medium">Font Weight</label>
               <select
                 value={(canvas?.getActiveObject() as any)?.fontWeight || 'normal'}
                 onChange={(e) => {
@@ -238,7 +238,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                     }
                   }
                 }}
-                className="w-full px-2 py-1 text-sm border border-hairline rounded"
+                className="w-full px-2 py-1 text-meta border border-hairline rounded"
               >
                 <option value="normal">Normal</option>
                 <option value="bold">Bold</option>
@@ -261,12 +261,12 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               <br />
               3. End point (red anchor)
               <br />
-              <span className="text-xs text-ink-muted">
+              <span className="text-micro text-ink-muted">
                 After creation, you can drag any anchor point to reshape the curve in real-time!
               </span>
             </div>
             {curvePoints.length > 0 && (
-              <div className="text-xs text-green-700 bg-green-50 p-2 rounded border border-green-200">
+              <div className="text-micro text-green-700 bg-green-50 p-2 rounded border border-green-200">
                 Points clicked: {curvePoints.length}/3
                 {curvePoints.length < 3 && (
                   <span className="block mt-1">

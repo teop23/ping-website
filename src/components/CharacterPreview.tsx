@@ -469,7 +469,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               onMouseDown={(e) => handleMouseDown(e, textElement.id)}
             >
               {/* Drag handle - visible on hover */}
-              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-ground/80 text-ink px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none">
+              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-ground/80 text-ink px-2 py-1 rounded text-micro whitespace-nowrap pointer-events-none">
                 <Move size={12} className="inline mr-1" />
                 Drag to move
               </div>
@@ -549,7 +549,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
       variant={variant}
       onClick={onClick}
       size="sm"
-      className={`flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 ${isCopying
+      className={`flex items-center gap-1 sm:gap-2 transition-all duration-300 text-micro sm:text-meta px-2 sm:px-3 ${isCopying
         ? 'border-positive bg-positive text-ink-inverse hover:bg-positive'
         : ''
         }`}

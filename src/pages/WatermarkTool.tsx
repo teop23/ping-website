@@ -295,7 +295,7 @@ const WatermarkTool: React.FC = () => {
       >
         <Card className="h-full overflow-hidden flex flex-col">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-lead">
               <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
                 <img src={pingIcon} alt="PING" className="w-5 h-5" />
               </div>
@@ -306,7 +306,7 @@ const WatermarkTool: React.FC = () => {
           <CardContent className="space-y-4 flex-1 overflow-y-auto">
             {/* Upload Section */}
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold">Upload Image</h3>
+              <h3 className="text-meta font-semibold">Upload Image</h3>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -323,7 +323,7 @@ const WatermarkTool: React.FC = () => {
                 Choose Image
               </Button>
               {!isImageUploaded && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-micro text-muted-foreground">
                   Upload an image to add a PING watermark
                 </p>
               )}
@@ -333,11 +333,11 @@ const WatermarkTool: React.FC = () => {
             {isImageUploaded && (
               <>
                 <div className="space-y-3 pt-4 border-t">
-                  <h3 className="text-sm font-semibold">Watermark Settings</h3>
+                  <h3 className="text-meta font-semibold">Watermark Settings</h3>
 
                   {/* Opacity Control */}
                   <div className="space-y-2">
-                    <label className="text-xs font-medium">
+                    <label className="text-micro font-medium">
                       Opacity: {Math.round(watermarkOpacity * 100)}%
                     </label>
                     <input
@@ -355,7 +355,7 @@ const WatermarkTool: React.FC = () => {
 
                 {/* Action Buttons */}
                 <div className="space-y-2 pt-4 border-t">
-                  <h3 className="text-sm font-semibold">Actions</h3>
+                  <h3 className="text-meta font-semibold">Actions</h3>
                   <div className="grid grid-cols-1 gap-2">
                     <Button
                       onClick={handleCopy}
@@ -412,8 +412,8 @@ const WatermarkTool: React.FC = () => {
 
                 {/* Instructions */}
                 <div className="space-y-2 pt-4 border-t">
-                  <h3 className="text-sm font-semibold">Instructions</h3>
-                  <div className="text-xs text-muted-foreground space-y-1">
+                  <h3 className="text-meta font-semibold">Instructions</h3>
+                  <div className="text-micro text-muted-foreground space-y-1">
                     <p>• Drag the PING logo to reposition</p>
                     <p>• Use corner handles to resize</p>
                     <p>• Rotate using the top handle</p>
@@ -456,7 +456,7 @@ const WatermarkTool: React.FC = () => {
                       <Upload className="w-8 h-8 text-ink-inverse" />
                     </div>
                     <div>
-                      <h3 className="mb-2 text-lg font-semibold text-ink">
+                      <h3 className="mb-2 text-lead font-semibold text-ink">
                         Upload an Image
                       </h3>
                       <p className="max-w-xs text-meta text-ink-muted">
