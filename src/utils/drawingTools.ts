@@ -32,9 +32,12 @@ const FloodFill = {
     let x: number, y: number, offset: number, i: number, x2: number, y2: number;
     let minX = -1, maxX = -1, minY = -1, maxY = -1;
 
-    // Keep going while we have points to walk
+    // Keep going while we have points to walk. Testing the popped value for
+    // truthiness would also end the loop on a legitimately falsy point, so the
+    // emptiness of the stack is what drives it.
     let currentPoint;
-    while (!!(currentPoint = points.pop())) {
+    while (points.length > 0) {
+      currentPoint = points.pop()!;
       x = currentPoint.x;
       y = currentPoint.y;
       offset = getPointOffsetFn(x, y);

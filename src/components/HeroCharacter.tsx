@@ -1,6 +1,7 @@
 import { useReducedMotion } from 'framer-motion';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { baseCharacterImage } from '../data/traits';
+import { BASE_IMAGE_SCALE_MULTIPLIER } from '../utils/canvasConstants';
 import { TRAIT_RENDER_ORDER } from '../data/traitOrder';
 import { TraitCategory } from '../types';
 
@@ -56,9 +57,7 @@ const Character: React.FC<{ combo: Combo }> = ({ combo }) => (
       src={baseCharacterImage}
       alt=""
       className="absolute inset-0 size-full object-contain"
-      // The base is drawn larger than the trait layers, matching the 1.4x
-      // multiplier the API and the builder canvas both use.
-      style={{ transform: 'scale(1.4)' }}
+      style={{ transform: `scale(${BASE_IMAGE_SCALE_MULTIPLIER})` }}
     />
     {layersFor(combo).map((src) => (
       <img key={src} src={src} alt="" className="absolute inset-0 size-full object-contain" />

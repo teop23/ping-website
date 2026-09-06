@@ -1,6 +1,6 @@
 import { baseCharacterImage } from '@/data/traits';
 import { TRAIT_RENDER_ORDER } from '@/data/traitOrder';
-import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
+import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasConstants';
 import { motion } from 'framer-motion';
 import { Check, Copy, Download, Move, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';

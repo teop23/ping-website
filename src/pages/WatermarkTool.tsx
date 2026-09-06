@@ -6,6 +6,7 @@ import pingIcon from '../assets/ping_transparent_icon.png';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { safeRenderAll } from '../utils/canvasUtils';
+import { fitToAspect, insetBy } from '../utils/canvasFit';
 
 const WatermarkTool: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -41,14 +42,10 @@ const WatermarkTool: React.FC = () => {
   // The canvas takes the uploaded image's aspect ratio and is fitted inside
   // whatever space the container gives it. A fixed square canvas letterboxed
   // every non-square upload and baked the bars into the exported file.
-  const canvasSize = useMemo(() => {
-    const maxWidth = Math.max(0, containerBox.width - 32);
-    const maxHeight = Math.max(0, containerBox.height - 32);
-    if (maxWidth <= 0 || maxHeight <= 0) return { width: 0, height: 0 };
-
-    const width = Math.min(maxWidth, maxHeight * imageAspect);
-    return { width: Math.floor(width), height: Math.floor(width / imageAspect) };
-  }, [containerBox, imageAspect]);
+  const canvasSize = useMemo(
+    () => fitToAspect(insetBy(containerBox, 32), imageAspect),
+    [containerBox, imageAspect]
+  );
 
   // Canvas aspect matches the image aspect, so one scale factor fills it exactly.
   const fillCanvas = useCallback((img: fabric.Image, size: { width: number; height: number }) => {
@@ -130,10 +127,7 @@ const WatermarkTool: React.FC = () => {
 
         // Fill against the size the canvas is about to become, so the first
         // paint is already correct rather than briefly letterboxed.
-        const maxWidth = Math.max(0, containerBox.width - 32);
-        const maxHeight = Math.max(0, containerBox.height - 32);
-        const nextWidth = Math.floor(Math.min(maxWidth, maxHeight * aspect));
-        const nextSize = { width: nextWidth, height: Math.floor(nextWidth / aspect) };
+        const nextSize = fitToAspect(insetBy(containerBox, 32), aspect);
 
         canvas.setDimensions(nextSize);
         fillCanvas(img, nextSize);

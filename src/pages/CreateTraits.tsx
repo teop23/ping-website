@@ -4,6 +4,7 @@ import { fabric } from 'fabric';
 import { baseCharacterImage } from '@/data/traits';
 import { ToolType } from '../types/traits';
 import { setupBaseImage, ensureProperLayering, safeRenderAll } from '../utils/canvasUtils';
+import { fitSquare } from '../utils/canvasFit';
 import { UndoRedoManager } from '../utils/undoRedoManager';
 import { 
   uploadImage, 
@@ -197,14 +198,11 @@ const CreateTraits: React.FC = () => {
 
     const fit = () => {
       const styles = getComputedStyle(box);
-      const available = Math.min(
-        box.clientWidth - parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight),
-        box.clientHeight - parseFloat(styles.paddingTop) - parseFloat(styles.paddingBottom)
-      );
-      if (!Number.isFinite(available) || available <= 0) return;
-
-      // Square, because traits have to register against a square base character.
-      const size = Math.floor(available);
+      const size = fitSquare({
+        width: box.clientWidth - parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight),
+        height: box.clientHeight - parseFloat(styles.paddingTop) - parseFloat(styles.paddingBottom),
+      });
+      if (size <= 0) return;
       canvas.setDimensions({ width: `${size}px`, height: `${size}px` }, { cssOnly: true });
       canvas.calcOffset();
       safeRenderAll(canvas);

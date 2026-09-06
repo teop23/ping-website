@@ -1,6 +1,9 @@
 import { fabric } from 'fabric';
 
-export const BASE_IMAGE_SCALE_MULTIPLIER = 1.4;
+import { BASE_IMAGE_SCALE_MULTIPLIER } from './canvasConstants';
+
+// Re-exported so existing fabric-side callers keep their import path.
+export { BASE_IMAGE_SCALE_MULTIPLIER };
 
 // Safe canvas rendering with error handling
 export const safeRenderAll = (canvas: fabric.Canvas) => {

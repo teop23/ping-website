@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # The app and the Pages Functions have separate configs and different
+      # JSX runtimes, so linting or building one says nothing about the other.
+      - name: Typecheck app
+        run: npx tsc --noEmit -p tsconfig.app.json
+
+      - name: Typecheck functions
+        run: npx tsc --noEmit -p functions/tsconfig.json
+
+      # Also exercises the trait manifest generator, which rejects malformed
+      # assets. A bad PNG fails here rather than shipping as a missing layer.
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
