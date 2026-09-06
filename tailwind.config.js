@@ -33,7 +33,7 @@ module.exports = {
           muted: token("--ink-muted"),
           faint: token("--ink-faint"),
           // Text sitting ON the accent or on a light artboard.
-          inverse: token("--bg-ground"),
+          inverse: token("--ink-inverse"),
         },
         positive: token("--positive"),
         negative: token("--negative"),
