@@ -110,10 +110,20 @@ describe('selection and focus', () => {
     });
   }
 
-  it('the focus ring is visible on a brand fill', () => {
-    // Buttons are lime and are focusable, so the ring lands on lime too.
-    expect(contrast('focus-ring', 'brand')).toBeGreaterThanOrEqual(AA_UI);
+  it('the focus ring reads against a brand fill', () => {
+    // Lime buttons are focusable and the hero is a lime surface, so the ring
+    // lands on lime. It is two-tone precisely because no single colour clears
+    // 3:1 against both the surfaces and the accent; either tone may do the work.
+    const best = Math.max(contrast('focus-ring', 'brand'), contrast('focus-ring-halo', 'brand'));
+    expect(best).toBeGreaterThanOrEqual(AA_UI);
   });
+
+  for (const surface of SURFACES) {
+    it(`the focus halo reads against ${surface}`, () => {
+      const best = Math.max(contrast('focus-ring', surface), contrast('focus-ring-halo', surface));
+      expect(best).toBeGreaterThanOrEqual(AA_UI);
+    });
+  }
 });
 
 describe('state colours', () => {

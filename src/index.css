@@ -99,6 +99,11 @@
        silently unreadable on a light one. */
     --selection-bg: var(--brand);
     --selection-ink: var(--ink);
+    /* The ring is two-tone because no single colour clears 3:1 against both
+       the surfaces and the accent: a focusable lime button sits on a dark card,
+       and a focusable link sits on the lime hero. The halo fills the offset gap
+       so whichever of the two contrasts with what is behind it does the work. */
+    --focus-ring-halo: var(--bg-raised);
     --focus-ring: var(--accent-ink);
 
     /* ---- Semantic z-index. No 9999 anywhere. ---- */
@@ -159,6 +164,7 @@
   :focus-visible {
     outline: 2px solid oklch(var(--focus-ring));
     outline-offset: 2px;
+    box-shadow: 0 0 0 2px oklch(var(--focus-ring-halo));
     border-radius: 2px;
   }
 
