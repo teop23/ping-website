@@ -22,15 +22,14 @@
 
 @layer base {
   :root {
-    /* ---- Surfaces: warm near-black ramp ----
-       Anchored on the dark from the Robinhood mark. At L21 the olive cast is
-       actually visible; the darker L16.5 variant reads as flat black on a
-       phone, which is indistinguishable from the neutral black every other
-       launchpad site uses. */
-    --bg-ground: 21.02% 0.021 90.34;   /* #1c180d - logo dark, exact */
-    --bg-raised: 24.6% 0.023 90;       /* #252014 - cards, nav */
-    --bg-panel: 28.6% 0.026 90;        /* #2f2a1b - inputs, hover surfaces, wells */
-    --hairline: 34% 0.03 89;           /* #3e3726 - 1px rules and borders */
+    /* ---- Surfaces: green-black ramp ----
+       Cooler and deeper than the olive cast taken from the Robinhood mark,
+       following the dark family theory.fund ships. Same lightness separation
+       between steps, so nothing built on these tokens shifts. */
+    --bg-ground: 17.74% 0.0136 169.62; /* #0b1310 */
+    --bg-raised: 22.02% 0.0229 160.22; /* #111e17 - cards, nav */
+    --bg-panel: 25.55% 0.0265 162.03;  /* #17271f - inputs, hover surfaces, wells */
+    --hairline: 32.4% 0.0313 162.27;   /* #25392f - 1px rules and borders */
 
     /* ---- Brand accent ---- */
     --brand: 93.07% 0.2286 123.09;     /* #CCFF00 - Robinhood lime, exact */
@@ -39,10 +38,9 @@
 
     /* ---- Ink. Verified >= 4.5:1 against every surface above, not just the
            darkest one: --bg-panel is the worst case. ---- */
-    --ink: 100% 0 89.88;               /* 17.71 ground / 14.31 panel */
-    --ink-muted: 75.48% 0.0221 88.75;  /*  8.10 ground /  6.54 panel */
-    /* Raised from L61.5: on the lighter base it fell to 3.85:1 on panels. */
-    --ink-faint: 65.75% 0.019 88;      /*  5.64 ground /  4.55 panel */
+    --ink: 100% 0 89.88;               /* 15.60 worst surface */
+    --ink-muted: 76.16% 0.0166 160.49; /*  7.36 worst surface */
+    --ink-faint: 66.13% 0.0172 160.39; /*  5.08 worst surface */
 
     /* ---- State. Never the only channel carrying meaning ---- */
     --positive: 81.73% 0.1837 149.08;  /* 11.68:1 */
