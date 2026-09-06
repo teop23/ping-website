@@ -73,7 +73,7 @@ const Home: React.FC = () => {
         surface; confining it to the fold keeps the brand loud and the tool
         legible. Near-black on #CCFF00 measures 15.07:1.
       */}
-      <section className="surface-brand flex flex-col bg-brand text-ink-inverse sm:min-h-[calc(100svh-3.5rem)]">
+      <section className="flex flex-col text-ink sm:min-h-[calc(100svh-3.5rem)]">
         <div className="container grid flex-1 items-center gap-8 py-12 sm:gap-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_30rem] lg:gap-16 lg:py-16">
           <div className="flex flex-col gap-8 sm:gap-8 lg:gap-10">
             <div className="w-full max-w-2xl">
@@ -81,31 +81,28 @@ const Home: React.FC = () => {
                 Build a PING.
               </motion.h1>
 
-              <motion.p {...rise(0.08)} className="type-prose mt-6 text-lead text-ink-inverse/75">
+              <motion.p {...rise(0.08)} className="type-prose mt-6 text-lead text-ink-muted">
                 {TRAIT_COUNT} community-made traits. An open image API that renders any
                 combination on demand.
               </motion.p>
             </div>
 
-            {/* Rules drawn in the ink colour, because the ground is lime. */}
             <motion.dl
               {...rise(0.16)}
-              className="grid w-full grid-cols-2 gap-px overflow-hidden rounded-lg bg-ink-inverse/20 sm:grid-cols-4"
+              className="grid w-full grid-cols-2 gap-px overflow-hidden rounded-lg border border-hairline bg-hairline sm:grid-cols-4"
             >
               {FACTS.map((fact) => (
-                <div key={fact.label} className="bg-brand px-4 py-3.5">
-                  <dt className="text-micro font-medium uppercase tracking-wider text-ink-inverse/70">
+                <div key={fact.label} className="bg-raised px-4 py-3.5">
+                  <dt className="text-micro font-medium uppercase tracking-wider text-ink-faint">
                     {fact.label}
                   </dt>
-                  <dd data-numeric className="mt-1 text-meta font-semibold text-ink-inverse">
+                  <dd data-numeric className="mt-1 text-meta font-semibold text-ink">
                     {fact.value}
                   </dd>
                 </div>
               ))}
             </motion.dl>
 
-            {/* A dark card on lime: the contract stays scannable and the
-                inversion reads as deliberate rather than as a hole. */}
             <ContractAddress />
 
             {SHOW_COUNTDOWN && <Countdown />}
@@ -120,7 +117,7 @@ const Home: React.FC = () => {
           <a
             href="#builder"
             onClick={handleScrollToBuilder}
-            className="group inline-flex items-center gap-2 text-meta font-semibold text-ink-inverse/80 transition-colors duration-fast ease-out-quart hover:text-ink-inverse"
+            className="group inline-flex items-center gap-2 text-meta font-semibold text-ink-muted transition-colors duration-fast ease-out-quart hover:text-ink"
           >
             Open the generator
             <ChevronDown

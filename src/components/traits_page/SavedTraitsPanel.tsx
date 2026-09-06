@@ -61,7 +61,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                   />
                   <div className="flex-1 min-w-0">
                     <span className="text-xs sm:text-sm font-medium block truncate">{trait.name}</span>
-                    <span className={`text-xs ${trait.isVisible ? 'text-brand' : 'text-ink-faint'}`}>
+                    <span className={`text-xs ${trait.isVisible ? 'text-accent-ink' : 'text-ink-faint'}`}>
                       {trait.isVisible ? 'Visible' : 'Hidden'}
                     </span>
                   </div>
@@ -75,7 +75,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                       e.stopPropagation();
                       onDownloadTrait(trait);
                     }}
-                    className="h-7 w-7 sm:h-8 sm:w-8 text-brand hover:text-ink-muted hover:bg-panel flex-shrink-0"
+                    className="h-7 w-7 sm:h-8 sm:w-8 text-accent-ink hover:text-ink-muted hover:bg-panel flex-shrink-0"
                   >
                     <Download size={12} className="sm:w-4 sm:h-4" />
                   </Button>

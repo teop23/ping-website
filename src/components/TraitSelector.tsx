@@ -323,7 +323,7 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          <div className="relative flex aspect-square items-center justify-center bg-ink">
+          <div className="relative flex aspect-square items-center justify-center bg-artboard">
             <img
               src={imageSrc}
               alt={trait.name}

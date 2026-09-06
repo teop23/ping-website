@@ -359,7 +359,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({
           {title}
         </CardTitle>
         <div className="flex items-center gap-2">
-          <span className="rounded bg-brand-wash px-2 py-1 font-mono text-micro text-brand">
+          <span className="rounded bg-brand-wash px-2 py-1 font-mono text-micro text-accent-ink">
             {endpoint.split(' ')[0]}
           </span>
           <code className="text-sm text-muted-foreground font-mono">
@@ -385,7 +385,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({
                 <tbody>
                   {parameters.map((param, index) => (
                     <tr key={index} className="border-b">
-                      <td className="py-2 font-mono text-brand">{param.name}</td>
+                      <td className="py-2 font-mono text-accent-ink">{param.name}</td>
                       <td className="py-2 text-muted-foreground">{param.type}</td>
                       <td className="py-2">{param.description}</td>
                     </tr>

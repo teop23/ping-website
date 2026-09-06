@@ -442,7 +442,7 @@ const WatermarkTool: React.FC = () => {
             style={{ width: canvasSize.width, height: canvasSize.height }}
           >
             {/* The frame tracks the canvas, which tracks the image's aspect. */}
-            <div className="relative size-full overflow-hidden rounded-md border border-hairline bg-ink">
+            <div className="relative size-full overflow-hidden rounded-md border border-hairline bg-artboard">
               <canvas
                 ref={canvasRef}
                 className="block w-full h-full"

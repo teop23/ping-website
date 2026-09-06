@@ -438,7 +438,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       <div className="w-full h-full flex flex-col overflow-hidden" ref={containerRef}>
         {/* Canvas Container - Takes most of the space */}
         <div className="flex-1 min-h-0 flex items-center justify-center p-2 sm:p-4">
-          <div className="flex h-full max-h-full w-full max-w-full items-center justify-center rounded-md border border-hairline bg-ink">
+          <div className="flex h-full max-h-full w-full max-w-full items-center justify-center rounded-md border border-hairline bg-artboard">
             <canvas
               ref={canvasRef}
               className="block max-w-full max-h-full"

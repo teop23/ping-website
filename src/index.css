@@ -22,31 +22,35 @@
 
 @layer base {
   :root {
-    /* ---- Surfaces: warm near-black ramp ----
-       Anchored on the dark from the Robinhood mark. At L21 the olive cast is
-       actually visible; the darker L16.5 variant reads as flat black on a
-       phone, which is indistinguishable from the neutral black every other
-       launchpad site uses. */
-    --bg-ground: 21.02% 0.021 90.34;   /* #1c180d - logo dark, exact */
-    --bg-raised: 24.6% 0.023 90;       /* #252014 - cards, nav */
-    --bg-panel: 28.6% 0.026 90;        /* #2f2a1b - inputs, hover surfaces, wells */
-    --hairline: 34% 0.03 89;           /* #3e3726 - 1px rules and borders */
+    /* ---- Surfaces: warm cream ramp, after theory.fund ---- */
+    --bg-ground: 95.78% 0.0095 93.57;  /* #F3F1EA - the page */
+    --bg-raised: 100% 0 89.88;         /* #FFFFFF - cards, nav */
+    --bg-panel: 98.15% 0.0067 97.35;   /* #FAF9F4 - inputs, wells */
+    --hairline: 88.49% 0.0181 92.7;    /* #DDD9CC - rules and borders */
+
+    /* The stage a character composites on. This previously borrowed --ink,
+       which happened to be white on a dark theme; on a light one that would
+       turn every artboard and trait swatch black. */
+    --artboard: 100% 0 89.88;          /* #FFFFFF */
 
     /* ---- Brand accent ---- */
-    --brand: 93.07% 0.2286 123.09;     /* #CCFF00 - Robinhood lime, exact */
+    /* Lime measures 1.04:1 against cream, so on a light ground it can only be
+       a fill behind dark text. Anywhere it previously acted AS text now uses
+       --accent-ink. */
+    --brand: 93.07% 0.2286 123.09;      /* #CCFF00 - Robinhood lime, exact */
     --brand-hover: 96.5% 0.2 123.09;
-    --brand-wash: 26% 0.06 123.09;     /* tinted well behind lime content */
+    --brand-wash: 95% 0.06 123.09;      /* pale lime tint */
+    --accent-ink: 43.38% 0.0848 145.77; /* #2F5D33 - 6.80:1, lime's stand-in for text */
 
     /* ---- Ink. Verified >= 4.5:1 against every surface above, not just the
            darkest one: --bg-panel is the worst case. ---- */
-    --ink: 100% 0 89.88;               /* 17.71 ground / 14.31 panel */
-    --ink-muted: 75.48% 0.0221 88.75;  /*  8.10 ground /  6.54 panel */
-    /* Raised from L61.5: on the lighter base it fell to 3.85:1 on panels. */
-    --ink-faint: 65.75% 0.019 88;      /*  5.64 ground /  4.55 panel */
+    --ink: 21.36% 0.0198 160.28;       /* #111C16 - 15.46 worst surface */
+    --ink-muted: 44.29% 0.0208 158.43; /* #4A574F -  6.71 worst surface */
+    --ink-faint: 51.43% 0.0201 158.62; /* #5E6B63 -  4.94 worst surface */
 
     /* ---- State. Never the only channel carrying meaning ---- */
-    --positive: 81.73% 0.1837 149.08;  /* 11.68:1 */
-    --negative: 68.87% 0.2009 28.61;   /*  6.32:1 */
+    --positive: 45% 0.13 149.08;       /* darkened to read on a light ground */
+    --negative: 48% 0.18 28.61;
 
     /* ---- shadcn/radix semantic aliases ----
        Note: shadcn's --accent is a *hover surface*, not the brand colour.
