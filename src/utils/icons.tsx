@@ -23,3 +23,26 @@ export const DexScreenerLogo: React.FC<{ size?: number; className?: string }> = 
     </svg>
   );
 };
+// Pons launchpad, used only as the link icon pointing at Pons.
+//
+// Redrawn from an auto-traced copy of their mark: that trace was 409 paths in
+// six greys (antialiasing bands, plus slivers that were tracing artifacts
+// rather than real geometry). This is the outer silhouette alone, rasterised
+// and re-contoured to a single flat path on a 24x24 grid, taking currentColor
+// so it sits with the other nav icons. 460 characters instead of 169KB.
+export const PonsMark: React.FC<{ size?: number; className?: string }> = ({
+  size = 20,
+  className = '',
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="M9.3 1.5L14.48 1.5L15.49 1.54L16.54 1.81L17.55 2.38L18.12 2.9L18.6 3.56L18.91 4.17L18.91 4.35L19.17 4.96L19.21 12.37L19.17 12.81L18.95 13.47L18.73 13.82L18.34 14.17L17.41 14.52L16.84 14.61L12.59 14.56L12.2 14.7L11.89 15L11.8 15.35L11.76 17.63L11.8 20.4L11.72 21.1L11.36 21.84L10.71 22.32L9.87 22.5L7.9 22.5L6.8 22.28L6.1 21.89L5.45 21.23L5.01 20.48L4.79 19.52L4.83 5.05L4.96 4.83L5.05 4.26L5.14 4.22L5.14 4.09L5.45 3.52L6.37 2.51L7.55 1.85L8.47 1.59L9.26 1.54Z" />
+  </svg>
+);

@@ -44,8 +44,8 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                 key={trait.id}
                 className={`flex flex-row items-center p-2 sm:p-3 rounded-lg transition-colors cursor-pointer w-full ${
                   trait.isVisible 
-                    ? 'bg-blue-50 border-2 border-blue-200 hover:bg-blue-100' 
-                    : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+                    ? 'bg-brand-wash border border-brand hover:bg-blue-100' 
+                    : 'bg-panel border border-transparent hover:bg-panel'
                 }`}
               >
                 <div 
@@ -56,12 +56,12 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                     src={trait.data}
                     alt={trait.name}
                     className={`w-12 h-12 sm:w-16 sm:h-16 object-cover rounded flex-shrink-0 ${
-                      trait.isVisible ? 'ring-2 ring-blue-400' : ''
+                      trait.isVisible ? 'ring-2 ring-brand' : ''
                     }`}
                   />
                   <div className="flex-1 min-w-0">
                     <span className="text-xs sm:text-sm font-medium block truncate">{trait.name}</span>
-                    <span className={`text-xs ${trait.isVisible ? 'text-blue-600' : 'text-gray-500'}`}>
+                    <span className={`text-xs ${trait.isVisible ? 'text-brand' : 'text-ink-faint'}`}>
                       {trait.isVisible ? 'Visible' : 'Hidden'}
                     </span>
                   </div>
@@ -75,7 +75,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                       e.stopPropagation();
                       onDownloadTrait(trait);
                     }}
-                    className="h-7 w-7 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50 flex-shrink-0"
+                    className="h-7 w-7 sm:h-8 sm:w-8 text-brand hover:text-ink-muted hover:bg-panel flex-shrink-0"
                   >
                     <Download size={12} className="sm:w-4 sm:h-4" />
                   </Button>
@@ -120,7 +120,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
               </div>
             ))}
             {savedTraits.length === 0 && (
-              <div className="text-center text-gray-500 py-8">
+              <div className="text-center text-ink-faint py-8">
                 <p className="text-sm">No saved traits yet</p>
                 <p className="text-xs mt-2">Create and save your first trait! Click on saved traits to toggle visibility.</p>
               </div>

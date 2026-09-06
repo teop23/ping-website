@@ -1,12 +1,25 @@
-import { motion } from 'framer-motion';
-import { Check, Copy, ExternalLink, ShoppingCart } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import React, { useState } from 'react';
-import { BUY_LINK, CONTRACT_ADDRESS, SOLSCAN_LINK } from '../utils/constants';
-import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
+import {
+  BUY_LINK,
+  CHAIN_NAME,
+  CONTRACT_ADDRESS,
+  EXPLORER_LINK,
+  LAUNCHPAD_NAME,
+  TOKEN_LIVE,
+} from '../utils/constants';
 
+/**
+ * The single most-scanned element on the page: a trader arriving from a Pons
+ * listing wants the address and the buy link, in that order, without hunting.
+ *
+ * Pre-launch it says so plainly rather than showing a stale address from a
+ * different chain.
+ */
 const ContractAddress: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const handleCopy = async () => {
     try {
@@ -18,104 +31,90 @@ const ContractAddress: React.FC = () => {
     }
   };
 
-  const handleViewOnExplorer = () => {
-    // Open Solana explorer with the contract address
-    window.open(SOLSCAN_LINK, '_blank');
-  };
-
-  const handleBuyToken = () => {
-    // Open buy link in new tab
-    window.open(BUY_LINK, '_blank');
-  };
-
-  const formatAddress = (address: string) => {
-    if (address.length <= 12) return address;
-    return `${address.slice(0, 6)}...${address.slice(-6)}`;
-  };
+  const isLive = TOKEN_LIVE && CONTRACT_ADDRESS.length > 0;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4, duration: 0.7 }}
-      className="w-full max-w-lg mx-auto"
+      transition={{ delay: 0.25, duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+      className="w-full max-w-2xl"
     >
-      <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
-        <CardContent className="p-3">
-          <div className="space-y-3">
-            {/* Contract Address Section */}
-            <div className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border border-border/50">
-              <div className="flex-1 min-w-0">
-                <div className="font-mono text-sm text-foreground">
-                  <span className="hidden sm:inline whitespace-nowrap">{CONTRACT_ADDRESS}</span>
-                  <span className="sm:hidden break-all">{formatAddress(CONTRACT_ADDRESS)}</span>
-                </div>
-              </div>
+      <div className="rounded-lg border border-hairline bg-raised">
+        <div className="flex items-center justify-between gap-3 border-b border-hairline px-4 py-2.5">
+          <span className="text-micro font-medium uppercase tracking-wider text-ink-faint">
+            Contract
+          </span>
+          <span className="flex items-center gap-1.5 text-micro text-ink-muted">
+            {/* Colour is never the only channel: the dot has a label beside it. */}
+            <span
+              aria-hidden="true"
+              className={
+                isLive
+                  ? 'size-1.5 rounded-pill bg-positive motion-safe:animate-pulse-live'
+                  : 'size-1.5 rounded-pill bg-ink-faint'
+              }
+            />
+            {isLive ? 'Live' : 'Not yet deployed'}
+          </span>
+        </div>
 
-              <div className="flex gap-1 flex-shrink-0">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleCopy}
-                    className={`h-8 w-8 transition-all duration-300 ${isCopied
-                      ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
-                      : 'hover:bg-primary/10 hover:border-primary/50'
-                      }`}
-                    title="Copy contract address"
-                  >
-                    <motion.div
-                      animate={isCopied ? {
-                        scale: [1, 1.2, 1]
-                      } : {}}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      {isCopied ? <Check size={14} /> : <Copy size={14} />}
-                    </motion.div>
-                  </Button>
-                </motion.div>
-
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleViewOnExplorer}
-                    className="h-8 w-8 hover:bg-primary/10 hover:border-primary/50"
-                    title="View on Solana Explorer"
-                  >
-                    <ExternalLink size={14} />
-                  </Button>
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Buy Button Section */}
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                onClick={handleBuyToken}
-                className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
+        {isLive ? (
+          <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+            <code className="min-w-0 flex-1 truncate font-mono text-meta text-ink" title={CONTRACT_ADDRESS}>
+              {CONTRACT_ADDRESS}
+            </code>
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-hairline px-3 text-meta text-ink-muted transition-colors duration-fast ease-out-quart hover:bg-panel hover:text-ink"
               >
-                <ShoppingCart size={18} className="mr-2" />
-                Buy $PING
-              </Button>
-            </motion.div>
+                {isCopied ? <Check size={14} className="text-positive" /> : <Copy size={14} />}
+                {isCopied ? 'Copied' : 'Copy'}
+              </button>
+              <a
+                href={EXPLORER_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-hairline px-3 text-meta text-ink-muted transition-colors duration-fast ease-out-quart hover:bg-panel hover:text-ink"
+              >
+                Explorer
+                <ArrowUpRight size={14} />
+              </a>
+              <a
+                href={BUY_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-9 items-center gap-1.5 rounded-md bg-brand px-4 text-meta font-semibold text-ink-inverse transition-colors duration-fast ease-out-quart hover:bg-brand-hover"
+              >
+                BUY
+                <ArrowUpRight size={14} />
+              </a>
+            </div>
           </div>
-
-          {isCopied && (
-            <motion.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              className="text-center"
+        ) : (
+          <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-meta text-ink-muted">
+              The address appears here the moment $PING deploys on {LAUNCHPAD_NAME}, on {CHAIN_NAME}.
+            </p>
+            <a
+              href={BUY_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md bg-brand px-4 text-meta font-semibold text-ink-inverse transition-colors duration-fast ease-out-quart hover:bg-brand-hover"
             >
-              <span className="text-xs text-green-600 font-medium">✓ Copied to clipboard!</span>
-            </motion.div>
-          )}
-        </CardContent>
-      </Card>
+              BUY
+              <ArrowUpRight size={14} />
+            </a>
+          </div>
+        )}
+      </div>
+
+      {/* Announced politely rather than as a floating toast. */}
+      <span aria-live="polite" className="sr-only">
+        {isCopied ? 'Contract address copied to clipboard' : ''}
+      </span>
     </motion.div>
   );
 };

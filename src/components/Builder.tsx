@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion';
-import { Palette, Sparkles, Type, Plus } from 'lucide-react';
+import { Type } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
 import TextToolsModal, { TextElement } from '../components/TextToolsModal';
@@ -7,7 +6,6 @@ import TraitSelector from '../components/TraitSelector';
 import { initializeTraits } from '../data/traits';
 import { CategoryOption, Trait } from '../types';
 import { EMPTY_TRAIT_CHANCE } from '../utils/constants';
-import { Button } from './ui/button';
 
 const Builder: React.FC = () => {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -18,7 +16,6 @@ const Builder: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isTextModalOpen, setIsTextModalOpen] = useState(false);
 
-  // Load traits on component mount
   useEffect(() => {
     const loadTraits = async () => {
       setIsLoading(true);
@@ -37,177 +34,115 @@ const Builder: React.FC = () => {
   }, []);
 
   const handleTraitSelect = (trait: Trait) => {
-    setSelectedTraits(prev => [...prev, trait]);
+    setSelectedTraits((prev) => [...prev, trait]);
   };
 
   const handleTraitRemove = (trait: Trait) => {
-    setSelectedTraits(prev =>
-      prev.filter(selected =>
-        !(selected.id === trait.id && selected.category === trait.category)
-      )
+    setSelectedTraits((prev) =>
+      prev.filter((selected) => !(selected.id === trait.id && selected.category === trait.category))
     );
   };
 
-  const handleReset = () => {
-    setSelectedTraits([]);
-  };
-
-  const handleTextElementsChange = (elements: TextElement[]) => {
-    setTextElements(elements);
-  };
-
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const handleClearAll = () => {
-    setSelectedTraits([]);
-  };
+  const handleClearAll = () => setSelectedTraits([]);
+  const handleTextElementsChange = (elements: TextElement[]) => setTextElements(elements);
+  const handleSearchChange = (query: string) => setSearchQuery(query);
 
   const handleRandomize = () => {
-    const newSelectedTraits: Trait[] = [];
+    const next: Trait[] = [];
 
-    categories.forEach(category => {
-      // Check if this category should be empty based on EMPTY_TRAIT_CHANCE
+    categories.forEach((category) => {
       if (Math.random() >= EMPTY_TRAIT_CHANCE) {
-        // Get traits for this category
-        const categoryTraits = traits.filter(trait => trait.category === category.id);
-
+        const categoryTraits = traits.filter((trait) => trait.category === category.id);
         if (categoryTraits.length > 0) {
-          // Select a random trait from this category
-          const randomIndex = Math.floor(Math.random() * categoryTraits.length);
-          newSelectedTraits.push(categoryTraits[randomIndex]);
+          next.push(categoryTraits[Math.floor(Math.random() * categoryTraits.length)]);
         }
       }
     });
 
-    setSelectedTraits(newSelectedTraits);
+    setSelectedTraits(next);
   };
 
   if (isLoading) {
+    // Quiet and honest. A spinner plus "Preparing your character customization
+    // experience" was doing neither.
     return (
-      <div className="flex items-center justify-center w-full h-full py-12">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            className="relative mx-auto mb-6"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          >
-            <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full" />
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center"
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <Sparkles className="w-6 h-6 text-primary" />
-            </motion.div>
-          </motion.div>
-          <motion.h3
-            className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 mb-2"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            Loading Traits...
-          </motion.h3>
-          <motion.p
-            className="text-muted-foreground"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-          >
-            Preparing your character customization experience
-          </motion.p>
-        </motion.div>
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex h-full min-h-[500px] w-full items-center justify-center"
+      >
+        <div className="flex items-center gap-3 text-meta text-ink-muted">
+          <span
+            aria-hidden="true"
+            className="size-1.5 rounded-pill bg-brand motion-safe:animate-pulse-live"
+          />
+          Loading traits
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full p-1 sm:p-2 lg:p-4">
-      {/* Mobile Layout - Stack vertically */}
-      <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 lg:gap-6 w-full h-full">
-        
-        {/* Character Preview - Full width on mobile, half on desktop */}
-        <div className="w-full lg:w-1/2 h-1/2 lg:h-full order-1 lg:order-1">
-          <div className="h-full flex flex-col gap-2 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl min-h-[350px] lg:min-h-[580px]">
-            <div className="flex items-center justify-between flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                </div>
-                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                  Your Character
-                </h2>
-              </div>
-            </div>
+    <>
+      {/*
+        One frame, split by a rule. The page already wraps this in a panel, so
+        giving each half its own card would be a card inside a card.
+      */}
+      <div className="flex h-full w-full flex-col divide-y divide-hairline lg:flex-row lg:divide-x lg:divide-y-0">
+        <section
+          aria-label="Character preview"
+          className="flex h-1/2 min-h-0 w-full flex-col gap-3 pb-5 lg:h-full lg:w-1/2 lg:pb-0 lg:pr-5"
+        >
+          <h2 className="shrink-0 font-display text-meta font-semibold text-ink">Your character</h2>
 
-            <div className="flex-1 min-h-[300px] lg:min-h-[520px]">
-              <CharacterPreview
-                selectedTraits={selectedTraits}
-                textElements={textElements}
-                onTextElementsChange={handleTextElementsChange}
-                onReset={handleReset}
-                onRandomize={handleRandomize}
-              />
-            </div>
+          <div className="min-h-0 flex-1">
+            <CharacterPreview
+              selectedTraits={selectedTraits}
+              textElements={textElements}
+              onTextElementsChange={handleTextElementsChange}
+              onRandomize={handleRandomize}
+            />
           </div>
-        </div>
+        </section>
 
-        {/* Trait Selector - Full width on mobile, half on desktop */}
-        <div className="w-full lg:w-1/2 h-1/2 lg:h-full flex-1 order-2 lg:order-2 lg:min-h-0">
-          <div className="h-full bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm border border-border/50 rounded-xl p-2 sm:p-3 lg:p-4 shadow-xl flex flex-col">
-            <div className="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Palette className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                </div>
-                <h2 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                  Choose Traits
-                </h2>
-              </div>
-              
-              {/* Text Tools Button - Right side */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsTextModalOpen(true)}
-                className="flex items-center gap-1 sm:gap-2 hover:bg-primary/10 hover:border-primary/50 text-xs sm:text-sm px-2 sm:px-3"
-              >
-                <Type className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Text Tools</span>
-                <span className="sm:hidden">Text</span>
-              </Button>
-            </div>
+        <section
+          aria-label="Trait picker"
+          className="flex h-1/2 min-h-0 w-full flex-col pt-5 lg:h-full lg:w-1/2 lg:pl-5 lg:pt-0"
+        >
+          <div className="mb-3 flex shrink-0 items-center justify-between gap-3">
+            <h2 className="font-display text-meta font-semibold text-ink">Traits</h2>
 
-            <div className="flex-grow overflow-hidden">
-              <TraitSelector
-                categories={categories}
-                traits={traits}
-                selectedTraits={selectedTraits}
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                onTraitSelect={handleTraitSelect}
-                onTraitRemove={handleTraitRemove}
-                onClearAll={handleClearAll}
-              />
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsTextModalOpen(true)}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-hairline px-2.5 text-micro text-ink-muted transition-colors duration-fast ease-out-quart hover:bg-panel hover:text-ink"
+            >
+              <Type size={13} />
+              Text
+            </button>
           </div>
-        </div>
+
+          <div className="min-h-0 flex-grow overflow-hidden">
+            <TraitSelector
+              categories={categories}
+              traits={traits}
+              selectedTraits={selectedTraits}
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              onTraitSelect={handleTraitSelect}
+              onTraitRemove={handleTraitRemove}
+              onClearAll={handleClearAll}
+            />
+          </div>
+        </section>
       </div>
 
-      {/* Text Tools Modal */}
       <TextToolsModal
         isOpen={isTextModalOpen}
         onClose={() => setIsTextModalOpen(false)}
         onTextElementsChange={handleTextElementsChange}
       />
-    </div>
+    </>
   );
 };
 

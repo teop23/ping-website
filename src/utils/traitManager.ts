@@ -43,11 +43,10 @@ export const saveTrait = (
       format: 'png',
       quality: 1,
       multiplier: 2,
-      withoutTransform: false,
-      backgroundColor: 'transparent'
+      withoutTransform: false
     });
 
-    canvas.setBackgroundColor(originalBackground, () => {
+    canvas.setBackgroundColor(originalBackground ?? 'transparent', () => {
       if (baseImage && originalOpacity !== undefined) {
         baseImage.set({ opacity: originalOpacity });
       }
@@ -105,11 +104,10 @@ export const downloadTrait = (
       const dataURL = canvas.toDataURL({
         format: 'png',
         quality: 1,
-        withoutTransform: false,
-        backgroundColor: 'transparent'
+        withoutTransform: false
       });
 
-      canvas.setBackgroundColor(originalBackground, () => {
+      canvas.setBackgroundColor(originalBackground ?? 'transparent', () => {
         if (baseImage && originalOpacity !== undefined) {
           baseImage.set({ opacity: originalOpacity });
         }
@@ -127,17 +125,26 @@ export const downloadTrait = (
       link.click();
     });
   } else {
-    const dataURL = canvas.toDataURL({
-      format: 'png',
-      quality: 1,
-      withoutTransform: false,
-      backgroundColor: 'white'
-    });
+    const originalBackground = canvas.backgroundColor;
 
-    const link = document.createElement('a');
-    link.download = `${traitName || 'ping-character'}.png`;
-    link.href = dataURL;
-    link.click();
+    canvas.setBackgroundColor('#ffffff', () => {
+      safeRenderAll(canvas);
+
+      const dataURL = canvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        withoutTransform: false,
+      });
+
+      canvas.setBackgroundColor(originalBackground ?? 'transparent', () => {
+        safeRenderAll(canvas);
+      });
+
+      const link = document.createElement('a');
+      link.download = `${traitName || 'ping-character'}.png`;
+      link.href = dataURL;
+      link.click();
+    });
   }
 };
 

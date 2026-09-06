@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Type, Move } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Plus, Trash2, Type } from 'lucide-react';
 import React, { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { Button } from './ui/button';
@@ -67,8 +67,8 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-              <Type className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
+              <Type className="w-4 h-4 text-ink-inverse" />
             </div>
             Text Tools
           </DialogTitle>

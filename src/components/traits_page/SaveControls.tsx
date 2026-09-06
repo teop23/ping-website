@@ -33,7 +33,7 @@ const SaveControls: React.FC<SaveControlsProps> = ({
           value={traitName}
           onChange={(e) => setTraitName(e.target.value)}
           placeholder="Enter trait name..."
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 text-sm border border-hairline rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         <div className="flex flex-col space-y-2">
           <Button
@@ -53,16 +53,16 @@ const SaveControls: React.FC<SaveControlsProps> = ({
               size="sm"
             >
               <Download size={16} className="mr-2" />
-              Download
+              {getDownloadButtonText()}
             </Button>
             {/* Compact Download Mode Toggle */}
-            <div className="flex items-center p-0.5 bg-gray-100 rounded-lg h-10 flex-shrink-0">
+            <div className="flex items-center p-0.5 bg-panel rounded-lg h-10 flex-shrink-0">
               <button
                 onClick={() => setDownloadMode('trait')}
                 className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
                   downloadMode === 'trait'
-                    ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-panel text-ink shadow-sm border border-hairline'
+                    : 'text-ink-muted hover:text-ink'
                 }`}
                 title="Download trait only"
               >
@@ -72,8 +72,8 @@ const SaveControls: React.FC<SaveControlsProps> = ({
                 onClick={() => setDownloadMode('character')}
                 className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors h-9 flex items-center justify-center min-w-[36px] ${
                   downloadMode === 'character'
-                    ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-panel text-ink shadow-sm border border-hairline'
+                    : 'text-ink-muted hover:text-ink'
                 }`}
                 title="Download full character"
               >

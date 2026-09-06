@@ -1,102 +1,36 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
-interface Blob {
-  x: number;
-  y: number;
-  radius: number;
-  angle: number;
-  velocity: number;
-  opacity: number;
-  hue: number;
-}
-
-const Background: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener('resize', handleResize);
-    handleResize();
-
-    // Create animated blobs with colors
-    const blobs: Blob[] = Array.from({ length: 4 }, (_, i) => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 300 + 200,
-      angle: Math.random() * Math.PI * 2,
-      velocity: 0.0003 + Math.random() * 0.0002,
-      opacity: Math.random() * 0.02 + 0.01,
-      hue: i * 90 + Math.random() * 60 // Different hues for each blob
-    }));
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      
-      // Clear with gradient background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, '#ffffff');
-      gradient.addColorStop(0.5, '#fafafa');
-      gradient.addColorStop(1, '#f8fafc');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Update and draw blobs
-      blobs.forEach((blob, index) => {
-        // Orbital movement with different patterns
-        blob.angle += blob.velocity;
-        const orbitRadius = Math.min(canvas.width, canvas.height) * (0.15 + index * 0.05);
-        const centerX = canvas.width / 2 + Math.sin(blob.angle * 0.5) * 100;
-        const centerY = canvas.height / 2 + Math.cos(blob.angle * 0.3) * 50;
-        
-        blob.x = centerX + Math.cos(blob.angle) * orbitRadius;
-        blob.y = centerY + Math.sin(blob.angle) * orbitRadius;
-
-        // Draw with colorful blur
-        ctx.save();
-        ctx.filter = 'blur(120px)';
-        
-        const blobGradient = ctx.createRadialGradient(
-          blob.x, blob.y, 0,
-          blob.x, blob.y, blob.radius
-        );
-        
-        blobGradient.addColorStop(0, `hsla(${blob.hue}, 70%, 60%, ${blob.opacity})`);
-        blobGradient.addColorStop(0.6, `hsla(${blob.hue}, 70%, 60%, ${blob.opacity * 0.3})`);
-        blobGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-        ctx.fillStyle = blobGradient;
-        ctx.beginPath();
-        ctx.arc(blob.x, blob.y, blob.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      });
-    };
-
-    const animationId = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationId);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 w-full h-full -z-10 pointer-events-none"
-      style={{ opacity: 0.6 }}
+/**
+ * The page ground.
+ *
+ * This used to be a canvas painting a white-to-slate gradient with four
+ * rainbow blobs on a permanent requestAnimationFrame loop. It burned a frame
+ * budget forever to produce an effect nobody could name, and it fought the
+ * dark palette rather than supporting it.
+ *
+ * Now: two static washes in CSS. One warm lift under the fold where the hero
+ * sits, one cold falloff at the edges so the near-black has depth instead of
+ * reading flat. No JS, no animation frame, nothing to clean up.
+ */
+const Background: React.FC = () => (
+  <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 bg-ground">
+    {/* Warm lift behind the hero. Lime at 6% is a suggestion, not a glow. */}
+    <div
+      className="absolute inset-x-0 top-0 h-[70vh]"
+      style={{
+        background:
+          'radial-gradient(70% 55% at 50% 0%, oklch(var(--brand) / 0.06) 0%, transparent 70%)',
+      }}
     />
-  );
-};
+    {/* Edge falloff, so the field has a centre. */}
+    <div
+      className="absolute inset-0"
+      style={{
+        background:
+          'radial-gradient(120% 80% at 50% 40%, transparent 40%, oklch(0% 0 0 / 0.45) 100%)',
+      }}
+    />
+  </div>
+);
 
 export default Background;

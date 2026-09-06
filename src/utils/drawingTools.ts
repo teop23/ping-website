@@ -120,7 +120,7 @@ export const addFill = (
     // Check if we clicked on a shape object
     for (let i = objects.length - 1; i >= 0; i--) {
       const obj = objects[i];
-      if (obj.containsPoint({ x: mouseX, y: mouseY }) && 
+      if (obj.containsPoint(new fabric.Point(mouseX, mouseY)) && 
           obj.name !== 'baseImage' && 
           !obj.name?.startsWith('trait-') &&
           obj.name !== 'fillLayer') {
@@ -147,7 +147,9 @@ export const addFill = (
 
 function performFloodFill(mouseX: number, mouseY: number, canvas: fabric.Canvas, fillColor: string) {
   try {
-    const canvasElement = canvas.lowerCanvasEl;
+    // lowerCanvasEl is real in fabric v5 but missing from its type defs.
+    const canvasElement = (canvas as fabric.Canvas & { lowerCanvasEl: HTMLCanvasElement })
+      .lowerCanvasEl;
     const context = canvasElement.getContext('2d');
     if (!context) return;
 
@@ -159,7 +161,7 @@ function performFloodFill(mouseX: number, mouseY: number, canvas: fabric.Canvas,
     };
     
     const targetOffset = getPointOffset(mouseX, mouseY);
-    const target = Array.from(imageData.data.slice(targetOffset, targetOffset + 4));
+    const target = Array.from(imageData.data.slice(targetOffset, targetOffset + 4)) as number[];
 
     // Check if we're trying to fill with the same color
     if (FloodFill.withinTolerance(imageData.data, targetOffset, parsedColor, 2)) {
@@ -390,8 +392,10 @@ function updateCurvePath(curvePath: fabric.Path, startPoint: fabric.Circle, cont
   const pathString = `M ${startPoint.left} ${startPoint.top} Q ${controlPoint.left} ${controlPoint.top} ${endPoint.left} ${endPoint.top}`;
   
   // Update the path data
-  (curvePath as any).path = fabric.util.parsePath(pathString);
-  curvePath._setPath(pathString);
+  // parsePath and _setPath exist in fabric v5; neither is in the type defs.
+  const util = fabric.util as typeof fabric.util & { parsePath: (path: string) => unknown };
+  (curvePath as unknown as { path: unknown }).path = util.parsePath(pathString);
+  (curvePath as unknown as { _setPath: (path: string) => void })._setPath(pathString);
   curvePath.setCoords();
 }
 

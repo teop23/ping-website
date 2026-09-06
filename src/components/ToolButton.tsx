@@ -13,8 +13,8 @@ const ToolButton: React.FC<ToolButtonProps> = ({ icon, label, active, onClick })
       onClick={onClick}
       className={`flex flex-col items-center justify-center p-1 sm:p-2 rounded-lg border-2 transition-all ${
         active
-          ? 'border-blue-500 bg-blue-50 text-blue-700'
-          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+          ? 'border-brand bg-brand-wash text-brand'
+          : 'border-hairline hover:border-ink-faint hover:bg-panel'
       }`}
     >
       {icon}

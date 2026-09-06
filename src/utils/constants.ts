@@ -1,58 +1,87 @@
 import { RoadmapStep } from "@/components/Roadmap";
 
-// Contract addresses and other constants
-export const CONTRACT_ADDRESS = "EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump"; // Example Solana address
-export const SOLSCAN_LINK = "https://solscan.io/token/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump";
-// Buy link for the token
-export const BUY_LINK = "https://jup.ag/swap/EiFYrfJHuiWM6uHADtmzSKMAEzrANB9tLaLc4GhBpump-So11111111111111111111111111111111111111112";
+/**
+ * Launch configuration.
+ *
+ * $PING is relaunching on Pons, on Robinhood Chain. Until the token is
+ * deployed there is no contract address, and showing the old Solana pump.fun
+ * address on a Robinhood Chain site would be worse than showing nothing.
+ * Flip TOKEN_LIVE once CONTRACT_ADDRESS is real; every surface reads this
+ * flag and degrades to a pre-launch state on its own.
+ */
+export const TOKEN_LIVE = false;
 
-// Social media links
+/** 0x address from the Pons launch. Empty until deployed. */
+export const CONTRACT_ADDRESS = "";
+
+// --- Chain facts. These are fixed by Pons and Robinhood Chain, not by us. ---
+export const CHAIN_NAME = "Robinhood Chain";
+export const CHAIN_ID = 4663;
+export const LAUNCHPAD_NAME = "Pons";
+export const LAUNCHPAD_URL = "https://www.ponslaunchpad.com/";
+/** Pons mints a fixed 1B supply straight to the bonding curve. No creator allocation. */
+export const TOKEN_SUPPLY = 1_000_000_000;
+export const EXPLORER_BASE = "https://robinhoodchain.blockscout.com";
+
+export const EXPLORER_LINK = CONTRACT_ADDRESS
+  ? `${EXPLORER_BASE}/token/${CONTRACT_ADDRESS}`
+  : EXPLORER_BASE;
+
+export const BUY_LINK = CONTRACT_ADDRESS
+  ? `${LAUNCHPAD_URL}?token=${CONTRACT_ADDRESS}`
+  : LAUNCHPAD_URL;
+
+/** TODO(relaunch): repoint once the new pair exists. */
+export const CHART_LINK = "";
+
+// --- Social ---
 export const SOCIAL_LINKS = {
   TWITTER: "https://x.com/i/communities/1933201526584963118",
   TELEGRAM: "https://t.me/pingtoken",
-  DEXSCREENER: "https://dexscreener.com/solana/6awkhGgNxpbhF9XZVstdLrG4PUhzwvj8YnEqHCy3nVZV" // You can change this later
+  DEXSCREENER: CHART_LINK,
 };
 
-// Countdown target timestamp (Unix timestamp in milliseconds)
-// Example: January 1, 2025, 00:00:00 UTC - edit this to your desired date
-export const COUNTDOWN_TARGET = 1750280400 * 1000;
-
-// Show/hide countdown component
+// --- Countdown ---
+/** Unix ms. Set to the Pons launch slot, then flip SHOW_COUNTDOWN. */
+export const COUNTDOWN_TARGET = 0;
 export const SHOW_COUNTDOWN = false;
 
-// Randomizer settings
-export const EMPTY_TRAIT_CHANCE = 0.3; // 30% chance for no trait in a category
-
-// Other constants can be added here
-export const NETWORK = "mainnet";
+// --- Builder ---
+export const EMPTY_TRAIT_CHANCE = 0.3; // 30% chance of no trait in a category
 export const TOKEN_SYMBOL = "PING";
-export const TOKEN_NAME = "PING Token";
+export const TOKEN_NAME = "PING";
 
-// Roadmap configuration
+// --- Roadmap ---
+// Deadpan: state what is done and what is next. No "revolutionising", no
+// "phase 4: to be revealed".
 export const ROADMAP_STEPS: RoadmapStep[] = [
   {
     id: "phase-1",
-    title: "Phase 1: Foundation",
-    description: "Launch PING token, establish community, and deploy character builder with basic traits.",
-    status: "completed" as const
+    title: "Character generator",
+    description:
+      "176 traits across eight slots, a browser trait editor, and an open image API that renders any combination on demand. All shipped and in use.",
+    status: "completed" as const,
   },
   {
     id: "phase-2",
-    title: "Phase 2: Community Growth",
-    description: "Expand trait library, establish daily community spaces. Create tools to easily share user-created content that will make $PING go viral on X.",
-    status: "in-progress" as const
+    title: "Robinhood Chain launch",
+    description:
+      "Deploy on Pons with a fixed supply and permanently locked liquidity. Rebuild the site around the new chain.",
+    status: "in-progress" as const,
   },
   {
     id: "phase-3",
-    title: "Phase 3: Advanced Features and Partnerships",
-    description: "Integrate other social media platforms, create partnerships with major crypto platforms and artists. Incorporate features suggested by the community(Improve Ping Website and API).",
-    status: "upcoming" as const
+    title: "Trait library and sharing",
+    description:
+      "Expand the trait library with community submissions. Share tools that put a generated character straight into a post, with the preview rendered server-side.",
+    status: "upcoming" as const,
   },
   {
     id: "phase-4",
-    title: "Phase 4: To Be Revealed",
-    description: "",
-    status: "upcoming" as const
+    title: "Integrations",
+    description:
+      "Open the image API to other projects on Robinhood Chain. Whatever the community builds with it decides what comes after.",
+    status: "upcoming" as const,
   },
 ];
 

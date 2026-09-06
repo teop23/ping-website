@@ -48,8 +48,8 @@ const Countdown: React.FC = () => {
         className="w-full max-w-lg mx-auto"
       >
         <div className="flex items-center justify-center">
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl px-6 py-4 shadow-lg">
-            <span className="text-xl font-semibold text-white">
+          <div className="bg-brand rounded-xl px-6 py-4 shadow-lg">
+            <span className="text-xl font-semibold text-ink-inverse">
               🚀 Launching soon!
             </span>
           </div>

@@ -1,278 +1,156 @@
-import { motion } from 'framer-motion';
-import { Heart, Sparkles, Zap } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import React, { useEffect } from 'react';
 import Builder from '../components/Builder';
 import ContractAddress from '../components/ContractAddress';
+import HeroCharacter from '../components/HeroCharacter';
 import Countdown from '../components/Countdown';
 import Roadmap from '../components/Roadmap';
-import { SHOW_COUNTDOWN } from '../utils/constants';
+import {
+  CHAIN_NAME,
+  LAUNCHPAD_NAME,
+  SHOW_COUNTDOWN,
+  TOKEN_SUPPLY,
+} from '../utils/constants';
+
+/** Verified against public/traits at build time by scripts/generate-index.mjs. */
+const TRAIT_COUNT = 176;
+const TRAIT_SLOTS = 8;
+
+/**
+ * The facts a Pons trader is scanning for, above the fold, in one row.
+ * Real numbers, tabular, no adjectives. This is the credibility argument.
+ */
+const FACTS: { label: string; value: string }[] = [
+  { label: 'Chain', value: CHAIN_NAME },
+  { label: 'Launchpad', value: LAUNCHPAD_NAME },
+  { label: 'Supply', value: TOKEN_SUPPLY.toLocaleString('en-US') },
+  { label: 'Traits', value: `${TRAIT_COUNT} across ${TRAIT_SLOTS} slots` },
+];
 
 const Home: React.FC = () => {
-  // Handle direct navigation to hash fragments (e.g., /#roadmap)
+  const reduceMotion = useReducedMotion();
+
+  // Direct navigation to a hash fragment, e.g. /#roadmap
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-      // Remove the # from the hash
-      const elementId = hash.substring(1);
-      // Wait a bit for the page to fully render
-      setTimeout(() => {
-        const element = document.getElementById(elementId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 500); // Increased delay to ensure all animations are complete
-    }
-  }, []);
+    const { hash } = window.location;
+    if (!hash) return;
+
+    const element = document.getElementById(hash.slice(1));
+    if (!element) return;
+
+    const timer = setTimeout(() => {
+      element.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [reduceMotion]);
+
+  // Honour reduced motion on the hero's own scroll handoff too, not just on
+  // hash navigation.
+  const handleScrollToBuilder = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const target = document.getElementById('builder');
+    if (!target) return;
+
+    event.preventDefault();
+    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  };
+
+  // One orchestrated entrance, staggered down the fold. Not a fade on every
+  // section: content is visible by default and this only animates it in.
+  const rise = (delay: number) => ({
+    initial: reduceMotion ? false : ({ opacity: 0, y: 16 } as const),
+    animate: { opacity: 1, y: 0 },
+    transition: { delay, duration: 0.5, ease: [0.25, 1, 0.5, 1] as const },
+  });
 
   return (
-    <div className="flex flex-col">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating Orbs */}
-        <motion.div
-          className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl"
-          animate={{
-            y: [0, -20, 0],
-            x: [0, 10, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-xl"
-          animate={{
-            y: [0, 15, 0],
-            x: [0, -15, 0],
-            scale: [1, 0.9, 1],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
-        <motion.div
-          className="absolute bottom-40 left-1/4 w-20 h-20 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full blur-xl"
-          animate={{
-            y: [0, -25, 0],
-            x: [0, 20, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-        />
-        <motion.div
-          className="absolute top-60 left-1/3 w-28 h-28 bg-gradient-to-br from-green-400/15 to-emerald-400/15 rounded-full blur-xl"
-          animate={{
-            y: [0, 30, 0],
-            x: [0, -25, 0],
-            scale: [1, 0.8, 1],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 3
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-1/3 w-36 h-36 bg-gradient-to-br from-indigo-400/15 to-purple-400/15 rounded-full blur-xl"
-          animate={{
-            y: [0, -35, 0],
-            x: [0, 15, 0],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 4
-          }}
-        />
-        <motion.div
-          className="absolute top-32 right-1/4 w-22 h-22 bg-gradient-to-br from-pink-400/18 to-rose-400/18 rounded-full blur-xl"
-          animate={{
-            y: [0, 20, 0],
-            x: [0, -10, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 9,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1.5
-          }}
-        />
-        <motion.div
-          className="absolute bottom-60 left-16 w-26 h-26 bg-gradient-to-br from-cyan-400/16 to-teal-400/16 rounded-full blur-xl"
-          animate={{
-            y: [0, -18, 0],
-            x: [0, 22, 0],
-            scale: [1, 0.9, 1],
-          }}
-          transition={{
-            duration: 11,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2.5
-          }}
-        />
-        <motion.div
-          className="absolute top-80 right-12 w-30 h-30 bg-gradient-to-br from-violet-400/14 to-purple-400/14 rounded-full blur-xl"
-          animate={{
-            y: [0, 28, 0],
-            x: [0, -20, 0],
-            scale: [1, 1.15, 1],
-          }}
-          transition={{
-            duration: 13,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 3.5
-          }}
-        />
-        <motion.div
-          className="absolute bottom-32 left-2/3 w-24 h-24 bg-gradient-to-br from-amber-400/17 to-yellow-400/17 rounded-full blur-xl"
-          animate={{
-            y: [0, -22, 0],
-            x: [0, 18, 0],
-            scale: [1, 1.05, 1],
-          }}
-          transition={{
-            duration: 7,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.5
-          }}
-        />
-      </div>
+    <main className="relative">
+      {/*
+        Lime owns one whole viewport, then hands off to the dark ground where
+        the work happens. Drenching the entire page would put every white
+        artboard and all 176 black-outlined trait swatches on a clashing
+        surface; confining it to the fold keeps the brand loud and the tool
+        legible. Near-black on #CCFF00 measures 15.07:1.
+      */}
+      <section className="surface-brand flex flex-col bg-brand text-ink-inverse sm:min-h-[calc(100svh-3.5rem)]">
+        <div className="container grid flex-1 items-center gap-8 py-12 sm:gap-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_30rem] lg:gap-16 lg:py-16">
+          <div className="flex flex-col gap-8 sm:gap-8 lg:gap-10">
+            <div className="w-full max-w-2xl">
+              <motion.h1 {...rise(0)} className="type-display font-display text-hero font-extrabold">
+                Build a PING.
+              </motion.h1>
 
-      {/* Main Content - Scrollable */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        <div className="relative z-10">
-          {/* Hero Section */}
-          <section className="min-h-full flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6">
-            <motion.div
-              className="relative h-full z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 p-2 sm:p-4 py-4 sm:py-6"
-              initial={{ opacity: 0, filter: "blur(10px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              <motion.p {...rise(0.08)} className="type-prose mt-6 text-lead text-ink-inverse/75">
+                {TRAIT_COUNT} community-made traits. An open image API that renders any
+                combination on demand.
+              </motion.p>
+            </div>
+
+            {/* Rules drawn in the ink colour, because the ground is lime. */}
+            <motion.dl
+              {...rise(0.16)}
+              className="grid w-full grid-cols-2 gap-px overflow-hidden rounded-lg bg-ink-inverse/20 sm:grid-cols-4"
             >
-              {/* Hero Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-center space-y-2 sm:space-y-4 w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2"
-              >
-                {/* Main Title with Enhanced Styling */}
-                <div className="relative">
-                  <motion.h1
-                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-tight"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                  >
-                    Create Your PING
-                  </motion.h1>
-
-                  {/* Glow effect behind title */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 blur-3xl -z-10 scale-110" />
+              {FACTS.map((fact) => (
+                <div key={fact.label} className="bg-brand px-4 py-3.5">
+                  <dt className="text-micro font-medium uppercase tracking-wider text-ink-inverse/70">
+                    {fact.label}
+                  </dt>
+                  <dd data-numeric className="mt-1 text-meta font-semibold text-ink-inverse">
+                    {fact.value}
+                  </dd>
                 </div>
+              ))}
+            </motion.dl>
 
-                {/* Subtitle with Animation */}
-                <motion.p
-                  className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7, duration: 0.8 }}
-                >
-                  Customize your unique PING character with different traits and join the{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 font-semibold">
-                    community
-                  </span>
-                </motion.p>
+            {/* A dark card on lime: the contract stays scannable and the
+                inversion reads as deliberate rather than as a hole. */}
+            <ContractAddress />
 
-                {/* Feature Pills */}
-                <motion.div
-                  className="flex flex-wrap justify-center gap-2 mt-3"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9, duration: 0.8 }}
-                >
-                  {[
-                    { icon: <Sparkles size={16} />, text: "Unique Traits" },
-                    { icon: <Zap size={16} />, text: "Instant Creation" },
-                    { icon: <Heart size={16} />, text: "Community Driven" }
-                  ].map((feature, index) => (
-                    <motion.div
-                      key={feature.text}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border border-border/50 rounded-full text-xs sm:text-sm font-medium shadow-lg"
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.1 + index * 0.1, duration: 0.6 }}
-                    >
-                      <span className="text-primary">{feature.icon}</span>
-                      {feature.text}
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </motion.div>
+            {SHOW_COUNTDOWN && <Countdown />}
+          </div>
 
-              {/* Contract Address Section with Enhanced Styling */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.2, duration: 0.8 }}
-                className="relative"
-              >
-                <ContractAddress />
-                {/* Subtle glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-600/10 blur-2xl -z-10 scale-110" />
-              </motion.div>
-
-              {/* Countdown Section */}
-              {SHOW_COUNTDOWN && <Countdown />}
-
-              {/* Builder Section with Enhanced Container */}
-              <div className="w-full max-w-[95vw] sm:max-w-[85vw] lg:max-w-[70vw] h-[120vh] sm:h-[100vh] lg:h-[60vh] min-h-[800px] lg:min-h-[750px] relative mb-8 sm:mb-12 lg:mb-16">
-                {/* Background decoration */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-600/5 rounded-3xl blur-3xl -z-10" />
-
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4, duration: 0.8 }}
-                  className="size-full relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border/50 rounded-xl sm:rounded-2xl lg:rounded-2xl p-2 sm:p-4 lg:p-6 xl:p-8 shadow-2xl"
-                >
-                  {/* Decorative corner elements */}
-                  <div className="hidden lg:block absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
-                  <div className="hidden lg:block absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
-                  <div className="hidden lg:block absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
-                  <div className="hidden lg:block absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
-
-                  <Builder />
-                </motion.div>
-              </div>
-            </motion.div>
-          </section>
-
-          {/* Roadmap Section */}
-          <Roadmap />
+          <motion.div {...rise(0.2)} className="order-first lg:order-none">
+            <HeroCharacter />
+          </motion.div>
         </div>
-      </div>
-    </div>
+
+        <div className="container hidden pb-8 sm:block">
+          <a
+            href="#builder"
+            onClick={handleScrollToBuilder}
+            className="group inline-flex items-center gap-2 text-meta font-semibold text-ink-inverse/80 transition-colors duration-fast ease-out-quart hover:text-ink-inverse"
+          >
+            Open the generator
+            <ChevronDown
+              size={16}
+              className="transition-transform duration-normal ease-out-quart motion-safe:group-hover:translate-y-0.5"
+            />
+          </a>
+        </div>
+      </section>
+
+      {/* The builder is the proof. Give it the room a product gets, and label
+          it so it reads as the working thing rather than a decoration. */}
+      <section id="builder" className="container scroll-mt-24 pb-24">
+        <div className="mb-5 flex items-baseline justify-between gap-4 border-t border-hairline pt-5">
+          <h2 className="font-display text-h3 font-bold text-ink">The generator</h2>
+          <p className="hidden text-meta text-ink-muted sm:block">
+            Pick traits, shuffle, download. No wallet needed.
+          </p>
+        </div>
+
+        <motion.div
+          {...rise(0.24)}
+          className="relative h-[1180px] rounded-lg border border-hairline bg-raised p-3 shadow-panel sm:h-[1100px] sm:p-5 lg:h-[760px]"
+        >
+          <Builder />
+        </motion.div>
+      </section>
+
+      <Roadmap />
+    </main>
   );
 };
 

@@ -1,5 +1,4 @@
 import { fabric } from 'fabric';
-import { safeRenderAll } from './canvasUtils';
 
 export interface CanvasState {
   objects: any[];
@@ -16,6 +15,17 @@ export class UndoRedoManager {
   private lastStateHash: string = '';
 
   constructor(private canvas: fabric.Canvas) {}
+
+  /**
+   * True while an undo or redo is being applied to the canvas.
+   *
+   * Callers use this to avoid recording a history entry for changes the
+   * manager itself is making. saveState() also guards on it internally, so
+   * this is belt-and-braces rather than the only protection.
+   */
+  get isBusy(): boolean {
+    return this.isProcessing;
+  }
 
   // Generate a hash of the current canvas state for comparison
   private generateStateHash(objects: any[]): string {

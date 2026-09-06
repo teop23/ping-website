@@ -86,16 +86,16 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
           <label className="text-xs sm:text-sm font-medium">Color</label>
           <div className="relative">
             <button
-              className="w-full h-6 sm:h-8 rounded-md border-2 border-gray-200"
+              className="w-full h-6 sm:h-8 rounded-md border border-hairline"
               style={{ backgroundColor: color }}
               onClick={() => setShowColorPicker(!showColorPicker)}
             />
             {showColorPicker && (
               <div className="absolute z-10 mt-2">
-                <div className="p-3 bg-white rounded-lg shadow-lg border">
+                <div className="rounded-lg border border-hairline bg-panel p-3 shadow-panel">
                   <HexColorPicker color={color} onChange={setColor} />
                   <div className="mt-3 mb-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Hex Color</label>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Hex Color</label>
                     <input
                       type="text"
                       value={color}
@@ -121,12 +121,12 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                         }
                       }}
                       placeholder="#000000"
-                      className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
+                      className="w-full px-2 py-1 text-xs border border-hairline rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
                       maxLength={7}
                     />
                   </div>
                   <button
-                    className="mt-2 w-full px-3 py-1 text-sm bg-gray-100 rounded"
+                    className="mt-2 w-full px-3 py-1 text-sm bg-panel rounded"
                     onClick={() => setShowColorPicker(false)}
                   >
                     Close
@@ -157,7 +157,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
         {/* Text Controls */}
         {tool === 'text' && (
           <div className="space-y-2">
-            <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+            <div className="text-micro text-ink-muted bg-panel p-2 rounded border border-blue-200">
               💡 Click anywhere on canvas to add text
             </div>
             <div className="space-y-1">
@@ -175,16 +175,16 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               <label className="text-xs sm:text-sm font-medium">Text Color</label>
               <div className="relative">
                 <button
-                  className="w-full h-6 sm:h-8 rounded border-2 border-gray-200"
+                  className="w-full h-6 sm:h-8 rounded border border-hairline"
                   style={{ backgroundColor: textColor }}
                   onClick={() => setShowTextColorPicker(!showTextColorPicker)}
                 />
                 {showTextColorPicker && (
                   <div className="absolute z-10 mt-2">
-                    <div className="p-3 bg-white rounded-lg shadow-lg border">
+                    <div className="rounded-lg border border-hairline bg-panel p-3 shadow-panel">
                       <HexColorPicker color={textColor} onChange={setTextColor} />
                       <div className="mt-3 mb-2">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Hex Color</label>
+                        <label className="block text-xs font-medium text-ink-muted mb-1">Hex Color</label>
                         <input
                           type="text"
                           value={textColor}
@@ -210,12 +210,12 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                             }
                           }}
                           placeholder="#000000"
-                          className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
+                          className="w-full px-2 py-1 text-xs border border-hairline rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-mono"
                           maxLength={7}
                         />
                       </div>
                       <button
-                        className="mt-2 w-full px-3 py-1 text-sm bg-gray-100 rounded"
+                        className="mt-2 w-full px-3 py-1 text-sm bg-panel rounded"
                         onClick={() => setShowTextColorPicker(false)}
                       >
                         Close
@@ -238,7 +238,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                     }
                   }
                 }}
-                className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
+                className="w-full px-2 py-1 text-sm border border-hairline rounded"
               >
                 <option value="normal">Normal</option>
                 <option value="bold">Bold</option>
@@ -252,7 +252,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
         {/* Curve Tool Instructions */}
         {tool === 'curve' && (
           <div className="space-y-2">
-            <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+            <div className="text-micro text-ink-muted bg-panel p-2 rounded border border-blue-200">
               💡 Click 3 points to create a curved line with movable anchors:
               <br />
               1. Start point (blue anchor)
@@ -261,7 +261,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               <br />
               3. End point (red anchor)
               <br />
-              <span className="text-xs text-gray-600">
+              <span className="text-xs text-ink-muted">
                 After creation, you can drag any anchor point to reshape the curve in real-time!
               </span>
             </div>
@@ -281,7 +281,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
         {/* Fill Tool Instructions */}
         {tool === 'fill' && (
           <div className="space-y-2">
-            <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+            <div className="text-micro text-ink-muted bg-panel p-2 rounded border border-blue-200">
               💡 Click on any area to fill it with the selected color. Works best on enclosed shapes and areas.
             </div>
           </div>
@@ -333,7 +333,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
           </Button>
           
           {/* Paste hint */}
-          <div className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200 mt-2">
+          <div className="text-micro text-ink-muted bg-panel p-2 rounded border border-blue-200 mt-2">
             💡 Tip: You can paste images directly from your clipboard using Ctrl+V (Cmd+V on Mac)
           </div>
         </div>

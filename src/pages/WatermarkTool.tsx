@@ -1,16 +1,17 @@
 import { fabric } from 'fabric';
 import { motion } from 'framer-motion';
 import { Check, Copy, Download, RotateCcw, Upload } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import pingIcon from '../assets/ping_transparent_icon.png';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { calculateCanvasSize, safeRenderAll } from '../utils/canvasUtils';
+import { safeRenderAll } from '../utils/canvasUtils';
 
 const WatermarkTool: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerSize, setContainerSize] = useState(0);
+  const [containerBox, setContainerBox] = useState({ width: 0, height: 0 });
+  const [imageAspect, setImageAspect] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [uploadedImage, setUploadedImage] = useState<fabric.Image | null>(null);
@@ -27,8 +28,7 @@ const WatermarkTool: React.FC = () => {
 
     const resizeObserver = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      const size = Math.floor(Math.min(width, height) * 0.8);
-      setContainerSize(size);
+      setContainerBox({ width, height });
     });
 
     resizeObserver.observe(element);
@@ -38,13 +38,41 @@ const WatermarkTool: React.FC = () => {
     };
   }, []);
 
+  // The canvas takes the uploaded image's aspect ratio and is fitted inside
+  // whatever space the container gives it. A fixed square canvas letterboxed
+  // every non-square upload and baked the bars into the exported file.
+  const canvasSize = useMemo(() => {
+    const maxWidth = Math.max(0, containerBox.width - 32);
+    const maxHeight = Math.max(0, containerBox.height - 32);
+    if (maxWidth <= 0 || maxHeight <= 0) return { width: 0, height: 0 };
+
+    const width = Math.min(maxWidth, maxHeight * imageAspect);
+    return { width: Math.floor(width), height: Math.floor(width / imageAspect) };
+  }, [containerBox, imageAspect]);
+
+  // Canvas aspect matches the image aspect, so one scale factor fills it exactly.
+  const fillCanvas = useCallback((img: fabric.Image, size: { width: number; height: number }) => {
+    const { width: naturalWidth, height: naturalHeight } = img.getOriginalSize();
+    const scale = Math.max(size.width / naturalWidth, size.height / naturalHeight);
+
+    img.set({
+      scaleX: scale,
+      scaleY: scale,
+      left: size.width / 2,
+      top: size.height / 2,
+      originX: 'center',
+      originY: 'center',
+    });
+    img.setCoords();
+  }, []);
+
   useEffect(() => {
     if (!canvasRef.current) return;
+
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: containerSize,
-      height: containerSize,
-      backgroundColor: '#f8f9fa',
-      selection: true
+      // Transparent, so a PNG export carries no invented background.
+      backgroundColor: undefined,
+      selection: true,
     });
 
     setCanvas(fabricCanvas);
@@ -52,43 +80,35 @@ const WatermarkTool: React.FC = () => {
     return () => {
       fabricCanvas.dispose();
     };
-  }, [containerSize]);
+  }, []);
 
-  // Handle window resize
+  // Resize in place rather than rebuilding, and carry the artwork with it.
   useEffect(() => {
-    if (!canvas) return;
+    if (!canvas || canvasSize.width === 0) return;
 
-    const handleResize = () => {
-      const newSize = calculateCanvasSize(canvasRef.current?.parentElement);
-      canvas.setDimensions({ width: newSize, height: newSize });
+    const previousWidth = canvas.getWidth();
+    const previousHeight = canvas.getHeight();
 
-      // Rescale uploaded image to fit new canvas size
-      if (uploadedImage) {
-        scaleImageToFit(uploadedImage, newSize, newSize);
-      }
+    canvas.setDimensions({ width: canvasSize.width, height: canvasSize.height });
 
-      safeRenderAll(canvas);
-    };
+    if (uploadedImage) fillCanvas(uploadedImage, canvasSize);
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [canvas, uploadedImage]);
+    // Keep the watermark where the user put it, proportionally.
+    if (watermarkImage && previousWidth > 0 && previousHeight > 0) {
+      const scaleX = canvasSize.width / previousWidth;
+      const scaleY = canvasSize.height / previousHeight;
 
-  const scaleImageToFit = (img: fabric.Image, maxWidth: number, maxHeight: number) => {
-    const imgWidth = img.getOriginalSize().width;
-    const imgHeight = img.getOriginalSize().height;
+      watermarkImage.set({
+        left: (watermarkImage.left ?? 0) * scaleX,
+        top: (watermarkImage.top ?? 0) * scaleY,
+        scaleX: (watermarkImage.scaleX ?? 1) * scaleX,
+        scaleY: (watermarkImage.scaleY ?? 1) * scaleY,
+      });
+      watermarkImage.setCoords();
+    }
 
-    const scale = Math.min(maxWidth / imgWidth, maxHeight / imgHeight) * 1; // 90% of canvas size
-
-    img.set({
-      scaleX: scale,
-      scaleY: scale,
-      left: maxWidth / 2,
-      top: maxHeight / 2,
-      originX: 'center',
-      originY: 'center'
-    });
-  };
+    safeRenderAll(canvas);
+  }, [canvas, canvasSize, uploadedImage, watermarkImage, fillCanvas]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -104,8 +124,19 @@ const WatermarkTool: React.FC = () => {
           canvas.remove(uploadedImage);
         }
 
-        // Scale image to fit canvas
-        scaleImageToFit(img, canvas.width!, canvas.height!);
+        const { width: naturalWidth, height: naturalHeight } = img.getOriginalSize();
+        const aspect = naturalWidth / naturalHeight;
+        setImageAspect(aspect);
+
+        // Fill against the size the canvas is about to become, so the first
+        // paint is already correct rather than briefly letterboxed.
+        const maxWidth = Math.max(0, containerBox.width - 32);
+        const maxHeight = Math.max(0, containerBox.height - 32);
+        const nextWidth = Math.floor(Math.min(maxWidth, maxHeight * aspect));
+        const nextSize = { width: nextWidth, height: Math.floor(nextWidth / aspect) };
+
+        canvas.setDimensions(nextSize);
+        fillCanvas(img, nextSize);
 
         img.set({
           selectable: false,
@@ -206,7 +237,7 @@ const WatermarkTool: React.FC = () => {
   //   try {
   //     const tweetText = "Just created my custom $PING watermark!\nCreate your own at:\n";
   //     const hashtags = "PING,Solana,Crypto,Watermark";
-  //     const url = "https://pingonsol.com/watermark";
+  //     const url = `${window.location.origin}/watermark`;
 
   //     // Construct the Twitter share URL
   //     const twitterUrl = new URL('https://twitter.com/intent/tweet');
@@ -235,7 +266,6 @@ const WatermarkTool: React.FC = () => {
         format: 'png',
         quality: 1,
         multiplier: 2,
-        backgroundColor: 'transparent'
       });
 
       // Convert data URL to blob
@@ -261,18 +291,18 @@ const WatermarkTool: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-56px)] flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex flex-col lg:flex-row">
+    <div className="h-[calc(100vh-56px)] flex-grow bg-transparent w-full min-h-0 flex flex-col lg:flex-row">
       {/* Left Sidebar - Controls */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="w-full lg:w-80 flex-shrink-0 p-4 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white/50 backdrop-blur-sm"
+        className="w-full lg:w-80 flex-shrink-0 p-4 border-b lg:border-b-0 lg:border-r border-hairline bg-raised/80 backdrop-blur-sm"
       >
         <Card className="h-full overflow-hidden flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
                 <img src={pingIcon} alt="PING" className="w-5 h-5" />
               </div>
               Watermark Tool
@@ -339,7 +369,7 @@ const WatermarkTool: React.FC = () => {
                       variant="outline"
                       size="sm"
                       className={`transition-all duration-300 ${isCopying
-                        ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
+                        ? 'border-positive bg-positive text-ink-inverse hover:bg-positive'
                         : ''
                         }`}
                     >
@@ -370,7 +400,7 @@ const WatermarkTool: React.FC = () => {
                   <Button
                     onClick={downloadImage}
                     disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700"
+                    className="w-full bg-brand hover:bg-brand-hover"
                   >
                     <Download size={16} className="mr-2" />
                     Download Image
@@ -415,10 +445,10 @@ const WatermarkTool: React.FC = () => {
         >
           <div
             className="relative"
-            style={{ width: containerSize, height: containerSize }}
+            style={{ width: canvasSize.width, height: canvasSize.height }}
           >
-            {/* Canvas Container */}
-            <div className="relative size-full bg-white rounded-lg shadow-xl border-2 border-gray-200 overflow-hidden flex flex-row justify-center">
+            {/* The frame tracks the canvas, which tracks the image's aspect. */}
+            <div className="relative size-full overflow-hidden rounded-md border border-hairline bg-ink">
               <canvas
                 ref={canvasRef}
                 className="block w-full h-full"
@@ -426,22 +456,22 @@ const WatermarkTool: React.FC = () => {
 
               {/* Overlay instructions when no image is uploaded */}
               {!isImageUploaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm">
+                <div className="absolute inset-0 flex items-center justify-center bg-panel/90 backdrop-blur-sm">
                   <div className="text-center space-y-4 p-8">
-                    <div className="w-16 h-16 mx-auto bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-full flex items-center justify-center">
-                      <Upload className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 mx-auto bg-brand rounded-full flex items-center justify-center">
+                      <Upload className="w-8 h-8 text-ink-inverse" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <h3 className="mb-2 text-lg font-semibold text-ink">
                         Upload an Image
                       </h3>
-                      <p className="text-sm text-gray-600 max-w-xs">
+                      <p className="max-w-xs text-meta text-ink-muted">
                         Choose an image from your device to add a PING watermark
                       </p>
                     </div>
                     <Button
                       onClick={triggerFileUpload}
-                      className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700"
+                      className="bg-brand hover:bg-brand-hover"
                     >
                       <Upload size={16} className="mr-2" />
                       Choose Image

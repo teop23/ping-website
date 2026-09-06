@@ -3,33 +3,39 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="src/assets/ping_transparent_icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- HTML Meta Tags -->
-  <title>PING - Create Your Custom Solana Based Character</title>
+  <meta name="theme-color" content="#110E08" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" type="image/png" href="/ping200_200.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Martian+Mono:wdth,wght@75..112.5,300..700&display=swap"
+    rel="stylesheet" />
+
+  <title>PING</title>
   <meta name="description"
-    content="Visit the website to create your unique Ping character. Customize with different traits and join the community.">
+    content="Build a PING character from 176 community-made traits. An open image API, a trait editor, and a token on Robinhood Chain." />
 
-  <!-- Facebook Meta Tags -->
-  <meta property="og:url" content="https://pingonsol.com/">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="PING - Create Your Custom Solana Based Character">
+  <!-- TODO(relaunch): set these to the new domain once it is registered.
+       Everything server-rendered already derives its own origin; only these
+       static tags carry a hardcoded host. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="PING" />
+  <meta property="og:title" content="PING" />
   <meta property="og:description"
-    content="Visit the website to create your unique Ping character. Customize with different traits and join the community.">
-  <meta property="og:image" content="https://pingonsol.com/opengraph-ping.png">
+    content="Build a PING character from 176 community-made traits. An open image API, a trait editor, and a token on Robinhood Chain." />
+  <meta property="og:image" content="/opengraph-ping.png" />
 
-  <!-- Twitter Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="twitter:domain" content="pingonsol.com">
-  <meta property="twitter:url" content="https://pingonsol.com/">
-  <meta name="twitter:title" content="PING - Create Your Custom Solana Based Character">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PING" />
   <meta name="twitter:description"
-    content="Visit the website to create your unique Ping character. Customize with different traits and join the community.">
-  <meta name="twitter:image" content="https://pingonsol.com/opengraph-ping.png">
-  <meta name="twitter:site" content="@spectrumcalls">
+    content="Build a PING character from 176 community-made traits. An open image API, a trait editor, and a token on Robinhood Chain." />
+  <meta name="twitter:image" content="/opengraph-ping.png" />
 </head>
 
-<body class="font-['Inter',sans-serif]">
+<body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

@@ -5,9 +5,9 @@ import { Palette, Menu, X, ChevronDown, Wrench, Code } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
-import { SOCIAL_LINKS } from '../utils/constants';
+import { LAUNCHPAD_NAME, LAUNCHPAD_URL, SOCIAL_LINKS } from '../utils/constants';
 import pingIcon from '../assets/ping_transparent_icon.png';
-import { DexScreenerLogo } from '../utils/icons';
+import { DexScreenerLogo, PonsMark } from '../utils/icons';
 
 // Twitter/X icon component
 export const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
@@ -62,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
 
   return (
     <>
-      <nav className={cn("h-14 bg-gradient-to-b from-background/95 to-background/90 backdrop-blur-lg border-b border-border/50 px-4 py-2 sm:px-6 md:px-12 relative flex items-center shadow-sm z-50", className)} {...props}>
+      <nav className={cn("sticky top-0 z-sticky flex h-14 items-center border-b border-hairline bg-ground/85 px-4 backdrop-blur-md sm:px-6 md:px-12", className)} {...props}>
         <div className="w-full flex justify-between items-center">
           {/* Logo */}
           <motion.div 
@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 alt="PING" 
                 className="w-6 h-6 sm:w-7 sm:h-7 opacity-90"
               />
-              <span className="font-bold text-xl sm:text-2xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">PING</span>
+              <span className="type-display font-display text-xl font-extrabold text-ink sm:text-2xl">PING</span>
             </a>
           </motion.div>
           
@@ -161,11 +161,18 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 icon={<TelegramIcon size={18} />}
                 label="Telegram"
               />
-              <SocialLink 
-                href={SOCIAL_LINKS.DEXSCREENER}
-                icon={<DexScreenerLogo size={18} />}
-                label="DexScreener"
+              <SocialLink
+                href={LAUNCHPAD_URL}
+                icon={<PonsMark size={18} />}
+                label={LAUNCHPAD_NAME}
               />
+              {SOCIAL_LINKS.DEXSCREENER && (
+                <SocialLink
+                  href={SOCIAL_LINKS.DEXSCREENER}
+                  icon={<DexScreenerLogo size={18} />}
+                  label="Chart"
+                />
+              )}
             </div>
           </div>
 
@@ -286,12 +293,20 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                       label="Telegram"
                       isMobile
                     />
-                    <SocialLink 
-                      href={SOCIAL_LINKS.DEXSCREENER}
-                      icon={<DexScreenerLogo size={20} />}
-                      label="DexScreener"
+                    <SocialLink
+                      href={LAUNCHPAD_URL}
+                      icon={<PonsMark size={20} />}
+                      label={LAUNCHPAD_NAME}
                       isMobile
                     />
+                    {SOCIAL_LINKS.DEXSCREENER && (
+                      <SocialLink
+                        href={SOCIAL_LINKS.DEXSCREENER}
+                        icon={<DexScreenerLogo size={20} />}
+                        label="Chart"
+                        isMobile
+                      />
+                    )}
                   </div>
                 </div>
               </div>

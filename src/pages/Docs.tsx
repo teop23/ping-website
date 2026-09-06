@@ -3,13 +3,16 @@ import { Code, Globe, Image, Share2, Shirt, Users } from 'lucide-react';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
+/** Whatever host the docs are read from is the host the examples should use. */
+const ORIGIN = typeof window === 'undefined' ? '' : window.location.origin;
+
 const Docs: React.FC = () => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-screen">
+    <div className="bg-transparent w-full min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <motion.div
@@ -19,10 +22,10 @@ const Docs: React.FC = () => {
           className="text-center mb-12"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <Code className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center">
+              <Code className="w-6 h-6 text-ink-inverse" />
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+            <h1 className="text-4xl sm:text-5xl font-bold type-display text-ink">
               API Documentation
             </h1>
           </div>
@@ -46,7 +49,7 @@ const Docs: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <CodeBlock>https://pingonsol.com</CodeBlock>
+              <CodeBlock>{ORIGIN}</CodeBlock>
               <p className="text-sm text-muted-foreground mt-2">
                 All API endpoints are relative to this base URL. No authentication required.
               </p>
@@ -67,7 +70,7 @@ const Docs: React.FC = () => {
               title="Get Available Traits"
               endpoint="GET /traits-index.json"
               description="Retrieve all available categories and traits for character customization."
-              example="https://pingonsol.com/traits-index.json"
+              example={`${ORIGIN}/traits-index.json`}
               responseExample={`{
   "head": ["cap", "backwards-cap", "cowboy-hat", "crown"],
   "face": ["pit-vipers", "cool-glasses", "heart-glasses"],
@@ -78,7 +81,7 @@ const Docs: React.FC = () => {
   "left_hand": ["beer", "mop", "handbag"],
   "accessory": ["nuke", "lily", "pet-apu"]
 }`}
-              onCopy={() => copyToClipboard('https://pingonsol.com/traits-index.json')}
+              onCopy={() => copyToClipboard(`${ORIGIN}/traits-index.json`)}
             />
           </motion.div>
 
@@ -103,9 +106,9 @@ const Docs: React.FC = () => {
                 { name: "left_hand", type: "string", description: "Left hand item trait (optional)" },
                 { name: "accessory", type: "string", description: "Additional accessory trait (optional)" }
               ]}
-              example="https://pingonsol.com/api/image/custom.png?head=backwards-cap&face=pit-vipers"
+              example={`${ORIGIN}/api/image/custom.png?head=backwards-cap&face=pit-vipers`}
               responseExample="Returns a PNG image of the custom PING character"
-              onCopy={() => copyToClipboard('https://pingonsol.com/api/image/custom.png?head=backwards-cap&face=pit-vipers')}
+              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/custom.png?head=backwards-cap&face=pit-vipers`)}
             />
           </motion.div>
           {/* Generate Random Character */}
@@ -122,9 +125,9 @@ const Docs: React.FC = () => {
               parameters={[
                 { name: "t", type: "string", description: "Timestamp - used to invalidate Cloudflare cache(if there is any)" },
               ]}
-              example="https://pingonsol.com/api/image/random.png?t=1700000000"
+              example={`${ORIGIN}/api/image/random.png?t=1700000000`}
               responseExample="Returns a PNG image of the PING character with random traits"
-              onCopy={() => copyToClipboard('https://pingonsol.com/api/image/random.png?t=1700000000')}
+              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/random.png?t=1700000000`)}
             />
           </motion.div>
 
@@ -149,9 +152,9 @@ const Docs: React.FC = () => {
                 { name: "left_hand", type: "string", description: "Left hand item trait (optional)" },
                 { name: "accessory", type: "string", description: "Additional accessory trait (optional)" }
               ]}
-              example="https://pingonsol.com/api/og?head=backwards-cap&face=pit-vipers"
+              example={`${ORIGIN}/api/og?head=backwards-cap&face=pit-vipers`}
               responseExample="Returns an HTML page with Open Graph meta tags for social media preview"
-              onCopy={() => copyToClipboard('https://pingonsol.com/api/og?head=backwards-cap&face=pit-vipers')}
+              onCopy={() => copyToClipboard(`${ORIGIN}/api/og?head=backwards-cap&face=pit-vipers`)}
             />
           </motion.div>
 
@@ -169,9 +172,9 @@ const Docs: React.FC = () => {
               parameters={[
                 { name: "photo", type: "string", description: "URL of the image to use as shirt design (required)" }
               ]}
-              example="https://pingonsol.com/api/image/shirt.png?photo=https://example.com/my-image.jpg"
+              example={`${ORIGIN}/api/image/shirt.png?photo=https://example.com/my-image.jpg`}
               responseExample="Returns a PNG image of PING character wearing the custom shirt"
-              onCopy={() => copyToClipboard('https://pingonsol.com/api/image/shirt.png?photo=https://example.com/my-image.jpg')}
+              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/shirt.png?photo=https://example.com/my-image.jpg`)}
             />
           </motion.div>
 
@@ -189,9 +192,9 @@ const Docs: React.FC = () => {
               parameters={[
                 { name: "handle", type: "string", description: "X (Twitter) username without @ symbol (required)" }
               ]}
-              example="https://pingonsol.com/api/image/shirt_by_x.png?handle=elonmusk"
+              example={`${ORIGIN}/api/image/shirt_by_x.png?handle=elonmusk`}
               responseExample="Returns a PNG image of PING character wearing a shirt with the user's profile picture"
-              onCopy={() => copyToClipboard('https://pingonsol.com/api/image/shirt_by_x.png?handle=elonmusk')}
+              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/shirt_by_x.png?handle=elonmusk`)}
             />
           </motion.div>
 
@@ -209,9 +212,9 @@ const Docs: React.FC = () => {
               parameters={[
                 { name: "handle", type: "string", description: "X (Twitter) username without @ symbol (required, part of URL path)" }
               ]}
-              example="https://pingonsol.com/api/og/ogx/elonmusk"
+              example={`${ORIGIN}/api/og/ogx/elonmusk`}
               responseExample="Returns an HTML page with Open Graph meta tags for social media preview"
-              onCopy={() => copyToClipboard('https://pingonsol.com/api/og/ogx/elonmusk')}
+              onCopy={() => copyToClipboard(`${ORIGIN}/api/og/ogx/elonmusk`)}
             />
           </motion.div>
         </div>
@@ -234,11 +237,11 @@ const Docs: React.FC = () => {
               <div>
                 <h4 className="font-semibold mb-2">JavaScript/TypeScript</h4>
                 <CodeBlock language="javascript">{`// Fetch available traits
-const traits = await fetch('https://pingonsol.com/traits-index.json')
+const traits = await fetch('${ORIGIN}/traits-index.json')
   .then(res => res.json());
 
 // Generate custom character image URL
-const characterUrl = new URL('https://pingonsol.com/api/image/custom.png');
+const characterUrl = new URL('${ORIGIN}/api/image/custom.png');
 characterUrl.searchParams.set('head', 'backwards-cap');
 characterUrl.searchParams.set('face', 'pit-vipers');
 characterUrl.searchParams.set('body', 'ping-tee');
@@ -252,11 +255,11 @@ document.body.appendChild(img);`}</CodeBlock>
               <div>
                 <h4 className="font-semibold mb-2">HTML</h4>
                 <CodeBlock language="html">{`<!-- Direct image embedding -->
-<img src="https://pingonsol.com/api/image/custom.png?head=crown&aura=fire-aura" 
+<img src="${ORIGIN}/api/image/custom.png?head=crown&aura=fire-aura" 
      alt="Custom PING Character" />
 
 <!-- Social media sharing -->
-<a href="https://pingonsol.com/api/og?head=crown&aura=fire-aura" 
+<a href="${ORIGIN}/api/og?head=crown&aura=fire-aura" 
    target="_blank">
   Share on Social Media
 </a>`}</CodeBlock>
@@ -267,7 +270,7 @@ document.body.appendChild(img);`}</CodeBlock>
                 <CodeBlock language="python">{`import requests
 
 # Get available traits
-response = requests.get('https://pingonsol.com/traits-index.json')
+response = requests.get('${ORIGIN}/traits-index.json')
 traits = response.json()
 
 # Generate character image
@@ -277,7 +280,7 @@ params = {
     'right_hand': 'pistol'
 }
 
-image_url = 'https://pingonsol.com/api/image/custom.png'
+image_url = '${ORIGIN}/api/image/custom.png'
 image_response = requests.get(image_url, params=params)
 
 # Save image
@@ -300,15 +303,15 @@ with open('my_ping_character.png', 'wb') as f:
               <CardTitle>Important Notes</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-2">Rate Limiting</h4>
-                <p className="text-blue-800 text-sm">
+              <div className="rounded-md border border-hairline bg-raised p-4">
+                <h4 className="mb-2 font-semibold text-ink">Rate Limiting</h4>
+                <p className="text-meta text-ink-muted">
                   Please be respectful with API usage. No strict rate limits are enforced, but excessive requests may be throttled.
                 </p>
               </div>
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h4 className="font-semibold text-green-900 mb-2">Caching</h4>
-                <p className="text-green-800 text-sm">
+              <div className="rounded-md border border-hairline bg-raised p-4">
+                <h4 className="mb-2 font-semibold text-ink">Caching</h4>
+                <p className="text-meta text-ink-muted">
                   Generated images are cached for performance. Identical requests will return cached results.
                 </p>
               </div>
@@ -356,7 +359,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({
           {title}
         </CardTitle>
         <div className="flex items-center gap-2">
-          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-mono rounded">
+          <span className="rounded bg-brand-wash px-2 py-1 font-mono text-micro text-brand">
             {endpoint.split(' ')[0]}
           </span>
           <code className="text-sm text-muted-foreground font-mono">
@@ -382,7 +385,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({
                 <tbody>
                   {parameters.map((param, index) => (
                     <tr key={index} className="border-b">
-                      <td className="py-2 font-mono text-blue-600">{param.name}</td>
+                      <td className="py-2 font-mono text-brand">{param.name}</td>
                       <td className="py-2 text-muted-foreground">{param.type}</td>
                       <td className="py-2">{param.description}</td>
                     </tr>
@@ -416,13 +419,13 @@ interface CodeBlockProps {
 const CodeBlock: React.FC<CodeBlockProps> = ({ children, language, onCopy }) => {
   return (
     <div className="relative group">
-      <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
+      <pre className="overflow-x-auto rounded-md border border-hairline bg-ground p-4 text-meta text-ink">
         <code className={language ? `language-${language}` : ''}>{children}</code>
       </pre>
       {onCopy && (
         <button
           onClick={onCopy}
-          className="absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-2 right-2 rounded border border-hairline bg-panel p-2 text-ink-muted hover:text-ink opacity-0 group-hover:opacity-100 transition-opacity"
           title="Copy to clipboard"
         >
           <Code size={14} />

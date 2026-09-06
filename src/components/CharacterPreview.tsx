@@ -1,6 +1,5 @@
 import { baseCharacterImage } from '@/data/traits';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasUtils';
-import { AnimatePresence } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Check, Copy, Download, Move, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -13,11 +12,10 @@ interface CharacterPreviewProps {
   selectedTraits: Trait[];
   textElements?: TextElement[];
   onTextElementsChange?: (elements: TextElement[]) => void;
-  onReset: () => void;
   onRandomize?: () => void;
 }
 
-const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, textElements = [], onTextElementsChange, onReset, onRandomize }) => {
+const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, textElements = [], onTextElementsChange, onRandomize }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -156,27 +154,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       y: e.clientY - currentY
     });
     setIsDragging(textId);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !overlayRef.current || !onTextElementsChange) return;
-
-    const rect = overlayRef.current.getBoundingClientRect();
-    const newX = Math.max(0, Math.min(1, (e.clientX - dragOffset.x) / rect.width));
-    const newY = Math.max(0, Math.min(1, (e.clientY - dragOffset.y) / rect.height));
-
-    const updatedElements = textElements.map(element =>
-      element.id === isDragging
-        ? { ...element, x: newX, y: newY }
-        : element
-    );
-
-    onTextElementsChange(updatedElements);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(null);
-    setDragOffset({ x: 0, y: 0 });
   };
 
   // Add global mouse event listeners for dragging
@@ -412,7 +389,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   };
 
   const generateApiUrl = () => {
-    const baseUrl = 'https://pingonsol.com/api/og';
+    // Share links have to point at whatever host is serving the page.
+    const baseUrl = `${window.location.origin}/api/og`;
     const params = new URLSearchParams();
 
     // Add selected traits as query parameters
@@ -460,7 +438,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       <div className="w-full h-full flex flex-col overflow-hidden" ref={containerRef}>
         {/* Canvas Container - Takes most of the space */}
         <div className="flex-1 min-h-0 flex items-center justify-center p-2 sm:p-4">
-          <div className="w-full h-full max-w-full max-h-full bg-gradient-to-br from-white to-gray-50 shadow-xl rounded-lg border flex items-center justify-center">
+          <div className="flex h-full max-h-full w-full max-w-full items-center justify-center rounded-md border border-hairline bg-ink">
             <canvas
               ref={canvasRef}
               className="block max-w-full max-h-full"
@@ -491,7 +469,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               onMouseDown={(e) => handleMouseDown(e, textElement.id)}
             >
               {/* Drag handle - visible on hover */}
-              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/70 text-white px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none">
+              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-ground/80 text-ink px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none">
                 <Move size={12} className="inline mr-1" />
                 Drag to move
               </div>
@@ -572,7 +550,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
       onClick={onClick}
       size="sm"
       className={`flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 ${isCopying
-        ? 'bg-green-600 hover:bg-green-600 text-white border-green-600'
+        ? 'border-positive bg-positive text-ink-inverse hover:bg-positive'
         : ''
         }`}
       disabled={disabled}

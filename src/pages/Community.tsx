@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Heart, Filter, Grid, List } from 'lucide-react';
+import { Users, Heart, Grid, List } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -17,14 +17,14 @@ type SortBy = 'newest' | 'oldest';
 
 const Community: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [sortBy, setSortBy] = useState<SortBy>('newest');
+  const sortBy: SortBy = 'newest';
 
   // Get sorted data
   const sortedCommunityPings = sortItems(communityPings, sortBy);
   const sortedPingMemes = sortItems(pingMemes, sortBy);
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0">
+    <div className="bg-transparent w-full min-h-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <motion.div
@@ -34,10 +34,10 @@ const Community: React.FC = () => {
           className="text-center mb-12"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center">
+              <Users className="w-6 h-6 text-ink-inverse" />
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+            <h1 className="text-4xl sm:text-5xl font-bold type-display text-ink">
               Community
             </h1>
           </div>
@@ -172,7 +172,7 @@ interface PingCardProps {
 
 const PingCard: React.FC<PingCardProps> = ({ ping }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group border border-hairline bg-raised shadow-panel">
       <div className="flex flex-row justify-center items-center relative aspect-square">
         <img
           src={ping.imageUrl}
@@ -180,11 +180,11 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
           className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
         />
         {/* Subtle overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
       </div>
-      <CardContent className="p-4 bg-gradient-to-br from-white to-gray-50/50 border-t border-gray-100/50 relative">
+      <CardContent className="border-t bg-raised p-4 border-hairline relative">
         {/* Subtle top border accent */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        
         
         <p className="text-xs text-muted-foreground mb-2">
           by{' '}
@@ -209,7 +209,7 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
 // Ping List Item Component
 const PingListItem: React.FC<PingCardProps> = ({ ping }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md hover:shadow-primary/5">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group border border-hairline bg-raised shadow-panel">
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
           <img
@@ -247,19 +247,19 @@ interface MemeCardProps {
 
 const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md">
-      <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group border border-hairline bg-raised shadow-panel">
+      <div className="relative aspect-square bg-transparent">
         <img
           src={meme.imageUrl}
           alt={meme.title}
           className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500 ease-out"
         />
         {/* Subtle overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
       </div>
-      <CardContent className="p-4 bg-gradient-to-br from-white to-gray-50/50 border-t border-gray-100/50 relative">
+      <CardContent className="border-t bg-raised p-4 border-hairline relative">
         {/* Subtle top border accent */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        
         
         <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
         <p className="text-xs text-muted-foreground">
@@ -273,10 +273,10 @@ const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
 // Meme List Item Component
 const MemeListItem: React.FC<MemeCardProps> = ({ meme }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group bg-white border-0 shadow-md hover:shadow-primary/5">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group border border-hairline bg-raised shadow-panel">
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <div className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
           <img
             src={meme.imageUrl}
             alt={meme.title}

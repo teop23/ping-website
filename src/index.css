@@ -1,72 +1,204 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
+/*
+  PING design tokens.
+
+  Committed dark. The scene: a trader on a phone at night, twelve tabs deep in
+  Pons listings, deciding in seconds whether this one is worth a second look.
+  Every surface in that context is dark; a light theme would be the odd one out,
+  so there is no light theme, only one palette built properly.
+
+  Palette anchors are Robinhood's own brand values, exact:
+    #110E08  warm near-black
+    #CCFF00  acid lime
+  Everything else is a neutral ramp tinted to that same warm hue (~85 deg), which
+  is what keeps this from reading as the neutral-black launchpad default.
+
+  Values are stored as bare OKLCH components so Tailwind can inject alpha via
+  <alpha-value>. Do not wrap them in oklch() here.
+*/
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* ---- Surfaces: warm near-black ramp ----
+       Anchored on the dark from the Robinhood mark. At L21 the olive cast is
+       actually visible; the darker L16.5 variant reads as flat black on a
+       phone, which is indistinguishable from the neutral black every other
+       launchpad site uses. */
+    --bg-ground: 21.02% 0.021 90.34;   /* #1c180d - logo dark, exact */
+    --bg-raised: 24.6% 0.023 90;       /* #252014 - cards, nav */
+    --bg-panel: 28.6% 0.026 90;        /* #2f2a1b - inputs, hover surfaces, wells */
+    --hairline: 34% 0.03 89;           /* #3e3726 - 1px rules and borders */
+
+    /* ---- Brand accent ---- */
+    --brand: 93.07% 0.2286 123.09;     /* #CCFF00 - Robinhood lime, exact */
+    --brand-hover: 96.5% 0.2 123.09;
+    --brand-wash: 26% 0.06 123.09;     /* tinted well behind lime content */
+
+    /* ---- Ink. Verified >= 4.5:1 against every surface above, not just the
+           darkest one: --bg-panel is the worst case. ---- */
+    --ink: 100% 0 89.88;               /* 17.71 ground / 14.31 panel */
+    --ink-muted: 75.48% 0.0221 88.75;  /*  8.10 ground /  6.54 panel */
+    /* Raised from L61.5: on the lighter base it fell to 3.85:1 on panels. */
+    --ink-faint: 65.75% 0.019 88;      /*  5.64 ground /  4.55 panel */
+
+    /* ---- State. Never the only channel carrying meaning ---- */
+    --positive: 81.73% 0.1837 149.08;  /* 11.68:1 */
+    --negative: 68.87% 0.2009 28.61;   /*  6.32:1 */
+
+    /* ---- shadcn/radix semantic aliases ----
+       Note: shadcn's --accent is a *hover surface*, not the brand colour.
+       Pointing it at lime would turn every dropdown hover acid green. */
+    --background: var(--bg-ground);
+    --foreground: var(--ink);
+    --card: var(--bg-raised);
+    --card-foreground: var(--ink);
+    --popover: var(--bg-panel);
+    --popover-foreground: var(--ink);
+    --primary: var(--brand);
+    --primary-foreground: var(--bg-ground);
+    --secondary: var(--bg-panel);
+    --secondary-foreground: var(--ink);
+    --muted: var(--bg-panel);
+    --muted-foreground: var(--ink-muted);
+    --accent: var(--bg-panel);
+    --accent-foreground: var(--ink);
+    --destructive: var(--negative);
+    --destructive-foreground: var(--bg-ground);
+    --border: var(--hairline);
+    --input: var(--hairline);
+    --ring: var(--brand);
+
+    /* ---- Radii. Deliberately tighter than the 24px launchpad default;
+            signage is squarer than it is soft. ---- */
     --radius: 0.5rem;
-  }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --radius-pill: 999px;
+
+    /* ---- Motion. Exponential ease-out, no bounce. ---- */
+    --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 400ms;
+
+    /* ---- Semantic z-index. No 9999 anywhere. ---- */
+    --z-dropdown: 1000;
+    --z-sticky: 1100;
+    --z-backdrop: 1200;
+    --z-modal: 1300;
+    --z-toast: 1400;
+    --z-tooltip: 1500;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground size-full;
-  }
-  
+
   html {
     @apply size-full;
+    scroll-behavior: smooth;
+    /* Archivo is a variable font with a width axis. Body sits at normal width;
+       display type widens rather than just growing, which is the signage move. */
+    font-variation-settings: "wdth" 100;
   }
-  
+
+  body {
+    @apply size-full bg-background text-foreground antialiased;
+    font-feature-settings: "cv05" 1, "ss01" 1;
+    text-rendering: optimizeLegibility;
+  }
+
   #root {
     @apply size-full;
   }
-  
-  /* Smooth scrolling */
+
+  /* Numbers in a token UI are data. They must align in columns and never
+     reflow as they tick. */
+  .tabular,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  ::selection {
+    background: oklch(var(--brand));
+    color: oklch(var(--bg-ground));
+  }
+
+  /* On a lime surface the rule above paints lime on lime and the highlight
+     vanishes, which reads as "this text is not selectable". Invert it there. */
+  .surface-brand ::selection {
+    background: oklch(var(--bg-ground));
+    color: oklch(var(--brand));
+  }
+
+  .surface-brand::selection {
+    background: oklch(var(--bg-ground));
+    color: oklch(var(--brand));
+  }
+
+  /* Never remove focus without replacing it. */
+  :focus-visible {
+    outline: 2px solid oklch(var(--brand));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: oklch(var(--bg-ground));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(var(--hairline));
+    border-radius: var(--radius-pill);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(var(--ink-faint));
+  }
+}
+
+@layer components {
+  /* Display type: Archivo widened. Used for the few headlines that carry the
+     page, not for every heading. */
+  .type-display {
+    font-variation-settings: "wdth" 118;
+    letter-spacing: -0.03em; /* floor is -0.04em; this stays clear of it */
+    text-wrap: balance;
+    line-height: 0.95;
+  }
+
+  .type-prose {
+    text-wrap: pretty;
+    max-width: 68ch;
+    /* Light-on-dark reads lighter than it is and needs the extra room. */
+    line-height: 1.65;
+  }
+
+  /* A hairline that reads as a drawn rule rather than a box edge. */
+  .rule {
+    border-top: 1px solid oklch(var(--hairline));
+  }
+}
+
+/* Reduced motion is an alternative, not a removal: things still change state,
+   they just stop travelling. */
+@media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

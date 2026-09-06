@@ -129,10 +129,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col h-full bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm border border-border/30 rounded-lg">
+      <div className="flex h-full flex-col overflow-hidden rounded-md border border-hairline bg-ground">
         
         {/* Search Section */}
-        <div className="p-2 bg-gradient-to-r from-background/80 to-muted/40 border-b border-border/50 flex-shrink-0">
+        <div className="shrink-0 border-b border-hairline p-2">
           <div className="relative">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={14} />
             <input
@@ -154,7 +154,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Category Filters */}
-        <div className="p-2 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
+        <div className="shrink-0 border-b border-hairline p-2">
           <div className="flex flex-wrap gap-1 sm:gap-2">
             <button
               onClick={() => handleCategoryFilterClick('all')}
@@ -183,7 +183,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Selected Traits Section - Always visible but compact */}
-        <div className="p-2 bg-gradient-to-r from-primary/5 to-purple-600/5 border-b border-border/50 flex-shrink-0">
+        <div className="shrink-0 border-b border-hairline bg-raised p-2">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-xs sm:text-sm font-semibold text-foreground">
               Selected ({selectedTraits.length})
@@ -228,7 +228,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Traits Grid Header */}
-        <div className="p-2 bg-gradient-to-r from-background/60 to-muted/30 border-b border-border/50 flex-shrink-0">
+        <div className="shrink-0 border-b border-hairline p-2">
           <h3 className="text-xs sm:text-sm font-semibold text-foreground">
             {searchQuery 
               ? `Search Results (${filteredTraits.length})` 
@@ -247,7 +247,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                 {/* Upload button - only show when filtering by specific category */}
                 {selectedCategoryFilter !== 'all' && !searchQuery && (
                   <motion.button
-                    className="relative cursor-pointer rounded-md overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary bg-gradient-to-br from-background/80 to-muted/40 transition-all duration-200 group"
+                    className="group relative cursor-pointer overflow-hidden rounded-md border border-dashed border-hairline bg-raised transition-colors duration-fast ease-out-quart hover:border-brand"
                     onClick={() => handleUpload(selectedCategoryFilter)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -323,7 +323,7 @@ const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onCl
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          <div className="aspect-square bg-gradient-to-br from-card/80 to-card/60 flex items-center justify-center relative">
+          <div className="relative flex aspect-square items-center justify-center bg-ink">
             <img
               src={imageSrc}
               alt={trait.name}

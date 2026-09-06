@@ -3,14 +3,7 @@ import { motion } from 'framer-motion';
 import { fabric } from 'fabric';
 import { baseCharacterImage } from '@/data/traits';
 import { ToolType } from '../types/traits';
-import { 
-  calculateCanvasSize, 
-  setupBaseImage, 
-  updateBaseImageScale, 
-  updateLoadedTraitsScale,
-  ensureProperLayering,
-  safeRenderAll
-} from '../utils/canvasUtils';
+import { setupBaseImage, ensureProperLayering, safeRenderAll } from '../utils/canvasUtils';
 import { UndoRedoManager } from '../utils/undoRedoManager';
 import { 
   uploadImage, 
@@ -33,6 +26,7 @@ import SaveControls from '../components/traits_page/SaveControls';
 
 const CreateTraits: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasBoxRef = useRef<HTMLDivElement>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [baseImage, setBaseImage] = useState<fabric.Image | null>(null);
   const [showBaseLayer, setShowBaseLayer] = useState(true);
@@ -86,7 +80,12 @@ const CreateTraits: React.FC = () => {
       width: canvasSize,
       height: canvasSize,
       backgroundColor: 'white',
-      selection: tool === 'select'
+      selection: tool === 'select',
+      // Retina scaling multiplies the backing store by devicePixelRatio, so a
+      // trait drawn on a DPR-2 phone exported at 2000px while the same trait on
+      // a desktop exported at 1000px. Every trait must come out at exactly the
+      // authoring resolution, whatever drew it.
+      enableRetinaScaling: false,
     });
 
     // Load base character image
@@ -116,7 +115,7 @@ const CreateTraits: React.FC = () => {
 
     const saveStateDelayed = (description?: string) => {
       setTimeout(() => {
-        if (undoRedoManager && !undoRedoManager.isProcessing) {
+        if (undoRedoManager && !undoRedoManager.isBusy) {
           undoRedoManager.saveState(description);
         }
       }, 200);
@@ -184,29 +183,40 @@ const CreateTraits: React.FC = () => {
     return setupClipboardHandlers(canvas, setTool);
   }, [canvas]);
 
-  // Handle window resize
+  // Fit the canvas to its column without touching the drawing buffer.
+  //
+  // The 1000x1000 buffer is the authoring resolution every exported trait is
+  // rendered at, so it must not follow the viewport; only the on-screen box
+  // does. cssOnly does exactly that, and fabric keeps mapping pointer events
+  // through the resulting scale factor.
   useEffect(() => {
     if (!canvas) return;
 
-    const handleResize = () => {
-      const newSize = calculateCanvasSize(canvasRef.current?.parentElement);
-      canvas.setDimensions({ width: newSize, height: newSize });
-      
-      if (baseImage) {
-        updateBaseImageScale(canvas, baseImage);
-      }
-      
-      updateLoadedTraitsScale(canvas, loadedTraits);
+    const box = canvasBoxRef.current;
+    if (!box) return;
+
+    const fit = () => {
+      const styles = getComputedStyle(box);
+      const available = Math.min(
+        box.clientWidth - parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight),
+        box.clientHeight - parseFloat(styles.paddingTop) - parseFloat(styles.paddingBottom)
+      );
+      if (!Number.isFinite(available) || available <= 0) return;
+
+      // Square, because traits have to register against a square base character.
+      const size = Math.floor(available);
+      canvas.setDimensions({ width: `${size}px`, height: `${size}px` }, { cssOnly: true });
+      canvas.calcOffset();
       safeRenderAll(canvas);
     };
 
+    fit();
 
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [canvas, baseImage, loadedTraits]);
+    const observer = new ResizeObserver(fit);
+    observer.observe(box);
+
+    return () => observer.disconnect();
+  }, [canvas]);
 
   // Update canvas when tool changes
   useEffect(() => {
@@ -334,13 +344,13 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-56px)] flex-grow bg-gradient-to-br from-gray-50 to-gray-100 w-full min-h-0 flex flex-col lg:flex-row">
+    <div className="h-[calc(100vh-56px)] flex-grow bg-transparent w-full min-h-0 flex flex-col lg:flex-row">
       {/* Left Sidebar - Tools */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="w-full lg:w-80 flex-shrink-0 p-4 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white/50 backdrop-blur-sm"
+        className="w-full lg:w-80 flex-shrink-0 p-4 border-b lg:border-b-0 lg:border-r border-hairline bg-raised/80 backdrop-blur-sm"
       >
         <ToolsPanel
           tool={tool}
@@ -377,7 +387,7 @@ const CreateTraits: React.FC = () => {
         transition={{ delay: 0.6, duration: 0.6 }}
         className="flex-1 flex flex-col min-w-0 order-1 lg:order-none"
       >
-        <CanvasArea canvasRef={canvasRef} />
+        <CanvasArea canvasRef={canvasRef} containerRef={canvasBoxRef} />
       </motion.div>
 
       {/* Right Sidebar - Saved Traits + Save Controls */}
@@ -385,7 +395,7 @@ const CreateTraits: React.FC = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
-        className="w-full lg:w-80 flex-shrink-0 p-4 border-t lg:border-t-0 lg:border-l border-gray-200 bg-white/50 backdrop-blur-sm flex flex-col gap-4 order-2 lg:order-none"
+        className="w-full lg:w-80 flex-shrink-0 p-4 border-t lg:border-t-0 lg:border-l border-hairline bg-raised/80 backdrop-blur-sm flex flex-col gap-4 order-2 lg:order-none"
       >
         <SavedTraitsPanel
           savedTraits={savedTraits}
