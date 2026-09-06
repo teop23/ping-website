@@ -1,15 +1,13 @@
 name = "ping-character-api"
 compatibility_date = "2024-01-01"
 
+# Must stay above the [env.*] headers: TOML assigns any key that follows a
+# table header to that table, so declaring this at the bottom of the file put
+# it inside [env.preview] and Pages reported the field as missing entirely.
+pages_build_output_dir = "dist"
+
 [env.production]
 name = "ping-character-api"
 
 [env.preview]
 name = "ping-character-api-preview"
-
-# Pages configuration
-pages_build_output_dir = "dist"
-
-# Environment variables (if needed)
-[vars]
-# Add any environment variables here
