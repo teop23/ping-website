@@ -8,16 +8,16 @@
  * sees of the project, so it now draws from the same tints the site does.
  */
 const BG_COLORS = [
-  '#1c180d',
+  '#0b1310',
   '#CCFF00',
 ];
 
 /** Palette for the site's own share card, mirroring the theme it ships with. */
 export const OG_THEME = {
-  background: '#1c180d',
+  background: '#0b1310',
   ink: '#FFFFFF',
   accent: '#CCFF00',
-  accentInk: '#1c180d',
+  accentInk: '#0b1310',
 };
 
 // FNV-1a. Small, fast, and gives the same number for the same string every time.
