@@ -2,7 +2,9 @@ import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import {
+  EMPTY_TRAIT_CHANCE,
   RENDER_BASE_IMAGE,
+  cardGeometry,
   RENDER_TRAITS_DIR,
   TRAIT_ORDER,
   noStore,
@@ -14,14 +16,16 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const isBanner = url.searchParams.get('type') === 'banner';
         const baseURL = new URL(request.url).origin;
         const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
-        const baseImageScaleMultiplier = 1.4;
-        const baseContainerWidth = isBanner ? 1200 : 512;
-        const baseContainerHeight = isBanner ? 630 : 512;
-        const baseImageSize = 512 * baseImageScaleMultiplier;
-        const baseImageTopOffset = isBanner ? (baseContainerHeight / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
-        const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
-        const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
-        const traitImageLeftOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0;
+    const {
+      width: baseContainerWidth,
+      height: baseContainerHeight,
+      character: traitSize,
+      baseSize: baseImageSize,
+      baseTop: baseImageTopOffset,
+      baseLeft: baseImageLeftOffset,
+      traitTop: traitImageTopOffset,
+      traitLeft: traitImageLeftOffset,
+    } = cardGeometry(isBanner);
         const traitOrder = TRAIT_ORDER;
         // Load the traits index JSON from the public directory
         const traitsIndexUrl = new URL('/traits-index.json', request.url);
@@ -33,12 +37,16 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         // Output differs every call anyway, so seed the colour off the roll.
         const bgColor = pickBgColor(String(Math.random()));
 
-        //select random traits for each category
+        // Roll each category, sometimes leaving it empty. The builder does the
+        // same (EMPTY_TRAIT_CHANCE), so this matches what a real character looks
+        // like instead of always wearing all eight slots - which also made this
+        // endpoint the heaviest possible render on every single call.
         for (const category of validCategories) {
             const traits = traitsIndex[category];
             if (traits.length === 0) {
                 return new Response(`No traits found for category "${category}"`, { status: 400 });
             }
+            if (Math.random() < EMPTY_TRAIT_CHANCE) continue;
             const randomTrait = traits[Math.floor(Math.random() * traits.length)];
             traitSelectionsByCategory.push({ category, trait: randomTrait });
         }
@@ -72,8 +80,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                     <img
                         key={i}
                         src={src}
-                        width="512"
-                        height="512"
+                        width={traitSize}
+                        height={traitSize}
                         style={{ position: 'absolute', top: traitImageTopOffset, left: traitImageLeftOffset }}
                     />
                 ))}

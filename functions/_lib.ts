@@ -143,8 +143,8 @@ export const renderOgPage = ({ imageUrl, pageUrl, title, description }: OgPageOp
   <meta property="og:title" content="${safeTitle}" />
   <meta property="og:description" content="${safeDescription}" />
   <meta property="og:image" content="${image}" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
+  <meta property="og:image:width" content="${CARD.banner.width}" />
+  <meta property="og:image:height" content="${CARD.banner.height}" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${page}" />
 </head>
@@ -177,3 +177,47 @@ export const BOT_USER_AGENT =
  */
 export const RENDER_TRAITS_DIR = '/traits-512';
 export const RENDER_BASE_IMAGE = '/ping-768.png';
+
+/**
+ * Card geometry, shared by every image endpoint.
+ *
+ * The banner is 800x420 rather than the conventional 1200x630. Output raster
+ * size, not layer count, is what pushes this over the free tier's per-request
+ * CPU budget: measured on the live deployment, a TWO-trait 1200x630 card failed
+ * 4/10 while an EIGHT-trait 512x512 one failed 3/10. 800x420 holds the same
+ * 1.905:1 shape at 44% of the pixels, and stays well above the 300x157 floor
+ * that X and Facebook need to render a large summary card rather than
+ * downgrading to a thumbnail.
+ *
+ * The character keeps its proportion of the frame, so the composition is
+ * unchanged - it is the same picture, rasterised smaller.
+ */
+export const CARD = {
+  square: { width: 512, height: 512 },
+  banner: { width: 800, height: 420 },
+};
+
+/** The base art is drawn larger than the trait box; traits register to the box. */
+export const BASE_SCALE = 1.4;
+
+export const cardGeometry = (isBanner: boolean) => {
+  const { width, height } = isBanner ? CARD.banner : CARD.square;
+  // Traits are authored square and fill the character box.
+  const character = isBanner ? Math.round((CARD.banner.width / 1200) * 512) : 512;
+  const baseSize = character * BASE_SCALE;
+
+  return {
+    width,
+    height,
+    character,
+    baseSize,
+    baseTop: (height - baseSize) / 2,
+    baseLeft: (width - baseSize) / 2,
+    traitTop: (height - character) / 2,
+    traitLeft: (width - character) / 2,
+  };
+};
+
+/** Mirrors EMPTY_TRAIT_CHANCE in src/utils/constants.ts: a real character
+ *  usually has empty slots, so a random one should too. */
+export const EMPTY_TRAIT_CHANCE = 0.3;

@@ -3,6 +3,7 @@ import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import {
   RENDER_BASE_IMAGE,
+  cardGeometry,
   RENDER_TRAITS_DIR,
   TRAIT_ORDER,
   pickBgColor,
@@ -19,14 +20,16 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const isBanner = queryParams.type === 'banner';
     const baseURL = new URL(request.url).origin;
     const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
-    const baseImageScaleMultiplier = 1.4;
-    const baseContainerWidth = isBanner ? 1200 : 512;
-    const baseContainerHeight = isBanner ? 630 : 512;
-    const baseImageSize = 512 * baseImageScaleMultiplier;
-    const baseImageTopOffset = isBanner ? (baseContainerHeight / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
-    const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
-    const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
-    const traitImageLeftOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0;
+    const {
+      width: baseContainerWidth,
+      height: baseContainerHeight,
+      character: traitSize,
+      baseSize: baseImageSize,
+      baseTop: baseImageTopOffset,
+      baseLeft: baseImageLeftOffset,
+      traitTop: traitImageTopOffset,
+      traitLeft: traitImageLeftOffset,
+    } = cardGeometry(isBanner);
     const traitOrder = TRAIT_ORDER;
     // Load the traits index JSON from the public directory
     const traitsIndexUrl = new URL('/traits-index.json', request.url);
@@ -85,8 +88,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           <img
             key={i}
             src={src}
-            width="512"
-            height="512"
+            width={traitSize}
+            height={traitSize}
             style={{ position: 'absolute', top: traitImageTopOffset, left: traitImageLeftOffset }}
           />
         ))}

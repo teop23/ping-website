@@ -1,33 +1,35 @@
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
-import { RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, pickBgColor } from '../../_lib';
+import { RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, cardGeometry, pickBgColor } from '../../_lib';
 import * as React from 'react';
 
 export const onRequestGet: APIRoute = async ({ request }) => {
     try {
-        const baseImageScaleMultiplier = 1.4;
-        const baseImageSize = 512 * baseImageScaleMultiplier;
         const url = new URL(request.url);
         const userPhotoUrl = url.searchParams.get("photo");
         const isBanner = url.searchParams.get("type") === "banner";
-        console.log(isBanner, "isBanner");
         if (!userPhotoUrl) {
             return new Response("Missing photo URL parameter", { status: 400 });
         }
         const baseURL = url.origin;
         const basePingImage = `${baseURL}${RENDER_BASE_IMAGE}`;
         const blankShirtTrait = `${baseURL}${RENDER_TRAITS_DIR}/trait-blank-tee_body.png`;
-        const baseContainerWidth = isBanner ? 1200 : 512;
-        const baseContainerHeight = isBanner ? 630 : 512;
-        console.log("baseContainerWidth", baseContainerWidth, "baseContainerHeight", baseContainerHeight);
-        const baseImageTopOffset = isBanner ? (baseContainerHeight / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
-        const baseImageLeftOffset = isBanner ? (baseContainerWidth / 2 - baseImageSize / 2) : (-1 * (baseImageSize - 512) / 2);
-        const traitImageTopOffset = isBanner ? (baseContainerHeight / 2 - 256) : 0;
-        const traitImageLeftOffset = isBanner ? (baseContainerWidth / 2 - 256) : 0;
-        const pfpImageSize = 120;
+        const {
+            width: baseContainerWidth,
+            height: baseContainerHeight,
+            character: traitSize,
+            baseSize: baseImageSize,
+            baseTop: baseImageTopOffset,
+            baseLeft: baseImageLeftOffset,
+            traitTop: traitImageTopOffset,
+            traitLeft: traitImageLeftOffset,
+        } = cardGeometry(isBanner);
+        // The photo sits on the tee. Both offsets are in character-space, so
+        // they scale with the character rather than with the canvas.
+        const scale = traitSize / 512;
+        const pfpImageSize = 120 * scale;
         const pfpImageLeftOffset = (baseContainerWidth / 2) - (pfpImageSize / 2);
-        const pfpImageTopOffset = (isBanner ? (baseContainerHeight / 2 - 256) : 0) + 242;
-        console.log("pfpImageTopOffset", pfpImageTopOffset, "pfpImageLeftOffset", pfpImageLeftOffset);
+        const pfpImageTopOffset = traitImageTopOffset + 242 * scale;
         return new ImageResponse(
             <div
                 style={{
@@ -48,8 +50,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                 <img
                     key={'pfp'}
                     src={blankShirtTrait}
-                    width="512"
-                    height="512"
+                    width={traitSize}
+                    height={traitSize}
                     style={{ position: 'absolute', top: traitImageTopOffset, left: traitImageLeftOffset }}
                 />
                 <img

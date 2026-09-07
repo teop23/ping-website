@@ -3,6 +3,8 @@ import {
   TRAIT_ORDER,
   escapeHtml,
   hashString,
+  CARD,
+  cardGeometry,
   noStore,
   pickBgColor,
   seedFromParams,
@@ -130,5 +132,41 @@ describe('TRAIT_ORDER', () => {
 
   it('has no duplicates', () => {
     expect(new Set(TRAIT_ORDER).size).toBe(TRAIT_ORDER.length);
+  });
+});
+
+describe('cardGeometry', () => {
+  it('centres the character on both axes', () => {
+    for (const isBanner of [false, true]) {
+      const g = cardGeometry(isBanner);
+      expect(g.traitLeft + g.character / 2).toBeCloseTo(g.width / 2);
+      expect(g.traitTop + g.character / 2).toBeCloseTo(g.height / 2);
+      expect(g.baseLeft + g.baseSize / 2).toBeCloseTo(g.width / 2);
+      expect(g.baseTop + g.baseSize / 2).toBeCloseTo(g.height / 2);
+    }
+  });
+
+  it('keeps the square card at the trait art native size', () => {
+    expect(cardGeometry(false).character).toBe(512);
+  });
+
+  it('holds the banner aspect ratio while shrinking the raster', () => {
+    // Output raster size is what pushes this over the free tier's CPU budget,
+    // so the banner is deliberately smaller than the conventional 1200x630.
+    const g = cardGeometry(true);
+    expect(g.width / g.height).toBeCloseTo(1200 / 630, 2);
+    expect(g.width * g.height).toBeLessThan(1200 * 630 * 0.5);
+  });
+
+  it('stays above the size scrapers need for a large card', () => {
+    expect(CARD.banner.width).toBeGreaterThanOrEqual(600);
+    expect(CARD.banner.height).toBeGreaterThanOrEqual(315);
+  });
+
+  it('scales the character with the frame', () => {
+    const square = cardGeometry(false);
+    const banner = cardGeometry(true);
+    expect(banner.character / banner.width).toBeCloseTo(512 / 1200, 2);
+    expect(square.baseSize / square.character).toBeCloseTo(banner.baseSize / banner.character);
   });
 });
