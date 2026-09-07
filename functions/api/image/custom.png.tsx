@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
-import { TRAIT_ORDER, pickBgColor, seedFromParams } from '../../_lib';
+import {
+  RENDER_BASE_IMAGE,
+  RENDER_TRAITS_DIR,
+  TRAIT_ORDER,
+  pickBgColor,
+  seedFromParams,
+} from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
@@ -12,7 +18,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     );
     const isBanner = queryParams.type === 'banner';
     const baseURL = new URL(request.url).origin;
-    const baseCharacterImage = `${baseURL}/ping.png`;
+    const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
     const baseImageScaleMultiplier = 1.4;
     const baseContainerWidth = isBanner ? 1200 : 512;
     const baseContainerHeight = isBanner ? 630 : 512;
@@ -54,7 +60,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
     const selectedTraits = traitSelectionsByCategory.map(({ category, trait }) => {
       const traitKey = `trait-${trait}_${category}`;
-      return `${baseURL}/traits/${traitKey}.png`;
+      return `${baseURL}${RENDER_TRAITS_DIR}/${traitKey}.png`;
     });
 
     // 🖼️ Generate the composited image

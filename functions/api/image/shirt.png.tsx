@@ -1,6 +1,6 @@
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
-import { pickBgColor } from '../../_lib';
+import { RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, pickBgColor } from '../../_lib';
 import * as React from 'react';
 
 export const onRequestGet: APIRoute = async ({ request }) => {
@@ -15,8 +15,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             return new Response("Missing photo URL parameter", { status: 400 });
         }
         const baseURL = url.origin;
-        const basePingImage = `${baseURL}/ping.png`;
-        const blankShirtTrait = `${baseURL}/traits/trait-blank-tee_body.png`;
+        const basePingImage = `${baseURL}${RENDER_BASE_IMAGE}`;
+        const blankShirtTrait = `${baseURL}${RENDER_TRAITS_DIR}/trait-blank-tee_body.png`;
         const baseContainerWidth = isBanner ? 1200 : 512;
         const baseContainerHeight = isBanner ? 630 : 512;
         console.log("baseContainerWidth", baseContainerWidth, "baseContainerHeight", baseContainerHeight);

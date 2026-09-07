@@ -1,13 +1,19 @@
 import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
-import { TRAIT_ORDER, noStore, pickBgColor } from '../../_lib';
+import {
+  RENDER_BASE_IMAGE,
+  RENDER_TRAITS_DIR,
+  TRAIT_ORDER,
+  noStore,
+  pickBgColor,
+} from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
     try {
         const url = new URL(request.url);
         const isBanner = url.searchParams.get('type') === 'banner';
         const baseURL = new URL(request.url).origin;
-        const baseCharacterImage = `${baseURL}/ping.png`;
+        const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
         const baseImageScaleMultiplier = 1.4;
         const baseContainerWidth = isBanner ? 1200 : 512;
         const baseContainerHeight = isBanner ? 630 : 512;
@@ -39,7 +45,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
         const selectedTraits = traitSelectionsByCategory.map(({ category, trait }) => {
             const traitKey = `trait-${trait}_${category}`;
-            return `${baseURL}/traits/${traitKey}.png`;
+            return `${baseURL}${RENDER_TRAITS_DIR}/${traitKey}.png`;
         });
 
         traitSelectionsByCategory.sort((a, b) => traitOrder.indexOf(a.category) - traitOrder.indexOf(b.category));

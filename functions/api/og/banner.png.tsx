@@ -1,7 +1,7 @@
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import * as React from 'react';
-import { OG_THEME, TRAIT_ORDER } from '../../_lib';
+import { OG_THEME, RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, TRAIT_ORDER } from '../../_lib';
 
 /**
  * The share card for the site itself.
@@ -40,7 +40,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     ]);
 
     const layers = TRAIT_ORDER.filter((category) => FEATURED[category]).map(
-      (category) => `${origin}/traits/trait-${FEATURED[category]}_${category}.png`
+      (category) => `${origin}${RENDER_TRAITS_DIR}/trait-${FEATURED[category]}_${category}.png`
     );
 
     // The character is composited exactly as the builder does it: the base is
@@ -110,7 +110,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           </div>
 
           <img
-            src={`${origin}/ping.png`}
+            src={`${origin}${RENDER_BASE_IMAGE}`}
             width={baseSize}
             height={baseSize}
             style={{
