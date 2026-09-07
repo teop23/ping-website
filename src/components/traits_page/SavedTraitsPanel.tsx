@@ -34,7 +34,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
   return (
     <Card className="flex-1 overflow-hidden flex flex-col max-h-[400px]">
       <CardHeader className="p-2 flex-shrink-0">
-        <h3 className="text-base sm:text-lg font-semibold">Saved Traits</h3>
+        <h3 className="text-body sm:text-lead font-semibold">Saved Traits</h3>
       </CardHeader>
       <CardContent className="p-0 flex-1 overflow-hidden">
         <div className="h-full overflow-y-auto">
@@ -60,8 +60,8 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                     }`}
                   />
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs sm:text-sm font-medium block truncate">{trait.name}</span>
-                    <span className={`text-xs ${trait.isVisible ? 'text-brand' : 'text-ink-faint'}`}>
+                    <span className="text-micro sm:text-meta font-medium block truncate">{trait.name}</span>
+                    <span className={`text-micro ${trait.isVisible ? 'text-accent-ink' : 'text-ink-faint'}`}>
                       {trait.isVisible ? 'Visible' : 'Hidden'}
                     </span>
                   </div>
@@ -75,7 +75,7 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
                       e.stopPropagation();
                       onDownloadTrait(trait);
                     }}
-                    className="h-7 w-7 sm:h-8 sm:w-8 text-brand hover:text-ink-muted hover:bg-panel flex-shrink-0"
+                    className="h-7 w-7 sm:h-8 sm:w-8 text-accent-ink hover:text-ink-muted hover:bg-panel flex-shrink-0"
                   >
                     <Download size={12} className="sm:w-4 sm:h-4" />
                   </Button>
@@ -121,8 +121,8 @@ const SavedTraitsPanel: React.FC<SavedTraitsPanelProps> = ({
             ))}
             {savedTraits.length === 0 && (
               <div className="text-center text-ink-faint py-8">
-                <p className="text-sm">No saved traits yet</p>
-                <p className="text-xs mt-2">Create and save your first trait! Click on saved traits to toggle visibility.</p>
+                <p className="text-meta">No saved traits yet</p>
+                <p className="text-micro mt-2">Create and save your first trait! Click on saved traits to toggle visibility.</p>
               </div>
             )}
           </div>

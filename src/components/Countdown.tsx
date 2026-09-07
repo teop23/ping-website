@@ -49,7 +49,7 @@ const Countdown: React.FC = () => {
       >
         <div className="flex items-center justify-center">
           <div className="bg-brand rounded-xl px-6 py-4 shadow-lg">
-            <span className="text-xl font-semibold text-ink-inverse">
+            <span className="text-h3 font-semibold text-ink-inverse">
               🚀 Launching soon!
             </span>
           </div>
@@ -69,45 +69,45 @@ const Countdown: React.FC = () => {
         {/* Hours */}
         <div className="text-center">
           <div className="bg-card rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
-            <div className="text-2xl sm:text-3xl font-bold text-muted-foreground font-mono">
+            <div className="text-h3 sm:text-h2 font-bold text-muted-foreground font-mono">
               {formatNumber(timeLeft.hours)}
             </div>
           </div>
-          <div className="text-xs text-muted-foreground font-medium mt-2 tracking-wider">
+          <div className="text-micro text-muted-foreground font-medium mt-2 tracking-wider">
             HOURS
           </div>
         </div>
 
         {/* Separator */}
-        <div className="text-2xl sm:text-3xl font-bold text-muted-foreground pb-6">
+        <div className="text-h3 sm:text-h2 font-bold text-muted-foreground pb-6">
           :
         </div>
 
         {/* Minutes */}
         <div className="text-center">
           <div className="bg-card rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
-            <div className="text-2xl sm:text-3xl font-bold text-muted-foreground font-mono">
+            <div className="text-h3 sm:text-h2 font-bold text-muted-foreground font-mono">
               {formatNumber(timeLeft.minutes)}
             </div>
           </div>
-          <div className="text-xs text-muted-foreground font-medium mt-2 tracking-wider">
+          <div className="text-micro text-muted-foreground font-medium mt-2 tracking-wider">
             MINUTES
           </div>
         </div>
 
         {/* Separator */}
-        <div className="text-2xl sm:text-3xl font-bold text-muted-foreground pb-6">
+        <div className="text-h3 sm:text-h2 font-bold text-muted-foreground pb-6">
           :
         </div>
 
         {/* Seconds */}
         <div className="text-center">
           <div className="bg-card rounded-xl px-4 py-3 shadow-lg min-w-[70px]">
-            <div className="text-2xl sm:text-3xl font-bold text-muted-foreground font-mono">
+            <div className="text-h3 sm:text-h2 font-bold text-muted-foreground font-mono">
               {formatNumber(timeLeft.seconds)}
             </div>
           </div>
-          <div className="text-xs text-muted-foreground font-medium mt-2 tracking-wider">
+          <div className="text-micro text-muted-foreground font-medium mt-2 tracking-wider">
             SECONDS
           </div>
         </div>

@@ -20,6 +20,7 @@ module.exports = {
         // font-size utility, and a colour of the same name generates a second
         // `.text-base` rule that silently repaints every heading using it.
         ground: token("--bg-ground"),
+        artboard: token("--artboard"),
         raised: token("--bg-raised"),
         panel: token("--bg-panel"),
         hairline: token("--hairline"),
@@ -35,6 +36,7 @@ module.exports = {
           // Text sitting ON the accent or on a light artboard.
           inverse: token("--ink-inverse"),
         },
+        "accent-ink": token("--accent-ink"),
         positive: token("--positive"),
         negative: token("--negative"),
 

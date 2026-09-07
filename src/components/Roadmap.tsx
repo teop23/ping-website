@@ -19,7 +19,7 @@ export type RoadmapStep = {
  */
 const STATUS_META: Record<RoadmapStatus, { label: string; dot: string; text: string }> = {
   completed: { label: 'Shipped', dot: 'bg-positive', text: 'text-positive' },
-  'in-progress': { label: 'In progress', dot: 'bg-brand', text: 'text-brand' },
+  'in-progress': { label: 'In progress', dot: 'bg-brand', text: 'text-accent-ink' },
   upcoming: { label: 'Planned', dot: 'bg-ink-faint', text: 'text-ink-faint' },
 };
 

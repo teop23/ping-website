@@ -37,11 +37,11 @@ const Community: React.FC = () => {
             <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center">
               <Users className="w-6 h-6 text-ink-inverse" />
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold type-display text-ink">
+            <h1 className="text-h2 sm:text-h1 font-bold type-display text-ink">
               Community
             </h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lead text-muted-foreground max-w-3xl mx-auto">
             Discover amazing PING characters created by our community and enjoy the best PING memes
           </p>
         </motion.div>
@@ -59,7 +59,7 @@ const Community: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortBy)}
-                className="px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="px-3 py-2 border border-input rounded-md bg-background text-meta focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -186,7 +186,7 @@ const PingCard: React.FC<PingCardProps> = ({ ping }) => {
         {/* Subtle top border accent */}
         
         
-        <p className="text-xs text-muted-foreground mb-2">
+        <p className="text-micro text-muted-foreground mb-2">
           by{' '}
           {ping.creator ? (
             <a
@@ -218,7 +218,7 @@ const PingListItem: React.FC<PingCardProps> = ({ ping }) => {
             className="w-16 h-16 object-cover rounded-lg flex-shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-sm"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground mb-2">
+            <p className="text-micro text-muted-foreground mb-2">
               by{' '}
               {ping.creator ? (
                 <a
@@ -261,8 +261,8 @@ const MemeCard: React.FC<MemeCardProps> = ({ meme }) => {
         {/* Subtle top border accent */}
         
         
-        <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
-        <p className="text-xs text-muted-foreground">
+        <h3 className="font-semibold text-meta mb-1 truncate">{meme.title}</h3>
+        <p className="text-micro text-muted-foreground">
           {new Date(meme.createdAt).toLocaleDateString()}
         </p>
       </CardContent>
@@ -284,8 +284,8 @@ const MemeListItem: React.FC<MemeCardProps> = ({ meme }) => {
           />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm mb-1 truncate">{meme.title}</h3>
-            <p className="text-xs text-muted-foreground">
+            <h3 className="font-semibold text-meta mb-1 truncate">{meme.title}</h3>
+            <p className="text-micro text-muted-foreground">
               {new Date(meme.createdAt).toLocaleDateString()}
             </p>
           </div>

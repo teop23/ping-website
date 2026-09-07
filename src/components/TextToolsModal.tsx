@@ -77,7 +77,7 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
         <div className="space-y-4">
           {/* Add Text Section */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold">Add New Text</h3>
+            <h3 className="text-meta font-semibold">Add New Text</h3>
             
             {/* Text Input */}
             <input
@@ -85,18 +85,18 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
               placeholder="Enter text..."
-              className="w-full px-3 py-2 text-sm border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full px-3 py-2 text-meta border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
               onKeyPress={(e) => e.key === 'Enter' && addTextElement()}
             />
 
             {/* Font Size and Color Row */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">Size</label>
+                <label className="text-micro font-medium text-muted-foreground mb-1 block">Size</label>
                 <select
                   value={fontSize}
                   onChange={(e) => setFontSize(Number(e.target.value))}
-                  className="w-full px-2 py-2 text-sm border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background"
+                  className="w-full px-2 py-2 text-meta border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background"
                 >
                   <option value={12}>12px</option>
                   <option value={14}>14px</option>
@@ -112,7 +112,7 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
               </div>
 
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">Color</label>
+                <label className="text-micro font-medium text-muted-foreground mb-1 block">Color</label>
                 <div className="relative">
                   <button
                     className="w-full h-9 rounded-md border border-input flex-shrink-0 hover:border-ring transition-colors"
@@ -136,12 +136,12 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
                               }
                             }}
                             placeholder="#000000"
-                            className="w-full px-2 py-1 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring font-mono"
+                            className="w-full px-2 py-1 text-micro border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-ring font-mono"
                             maxLength={7}
                           />
                         </div>
                         <button
-                          className="w-full mt-2 px-2 py-1 text-xs bg-muted rounded-md hover:bg-muted/80 transition-colors"
+                          className="w-full mt-2 px-2 py-1 text-micro bg-muted rounded-md hover:bg-muted/80 transition-colors"
                           onClick={() => setShowColorPicker(false)}
                         >
                           Close
@@ -167,7 +167,7 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
           {/* Text Elements List */}
           {textElements.length > 0 && (
             <div className="space-y-3 pt-4 border-t">
-              <h3 className="text-sm font-semibold">Added Text Elements</h3>
+              <h3 className="text-meta font-semibold">Added Text Elements</h3>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {textElements.map((element) => (
                   <motion.div
@@ -182,11 +182,11 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
                         type="text"
                         value={element.text}
                         onChange={(e) => updateTextElement(element.id, { text: e.target.value })}
-                        className="w-full bg-transparent text-sm font-medium focus:outline-none min-w-0 px-1 py-1 rounded border-0 focus:ring-1 focus:ring-ring"
+                        className="w-full bg-transparent text-meta font-medium focus:outline-none min-w-0 px-1 py-1 rounded border-0 focus:ring-1 focus:ring-ring"
                         style={{ color: element.color }}
                       />
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-micro text-muted-foreground">
                           {element.fontSize}px
                         </span>
                         <div 
@@ -211,8 +211,8 @@ const TextToolsModal: React.FC<TextToolsModalProps> = ({ isOpen, onClose, onText
 
           {/* Instructions */}
           <div className="pt-4 border-t">
-            <h3 className="text-sm font-semibold mb-2">Instructions</h3>
-            <div className="text-xs text-muted-foreground space-y-1">
+            <h3 className="text-meta font-semibold mb-2">Instructions</h3>
+            <div className="text-micro text-muted-foreground space-y-1">
               <p>• Text will appear randomly positioned on your character</p>
               <p>• Drag text elements on the character to reposition them</p>
               <p>• Edit text directly in the list above</p>

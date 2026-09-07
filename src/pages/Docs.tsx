@@ -25,11 +25,11 @@ const Docs: React.FC = () => {
             <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center">
               <Code className="w-6 h-6 text-ink-inverse" />
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold type-display text-ink">
+            <h1 className="text-h2 sm:text-h1 font-bold type-display text-ink">
               API Documentation
             </h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lead text-muted-foreground max-w-3xl mx-auto">
             Generate custom PING characters and social media previews programmatically
           </p>
         </motion.div>
@@ -50,7 +50,7 @@ const Docs: React.FC = () => {
             </CardHeader>
             <CardContent>
               <CodeBlock>{ORIGIN}</CodeBlock>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-meta text-muted-foreground mt-2">
                 All API endpoints are relative to this base URL. No authentication required.
               </p>
             </CardContent>
@@ -317,7 +317,7 @@ with open('my_ping_character.png', 'wb') as f:
               </div>
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <h4 className="font-semibold text-yellow-900 mb-2">Image Format</h4>
-                <p className="text-yellow-800 text-sm">
+                <p className="text-yellow-800 text-meta">
                   All character images are returned as PNG format with transparent backgrounds (where applicable).
                 </p>
               </div>
@@ -359,10 +359,10 @@ const EndpointCard: React.FC<EndpointCardProps> = ({
           {title}
         </CardTitle>
         <div className="flex items-center gap-2">
-          <span className="rounded bg-brand-wash px-2 py-1 font-mono text-micro text-brand">
+          <span className="rounded bg-brand-wash px-2 py-1 font-mono text-micro text-accent-ink">
             {endpoint.split(' ')[0]}
           </span>
-          <code className="text-sm text-muted-foreground font-mono">
+          <code className="text-meta text-muted-foreground font-mono">
             {endpoint.split(' ')[1]}
           </code>
         </div>
@@ -374,7 +374,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({
           <div>
             <h4 className="font-semibold mb-2">Parameters</h4>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-meta">
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-2 font-medium">Name</th>
@@ -385,7 +385,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({
                 <tbody>
                   {parameters.map((param, index) => (
                     <tr key={index} className="border-b">
-                      <td className="py-2 font-mono text-brand">{param.name}</td>
+                      <td className="py-2 font-mono text-accent-ink">{param.name}</td>
                       <td className="py-2 text-muted-foreground">{param.type}</td>
                       <td className="py-2">{param.description}</td>
                     </tr>
