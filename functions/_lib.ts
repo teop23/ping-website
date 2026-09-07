@@ -51,9 +51,16 @@ export const seedFromParams = (params: URLSearchParams, ignore: string[] = []): 
 // rolls fresh output per call. Headers passed into ImageResponse are appended to
 // its defaults rather than replacing them, so overriding means rebuilding the
 // response with the header set outright.
-export const noStore = (response: Response): Response => {
+//
+// This asks for revalidation rather than 'no-store'. Behind a proxied custom
+// domain, a no-store image response came back as 200 with a zero-length body on
+// every request - reproducible on both hostnames, cf-cache-status MISS, and
+// fine on the *.pages.dev origin and in `wrangler pages dev`, so it is the zone
+// hop rather than this code. 'max-age=0, must-revalidate' is what Pages itself
+// serves for uncacheable assets and gives the same freshness guarantee.
+export const alwaysRevalidate = (response: Response): Response => {
   const headers = new Headers(response.headers);
-  headers.set('Cache-Control', 'no-store');
+  headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
