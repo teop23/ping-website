@@ -52,15 +52,16 @@ export const seedFromParams = (params: URLSearchParams, ignore: string[] = []): 
 // its defaults rather than replacing them, so overriding means rebuilding the
 // response with the header set outright.
 //
-// This asks for revalidation rather than 'no-store'. Behind a proxied custom
-// domain, a no-store image response came back as 200 with a zero-length body on
-// every request - reproducible on both hostnames, cf-cache-status MISS, and
-// fine on the *.pages.dev origin and in `wrangler pages dev`, so it is the zone
-// hop rather than this code. 'max-age=0, must-revalidate' is what Pages itself
-// serves for uncacheable assets and gives the same freshness guarantee.
-export const alwaysRevalidate = (response: Response): Response => {
+// Note this header alone is not enough behind a proxied custom domain. The zone
+// rewrites Cache-Control to its own Browser Cache TTL, and Cloudflare treats a
+// .png path as cacheable by extension whatever the origin says - so this
+// endpoint got a zero-length entry stored at the edge and then served it back
+// as 200/0 bytes (cf-cache-status EXPIRED) on every revalidation. Keeping the
+// URL out of the shared cache needs a zone Cache Rule bypassing /api/*; this
+// header is the correct origin-side half of that, not a substitute for it.
+export const noStore = (response: Response): Response => {
   const headers = new Headers(response.headers);
-  headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+  headers.set('Cache-Control', 'no-store');
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,

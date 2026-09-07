@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
-import { TRAIT_ORDER, alwaysRevalidate, pickBgColor } from '../../_lib';
+import { TRAIT_ORDER, noStore, pickBgColor } from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
     try {
         const url = new URL(request.url);
@@ -45,7 +45,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         traitSelectionsByCategory.sort((a, b) => traitOrder.indexOf(a.category) - traitOrder.indexOf(b.category));
 
         // 🖼️ Generate the composited image
-        return alwaysRevalidate(new ImageResponse(
+        return noStore(new ImageResponse(
             <div
                 style={{
                     width: baseContainerWidth,

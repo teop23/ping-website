@@ -3,7 +3,7 @@ import {
   TRAIT_ORDER,
   escapeHtml,
   hashString,
-  alwaysRevalidate,
+  noStore,
   pickBgColor,
   seedFromParams,
   titleFromTraits,
@@ -103,28 +103,19 @@ describe('toTitleCase', () => {
   });
 });
 
-describe('alwaysRevalidate', () => {
+describe('noStore', () => {
   it('replaces the cache header rather than appending to it', () => {
     const cached = new Response('x', {
       headers: { 'Cache-Control': 'public, immutable, max-age=31536000' },
     });
-    const header = alwaysRevalidate(cached).headers.get('Cache-Control');
-    expect(header).toBe('public, max-age=0, must-revalidate');
-    expect(header).not.toContain('31536000');
-    expect(header).not.toContain('immutable');
-  });
-
-  it('does not say no-store', () => {
-    // Behind a proxied custom domain a no-store image response came back 200
-    // with an empty body on every request. Revalidation gives the same
-    // freshness without that.
-    const result = alwaysRevalidate(new Response('x'));
-    expect(result.headers.get('Cache-Control')).not.toContain('no-store');
+    const header = noStore(cached).headers.get('Cache-Control');
+    expect(header).toBe('no-store');
+    expect(header).not.toContain('max-age');
   });
 
   it('preserves status, body and other headers', async () => {
     const source = new Response('x', { status: 201, headers: { 'Content-Type': 'image/png' } });
-    const result = alwaysRevalidate(source);
+    const result = noStore(source);
     expect(result.status).toBe(201);
     expect(result.headers.get('Content-Type')).toBe('image/png');
     expect(await result.text()).toBe('x');
