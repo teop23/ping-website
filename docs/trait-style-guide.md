@@ -24,19 +24,55 @@ most of `accessory`.
 - Reference files: `trait-cowboy-hat_head.png`, `trait-ping-tee_body.png`,
   `trait-cigar_mouth.png`, `trait-crown_head.png`.
 
-## Treatment B — painterly gradient (auras only)
+## Treatment B — painterly glow halo (most auras)
 
-Used for: every `aura` trait, no exceptions.
+Used for: the flame/glow-style `aura` traits — `fire-aura`, `sunrise-aura`,
+and the six added 2026-09-10 (`storm-aura`, `toxic-aura`, `ice-aura`,
+`holy-aura`, `shadow-aura`, `galaxy-aura`).
 
-- Soft radial/directional gradients, visible film-grain noise texture, no
-  black outline at all — the opposite rendering approach from Treatment A.
-- Silhouette is a rounded aura shape sized to fully surround the character's
-  head and shoulders; the character itself is never drawn into the aura
-  layer (it renders as solid black in isolation, which is correct — it sits
-  *behind* the base in paint order).
+**This is not the only style inside the `aura` category — see the note below
+before assuming it is.**
+
+- Soft radial gradient (dark/near-transparent near the center, brightening
+  toward the outer edge) plus visible film-grain noise texture, no black
+  outline at all — the opposite rendering approach from Treatment A.
+- An open, jagged crown shape wrapping roughly the top 250 degrees (head and
+  shoulders), not a closed 360-degree ring — a full ring puts a spike
+  straight down through the character's face, and every reference file stops
+  well short of the belly.
+- **The center and any area near the character's actual face must be fully
+  transparent, not just "dark."** Confirmed by direct pixel measurement:
+  `fire-aura` is fully transparent (alpha 0) at the point matching where the
+  base's eyes/beak sit. This isn't cosmetic — an opaque area there, even a
+  near-black one, sits **in front of** the character rather than behind it
+  once actually composited (verified against a real render, not assumed),
+  and reads as a solid patch over the face. Trait art that "looks right" in
+  isolation and wrong once composited is specifically this failure mode; see
+  [[Trait Registration Against a Base Character]] for the fuller story of how
+  this shipped once and was only caught by testing the real composite.
 - Large file sizes (300KB-1MB) are normal here and are not a mistake to
-  "optimize away" — they're what the grain texture costs at 1120-1147px.
-- Reference file: `trait-fire-aura_aura.png`.
+  "optimize away" — they're what the grain texture costs at ~1147px.
+- Reference file: `trait-fire-aura_aura.png`. Generator:
+  `scripts/generate-aura-traits-svg.mjs`.
+
+### The other two `aura` sub-styles (not covered by any generator here)
+
+Opening more of the category than just `fire-aura` turned up two more
+treatments hiding under the same "aura" label:
+
+- **Flag/logo backdrop.** `american-aura`, `persian-aura`, `LGBTQ-aura`,
+  `link-aura` are a full-frame flat-color backdrop (a flag, a brand logo)
+  with a white silhouette cutout of the character traced into it, sized
+  slightly larger than the base so a thin white border peeks out around the
+  edge once the base renders on top. A completely different geometry system
+  from the glow halo, and choosing what to represent (whose flag, whose logo)
+  is a content decision, not a style-matching one.
+- **Ornate swirl/tendril halo.** `fart-aura` is neither of the above — hand
+  -drawn interlocking curls, no grain, no jagged spikes.
+
+Also found in the category and worth knowing about, not a style question:
+`bazooka-aura` is a literal photo of an RPG launcher. It appears to be
+mis-filed under `aura` rather than an intentional third sub-style.
 
 ## Treatment C — flat meme/pixel art (a handful of exceptions)
 
