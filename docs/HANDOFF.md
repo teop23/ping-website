@@ -1,7 +1,7 @@
 # PING / buildaping.com — handoff
 
-Updated 2026-09-11 (see "Session 2026-09-10/11" at the bottom for the
-latest state and the in-progress task). Originally written 2026-09-10, end of a session that took the trait library from 176 to
+Updated 2026-09-11 (see "Builder audit, 2026-09-11" at the bottom for the
+latest state). Originally written 2026-09-10, end of a session that took the trait library from 176 to
 239 and touched the palette, favicon, token image, domain, and deploy
 pipeline. Everything below is the actual current state, verified, not a
 summary of intentions.
@@ -36,7 +36,8 @@ with Pages Functions for server-rendered share images.
   submission.
 - **Trait library**: cleaned of 12 hate-symbol/explicit assets (see commit
   `032ab7b` for the exact list — Nazi-era imagery, slurs, a real photo of a
-  named terrorist, explicit content), then grown from 164 to **239 traits**
+  named terrorist, explicit content), then grown from 164 to 239 traits (238 after the builder audit removed one
+more hate-symbol asset)
   across all 8 categories by hand-authored SVG, not an image model. See
   `docs/trait-style-guide.md`, `docs/trait-generation-plan.md`.
 - **The image-API empty-body bug is fixed** (see "What's actually still
@@ -203,35 +204,56 @@ accessories (grown 1.45x, cart basket filled). Copy now says 239 everywhere
 and `scripts/check-copy-count.mjs` fails the build on drift. New scripts:
 `check-eye-clearance.mjs`, `rescale-trait.mjs`, `contact-sheet.mjs`.
 
-**In progress, not finished: the owner rejected gap-tooth as rendered by
-the BUILDER** (the browser canvas, not the image API) and asked for every
-single trait to be enabled in the real site, checked, and fixed where
-needed. Status:
-
-- The builder's geometry matches the API (base at 1.4x, centered; see
-  `BASE_IMAGE_SCALE_MULTIPLIER` in `src/components/CharacterPreview.tsx`),
-  so registration is the same. The difference the owner is seeing is
-  most likely the smaller canvas (599px vs the API's 512 with different
-  resampling) and/or that the open-beak lower mandible reads thin at that
-  size - NOT confirmed yet; nothing has been looked at closely.
-- All 239 traits were captured from the real builder canvas
-  (`npm run dev`, clicking each card, `canvas.toDataURL`) into
-  `.trait-audit/<name>.png` (gitignored, present in the working tree at
-  the time of writing). Tooling and the browser snippet are in
-  `scripts/capture-builder-receiver.mjs`.
-- **Nothing in `.trait-audit/` has been reviewed yet.** The session was
-  stopped at the tiling step. Next step: tile them ~20 per sheet with
-  labels (sharp one-liner, or extend contact-sheet.mjs to accept
-  pre-composited inputs), go through all 12 sheets, list every trait that
-  looks wrong in the builder, fix, re-capture those, re-check, commit.
-- Expect the review to be about builder-scale legibility, not
-  registration: the same 512px sheets already passed for registration.
-  Judge the mouths hardest; gap-tooth is the one already rejected.
-- If the mouths need another pass, the lower-mandible rim (22px in
-  `openBeak`, `scripts/generate-mouths-from-beak.mjs`) and the tooth row
-  height (24px) are the knobs; both were sized for the 512 API render.
+The owner then rejected gap-tooth as rendered by the BUILDER and asked for
+every trait to be checked in the real site. That audit is done; see the
+next section.
 
 Environment notes: `.claude/launch.json` has `ping-dev` (vite, 5173) and
 `ping-pages` (wrangler on 8790 - a stale workerd from an older session
 still holds 8788). Capturing from a hidden browser tab crawls; keep it
 fronted.
+
+## Builder audit, 2026-09-11: done
+
+All 239 traits were captured from the real builder canvas (599px, 1600px
+window) into `.trait-audit/`. They were tiled 20 per labelled sheet, and all
+12 sheets were reviewed. Each capture was also pixel-diffed against the
+bare base to catch traits that draw nothing. Every fix was re-captured from
+the builder, re-checked, contact-sheeted at 512 next to originals of the
+same category, and rendered once through `wrangler pages dev`.
+
+Fixed:
+
+- **gap-tooth** (the rejected one): a 5-tooth row with one dark slot is
+  ~8px tall at 599px and the slot vanished into the dark interior. It is now
+  two big front teeth under the closed real beak, with a gap.
+- **gold-tooth, open-laugh**: fewer, taller teeth (36px, from 24px).
+- **smirk**: the lower mandible pinched to a crossing sliver on the short
+  side. It now has its own tapered path.
+- **every beak-based mouth**: a light dotted seam showed under the beak on
+  open mouths. The flood-filled beak kept its outline's anti-aliased grey
+  fringe. That fringe is now black at matching coverage, which looks
+  identical over cream and dark over the interior.
+- **umbrella**: the canopy was a bat-wing shape. It is now a domed,
+  scalloped canopy with a J handle.
+- **fishing-rod**: it pointed across the chest with the fish on the belly.
+  It now points up and away, and the fish hangs in open space.
+- **wizard-hat**: the tip ran off the canvas top. The cone is shorter.
+- **rocket**: it floated ~140px above the ground line. It is now lowered to
+  stand where the other accessories stand.
+- **fan-of-the-painter-tee** removed: a swastika on red, named for Hitler.
+  The 2026-09-09 hate-symbol pass missed it behind the euphemism. The count
+  is now 238, and the six copy sites are updated.
+
+Not a defect: `skull-tattoo` captured as the bare base. The old capture
+snippet waited a fixed 500ms and the builder loads trait images
+asynchronously. The art is fine. The snippet in
+`scripts/capture-builder-receiver.mjs` now waits until the canvas differs
+from the bare base. A stray `receiver.mjs` from an older session was
+holding port 9911 and writing elsewhere, so the receiver now takes `PORT`.
+
+Looked at and left alone, as original art rather than a defect: angry
+brows extending past the head, wand's white glow, sayian hair over one
+eye, and the hello-kitty keychain's small size. Two left-side traits,
+such as umbrella plus rocket, overlap when both are picked. That is
+inherent to both slots living on the left.

@@ -81,8 +81,12 @@ const TRAITS = {
   `),
 
   // Small toy rocket - crypto's own "to the moon" motif, no branding.
+  // Sits 130px lower than first drawn (builder audit, 2026-09-11): after the
+  // batch's 1.45x grow about the bottom point it hovered ~140px above the
+  // ground line every other accessory stands on (bottoms at y~920-1000).
+  // Shipped asset = this output, then rescale-trait.mjs --factor 1.45 --anchor bottom.
   'rocket': svg(`
-    <g transform="translate(${CX} ${CY - 160}) rotate(-8)">
+    <g transform="translate(${CX} ${CY - 30}) rotate(-8)">
       <path d="M -32 40 Q -32 -100 0 -140 Q 32 -100 32 40 Z" fill="#E0403A" stroke="${BLACK}" stroke-width="11" stroke-linejoin="round"/>
       <circle cx="0" cy="-50" r="18" fill="#7FCBE0" stroke="${BLACK}" stroke-width="8"/>
       <path d="M -32 20 L -60 60 L -32 60 Z" fill="#B0342E" stroke="${BLACK}" stroke-width="9" stroke-linejoin="round"/>

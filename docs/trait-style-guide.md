@@ -100,6 +100,12 @@ render. Two consequences, both learned by shipping it wrong:
 - Nothing drawn inside the beak's own silhouette survives the render. A
   tooth row, a smile line or a tongue that fits inside 53x14px is a smudge on
   the live site. Make the added shape at least the beak's own size.
+- Size for the builder, not just the API. The builder canvas is 599px with
+  the base at 1.4x, so a trait's 1147px master shrinks to ~52%. Teeth under
+  ~30px tall in the master, or a detail that relies on dark-on-dark contrast
+  (a missing tooth in a dark mouth), don't read there. Check with a capture
+  from the real builder (`scripts/capture-builder-receiver.mjs`), not only a
+  512 contact sheet.
 
 Held objects (cigar, joint, lollipop, whistle) go in the beak's corner and
 were always fine.

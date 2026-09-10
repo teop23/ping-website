@@ -17,6 +17,13 @@ import { decodePng, encodeRgba, resizeRgba } from './lib/png.mjs';
  *      stroke. The beak is ~53x14px at the 512 render size, so every one of
  *      those details collapsed to a smudge or vanished. smile and smirk were
  *      literally invisible on the live site.
+ *   3. The below-the-beak version passed at the API's 512 render and was
+ *      rejected in the BUILDER (599px browser canvas): gap-tooth read as a
+ *      strip of tiny boxes, because a 5-tooth row with one dark slot is ~8px
+ *      tall there and the dark slot is indistinguishable from the dark
+ *      interior. gap-tooth is now two big front teeth hanging under a closed
+ *      beak with a visible gap; the grin tooth rows are fewer and taller;
+ *      smirk's lower mandible no longer pinches to a sliver on its short side.
  *
  * What works: treat the real beak as the UPPER mandible and add the
  * expression BELOW it, at a size that survives the 512 render. An open
@@ -105,9 +112,23 @@ while (stack.length) {
   }
 }
 
+// The outline's anti-aliased edge is black blended with the cream face, so
+// the flood-fill keeps it as light-grey pixels. Over cream that's invisible;
+// over an open beak's dark interior it showed as a light dotted seam under
+// the beak (builder capture, 2026-09-11). Re-express each neutral grey as
+// black at the matching coverage: identical over cream, dark over interior.
+const FACE_LUM = 244;
 for (let i = 0; i < cropW * cropH; i++) {
   if (!keep[i]) continue;
-  cropped.data.set(raw.data.subarray(i * 4, i * 4 + 4), i * 4);
+  const [r, g, b, a] = raw.data.subarray(i * 4, i * 4 + 4);
+  const neutral = Math.max(r, g, b) - Math.min(r, g, b) < 24;
+  if (neutral) {
+    const lum = (r + g + b) / 3;
+    const cover = Math.max(0, Math.min(1, 1 - lum / FACE_LUM));
+    cropped.data.set([0, 0, 0, Math.round(a * cover)], i * 4);
+  } else {
+    cropped.data.set([r, g, b, a], i * 4);
+  }
 }
 
 const beak = resizeRgba(cropped, Math.round(cropW * NATIVE_TO_TRAIT), Math.round(cropH * NATIVE_TO_TRAIT));
@@ -209,7 +230,7 @@ const teeth = ({ count = 5, gap = -1, gold = -1, y = BB - 6, h = 22, halfW = 62 
     const x = CX - halfW + i * w;
     if (i === gap) return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#1E0E0A"/>`;
     const fill = i === gold ? '#E8C34A' : 'white';
-    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${BLACK}" stroke-width="3"/>`;
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${BLACK}" stroke-width="5"/>`;
   }).join('');
 };
 
@@ -221,25 +242,45 @@ const run = async () => {
       <path d="M ${CX - 30} ${BB + 4} Q ${CX} ${BB + 34} ${CX + 30} ${BB + 4} Z" fill="#E8536B"/>
     `),
 
-    // Lopsided: lowest point pushed to the right, left side barely open.
+    // Lopsided: open only toward the right corner, left corner closed. Own
+    // path rather than openBeak({ skew }): skewing openBeak's symmetric rim
+    // pinched it to a crossing sliver on the short side (builder capture,
+    // 2026-09-11). The rim here is a separate band that tapers to nothing at
+    // both corners, so it can't cross itself.
     smirk: () => build(`
-      ${openBeak({ depth: 46, halfW: 80, skew: 46 })}
+      <path d="M ${CX - 78} ${BB - 12} L ${CX + 80} ${BB - 12}
+               C ${CX + 86} ${BB + 26}, ${CX + 64} ${BB + 52}, ${CX + 28} ${BB + 52}
+               C ${CX - 14} ${BB + 52}, ${CX - 60} ${BB + 20}, ${CX - 78} ${BB - 12} Z"
+            fill="#3A1A12" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
+      <path d="M ${CX - 78} ${BB - 12}
+               C ${CX - 60} ${BB + 20}, ${CX - 14} ${BB + 52}, ${CX + 28} ${BB + 52}
+               C ${CX + 64} ${BB + 52}, ${CX + 86} ${BB + 26}, ${CX + 80} ${BB - 12}
+               C ${CX + 66} ${BB + 16}, ${CX + 52} ${BB + 30}, ${CX + 26} ${BB + 30}
+               C ${CX - 6} ${BB + 30}, ${CX - 48} ${BB + 12}, ${CX - 78} ${BB - 12} Z"
+            fill="${ORANGE}" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
     `),
 
     // Big laugh: tall open beak with a full white tooth row.
+    // Tooth rows sized for the builder's 599px canvas, not just the 512 API
+    // render: 24px-tall teeth were ~8px there. 36px leaves ~15px visible.
     'open-laugh': () => build(`
-      ${openBeak({ depth: 74, halfW: 84 })}
-      ${teeth({ count: 6, halfW: 66, h: 24 })}
+      ${openBeak({ depth: 84, halfW: 84 })}
+      ${teeth({ count: 5, halfW: 66, h: 36 })}
     `),
 
+    // Two big front teeth hanging under the CLOSED real beak, with a gap
+    // between them - the classic cartoon gap-tooth. Painted under the beak so
+    // its bottom outline is the lip the teeth come out from.
     'gap-tooth': () => build(`
-      ${openBeak({ depth: 64, halfW: 82 })}
-      ${teeth({ count: 5, gap: 2, halfW: 64, h: 24 })}
+      <path d="M ${CX - 44} ${BB - 12} L ${CX - 8} ${BB - 12} L ${CX - 8} ${BB + 34} Q ${CX - 8} ${BB + 44} ${CX - 18} ${BB + 44} L ${CX - 34} ${BB + 44} Q ${CX - 44} ${BB + 44} ${CX - 44} ${BB + 34} Z"
+            fill="white" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
+      <path d="M ${CX + 8} ${BB - 12} L ${CX + 44} ${BB - 12} L ${CX + 44} ${BB + 34} Q ${CX + 44} ${BB + 44} ${CX + 34} ${BB + 44} L ${CX + 18} ${BB + 44} Q ${CX + 8} ${BB + 44} ${CX + 8} ${BB + 34} Z"
+            fill="white" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
     `),
 
     'gold-tooth': () => build(`
-      ${openBeak({ depth: 64, halfW: 82 })}
-      ${teeth({ count: 5, gold: 1, halfW: 64, h: 24 })}
+      ${openBeak({ depth: 84, halfW: 84 })}
+      ${teeth({ count: 4, gold: 1, halfW: 64, h: 36 })}
     `),
 
     // Tongue emerges from under the real beak: painted before it so the

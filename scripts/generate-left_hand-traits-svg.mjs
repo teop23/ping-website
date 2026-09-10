@@ -28,14 +28,20 @@ const CX = 235, CY = 740;
 const svg = (body) => `<svg xmlns="http://www.w3.org/2000/svg" width="${CANVAS}" height="${CANVAS}" viewBox="0 0 ${CANVAS} ${CANVAS}">${body}</svg>`;
 
 const TRAITS = {
+  // First version's canopy was a two-lobed wing shape that read as a bat or
+  // a red boomerang in the builder, not an umbrella. Rebuilt as the
+  // universal umbrella silhouette: domed canopy, scalloped hem, ribs, tip
+  // and a J handle, big enough to read at the builder's 599px canvas.
   'umbrella': svg(`
     <g transform="translate(${CX - 10} ${CY - 90})">
-      <path d="M 0 -70 L 0 130" stroke="${BLACK}" stroke-width="12" stroke-linecap="round"/>
-      <path d="M -10 130 Q -10 150 10 150" fill="none" stroke="${BLACK}" stroke-width="12" stroke-linecap="round"/>
-      <path d="M -95 -55 Q -95 -110 -48 -118 Q -48 -95 0 -95 Q 48 -95 48 -118 Q 95 -110 95 -55 Q 48 -75 0 -55 Q -48 -75 -95 -55 Z"
+      <path d="M 0 -150 L 0 132" stroke="${BLACK}" stroke-width="12" stroke-linecap="round"/>
+      <path d="M 0 132 Q 0 164 -24 164 Q -46 164 -46 142" fill="none" stroke="${BLACK}" stroke-width="12" stroke-linecap="round"/>
+      <path d="M 0 -166 L 0 -190" stroke="${BLACK}" stroke-width="10" stroke-linecap="round"/>
+      <path d="M -118 -40 C -118 -122 -62 -168 0 -168 C 62 -168 118 -122 118 -40
+               Q 89 -60 59 -40 Q 30 -60 0 -40 Q -30 -60 -59 -40 Q -89 -60 -118 -40 Z"
             fill="#D6473C" stroke="${BLACK}" stroke-width="10" stroke-linejoin="round"/>
-      <path d="M -60 -63 Q -30 -78 0 -63" fill="none" stroke="${BLACK}" stroke-width="5" opacity="0.4"/>
-      <path d="M 0 -63 Q 30 -78 60 -63" fill="none" stroke="${BLACK}" stroke-width="5" opacity="0.4"/>
+      <path d="M 0 -166 Q -40 -110 -59 -44 M 0 -166 L 0 -44 M 0 -166 Q 40 -110 59 -44"
+            fill="none" stroke="${BLACK}" stroke-width="6" stroke-linecap="round" opacity="0.45"/>
     </g>
   `),
 
@@ -51,16 +57,20 @@ const TRAITS = {
   // First pass was a thin stick with a dashed line - invisible at thumbnail
   // scale and gave no reason to read as "fishing" specifically. A visible
   // fish on the line and a solid, higher-contrast rod/line fix both.
+  // Second pass (builder audit, 2026-09-11): the rod pointed up and to the
+  // RIGHT, across the character's chest, with the fish dangling over the
+  // belly. It now points up and away to the left, so the line and fish hang
+  // in the open space beside the character.
   'fishing-rod': svg(`
-    <g transform="rotate(15 ${CX} ${CY})">
-      <path d="M ${CX - 15} ${CY + 45} L ${CX + 230} ${CY - 290}" stroke="#8A6A3E" stroke-width="18" stroke-linecap="round"/>
-      <path d="M ${CX + 230} ${CY - 290} Q ${CX + 250} ${CY - 180} ${CX + 150} ${CY - 90}"
-            fill="none" stroke="${BLACK}" stroke-width="7" stroke-linecap="round"/>
-      <g transform="translate(${CX + 130} ${CY - 70}) rotate(20)">
-        <path d="M -32 0 Q 0 -22 32 0 Q 0 22 -32 0 Z" fill="#4A9BD6" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-        <path d="M -32 0 L -48 -12 L -48 12 Z" fill="#4A9BD6" stroke="${BLACK}" stroke-width="7" stroke-linejoin="round"/>
-        <circle cx="14" cy="-3" r="4" fill="${BLACK}"/>
-      </g>
+    <path d="M ${CX + 12} ${CY + 52} L ${CX - 150} ${CY - 330}" stroke="#8A6A3E" stroke-width="18" stroke-linecap="round"/>
+    <path d="M ${CX + 12} ${CY + 52} L ${CX - 12} ${CY - 4}" stroke="#4A3422" stroke-width="24" stroke-linecap="round"/>
+    <circle cx="${CX - 22}" cy="${CY - 6}" r="17" fill="#B0B6BC" stroke="${BLACK}" stroke-width="8"/>
+    <path d="M ${CX - 150} ${CY - 330} Q ${CX - 178} ${CY - 220} ${CX - 168} ${CY - 130}"
+          fill="none" stroke="${BLACK}" stroke-width="7" stroke-linecap="round"/>
+    <g transform="translate(${CX - 168} ${CY - 92}) rotate(90)">
+      <path d="M -36 0 Q 0 -24 36 0 Q 0 24 -36 0 Z" fill="#4A9BD6" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
+      <path d="M 36 0 L 54 -14 L 54 14 Z" fill="#4A9BD6" stroke="${BLACK}" stroke-width="7" stroke-linejoin="round"/>
+      <circle cx="-16" cy="-4" r="4.5" fill="${BLACK}"/>
     </g>
   `),
 

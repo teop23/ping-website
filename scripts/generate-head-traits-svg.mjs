@@ -107,13 +107,14 @@ const TRAITS = {
   // the cone only ~70px wide at its base, needle-thin against a 400px-wide
   // brim - it read as an antenna, not a hat. Widened the cone's base to
   // match the brim's scale and shortened it so it stays a hat silhouette
-  // rather than a spike.
+  // rather than a spike. Tip lowered again (builder audit, 2026-09-11): at
+  // -230 it ran off the top of the canvas and rendered with a flat cut tip.
   'wizard-hat': svg(`
     <g transform="translate(${CX} 210)">
       <path d="M -190 20 Q -60 40 0 40 Q 60 40 190 20 L 200 55 Q 60 80 0 80 Q -60 80 -200 55 Z"
             fill="#3E2E6B" stroke="${BLACK}" stroke-width="13" stroke-linejoin="round"/>
-      <path d="M -110 35 Q -30 -190 15 -230 Q 90 -60 55 35 Z" fill="#4E3B85" stroke="${BLACK}" stroke-width="13" stroke-linejoin="round"/>
-      <circle cx="15" cy="-130" r="16" fill="#F2E23A" stroke="${BLACK}" stroke-width="5"/>
+      <path d="M -110 35 Q -34 -150 15 -178 Q 86 -50 55 35 Z" fill="#4E3B85" stroke="${BLACK}" stroke-width="13" stroke-linejoin="round"/>
+      <circle cx="12" cy="-100" r="16" fill="#F2E23A" stroke="${BLACK}" stroke-width="5"/>
       <circle cx="-30" cy="-30" r="12" fill="#F2E23A" stroke="${BLACK}" stroke-width="5"/>
     </g>
   `),
