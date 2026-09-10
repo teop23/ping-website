@@ -392,8 +392,11 @@ const DropdownItem: React.FC<DropdownItemProps> = ({ label, href, icon, isActive
       onClick={onClick}
       className={cn(
         "flex items-center gap-3 p-2 rounded-md transition-colors duration-200 w-full text-meta",
-        isActive 
-          ? "bg-primary/10 text-primary border border-primary/20" 
+        isActive
+          // text-accent-ink, not text-primary: lime as text measured 1.03:1
+          // on this lime-tinted wash - same failure as --primary-foreground,
+          // just a raw utility class instead of a token.
+          ? "bg-primary/10 text-accent-ink border border-primary/20"
           : "hover:bg-muted text-muted-foreground hover:text-foreground"
       )}
       whileHover={{ scale: 1.02 }}
@@ -423,8 +426,11 @@ const MobileNavItem: React.FC<MobileNavItemProps> = ({ label, href, isActive = f
       onClick={onClick}
       className={cn(
         "flex items-center gap-3 p-3 rounded-lg transition-colors duration-200 w-full",
-        isActive 
-          ? "bg-primary/10 text-primary border border-primary/20" 
+        isActive
+          // text-accent-ink, not text-primary: lime as text measured 1.03:1
+          // on this lime-tinted wash - same failure as --primary-foreground,
+          // just a raw utility class instead of a token.
+          ? "bg-primary/10 text-accent-ink border border-primary/20"
           : "hover:bg-muted text-muted-foreground hover:text-foreground"
       )}
       whileHover={{ scale: 1.02 }}

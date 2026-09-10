@@ -69,7 +69,12 @@
     --popover: var(--bg-panel);
     --popover-foreground: var(--ink);
     --primary: var(--brand);
-    --primary-foreground: var(--bg-ground);
+    /* Was --bg-ground: near-white on lime, 1.04:1 - every default-variant
+       shadcn Button (Download, the TraitSelector selected-badge) painted
+       near-invisible text. --ink-inverse is the token that exists precisely
+       for "text sitting on the brand fill"; --bg-ground never meant that,
+       it only happened to also be light. */
+    --primary-foreground: var(--ink-inverse);
     --secondary: var(--bg-panel);
     --secondary-foreground: var(--ink);
     --muted: var(--bg-panel);
@@ -80,7 +85,17 @@
     --destructive-foreground: var(--bg-ground);
     --border: var(--hairline);
     --input: var(--hairline);
-    --ring: var(--brand);
+    /* Was --brand: shadcn's default Button applies its own
+       `focus-visible:ring-ring` on top of the site's real focus-ring CSS
+       rule below, so this is a second, independent focus indicator - and
+       lime-on-lime measured 1.00:1 against a lime button and 1.04:1 against
+       the page, i.e. invisible either way. --focus-ring is the token this
+       project already built and proved (accent-ink, verified against every
+       surface and against brand) for exactly this problem; reusing it here
+       means both focus mechanisms agree instead of one being silently
+       unfixed. Forward reference to --focus-ring (declared further down) is
+       fine - custom properties resolve at used-value time, not parse order. */
+    --ring: var(--focus-ring);
 
     /* ---- Radii. Deliberately tighter than the 24px launchpad default;
             signage is squarer than it is soft. ---- */

@@ -147,3 +147,46 @@ describe('structure', () => {
     expect(contrast('bg-panel', 'bg-raised')).toBeGreaterThanOrEqual(1.05);
   });
 });
+
+// Every pairing above reads directly off this project's own PING tokens
+// (ink, brand, brand-wash, selection, focus-ring...). shadcn/radix ship a
+// second, parallel set of aliases (--primary, --primary-foreground, --ring,
+// ...) that this file never checked at all - and one of them shipped wrong
+// for exactly that reason: --primary-foreground pointed at --bg-ground
+// (the page background, only light by coincidence) instead of
+// --ink-inverse (the token that actually means "text on the brand fill"),
+// so every default-variant Button rendered near-invisible text on lime.
+// --ring had the same shape of bug: it pointed at --brand directly, a second
+// and unfixed focus-ring mechanism sitting right next to the one this file
+// already verifies below. Covering the alias layer here, not just the
+// tokens it resolves to, is what would have caught both before they shipped.
+describe('shadcn/radix aliases resolve to something legible', () => {
+  const foregroundPairs: [string, string][] = [
+    ['foreground', 'background'],
+    ['card-foreground', 'card'],
+    ['popover-foreground', 'popover'],
+    ['primary-foreground', 'primary'],
+    ['secondary-foreground', 'secondary'],
+    ['muted-foreground', 'muted'],
+    ['accent-foreground', 'accent'],
+    ['destructive-foreground', 'destructive'],
+  ];
+
+  for (const [fg, bg] of foregroundPairs) {
+    it(`${fg} on ${bg}`, () => {
+      expect(contrast(fg, bg)).toBeGreaterThanOrEqual(AA_BODY);
+    });
+  }
+
+  it('the shadcn focus ring is visible against every surface', () => {
+    for (const surface of SURFACES) {
+      expect(contrast('ring', surface)).toBeGreaterThanOrEqual(AA_UI);
+    }
+  });
+
+  it('the shadcn focus ring is visible against a brand fill', () => {
+    // Buttons with variant="default" are bg-primary - the ring has to clear
+    // the accent too, the same requirement --focus-ring already meets.
+    expect(contrast('ring', 'primary')).toBeGreaterThanOrEqual(AA_UI);
+  });
+});
