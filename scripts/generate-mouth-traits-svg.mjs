@@ -17,19 +17,40 @@ mkdirSync(OUT, { recursive: true });
 
 const BLACK = '#000000';
 const CREAM = '#FDF8EF';
-const STROKE = 13;
 
 // Beak center measured directly off public/ping.png (zoomed crop at
 // x=340..680,y=370..500) and carried through the renderer's actual math:
 // canvasX = baseLeft + bx*1.4*(canvasSize/1024), traitX = canvasX*(1147/canvasSize).
-// Beak bbox in ping.png space: x 468-575, y 402-453, center (521.5, 427.5)
-// -> trait-space center (588, 441), half-extents ~(84, 40).
-// Eyes land at trait-space (495, 381) and (658, 381) - the cover patch's top
-// edge has to clear y=392 (eye bottom) or it visibly eats the eyes.
-const CX = 588, CY = 441;
+// Beak bbox in trait-space: y 401-481 (half-extents ~84 x ~40 around (588,441)).
+// Eyes land at trait-space (495, 381) and (658, 381), radius ~11, so the
+// eye's own bottom edge is at y~392.
+//
+// Between those two facts is a real, narrow constraint: the cover shape's
+// top edge must sit in the 9px window between y=392 (eye bottom) and y=401
+// (beak top) to hide the beak without touching the eyes. The first version
+// of this file used a STROKED ellipse (13px stroke) for the cover, and the
+// stroke's own width ate most of that 9px window from both directions at
+// once - it shipped, composited fine in isolation, and visibly overlapped
+// the eyes once actually rendered on the site. A person caught it, not any
+// check here.
+//
+// Fix: no stroke on the cover shape at all. It never needed one - its only
+// job is to be the same cream as the surrounding face so the seam is
+// invisible, and a decorative border was exactly what was consuming the
+// clearance. A flat-topped rect (not an ellipse) makes the top edge exact
+// and independent of width, rather than curving away and re-eating margin
+// as rx changes.
+const CX = 588; // beak center x; beak center y (441) has no remaining direct
+                 // use now that the cover is a flat-topped rect rather than
+                 // an ellipse centered on it.
+const COVER_TOP = 399; // 2px above beak-top(401): full coverage, 7px real
+                        // clearance below eye-bottom(392).
+const COVER_BOTTOM = 500; // comfortably past beak-bottom(481)
+const COVER_LEFT = CX - 135, COVER_RIGHT = CX + 135;
 
 const cover = () => `
-  <ellipse cx="${CX}" cy="${CY}" rx="128" ry="52" fill="${CREAM}" stroke="${BLACK}" stroke-width="${STROKE}"/>
+  <rect x="${COVER_LEFT}" y="${COVER_TOP}" width="${COVER_RIGHT - COVER_LEFT}" height="${COVER_BOTTOM - COVER_TOP}"
+        rx="40" fill="${CREAM}"/>
 `;
 
 const svg = (body) => `<svg xmlns="http://www.w3.org/2000/svg" width="1147" height="1147" viewBox="0 0 1147 1147">${body}</svg>`;
@@ -97,27 +118,38 @@ const TRAITS = {
   `),
 
   // Bigger, higher-contrast twirl above the (uncovered) default beak.
+  // The curls reached up to y=362, well into the eyes' own y-range
+  // (y 370-392) - overlap that exists regardless of x-position, since the
+  // shapes shared vertical space at all. Shifted the whole path down 45px
+  // so its highest point clears y=399 (the same safe boundary the cover
+  // patch uses) and it rests on the beak's upper edge instead, which reads
+  // as a normal mustache position rather than eyebrows.
   'mustache-only': svg(`
-    <path d="M 588 388
-             C 552 362, 502 366, 480 388
-             C 500 380, 528 382, 546 394
-             C 530 384, 508 386, 495 398
-             C 522 388, 552 390, 588 402
-             C 624 390, 654 388, 681 398
-             C 668 386, 646 384, 630 394
-             C 648 382, 676 380, 696 388
-             C 674 366, 624 362, 588 388 Z"
+    <path d="M 588 433
+             C 552 407, 502 411, 480 433
+             C 500 425, 528 427, 546 439
+             C 530 429, 508 431, 495 443
+             C 522 433, 552 435, 588 447
+             C 624 435, 654 433, 681 443
+             C 668 431, 646 429, 630 439
+             C 648 427, 676 425, 696 433
+             C 674 411, 624 407, 588 433 Z"
           fill="#2B2320" stroke="${BLACK}" stroke-width="7" stroke-linejoin="round"/>
   `),
 
   // Held in the beak's right corner, matching the existing cigar/joint
   // convention, and shifted clear of the (658,381) eye.
+  // The candy head at (706,428) was 67px from the right eye (658,381) with a
+  // combined effective radius (candy + stroke, eye + stroke) of ~74px -
+  // genuine overlap, not a rounding error. Shifted right and down for real
+  // clearance (~96px center-to-center against the same ~74px combined
+  // radius - about 22px of actual daylight between the two shapes).
   'lollipop': svg(`
-    <g transform="rotate(-16 706 452)">
-      <rect x="698" y="452" width="16" height="130" rx="7" fill="white" stroke="${BLACK}" stroke-width="8"/>
-      <circle cx="706" cy="428" r="58" fill="#F2A6C4" stroke="${BLACK}" stroke-width="10"/>
-      <path d="M 706 428 m -38 0 a 38 38 0 0 1 76 0" fill="none" stroke="#E8536B" stroke-width="8"/>
-      <path d="M 706 428 m -22 0 a 22 22 0 0 1 44 0" fill="none" stroke="#E8536B" stroke-width="7"/>
+    <g transform="rotate(-16 726 472)">
+      <rect x="718" y="472" width="16" height="130" rx="7" fill="white" stroke="${BLACK}" stroke-width="8"/>
+      <circle cx="726" cy="448" r="58" fill="#F2A6C4" stroke="${BLACK}" stroke-width="10"/>
+      <path d="M 726 448 m -38 0 a 38 38 0 0 1 76 0" fill="none" stroke="#E8536B" stroke-width="8"/>
+      <path d="M 726 448 m -22 0 a 22 22 0 0 1 44 0" fill="none" stroke="#E8536B" stroke-width="7"/>
     </g>
   `),
 
