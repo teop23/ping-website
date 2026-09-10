@@ -86,6 +86,24 @@ example.
   next to Treatment A, and Treatment A is safer default for anything that
   isn't already a known meme asset.
 
+## Mouth: the beak is the mouth
+
+The base has no lips - its mouth is the orange beak, ~53x14px at the 512
+render. Two consequences, both learned by shipping it wrong:
+
+- Never cover or erase the beak to draw a different mouth. An expression is
+  the real beak (flood-filled out of `ping.png`, see
+  `scripts/generate-mouths-from-beak.mjs`) as the upper mandible, plus
+  something added *below* it: a dark interior and orange lower mandible for
+  an open beak, a tongue or bubble emerging from under it, a mustache under
+  it (the beak is also the nose).
+- Nothing drawn inside the beak's own silhouette survives the render. A
+  tooth row, a smile line or a tongue that fits inside 53x14px is a smudge on
+  the live site. Make the added shape at least the beak's own size.
+
+Held objects (cigar, joint, lollipop, whistle) go in the beak's corner and
+were always fine.
+
 ## Rules that apply to every treatment
 
 - **Canvas**: square, matching `public/ping.png`'s canvas (1024x1024

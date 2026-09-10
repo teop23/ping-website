@@ -125,12 +125,23 @@ const TRAITS = {
     <rect x="562" y="373" width="28" height="16" fill="#E8DDB8" stroke="${BLACK}" stroke-width="3" transform="rotate(-8 576 381)"/>
   `),
 
-  // A plain bandit-style bandana across the eyes - deliberately generic
-  // (solid color, no pattern, no cultural or political reference), paired
-  // thematically with the existing cowboy-hat head trait.
+  // A plain bandit-style bandana - deliberately generic (solid color, no
+  // pattern, no cultural or political reference), paired thematically with
+  // the existing cowboy-hat head trait.
+  //
+  // First version sat across the EYES (y 350-465) - a bandit mask covers the
+  // mouth, not the eyes, and it rendered as a brown blindfold with the beak
+  // poking out underneath. Now it hangs from just below the eyes (top edge
+  // at y=405, stroke half-width 6 -> opaque from 399, a 7px gap under the
+  // eye-bottom at 392 - same boundary the mouth traits respect) down over
+  // the beak to a hanging point, like the real thing. Face paints before
+  // mouth in TRAIT_ORDER, so a held-in-beak mouth trait will still draw on
+  // top of it; that is the correct layering for a mask.
   'bandana-mask': svg(`
-    <path d="M 380 350 Q 576 405 772 350 L 772 415 Q 576 465 380 415 Z" fill="#8C3A3A" stroke="${BLACK}" stroke-width="12" stroke-linejoin="round"/>
-    <path d="M 420 375 Q 576 415 732 375" fill="none" stroke="${BLACK}" stroke-width="5" opacity="0.4"/>
+    <path d="M 372 405 Q 576 432 780 405 L 780 468 Q 700 560 576 650 Q 452 560 372 468 Z"
+          fill="#8C3A3A" stroke="${BLACK}" stroke-width="12" stroke-linejoin="round"/>
+    <path d="M 410 445 Q 576 478 742 445" fill="none" stroke="${BLACK}" stroke-width="5" opacity="0.4"/>
+    <path d="M 500 520 Q 576 545 652 520" fill="none" stroke="${BLACK}" stroke-width="5" opacity="0.3"/>
   `),
 
   'blindfold': svg(`

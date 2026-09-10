@@ -4,8 +4,23 @@
     {
       "name": "ping-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 5173
+    },
+    {
+      "name": "ping-pages",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "pages:dev",
+        "--",
+        "--port",
+        "8790"
+      ],
+      "port": 8790
     }
   ]
 }

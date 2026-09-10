@@ -91,9 +91,11 @@ const TRAITS = {
     </g>
   `),
 
+  // Basket filled white: with fill="none" it rendered as bare wireframe on
+  // the lime share card.
   'shopping-cart': svg(`
     <g transform="translate(${CX - 100} ${CY - 90})">
-      <path d="M 20 20 L 210 20 L 185 110 L 55 110 Z" fill="none" stroke="${BLACK}" stroke-width="10" stroke-linejoin="round"/>
+      <path d="M 20 20 L 210 20 L 185 110 L 55 110 Z" fill="white" stroke="${BLACK}" stroke-width="10" stroke-linejoin="round"/>
       <path d="M 30 110 L 30 40 L 10 40" fill="none" stroke="${BLACK}" stroke-width="10" stroke-linecap="round"/>
       <path d="M 55 40 L 190 40 M 60 60 L 180 60 M 65 80 L 172 80" stroke="${BLACK}" stroke-width="6" opacity="0.5"/>
       <circle cx="75" cy="150" r="16" fill="#3A3F48" stroke="${BLACK}" stroke-width="8"/>

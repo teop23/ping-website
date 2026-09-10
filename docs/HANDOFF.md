@@ -68,15 +68,43 @@ generator scripts' own comments for the full detail):
    own outline, since both are black) and decorate that instead of replacing
    it (`scripts/generate-mouths-from-beak.mjs`).
 
+4. **Detail inside the beak is invisible at render size.** The rebuilt
+   mouths from (3) kept the real beak but drew every expression *inside* its
+   silhouette: a 14px tooth bar, a 6px smile stroke. The beak is ~53x14px at
+   the 512 render, so smile and smirk vanished entirely and the open mouths
+   became a 5px smudge - live, not in the preview script's 1147px output.
+   Fixed 2026-09-10 (second session) by treating the real beak as the upper
+   mandible and adding the expression *below* it at a readable size: a dark
+   interior plus an orange lower mandible for the open-beak family, a tongue
+   or bubble emerging from under it (`scripts/generate-mouths-from-beak.mjs`).
+   Everything added sits below the beak's bottom edge, so eye clearance is
+   guaranteed by construction, and measured anyway with
+   `scripts/check-eye-clearance.mjs`.
+
+Also fixed in that pass, same batch: `bandana-mask` was drawn across the
+eyes (a blindfold in brown) rather than over the beak; the 9 new ground
+accessories were ~60% the size of the existing stove/washing machine and
+were grown 1.45x about their ground point (`scripts/rescale-trait.mjs`);
+guitar, kite and balloon-animal were scaled up about the flipper contact
+point. Everything else in the 76-trait batch was checked composited over
+the base at 512px on contact sheets and left alone.
+
 **The takeaway for whoever picks this up:** when a new trait touches or sits
 near an existing feature of the base character, prefer extracting that real
-feature's pixels over hand-drawing an approximation, and always verify
-against an actual `wrangler pages dev` render — this project's own preview
-tooling and validation caught none of the three bugs above; a person looking
+feature's pixels over hand-drawing an approximation; make the defining shape
+big enough to survive the 512 render (a contact sheet of the real composite
+at 512px, not the 1147px master, is the honest test); and always verify
+against an actual `wrangler pages dev` render - this project's own preview
+tooling and validation caught none of the four bugs above; a person looking
 at the live site did.
 
 ## What's actually still broken
 
+- **Site copy quotes the trait count in four places** (hero, roadmap, meta
+  tags, OG banner) that can't read the manifest. `scripts/check-copy-count.mjs`
+  (runs in `prebuild`) now fails the build if any of them disagrees with the real count, so the
+  number can't silently sit at 176 again - but it still has to be edited by
+  hand when the library grows.
 - **The image API's empty-body failure is reduced, not eliminated, and its
   root cause is unconfirmed.** Best-supported explanation: Cloudflare
   Workers **Free** gives 10ms CPU per invocation, and satori/resvg's own WASM
@@ -137,6 +165,10 @@ real values is what launch day actually is, code-wise.
   instead of adding `sharp` as a real dependency for the site itself
   (`sharp` is used only in the one-off generator scripts, as a transitive
   dependency already present)
+- `scripts/check-eye-clearance.mjs` — pixel-distance check against the eyes;
+  run it on any mouth/face trait that is meant to leave the eyes alone
+- `scripts/rescale-trait.mjs` — grow/shrink a finished trait about its
+  ground point or centroid without re-authoring it
 - `scripts/preview-trait.mjs` — composites a candidate trait over the real
   base character using the renderer's exact math; `--aura` flag for the one
   category that paints *behind* the base instead of after it

@@ -22,6 +22,11 @@ const BLACK = '#000000';
 const CANVAS = 1147;
 const CX = 870, CY = 680;
 
+// guitar, kite and balloon-animal measured visibly smaller than the
+// library's existing hand items (basketball, mug, beer) once composited at
+// the 512 render size. Each is wrapped in a scale about the flipper contact
+// point (CX, CY) so it grows outward from the hand rather than drifting.
+
 const svg = (body) => `<svg xmlns="http://www.w3.org/2000/svg" width="${CANVAS}" height="${CANVAS}" viewBox="0 0 ${CANVAS} ${CANVAS}">${body}</svg>`;
 
 const TRAITS = {
@@ -29,12 +34,14 @@ const TRAITS = {
   // thin neck visible - looked like a stick, not a guitar. Shifted further
   // out and scaled up so the body is the dominant, unmissable shape.
   'guitar': svg(`
+    <g transform="translate(${CX} ${CY}) scale(1.5) translate(${-CX} ${-CY})">
     <g transform="translate(${CX + 30} ${CY - 60}) rotate(18)">
       <path d="M -9 -170 L 9 -170 L 14 20 L -14 20 Z" fill="#5A3B2E" stroke="${BLACK}" stroke-width="10"/>
       <path d="M -54 40 Q -95 40 -92 92 Q -88 138 -30 142 Q 0 145 8 112 Q 16 145 46 142 Q 98 137 95 88 Q 92 40 52 40 Q 34 78 0 78 Q -34 78 -54 40 Z"
             fill="#C9793E" stroke="${BLACK}" stroke-width="13" stroke-linejoin="round"/>
       <circle cx="6" cy="98" r="26" fill="#3A2318" stroke="${BLACK}" stroke-width="8"/>
       <path d="M -6 -170 L -8 100 M 6 -170 L 8 100" stroke="#E8DDB8" stroke-width="3" opacity="0.6"/>
+    </g>
     </g>
   `),
 
@@ -70,6 +77,7 @@ const TRAITS = {
   `),
 
   'kite': svg(`
+    <g transform="translate(${CX} ${CY}) scale(1.5) translate(${-CX} ${-CY})">
     <g transform="rotate(20 ${CX} ${CY})">
       <path d="M ${CX} ${CY - 90} L ${CX + 65} ${CY} L ${CX} ${CY + 90} L ${CX - 65} ${CY} Z"
             fill="#4A9BD6" stroke="${BLACK}" stroke-width="11" stroke-linejoin="round"/>
@@ -77,6 +85,7 @@ const TRAITS = {
       <path d="M ${CX} ${CY + 90} Q ${CX + 20} ${CY + 130} ${CX} ${CY + 160} Q ${CX - 20} ${CY + 190} ${CX} ${CY + 220}"
             fill="none" stroke="${BLACK}" stroke-width="5" stroke-dasharray="2 10" stroke-linecap="round"/>
       <path d="M ${CX - 25} ${CY - 30} L ${CX + 25} ${CY - 30} M ${CX - 40} ${CY + 20} L ${CX + 40} ${CY + 20}" stroke="white" stroke-width="5" opacity="0.5"/>
+    </g>
     </g>
   `),
 
@@ -131,6 +140,7 @@ const TRAITS = {
   // balloon-dog silhouette (round head, long snout, floppy ear, twisted
   // knot legs) at roughly triple the scale reads unambiguously.
   'balloon-animal': svg(`
+    <g transform="translate(${CX} ${CY}) scale(1.4) translate(${-CX} ${-CY})">
     <g transform="translate(${CX - 70} ${CY - 160})">
       <ellipse cx="70" cy="45" rx="42" ry="36" fill="#4FA85A" stroke="${BLACK}" stroke-width="13"/>
       <path d="M 108 50 Q 155 55 150 30 Q 148 12 128 15 Q 132 30 112 38" fill="#4FA85A" stroke="${BLACK}" stroke-width="12" stroke-linejoin="round"/>
@@ -140,6 +150,7 @@ const TRAITS = {
       <path d="M 95 78 Q 120 95 118 130 Q 116 150 96 148 Q 86 147 88 132 Q 90 115 78 105"
             fill="none" stroke="#4FA85A" stroke-width="15" stroke-linecap="round"/>
       <circle cx="95" cy="35" r="5" fill="${BLACK}"/>
+    </g>
     </g>
   `),
 };

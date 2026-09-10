@@ -13,8 +13,13 @@ import {
   TOKEN_SUPPLY,
 } from '../utils/constants';
 
-/** Verified against public/traits at build time by scripts/generate-index.mjs. */
-const TRAIT_COUNT = 176;
+/**
+ * Hard-coded because the manifest only exists after prebuild. Checked
+ * against the real library by scripts/generate-index.mjs, which fails the
+ * build if this drifts from public/traits - it sat at 176 for a while after
+ * the library reached 239.
+ */
+const TRAIT_COUNT = 239;
 const TRAIT_SLOTS = 8;
 
 /**
@@ -69,7 +74,7 @@ const Home: React.FC = () => {
       {/*
         Lime owns one whole viewport, then hands off to the dark ground where
         the work happens. Drenching the entire page would put every white
-        artboard and all 176 black-outlined trait swatches on a clashing
+        artboard and every black-outlined trait swatch on a clashing
         surface; confining it to the fold keeps the brand loud and the tool
         legible. Near-black on #CCFF00 measures 15.07:1.
       */}
@@ -82,8 +87,8 @@ const Home: React.FC = () => {
               </motion.h1>
 
               <motion.p {...rise(0.08)} className="type-prose mt-6 text-lead text-ink-muted">
-                {TRAIT_COUNT} community-made traits. An open image API that renders any
-                combination on demand.
+                {TRAIT_COUNT} traits. An open image API that renders any combination on
+                demand.
               </motion.p>
             </div>
 
