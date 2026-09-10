@@ -1,6 +1,7 @@
 # PING / buildaping.com — handoff
 
-Written 2026-09-10, end of a session that took the trait library from 176 to
+Updated 2026-09-11 (see "Session 2026-09-10/11" at the bottom for the
+latest state and the in-progress task). Originally written 2026-09-10, end of a session that took the trait library from 176 to
 239 and touched the palette, favicon, token image, domain, and deploy
 pipeline. Everything below is the actual current state, verified, not a
 summary of intentions.
@@ -191,3 +192,46 @@ tight physical constraint against an existing feature (mouth near the eyes,
 in particular), an automated pixel-distance check beats a visual pass —
 eyes sit only ~13px in radius and the beak's own top edge is only ~9px below
 their bottom edge; that gap is too easy to eyeball as "fine" when it isn't.
+
+## Session 2026-09-10/11: batch fixes shipped, full builder audit in progress
+
+**Shipped and live** (commit `83b8569`, pushed, verified on buildaping.com):
+the 76-trait batch was checked on contact sheets at 512px next to originals
+and 21 traits were rebuilt - all 8 mouth expressions (below the real beak,
+see item 4 above), bandana-mask, guitar/kite/balloon-animal, 9 ground
+accessories (grown 1.45x, cart basket filled). Copy now says 239 everywhere
+and `scripts/check-copy-count.mjs` fails the build on drift. New scripts:
+`check-eye-clearance.mjs`, `rescale-trait.mjs`, `contact-sheet.mjs`.
+
+**In progress, not finished: the owner rejected gap-tooth as rendered by
+the BUILDER** (the browser canvas, not the image API) and asked for every
+single trait to be enabled in the real site, checked, and fixed where
+needed. Status:
+
+- The builder's geometry matches the API (base at 1.4x, centered; see
+  `BASE_IMAGE_SCALE_MULTIPLIER` in `src/components/CharacterPreview.tsx`),
+  so registration is the same. The difference the owner is seeing is
+  most likely the smaller canvas (599px vs the API's 512 with different
+  resampling) and/or that the open-beak lower mandible reads thin at that
+  size - NOT confirmed yet; nothing has been looked at closely.
+- All 239 traits were captured from the real builder canvas
+  (`npm run dev`, clicking each card, `canvas.toDataURL`) into
+  `.trait-audit/<name>.png` (gitignored, present in the working tree at
+  the time of writing). Tooling and the browser snippet are in
+  `scripts/capture-builder-receiver.mjs`.
+- **Nothing in `.trait-audit/` has been reviewed yet.** The session was
+  stopped at the tiling step. Next step: tile them ~20 per sheet with
+  labels (sharp one-liner, or extend contact-sheet.mjs to accept
+  pre-composited inputs), go through all 12 sheets, list every trait that
+  looks wrong in the builder, fix, re-capture those, re-check, commit.
+- Expect the review to be about builder-scale legibility, not
+  registration: the same 512px sheets already passed for registration.
+  Judge the mouths hardest; gap-tooth is the one already rejected.
+- If the mouths need another pass, the lower-mandible rim (22px in
+  `openBeak`, `scripts/generate-mouths-from-beak.mjs`) and the tooth row
+  height (24px) are the knobs; both were sized for the 512 API render.
+
+Environment notes: `.claude/launch.json` has `ping-dev` (vite, 5173) and
+`ping-pages` (wrangler on 8790 - a stale workerd from an older session
+still holds 8788). Capturing from a hidden browser tab crawls; keep it
+fronted.
