@@ -34,9 +34,12 @@ import { decodePng, encodeRgba, resizeRgba } from './lib/png.mjs';
  * profile that is zero at the corners, and fill the gap with a black lip line
  * each side plus a dark interior. Every outline in the mouth is a warped
  * pixel of the original art. Teeth and tongue are clipped to that interior;
- * anything still drawn gets a small displacement wobble. Nothing moves above
- * the beak's top edge, so eye clearance is unchanged by construction.
- * Verified with scripts/check-eye-clearance.mjs, not by eye.
+ * anything still drawn gets a small displacement wobble. The beak's outline
+ * is thinned to ~45% of its base thickness (the base's heavy outline made
+ * the open mouths a black blob) and a face-cream footprint hides the base's
+ * own thick beak underneath. Only that footprint reaches toward the eyes
+ * (13.8px clear); no ink moves above the beak's top edge. Verified with
+ * scripts/check-eye-clearance.mjs, not by eye.
  *
  * lollipop and whistle (held-in-beak objects, the same convention as the
  * original cigar/joint) were fine and are not regenerated here.
@@ -177,8 +180,13 @@ const over = (dst, src, dx, dy) => {
       const a = src.data[s + 3] / 255;
       if (a <= 0) continue;
       const d = (cy * dst.width + cx) * 4;
-      for (let c = 0; c < 3; c++) dst.data[d + c] = Math.round(src.data[s + c] * a + dst.data[d + c] * (1 - a));
-      dst.data[d + 3] = Math.round((a + (dst.data[d + 3] / 255) * (1 - a)) * 255);
+      // Porter-Duff source-over with straight alpha. Blending colour as if
+      // dst were opaque darkened every soft edge painted onto the empty
+      // canvas (a grey ring around the face-cream footprint).
+      const da = dst.data[d + 3] / 255;
+      const oa = a + da * (1 - a);
+      for (let c = 0; c < 3; c++) dst.data[d + c] = Math.round((src.data[s + c] * a + dst.data[d + c] * da * (1 - a)) / oa);
+      dst.data[d + 3] = Math.round(oa * 255);
     }
   }
 };
@@ -240,6 +248,66 @@ for (let x = 0; x < up.width; x++) {
   cut[x] = Math.round((t + b) / 2);
   ox0 = Math.min(ox0, x); ox1 = Math.max(ox1, x);
 }
+
+/**
+ * Thinner outline. The base's beak outline (~13 native px) is right for the
+ * plain character but made every open mouth a heavy black blob. Proportional
+ * thinning keeps the hand-drawn variation: each black pixel stays only if it
+ * is in the inner OUTLINE_KEEP fraction of the local wall, measured as
+ * distance-to-orange / (distance-to-orange + distance-to-outside). Thick
+ * spots stay relatively thick, thin spots thin.
+ *
+ * The base still paints its own thick beak underneath, so FOOTPRINT (the
+ * original beak's area, dilated 3 native px to swallow its anti-aliased
+ * fringe) is painted in face cream first, under everything.
+ */
+const OUTLINE_KEEP = 0.45;
+// Mean of the real face pixels in the crop, not a guessed hex: a patch a
+// couple of levels off showed as a faint ring around the footprint.
+const FACE = (() => {
+  const sum = [0, 0, 0]; let n = 0;
+  for (let i = 0; i < cropW * cropH; i++) {
+    const [r, g, b] = raw.data.subarray(i * 4, i * 4 + 3);
+    if (keep[i] || !isFaceCream(r, g, b)) continue;
+    sum[0] += r; sum[1] += g; sum[2] += b; n++;
+  }
+  return sum.map((v) => Math.round(v / n));
+})();
+const chamfer = (seed) => {
+  const W = up.width, H = up.height, d = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) d[i] = seed(i) ? 0 : 1e9;
+  const pass = (y0, y1, dy, x0, x1, dx) => {
+    for (let y = y0; y !== y1; y += dy) {
+      for (let x = x0; x !== x1; x += dx) {
+        const i = y * W + x;
+        for (const [ox, oy, w] of [[-dx, 0, 1], [0, -dy, 1], [-dx, -dy, Math.SQRT2], [dx, -dy, Math.SQRT2]]) {
+          const nx = x + ox, ny = y + oy;
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+          d[i] = Math.min(d[i], d[ny * W + nx] + w);
+        }
+      }
+    }
+  };
+  pass(0, H, 1, 0, W, 1);
+  pass(H - 1, -1, -1, W - 1, -1, -1);
+  return d;
+};
+const solid = (i) => up.data[i * 4 + 3] >= 128;
+const toOrange = chamfer((i) => isOrange(i * 4));
+const toOutside = chamfer((i) => !solid(i));
+const toFootprint = chamfer(solid);
+const footprint = { width: up.width, height: up.height, data: Buffer.alloc(up.data.length) };
+for (let i = 0; i < up.width * up.height; i++) {
+  if (toFootprint[i] <= 3 * K) footprint.data.set([...FACE, 255], i * 4);
+  // The old outline's anti-aliased outer fringe would float free of the
+  // thinned wall; the 4x box downscale re-antialiases the new edge.
+  if (!solid(i)) { up.data.fill(0, i * 4, i * 4 + 4); continue; }
+  if (isOrange(i * 4)) continue;
+  const a = toOrange[i], b = toOutside[i];
+  if (a > OUTLINE_KEEP * (a + b)) up.data.fill(0, i * 4, i * 4 + 4);
+}
+console.log(`face cream ${FACE}`);
+const FOOTPRINT = resizeRgba(footprint, Math.round(cropW * NATIVE_TO_TRAIT), Math.round(cropH * NATIVE_TO_TRAIT));
 
 /**
  * @param {(u: number) => number} profile - opening in NATIVE px across the
@@ -335,11 +403,14 @@ const clipTo = (img, mask) => {
  * @param {(g: (tx: number) => ({ top, bot } | null)) => string} [inside] -
  *   SVG clipped to the interior (teeth, tongue in the mouth)
  * @param {(g) => string} [front] - SVG painted over everything (tongue out)
+ * @param {string} [under] - SVG painted under the beak (mustache)
  */
-const buildOpen = async (profile, inside, front) => {
+const buildOpen = async (profile, inside, front, under) => {
   const { layer, mask } = openRealBeak(profile);
   const g = (tx) => gapAt(mask, tx);
   const canvas = blankCanvas();
+  over(canvas, FOOTPRINT, BEAK_X, BEAK_Y);
+  if (under) over(canvas, wobble(await rasterize(under)), 0, 0);
   over(canvas, layer, BEAK_X, BEAK_Y);
   if (inside) over(canvas, clipTo(wobble(await rasterize(inside(g))), mask), 0, 0);
   if (front) over(canvas, wobble(await rasterize(front(g))), 0, 0);
@@ -410,20 +481,17 @@ const run = async () => {
     // Under the beak (the beak is the nose), same placement logic as the
     // existing beard trait. Above the beak is impossible: the 9px gap to the
     // eyes can't fit a mustache at any readable size.
-    'mustache-only': async () => {
-      // Handlebar tucked under the beak: painted first so the beak's bottom
-      // outline covers its top edge, tips curling up beside the beak.
+    // Handlebar tucked under the (closed) beak: painted first so the beak's
+    // bottom outline covers its top edge, tips curling up beside the beak.
+    'mustache-only': () => {
       const half = (m) => `
         C ${CX + m * 20} ${BB - 22}, ${CX + m * 60} ${BB - 18}, ${CX + m * 88} ${BB - 6}
         C ${CX + m * 104} ${BB + 2}, ${CX + m * 114} ${BB - 8}, ${CX + m * 116} ${BB - 26}
         C ${CX + m * 132} ${BB - 6}, ${CX + m * 118} ${BB + 26}, ${CX + m * 86} ${BB + 28}
         C ${CX + m * 56} ${BB + 32}, ${CX + m * 22} ${BB + 26}, ${CX} ${BB + 14}`;
-      const canvas = blankCanvas();
-      over(canvas, wobble(await rasterize(`
+      return buildOpen(() => 0, null, null, `
         <path d="M ${CX} ${BB - 14} ${half(-1)} M ${CX} ${BB - 14} ${half(1)}"
-              fill="#2B2320" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>`)), 0, 0);
-      over(canvas, beak, BEAK_X, BEAK_Y);
-      return canvas;
+              fill="#2B2320" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>`);
     },
   };
 

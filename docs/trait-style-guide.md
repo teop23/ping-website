@@ -99,6 +99,10 @@ render. Two consequences, both learned by shipping it wrong:
   Teeth and tongue go inside that gap; a tongue or bubble can come out of
   it; a mustache goes under the beak (the beak is also the nose). Anything
   still drawn gets the displacement wobble so it isn't perfect-vector.
+  The beak outline in mouth traits is thinned (proportionally, ~45%) over a
+  face-cream footprint that hides the base's own thick outline: the base's
+  heavy outline is right for the plain character, too heavy on an
+  expression.
 - Nothing drawn inside the beak's own silhouette survives the render. A
   tooth row, a smile line or a tongue that fits inside 53x14px is a smudge on
   the live site. Make the added shape at least the beak's own size.
