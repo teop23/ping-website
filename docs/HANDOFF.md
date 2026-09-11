@@ -257,3 +257,54 @@ brows extending past the head, wand's white glow, sayian hair over one
 eye, and the hello-kitty keychain's small size. Two left-side traits,
 such as umbrella plus rocket, overlap when both are picked. That is
 inherent to both slots living on the left.
+
+## Mouth expressions, 2026-09-11: 3 of 8 accepted, 5 still rejected
+
+**Accepted by the owner, keep as they are:** `tongue-out`, `gum-bubble`,
+`mustache-only` (the state in commit `b93ad3b`, thinned beak outline).
+
+**Rejected, "uncanny valley":** `smile`, `smirk`, `open-laugh`,
+`gap-tooth`, `gold-tooth`. They are live on the site right now in that
+rejected state.
+
+All eight come from `scripts/generate-mouths-from-beak.mjs`. Versions the
+owner has turned down so far (the generator header has the detail):
+
+1. A cream rectangle over the beak with a human mouth line drawn on bare face.
+2. The expression drawn inside the beak's silhouette. Too small to see.
+3. A drawn orange lower mandible and tooth row under the real beak. In the
+   builder it read as a strip of tiny boxes.
+4. The same idea resized. It read as a second beak or a bucket bolted on,
+   and the perfect-vector lines clashed with the hand-drawn base.
+5. The current version (`c4fb9bc` + `b93ad3b`): the real beak split along
+   its orange midline and opened, with teeth and tongue inside the gap,
+   drawn parts wobbled, and the outline thinned. It's technically clean in
+   the builder, and still uncanny.
+
+My read (a hypothesis, not confirmed with the owner): the three that work
+all keep the beak basically closed and add a **prop or object** (tongue
+hanging out, a bubble, a mustache). That is the same convention as the
+original cigar/joint/lollipop/whistle, which were always fine. The five
+that fail all show **inside the mouth**: teeth, gums, an interior.
+Human-style mouth anatomy on a bird beak is what reads as uncanny, so
+tuning sizes, outlines or line wobble won't fix them.
+
+Options for the five, which is the owner's call:
+
+- **Cut them.** Count 238 -> 233, update the six copy sites
+  (`scripts/check-copy-count.mjs` lists them), and delete the PNGs and their
+  jobs in the generator.
+- **Replace them with prop-style expressions** that never open the beak,
+  for example: a toothpick, a flower stem, a pacifier, a straw, a
+  harmonica, a party blower, a leaf, a fish tail sticking out. Held in the
+  beak's corner like the cigar.
+- **Keep the names, re-express them without an interior.** gold-tooth
+  becomes a gold cap on the beak tip; smirk becomes a tilted closed beak or
+  a single side cheek mark. It's risky, because it's closest to what already
+  failed.
+
+Process rule for whoever picks this up: the owner has rejected mouth work
+five times. **Show mockups at builder size (599px canvas, face crop plus
+full frame) and get a yes before regenerating, committing or pushing.**
+The pipeline, receiver on PORT=9912, capture snippet and gates all work.
+See "Verification standard" above and the generator header.
