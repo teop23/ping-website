@@ -558,25 +558,90 @@ Review sheets are in `.trait-work/extract/`.
    mouths, update the copy sites (`check-copy-count.mjs`), and commit the tools with the traits.
    Rejects go to `.trait-work/rejected/`.
 
-## Shipped 2026-09-11 (fourth session), aura in progress
+## Shipped, 2026-09-11 (fourth session)
 
-**Committed:** the owner said "all are good" on the vetted sheets (`.trait-work/extract/vetted-{1,2,3}.png`,
-built by `.trait-work/sheet.mjs`). 53 traits: 6 mouth (incl. pacifier take 2), 8 head, 7 face, 8 body,
-8 right_hand, 8 left_hand, 8 accessory. The five rejected mouths (smile, smirk, open-laugh, gap-tooth,
-gold-tooth) are cut, PNGs and generator entries. Library 239 - 5 + 53 = 287. No real builder capture or
-wrangler render was taken; the sheets use sim-builder geometry.
+**Pushed to `relaunch/robinhood-chain`:**
+- `4c36803`: the 53 traits from the vetted sheets (`.trait-work/extract/vetted-{1,2,3}.png`). That's
+  6 mouth (incl. pacifier take 2), 8 head, 7 face, 8 body, 8 right_hand, 8 left_hand and 8 accessory.
+  - The five rejected mouths (smile, smirk, open-laugh, gap-tooth, gold-tooth) are cut, PNGs and
+    generator entries.
+  - The tools went in with it: `register-edit.mjs` and all the extractor flags.
+- Second commit: six auras the owner approved ("very good job on the aura set"). Five are
+  full-canvas: northern-lights, money-rain, green-candles, confetti, bubbles. hearts is a huge halo.
+- Library: 239 -> 287 -> 293. The copy is updated, tests 101/101, the build is clean.
+- No real builder capture or wrangler render was taken. The sheets use sim-builder geometry.
 
-**Aura, committed (second commit):** the owner wanted auras "cooler, can be full images too" and approved
-northern-lights, money-rain, green-candles, confetti, bubbles (full canvas) and hearts (huge halo). Library 293.
-Extra auras beyond the list are parked in `.trait-work/pending/` (out of `public/traits/` so
-generate-index skips them) until the owner says yes. Chat `/app/5daaaf9b1a9abe8b`; page helpers `__wrapV(item, full)` with `__rulesV`
-(full canvas) / `__rulesH` (huge halo).
+**Waiting on the owner (parked in `.trait-work/pending/`, not in `public/traits/`, so generate-index skips
+them):** six extra full-canvas auras, sheet `.trait-work/extract/aura-extra.png`: to-the-moon, synthwave,
+blizzard, gold-hoard, fireworks, deep-sea. All fit ~1.7/255. The to-the-moon rocket is clipped at the
+top-right corner in the builder crop. To ship the approved ones:
+1. Move them back to `public/traits/`.
+2. Run `node scripts/generate-index.mjs`.
+3. Bump the count in the 4 copy files (`check-copy-count.mjs` lists them), run `npx vitest run`, and
+   commit.
+
+**Owner direction:** auras should be "cool", and can be full images. Full-canvas backgrounds are the
+most reliable Gemini output so far: the framing stayed exact on 11 of 12.
 
 **New tool flags:**
-- `register-edit.mjs --penguin`: fit on the penguin's own pixels only, with a coarse scale/offset grid
-  search. Needed when the background is no longer white (full-canvas auras). Fit is the mean diff inside
-  the penguin; ~1.7 is normal for these, 12 meant Gemini moved and greyed the penguin (reject).
-- `extract-trait-from-edit.mjs --full`: the whole edit becomes an opaque layer, the penguin silhouette
-  (+3px) filled from the surrounding background. take.sh: `aura <name> <n> --box 0,0,1023,1023 --full --penguin`.
-  For halo auras drop `--full`. The eye-clearance FAIL on full auras is expected.
-- `extract-trait-from-edit.mjs --ground Y`: moves accessories so their bottom sits on native Y (750).
+- `register-edit.mjs --penguin` fits on the penguin's own pixels only (the base silhouette, eroded
+  4px), with a coarse scale/offset grid search.
+  - Use it whenever the background isn't white.
+  - The fit line is then the mean diff inside the penguin. ~1.7 is normal; 12 meant Gemini moved and
+    greyed the penguin, so reject.
+- `extract-trait-from-edit.mjs --full` makes the whole edit an opaque layer. The penguin silhouette
+  (+3px) is filled from the surrounding background, so no ghost outline is possible.
+  - Command: `sh .trait-work/take.sh aura <name> <n> --box 0,0,1023,1023 --full --penguin`
+  - For a halo aura drop `--full`, and keep `--penguin`.
+  - The eye-clearance FAIL on full auras is expected: the aura sits behind the penguin.
+- `extract-trait-from-edit.mjs --ground Y` moves accessories straight up or down so their bottom sits
+  on native Y=750, the feet line.
+- `.trait-work/sheet.mjs out.png "Title" name_cat[:note] ...` builds a contact sheet at builder
+  geometry, drawing auras behind the penguin.
+  - Set `DIR=.trait-work/pending` to read from elsewhere.
+  - A note turns the label brown.
+
+**Gemini automation, what worked this session (Claude-in-Chrome, tab in Claude's group):**
+- The aura chat is `/app/5daaaf9b1a9abe8b`. Both reference images are already uploaded there.
+- Page helpers are lost on navigation. Rebuild them from `send`/`poll`/`markNewest` in the earlier
+  section; `__poll` must cap at 35s because JS calls time out at 45s. Aura prompts:
+  - `__wrapV(item, full)` = "New trait. Start again from image 1 (the plain penguin on white), not from
+    any image you made. Add ONE aura trait: " + item + " " + (full ? RULES_FULL : RULES_HALO).
+  - RULES_FULL: "The aura is drawn BEHIND the penguin: the penguin stays completely on top and exactly
+    unchanged, nothing covers its face, body, flippers or feet. Make it bold and striking, the kind of
+    background that makes the penguin look cool. It fills the WHOLE square picture edge to edge and
+    replaces the white background completely, the way american-aura in image 2 fills the whole frame.
+    Same hand-drawn style as image 2: chunky wobbly black marker outlines on the big shapes, bright
+    saturated colours, soft gradients and a little grain allowed. No text, no logos, no ground or floor
+    line, no other characters. Keep the framing identical to image 1: same square canvas, same penguin
+    size, position and pose. Do not redraw, recolour, re-outline or restyle any part of the penguin, and
+    put no glow or shadow on it. Output exactly one edited image with one penguin."
+  - RULES_HALO: the same, but "a HUGE halo that fills most of the picture and reaches close to all four
+    edges, much bigger than fire-aura, like coral-aura in image 2. Thick chunky black outer outline...
+    Outside the halo the background stays plain white."
+  - If Gemini moves the penguin, add: "IMPORTANT: the penguin is pasted in exactly as it is in image 1:
+    same size, same centred position, same pure black body, no grey tint and no glow on it."
+- Per take:
+  1. Send, then `await __poll()`.
+  2. Wait ~8s, run `__mark()`, and take a screenshot at scale 0.6. If the image is still dim, wait again.
+  3. `read_page filter=interactive` to get the "Copy newest image" ref, then click it. The ref goes up
+     by ~20 per response.
+  4. PowerShell: `Start-Sleep -Milliseconds 1500; powershell -STA -File .trait-work/clip.ps1`.
+  5. Bash: `take.sh`.
+  - Send the next prompt while take.sh runs.
+- Gotcha: once the clipboard held a 1542x249 strip instead of the image (fit 134/255). If a fit is
+  wild, check the raw's dimensions, delete the take, and click Copy again.
+- Parallel agents are unsafe: the clipboard and `Downloads/Gemini_Generated_Image_*` are shared.
+  Before going parallel, take.sh needs per-agent file paths plus a mkdir lock.
+
+**Next session:**
+1. Get the owner's verdict on the 6 extra auras. Ship the yeses (steps above); rejects go to
+   `.trait-work/rejected/`.
+2. Ask the owner what to generate next. Candidates:
+   - More full-canvas auras: lava, vaporwave, jungle, city-night, pixel-sky, rainy-window.
+   - A second round of hands, heads and accessories. Brainstorm the concepts first and check them
+     against the 293 existing traits for duplicates.
+   - Rerolls of the weaker ones: snowman, gold-bars and lawn-flamingo accessories are small;
+     band-aid sits on the chin; the mini-fridge glow is clipped at the left edge.
+3. Optionally, a real builder capture (`scripts/capture-builder-receiver.mjs`) of a few new traits, to
+   confirm the sim.
