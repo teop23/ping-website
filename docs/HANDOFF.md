@@ -367,3 +367,216 @@ attachments are in `docs/trait-refs/`:
 In `.trait-work/gemini/` you'll also find the reference images that were
 attached in Gemini: `ref-cigar`, `ref-ciggy` and `ref-beard` on white, and
 the sheet at 1600.
+
+## Mouth batch 1, 2026-09-11 (after fish-in-beak)
+
+**Shipped:** `fish-in-beak` (commit 1b1b0e7), with
+`scripts/extract-trait-from-edit.mjs <category> <edit.jpg|png> [--name] [--box] [--debug dir]`.
+The copy count is now 239.
+
+**Waiting on the owner's yes (in `public/traits/`, uncommitted):**
+- `rose` - the stem runs behind the beak. It fits the canvas and is 38.6px from the eyes. The strongest of the batch.
+- `toothpick` - from Gemini's first, unframed image (1200x896, beige background,
+  `.trait-work/gemini/toothpick-take0-unframed.jpg`). It was registered onto the base (scale 0.935, offset -49,101, fitted
+  on the diff outside the mouth), saved as `toothpick-take0.png`, then extracted. It's clean, but its outline
+  is thinner than the originals'.
+- Before committing: run the builder capture and a wrangler render on both. Adding them takes
+  the copy count to 241 while the five rejected mouths are still live.
+
+**Wheat-stalk: the owner likes the look. Redo it.** `.trait-work/gemini/wheat-stalk-take1.jpg`
+reaches native x=906, but the trait canvas ends at about 878, so the head gets clipped. Ask Gemini
+for the same wheat-stalk with the whole stalk ending before about 80% of the image width.
+The rejected extraction is in `.trait-work/extract/`.
+
+**Still to generate:** party-blower, gold-beak-ring, pacifier, bubble-pipe.
+
+**Gemini driving notes:**
+- Claude-in-Chrome needs its own tab group. Open gemini.google.com/app in it.
+- File upload: the input only exists after you click "Upload files", which opens a native picker.
+  Hook `HTMLInputElement.prototype.click` so that for `type=file` it just keeps the input,
+  click the menu item, then `file_upload` to that input. It's the second `input[type=file]`,
+  and its accept list is empty.
+- Paste long prompts through the clipboard (`Set-Clipboard`, then ctrl+v). Send with the "Send message" ref.
+- A batch prompt ("separate images, one per concept, not a sheet") works. Gemini
+  also sent one stray extra image, and that stray was the good toothpick.
+- Every download from one reply has the same filename
+  (`Gemini_Generated_Image_<id>.jpg`), so move each file out of Downloads before the next click.
+- Check framing: Gemini sometimes returns a different size or background. Register it
+  onto the base as above, and don't reject it for that alone.
+
+**Extractor notes:**
+- The mouth box is now [380,340,878,625]. Check the component list: a blob that touches the box edge
+  means the prop was clipped, or it runs off the canvas.
+
+## Mouth batch 2, 2026-09-11 (later session)
+
+**Owner verdict (2026-09-11):**
+- YES: toothpick, rose, wheat-stalk, party-blower, bubble-pipe. These PNGs are in `public/traits/`,
+  still uncommitted.
+- NO: gold-beak-ring. Its PNG was moved to `.trait-work/rejected/`. Don't reroll it.
+- MAYBE: pacifier, if it's made smaller. The current PNG is still in `public/traits/` and must not ship
+  as is.
+
+**Next session, in order:**
+1. Pacifier: ask for a smaller one in the fish chat (`/app/a79ee6352abc0cf5`), same short prompt as
+   before plus "about half the size, a small pacifier on the beak tip that leaves most of the lower
+   face visible". Register, extract with `--box 380,260,878,625`, send a builder-size sheet
+   (`.trait-work/review.mjs`) for a yes. If it isn't clearly better, drop it and move its PNG to
+   `.trait-work/rejected/`.
+2. Take a real builder capture (`scripts/capture-builder-receiver.mjs`) and a wrangler render of the
+   accepted mouths. Nothing from this batch has had either yet, only sim-builder.
+3. In one commit: add the accepted mouths (5, or 6 with pacifier), cut the five rejected expressions
+   (smile, smirk, open-laugh, gap-tooth, gold-tooth: PNGs plus their entries in
+   `generate-mouths-from-beak.mjs`), regenerate the index, and update the six copy sites.
+   Count: 239 + 5 - 5 = 239, or 240 with pacifier. Confirm with `check-copy-count.mjs`.
+   Commit `scripts/register-edit.mjs` and the `--behind-beak` change with it.
+
+The notes below were written before the verdict.
+
+All uncommitted, in `public/traits/`, waiting on the owner's yes along with rose and toothpick
+(review sheets were sent at builder size; `.trait-work/review.mjs out.png <names...>` rebuilds one):
+- `wheat-stalk` (take 2) - Gemini shrank the penguin and pointed the beak. Registered, then extracted
+  with `--behind-beak`, so the stalk comes out from behind the real beak's corner. 32.7px from the eyes.
+- `party-blower` - pixel-exact framing, `--box 380,260,878,625` so the curl and motion lines aren't clipped.
+- `gold-beak-ring` - exact framing, but **Gemini reshaped the beak to a point**, and that ghost beak is
+  in the layer. Probably needs a new take.
+- `pacifier` - clean, but large: it covers most of the lower face.
+- `bubble-pipe` - clean, `--box 380,150,878,625` for the bubbles. The pipe reads as a tobacco pipe.
+
+The committed library is 239 (fish-in-beak included). See the verdict above for the final count.
+
+New tools:
+- `scripts/register-edit.mjs <edit> <out.png> [--box]` fits scale+offset of an edit onto
+  `ping-on-white.png` (from the silhouette bbox and from identity, keeping the better), grid-refined on
+  the diff outside the box. Under ~1/255 is a good fit; 4+ means Gemini redrew the penguin: reject.
+- `extract-trait-from-edit.mjs --behind-beak` takes the base beak (orange fill + outline) out of the
+  region. Use it for props that pass behind the beak when Gemini redrew the beak.
+
+**Gemini, what works:** continue the "Adding a Fish Trait to Penguin Mascot" chat
+(`/app/a79ee6352abc0cf5`) with a short prompt that says "Start again from image 1 (the plain penguin),
+not from any image you made", names one trait, restates the framing rules. 4 of 4 came back at exact
+framing (diff 0.12-0.17/255). The batch chat drifts (sheets, restyled penguin) and a fresh chat with the
+long prompt redrew the penguin. The Send button appears a moment after the paste; click it by
+`button[aria-label="Send message"]` in JS.
+
+## All categories via Gemini, 2026-09-11 (third session)
+
+Everything below is **uncommitted** in `public/traits/`. Nothing gets committed without the owner's yes
+on builder-size sheets. Raws and registered edits are in `.trait-work/gemini/<name>-take<n>[-raw].png`.
+Review sheets are in `.trait-work/extract/`.
+
+**Status per category** (sheets marked "sent" went to the owner; no verdicts yet):
+- mouth: pacifier take 2 (smaller) sent. The 5 accepted mouths are still waiting on the commit from
+  "Mouth batch 2".
+- head (sent, `head-review.png`): ushanka, headphones, traffic-cone, eggshell, beret, santa-hat,
+  bunny-ears, mohawk.
+- face (sent, `face-review.png`): dollar-eyes, ski-goggles, aviators, vr-headset, snorkel-mask (take 2),
+  eye-bags, band-aid (take 2).
+  - dollar-eyes, goggles, aviators and snorkel all overlap the beak top, as pit-vipers does.
+  - band-aid landed on the chin twice; the cheek gap is too small for Gemini.
+- body (sent, `body-review.png`): puffer-jacket, gold-chain, overalls, varsity-jacket, lab-coat,
+  knit-sweater, tracksuit, cape. All first takes, fit 0.06-0.19. Lab-coat hem grazes the feet top.
+- right_hand (sent, `right-review.png`): pickaxe, smartphone (take 2), microphone, fish, megaphone
+  (take 2), magnifying-glass (take 2, fit-right 0.93x), rubber-duck, baguette (fit-right 0.92x).
+  Gemini often extends the flipper a little to grip.
+- left_hand (**not sent yet**): snowball, piggy-bank (take 2), briefcase, lantern (take 2), teddy-bear,
+  calculator, banana. Water-balloon hasn't been generated yet.
+  - Calculator: Gemini put it on the right twice, even when told "left half". So take 2 was extracted
+    as right_hand, flopped onto the left flipper (mirror axis native x~500, trait shift 38px), then
+    scaled 0.88x about its bottom-right.
+  - Banana: the current PNG is take 1, and its tip crosses onto the belly, so it's a reject. Take 2
+    (hanging outside the body) is generated in the chat but was never captured.
+  - `piggy-bank-take1-raw.png` is a wrong-side junk take. Ignore it.
+- accessory, aura: not started.
+
+**Region boxes that worked** (`take.sh` passes them to both register and extract):
+- head: `--box 180,0,840,600 --fit-top 165`, plus `--fill-enclosed` for white fills.
+- face: `--box 280,250,750,560`. Snorkel used `250,146,800,560`.
+- body: `--box 230,400,790,790`. Cape used `170,380,860,800`. Add `--fill-enclosed` for white fills
+  (lab-coat).
+- right_hand: `--box 590,146,1023,820 --fit-right 862`.
+- left_hand: `--box 0,146,440,1023 --fit-left 162`. y1 must be 1023, or items hanging below the feet
+  get cut (lantern).
+- Review: `LEFT=<x> TOP=<y> node .trait-work/review2.mjs out.png name_cat...` sets the 2x crop.
+  - body: TOP=210.
+  - right: LEFT=239 TOP=150-170.
+  - left: LEFT=0 TOP=200-230.
+
+**New flags in `extract-trait-from-edit.mjs`:**
+- `--fill-enclosed`: fills white-on-white areas inside the trait.
+- `--fit-top Y`: scales about the bottom centre.
+- `--fit-right X` / `--fit-left X`: scale about the bottom corner nearest the body.
+- `--max-hole N`.
+
+`register-edit.mjs` and all these extractor changes are still uncommitted.
+
+**Gemini automation (Claude-in-Chrome):**
+- Chats: face `/app/1fdef9131e2fd080` (drifted at about 21 edits), hands `/app/588081c59ab05e8b`
+  (18 edits so far). **Start a fresh chat per category** (accessory, aura). To set one up:
+  1. Hook `HTMLInputElement.prototype.click` for type=file *after* the page has loaded.
+  2. Click "Upload & tools", then "Upload files".
+  3. Aria-label the hooked input and `file_upload` `docs/trait-refs/ping-on-white.png` and
+     `originals-sheet.png` into it.
+  4. Send the intro line plus the first trait.
+- Page helpers (they're lost on every navigation): `cnt`, `markNewest`, `settle`, `poll`, `send`,
+  `rules`, and a category wrapper.
+  - The source is in this session's transcript and in the face/hand chats' first messages.
+  - The wrapper tells Gemini: start again from image 1, keep the framing identical, the flipper stays
+    down.
+- Per trait:
+  1. `send(...)`, then `await poll(__n0)`.
+  2. Screenshot, then `await settle()`. The hidden tab stalls animations until a frame is forced.
+  3. Get the "Copy newest image" ref. Use `read_page filter=interactive`, not `find`: `find` calls a
+    model and hit a rate limit.
+  4. Click it, then run `powershell -STA -File .trait-work/clip.ps1` with the PowerShell tool.
+  5. `sh .trait-work/take.sh <cat> <name> <n> <opts>`.
+- Gotchas:
+  - Scaled screenshots (0.3) seem to shrink the tab's viewport step by step (1568 to 193 to 82px). At
+    that size Copy fails silently. Use scale 0.5 or more; if `innerWidth` collapses, open a fresh tab.
+  - Closing the last tab in Claude's group deletes the group. Open the new tab first, then close the
+    old one.
+  - Two orphan Gemini tabs from this session may still be open outside the group.
+  - Always check the fit line from take.sh. 1-3/255 means Gemini restyled the penguin (the lantern
+    take 1 turned grey). Also check the side: "viewer's LEFT" gets ignored, so say "the left half of
+    the picture, where the teddy was".
+- **Blocker at handoff: the Windows clipboard is wedged.** Every OpenClipboard fails and no owning
+  window is reported, probably Chrome stuck mid-copy from a frozen renderer. Restart Chrome or copy
+  something by hand to clear it.
+  - A local receiver doesn't work: `.trait-work/recv.mjs` on port 9913 was started, but Gemini's page
+    can't fetch localhost ("Failed to fetch"). Kill it if it's still running.
+  - Other fallback: allow multiple downloads for gemini.google.com in Chrome site settings, then use
+    "Download full size image" (take.sh also picks up `Gemini_Generated_Image_*.jpg`).
+
+**Next session, in order:**
+1. Clear the clipboard, then capture banana take 2 and redo `take.sh left_hand banana 2`. Generate
+   water-balloon. Send the left_hand sheet.
+2. Accessory in a fresh chat. Items stand on the ground line beside the penguin at 1/3 to 1/2 of its
+   height, and must not touch it. Check the box on first use; `REGIONS.accessory` is
+   `146,525,878,878`.
+3. Aura in a fresh chat, drawn behind the penguin. Review with the `--aura` preview.
+4. Collect verdicts, then: builder capture plus wrangler render, generate-index, cut the 5 rejected
+   mouths, update the copy sites (`check-copy-count.mjs`), and commit the tools with the traits.
+   Rejects go to `.trait-work/rejected/`.
+
+## Shipped 2026-09-11 (fourth session), aura in progress
+
+**Committed:** the owner said "all are good" on the vetted sheets (`.trait-work/extract/vetted-{1,2,3}.png`,
+built by `.trait-work/sheet.mjs`). 53 traits: 6 mouth (incl. pacifier take 2), 8 head, 7 face, 8 body,
+8 right_hand, 8 left_hand, 8 accessory. The five rejected mouths (smile, smirk, open-laugh, gap-tooth,
+gold-tooth) are cut, PNGs and generator entries. Library 239 - 5 + 53 = 287. No real builder capture or
+wrangler render was taken; the sheets use sim-builder geometry.
+
+**Aura, not committed:** the owner wants auras "cooler, can be full images too" (like american-aura).
+Takes so far are parked in `.trait-work/pending/` (moved out of `public/traits/` so generate-index
+skips them): northern-lights take 2, money-rain, hearts (huge halo), green-candles take 2. Still to do:
+confetti, bubbles. Chat `/app/5daaaf9b1a9abe8b`; page helpers `__wrapV(item, full)` with `__rulesV`
+(full canvas) / `__rulesH` (huge halo).
+
+**New tool flags:**
+- `register-edit.mjs --penguin`: fit on the penguin's own pixels only, with a coarse scale/offset grid
+  search. Needed when the background is no longer white (full-canvas auras). Fit is the mean diff inside
+  the penguin; ~1.7 is normal for these, 12 meant Gemini moved and greyed the penguin (reject).
+- `extract-trait-from-edit.mjs --full`: the whole edit becomes an opaque layer, the penguin silhouette
+  (+3px) filled from the surrounding background. take.sh: `aura <name> <n> --box 0,0,1023,1023 --full --penguin`.
+  For halo auras drop `--full`. The eye-clearance FAIL on full auras is expected.
+- `extract-trait-from-edit.mjs --ground Y`: moves accessories so their bottom sits on native Y (750).

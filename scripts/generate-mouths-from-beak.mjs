@@ -3,8 +3,8 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { decodePng, encodeRgba, resizeRgba } from './lib/png.mjs';
 
 /**
- * Builds the mouth "expression" traits (smile, smirk, tongue-out, gap-tooth,
- * gold-tooth, open-laugh, gum-bubble, mustache-only) around the real beak
+ * Builds the mouth "expression" traits (tongue-out, gum-bubble,
+ * mustache-only) around the real beak
  * instead of erasing or scribbling inside it.
  *
  * History, because each version composited without error and was still
@@ -28,6 +28,9 @@ import { decodePng, encodeRgba, resizeRgba } from './lib/png.mjs';
  *      a second beak or a bucket bolted under the real one, and the
  *      perfect-vector strokes and box teeth looked pasted on next to the
  *      hand-drawn base.
+ *   5. smile, smirk, open-laugh, gap-tooth and gold-tooth were cut for good
+ *      (uncanny) and replaced by prop mouths cut from Gemini edits (toothpick,
+ *      rose, wheat-stalk...). Only the three the owner accepted stay here.
  *
  * What works: open the REAL beak (openRealBeak below). Cut it along the
  * orange's own midline, slide the lower half down by a smooth per-column
@@ -419,50 +422,8 @@ const buildOpen = async (profile, inside, front, under) => {
 
 const sine = (D, p = 0.8) => (u) => D * Math.pow(Math.max(0, Math.sin(Math.PI * u)), p);
 
-/** Teeth hanging from the upper lip: rounded-bottom blocks, clipped to the
- *  interior so their tops disappear into the lip line. */
-const toothRow = (g, { xs, w, h, gold = -1 }) => xs.map((tx, i) => {
-  const gap = g(Math.round(tx));
-  if (!gap) return '';
-  const y0 = gap.top - 12, y1 = gap.top + h;
-  const fill = i === gold ? '#E8C34A' : '#FFFDF6';
-  return `<path d="M ${tx - w / 2} ${y0} L ${tx + w / 2} ${y0} L ${tx + w / 2} ${y1 - 7} Q ${tx + w / 2} ${y1} ${tx} ${y1} Q ${tx - w / 2} ${y1} ${tx - w / 2} ${y1 - 7} Z"
-            fill="${fill}" stroke="${BLACK}" stroke-width="4.5" stroke-linejoin="round"/>`;
-}).join('');
-
-/** Tongue resting in the bottom of the interior. */
-const tongueIn = (g, tx, w) => {
-  const gap = g(tx);
-  if (!gap) return '';
-  const ry = Math.max(10, (gap.bot - gap.top) * 0.55);
-  return `<ellipse cx="${tx}" cy="${gap.bot + 6}" rx="${w}" ry="${ry}" fill="#E8536B" stroke="${BLACK}" stroke-width="4.5"/>`;
-};
-
 const run = async () => {
   const jobs = {
-    // Beak parted in a gentle curve, tongue at the bottom.
-    smile: () => buildOpen(sine(16), (g) => tongueIn(g, MX + 4, 32)),
-
-    // Opens toward the right corner only; left stays shut.
-    smirk: () => buildOpen(
-      (u) => 12 * Math.pow(Math.max(0, Math.sin(Math.PI * Math.pow(u, 2.2))), 0.9),
-      (g) => tongueIn(g, TIP_L + Math.round((TIP_R - TIP_L) * 0.68), 20),
-    ),
-
-    // Wide open, top teeth row and tongue.
-    'open-laugh': () => buildOpen(sine(24, 0.6), (g) =>
-      tongueIn(g, MX + 6, 40) +
-      toothRow(g, { xs: [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5].map((k) => MX + k * 22), w: 22, h: 18 })),
-
-    // Two front teeth from the upper lip with a clear gap between them.
-    'gap-tooth': () => buildOpen(sine(24, 0.55), (g) =>
-      tongueIn(g, MX + 4, 34) +
-      toothRow(g, { xs: [MX - 19, MX + 19], w: 28, h: 38 })),
-
-    'gold-tooth': () => buildOpen(sine(20, 0.6), (g) =>
-      tongueIn(g, MX + 6, 36) +
-      toothRow(g, { xs: [-1.5, -0.5, 0.5, 1.5].map((k) => MX + k * 26), w: 26, h: 20, gold: 1 })),
-
     // Slightly parted, tongue lolling out over the lower jaw.
     'tongue-out': () => buildOpen(sine(9), null, (g) => {
       const gap = g(MX + 10);
