@@ -645,3 +645,66 @@ most reliable Gemini output so far: the framing stayed exact on 11 of 12.
      band-aid sits on the chin; the mini-fridge glow is clipped at the left edge.
 3. Optionally, a real builder capture (`scripts/capture-builder-receiver.mjs`) of a few new traits, to
    confirm the sim.
+
+## Fifth session, 2026-09-11: auras shipped, 8 new auras pending, full vetting pass
+
+**Shipped:** `d75f17c` (pushed): the six extra full-canvas auras (to-the-moon, synthwave, blizzard,
+gold-hoard, fireworks, deep-sea). Library 293 -> 299, copy check passes, tests 101/101. Nothing since.
+
+**Waiting on the owner (nothing committed):**
+1. **8 new full-canvas auras** in `.trait-work/pending/`, sheet `.trait-work/extract/aura-batch5.png`:
+   volcano, jungle, neon-city, pixel-sky, red-candles, cherry-blossom, desert, haunted. All registered at
+   s=1, d=0. To ship: same three steps as the fourth session (move to `public/traits/`, generate-index,
+   bump the 4 copy files, vitest, commit).
+2. **Vetting verdicts.** Two independent passes (7 Sonnet agents, then 3 Opus agents) over all 299 traits.
+   Findings per category are in `.trait-work/vet/<cat>-findings.md` (pass 1) and `-findings-v2.md` (pass 2).
+   Consolidated sheets:
+   - `.trait-work/extract/vet-remove.png`: 25 REMOVE, both passes agree.
+     - aura (7): bazooka, link, sunrise, yellow, color, storm, shadow (near-dupes of fire/ice, or weak).
+     - accessory (5): chill-guy, cirno-fumo, reimu-fumo-(left), reimu-fumo-(right), reisen-fumo.
+     - body (4): wif-tattoo, pump-fun-tattoo, reimu-x-soldier-tee, reimu-x-wif-tee.
+     - face (2): helm-of-domination, monocle.
+     - right_hand (3): gun-hand, side-gun-hand, green-candle-injection.
+     - left_hand (4): gun-hand, side-gun-hand, poobis, green-candle-injection.
+   - `vet-fix-1.png`, `vet-fix-2.png`: FIX or the owner's call.
+     - Fixable gaps (shift onto the flipper): devil-trident, drumstick, both sparklers, money-bag, flower,
+       bong, rubber-duck.
+     - Style: gloss or shading on santa-hat, headphones, doom-helmet, master-chief-helmet, infinity-gauntlet.
+       Thin lines on girl-eyes, nerd-glasses, jBL-speaker, hello-kitty-mask, persianliion. Blur on
+       mF-dOOM-mask. Low-res m16, grenade. Stray dot on sayian-1. Cheese-grate-hat text unreadable.
+     - All 6 fumo hands are on the sheet, so they get the same verdict as the fumo accessories.
+     - ping-gameboy and its pink twin: keep both?
+   - To remove the approved ones: move the PNGs to `.trait-work/rejected/`, run generate-index, set the copy
+     count to 299 - N (+ any auras shipped), vitest, commit. Check `scripts/` generators for entries by name,
+     as was done for the cut mouths.
+
+**Gemini, what changed:**
+- The old aura chat `/app/5daaaf9b1a9abe8b` drifted at ~22 edits: it returned widescreen images with a
+  redrawn penguin twice. **The new aura chat is `/app/02ba2598ce24ac78`**, with both refs uploaded; 2 edits so far.
+- **Uploads no longer work through the file input.** The hooked input gets the files, but Gemini ignores
+  its change event. What works:
+  1. On `/app`, hook `HTMLInputElement.prototype.click` for type=file.
+  2. Click "Upload & tools". Take a screenshot to force a frame, then `read_page` shows the menuitem
+     "Upload files". Click it by ref; the hook captures the input.
+  3. Move the input to `document.body`, remove its `aria-hidden`, and `read_page` gives it a ref.
+     `file_upload` both refs into it.
+  4. Build a `DataTransfer` from `input.files` and dispatch `new ClipboardEvent('paste', {clipboardData})`
+     on `rich-textarea .ql-editor`. Both images attach.
+- Helpers: `.trait-work/helpers.js`. Paste it into `javascript_tool` after every navigation. It also adds
+  `__SQ`, a "square 1:1 only" line appended to both aura rule sets.
+- `.trait-work/ta.sh <cat> <name> <n> <take opts>` wraps take.sh: it prints the fit line and the raw's
+  dimensions, then parks the result in `.trait-work/pending/`.
+- Full-aura fit: 7-9/255 with s=1, d=0 was only Gemini tinting the penguin grey. The aura layer's
+  silhouette is filled from the background, so the tint never shows. Reject only when the penguin moves or
+  scales, or the image isn't square.
+- Tab-group gotcha: closing the old tab killed the group even though a new tab had just been created
+  (the new tab wasn't in the group). Create tabs with `tabs_context_mcp createIfEmpty` after the close instead.
+
+**Next session:**
+1. Get both verdicts above; ship the aura yeses and apply the removals in one commit each.
+2. For FIX items the owner keeps: shift or scale them onto the flipper with a small sharp script, make
+   before/after sheets.
+3. More generation from `.trait-work/concepts.md`: 15 aura ideas plus 12 per other category, top 6 starred,
+   dupe-checked against the list. Aura ideas not yet tried: tie-dye, laser-rave, black-hole, matrix-code,
+   candyland, meteor-shower, comic-burst, casino-jackpot. Non-aura categories need a fresh chat per
+   category, set up with the paste trick.
