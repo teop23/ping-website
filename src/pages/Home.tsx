@@ -19,7 +19,7 @@ import {
  * build if this drifts from public/traits - it sat at 176 for a while after
  * the library reached 239.
  */
-const TRAIT_COUNT = 238;
+const TRAIT_COUNT = 239;
 const TRAIT_SLOTS = 8;
 
 /**

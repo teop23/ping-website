@@ -87,7 +87,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               $PING
             </div>
             <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75, marginTop: 14 }}>
-              238 traits, eight slots.
+              239 traits, eight slots.
             </div>
             <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75 }}>
               An open image API.
