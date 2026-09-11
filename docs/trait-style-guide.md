@@ -91,12 +91,14 @@ example.
 The base has no lips - its mouth is the orange beak, ~53x14px at the 512
 render. Two consequences, both learned by shipping it wrong:
 
-- Never cover or erase the beak to draw a different mouth. An expression is
-  the real beak (flood-filled out of `ping.png`, see
-  `scripts/generate-mouths-from-beak.mjs`) as the upper mandible, plus
-  something added *below* it: a dark interior and orange lower mandible for
-  an open beak, a tongue or bubble emerging from under it, a mustache under
-  it (the beak is also the nose).
+- Never cover or erase the beak to draw a different mouth, and never bolt a
+  drawn lower mandible under it (read as a second beak, rejected twice). An
+  open expression is the real beak (flood-filled out of `ping.png`, see
+  `scripts/generate-mouths-from-beak.mjs`) split along its orange midline,
+  lower half slid down, gap filled with black lip lines and a dark interior.
+  Teeth and tongue go inside that gap; a tongue or bubble can come out of
+  it; a mustache goes under the beak (the beak is also the nose). Anything
+  still drawn gets the displacement wobble so it isn't perfect-vector.
 - Nothing drawn inside the beak's own silhouette survives the render. A
   tooth row, a smile line or a tongue that fits inside 53x14px is a smudge on
   the live site. Make the added shape at least the beak's own size.

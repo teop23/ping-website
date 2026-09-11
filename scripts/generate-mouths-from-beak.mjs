@@ -24,15 +24,19 @@ import { decodePng, encodeRgba, resizeRgba } from './lib/png.mjs';
  *      interior. gap-tooth is now two big front teeth hanging under a closed
  *      beak with a visible gap; the grin tooth rows are fewer and taller;
  *      smirk's lower mandible no longer pinches to a sliver on its short side.
+ *   4. Still rejected in the builder: the drawn orange lower mandible read as
+ *      a second beak or a bucket bolted under the real one, and the
+ *      perfect-vector strokes and box teeth looked pasted on next to the
+ *      hand-drawn base.
  *
- * What works: treat the real beak as the UPPER mandible and add the
- * expression BELOW it, at a size that survives the 512 render. An open
- * beak is the upper mandible (real pixels, untouched) plus a dark interior
- * and an orange lower mandible hanging beneath; a tongue or bubble comes out
- * from under it. Everything added sits below the beak's own bottom edge, so
- * it is 60+px clear of the eyes by construction - the tight 9px window
- * between eye-bottom and beak-top is never entered. Verified with
- * scripts/check-eye-clearance.mjs, not by eye.
+ * What works: open the REAL beak (openRealBeak below). Cut it along the
+ * orange's own midline, slide the lower half down by a smooth per-column
+ * profile that is zero at the corners, and fill the gap with a black lip line
+ * each side plus a dark interior. Every outline in the mouth is a warped
+ * pixel of the original art. Teeth and tongue are clipped to that interior;
+ * anything still drawn gets a small displacement wobble. Nothing moves above
+ * the beak's top edge, so eye clearance is unchanged by construction.
+ * Verified with scripts/check-eye-clearance.mjs, not by eye.
  *
  * lollipop and whistle (held-in-beak objects, the same convention as the
  * original cigar/joint) were fine and are not regenerated here.
@@ -202,118 +206,228 @@ const build = async (under, above = '') => {
 };
 
 /**
- * Open beak: dark interior + orange lower mandible hanging below the real
- * beak. `depth` is how far the lower mandible drops below the beak's bottom
- * edge; `skew` shifts the lowest point sideways for a lopsided (smirk) open.
- * The interior's top edge sits 12px above BB so the real beak's bottom
- * outline overlaps and hides the seam.
+ * Opens the REAL beak instead of bolting a drawn lower mandible under it.
+ *
+ * The beak is one thick black blob with an orange lens inside. This cuts it
+ * along the orange's own midline (measured per column), leaves the upper half
+ * where it is, and slides each column of the lower half down by d(x). The
+ * gap left behind gets a black lip line on each side (the same black as the
+ * outline, so the cut reads as the beak's own edge) and a dark interior
+ * between. d(x) goes to zero at the corners, so the side walls of the real
+ * outline close the mouth there: the opening is the character's own beak
+ * parting, every line in it is a warped pixel of the original art.
+ *
+ * Done at 4x (nearest upscale of the native crop) so per-column integer
+ * shifts become sub-pixel after the box downscale to trait size.
  */
-const openBeak = ({ depth, halfW = 78, skew = 0, interior = '#3A1A12' }) => {
-  const top = BB - 12;
-  const lx = CX - halfW, rx = CX + halfW;
-  const lowX = CX + skew, lowY = BB + depth;
-  const rim = 22; // lower mandible thickness
-  return `
-    <path d="M ${lx} ${top} L ${rx} ${top} Q ${rx + 4} ${lowY - 10} ${lowX} ${lowY} Q ${lx - 4} ${lowY - 10} ${lx} ${top} Z"
-          fill="${interior}" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-    <path d="M ${lx} ${top} Q ${lx - 4} ${lowY - 10} ${lowX} ${lowY} Q ${rx + 4} ${lowY - 10} ${rx} ${top}
-             Q ${rx - 18} ${lowY - rim - 4} ${lowX} ${lowY - rim} Q ${lx + 18} ${lowY - rim - 4} ${lx} ${top} Z"
-          fill="${ORANGE}" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-  `;
+const K = 4;
+const LIP = 3 * K; // lip line thickness, 4x px (~5 trait px)
+const INTERIOR = [58, 26, 18];
+const EXTRA_ROWS = 34; // native rows of headroom for the dropped lower jaw
+
+const up = resizeRgba(cropped, cropW * K, cropH * K);
+const isOrange = (i) => up.data[i + 3] > 200 && up.data[i] - up.data[i + 2] > 90;
+let ox0 = Infinity, ox1 = -Infinity;
+const cut = new Int32Array(up.width).fill(-1);
+for (let x = 0; x < up.width; x++) {
+  let t = -1, b = -1;
+  for (let y = 0; y < up.height; y++) {
+    if (!isOrange((y * up.width + x) * 4)) continue;
+    if (t < 0) t = y;
+    b = y;
+  }
+  if (t < 0) continue;
+  cut[x] = Math.round((t + b) / 2);
+  ox0 = Math.min(ox0, x); ox1 = Math.max(ox1, x);
+}
+
+/**
+ * @param {(u: number) => number} profile - opening in NATIVE px across the
+ *   orange's width, u = 0 at its left tip, 1 at its right tip
+ * @returns {{ layer, mask }} trait-resolution beak layer and interior mask
+ *   (white, alpha = interior coverage), both placed at (BEAK_X, BEAK_Y)
+ */
+const openRealBeak = (profile) => {
+  const W = up.width, H = up.height + EXTRA_ROWS * K;
+  const out = { width: W, height: H, data: Buffer.alloc(W * H * 4) };
+  const mask = { width: W, height: H, data: Buffer.alloc(W * H * 4) };
+  for (let x = 0; x < W; x++) {
+    const inOrange = cut[x] >= 0;
+    const u = (x - ox0) / (ox1 - ox0);
+    const d = inOrange ? Math.max(0, Math.round(profile(u) * K)) : 0;
+    const yc = inOrange ? cut[x] : H;
+    for (let y = 0; y < H; y++) {
+      const o = (y * W + x) * 4;
+      if (y < yc) {
+        if (y < up.height) out.data.set(up.data.subarray(o, o + 4), o);
+      } else if (y < yc + d) {
+        const g = y - yc;
+        const lip = d <= 2 * LIP || g < LIP || g >= d - LIP;
+        out.data.set(lip ? [0, 0, 0, 255] : [...INTERIOR, 255], o);
+        if (!lip) mask.data.set([255, 255, 255, 255], o);
+      } else if (y - d < up.height) {
+        const s = ((y - d) * W + x) * 4;
+        out.data.set(up.data.subarray(s, s + 4), o);
+      }
+    }
+  }
+  const tw = Math.round(cropW * NATIVE_TO_TRAIT);
+  const th = Math.round((cropH + EXTRA_ROWS) * NATIVE_TO_TRAIT);
+  return { layer: resizeRgba(out, tw, th), mask: resizeRgba(mask, tw, th) };
 };
 
-/** A white tooth row along the top of an open interior, optionally with one
- *  slot dark (gap) or gold. Tooth edges drawn as thin dark dividers. */
-const teeth = ({ count = 5, gap = -1, gold = -1, y = BB - 6, h = 22, halfW = 62 }) => {
-  const w = (halfW * 2) / count;
-  return Array.from({ length: count }, (_, i) => {
-    const x = CX - halfW + i * w;
-    if (i === gap) return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#1E0E0A"/>`;
-    const fill = i === gold ? '#E8C34A' : 'white';
-    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${BLACK}" stroke-width="5"/>`;
-  }).join('');
+// Trait-space x of the orange's tips, for placing teeth/tongue in the gap.
+const TIP_L = BEAK_X + Math.round((ox0 / K) * NATIVE_TO_TRAIT);
+const TIP_R = BEAK_X + Math.round((ox1 / K) * NATIVE_TO_TRAIT);
+const MX = Math.round((TIP_L + TIP_R) / 2);
+
+/** First/last interior row of a trait-space column, from the mask. */
+const gapAt = (mask, tx) => {
+  const x = tx - BEAK_X;
+  let top = -1, bot = -1;
+  for (let y = 0; y < mask.height; y++) {
+    if (mask.data[(y * mask.width + x) * 4 + 3] < 128) continue;
+    if (top < 0) top = y;
+    bot = y;
+  }
+  return top < 0 ? null : { top: BEAK_Y + top, bot: BEAK_Y + bot };
+};
+
+/**
+ * Hand-drawn wobble for anything that is still drawn (teeth, tongue, bubble,
+ * mustache): displaces the rasterized SVG by a smooth low-frequency field so
+ * strokes lose the perfect-vector look that made the last set read as
+ * pasted on. Deterministic (fixed phases) so reruns are byte-stable.
+ */
+const wobble = (img, amp = 2.2) => {
+  const { width: W, height: H, data } = img;
+  const out = Buffer.alloc(data.length);
+  const f = (x, y, p) =>
+    Math.sin(x * 0.043 + y * 0.017 + p) * 0.6 + Math.sin(x * 0.011 - y * 0.051 + p * 1.7) * 0.4;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const sx = Math.round(x + amp * f(x, y, 1.3));
+      const sy = Math.round(y + amp * f(y, x, 4.1));
+      if (sx < 0 || sy < 0 || sx >= W || sy >= H) continue;
+      const s = (sy * W + sx) * 4;
+      data.copy(out, (y * W + x) * 4, s, s + 4);
+    }
+  }
+  return { width: W, height: H, data: out };
+};
+
+/** Multiplies a full-canvas layer's alpha by the interior mask. */
+const clipTo = (img, mask) => {
+  for (let y = 0; y < img.height; y++) {
+    for (let x = 0; x < img.width; x++) {
+      const mx = x - BEAK_X, my = y - BEAK_Y;
+      const m = mx >= 0 && my >= 0 && mx < mask.width && my < mask.height
+        ? mask.data[(my * mask.width + mx) * 4 + 3] / 255 : 0;
+      const i = (y * img.width + x) * 4 + 3;
+      img.data[i] = Math.round(img.data[i] * m);
+    }
+  }
+  return img;
+};
+
+/**
+ * @param {(u: number) => number} profile - see openRealBeak
+ * @param {(g: (tx: number) => ({ top, bot } | null)) => string} [inside] -
+ *   SVG clipped to the interior (teeth, tongue in the mouth)
+ * @param {(g) => string} [front] - SVG painted over everything (tongue out)
+ */
+const buildOpen = async (profile, inside, front) => {
+  const { layer, mask } = openRealBeak(profile);
+  const g = (tx) => gapAt(mask, tx);
+  const canvas = blankCanvas();
+  over(canvas, layer, BEAK_X, BEAK_Y);
+  if (inside) over(canvas, clipTo(wobble(await rasterize(inside(g))), mask), 0, 0);
+  if (front) over(canvas, wobble(await rasterize(front(g))), 0, 0);
+  return canvas;
+};
+
+const sine = (D, p = 0.8) => (u) => D * Math.pow(Math.max(0, Math.sin(Math.PI * u)), p);
+
+/** Teeth hanging from the upper lip: rounded-bottom blocks, clipped to the
+ *  interior so their tops disappear into the lip line. */
+const toothRow = (g, { xs, w, h, gold = -1 }) => xs.map((tx, i) => {
+  const gap = g(Math.round(tx));
+  if (!gap) return '';
+  const y0 = gap.top - 12, y1 = gap.top + h;
+  const fill = i === gold ? '#E8C34A' : '#FFFDF6';
+  return `<path d="M ${tx - w / 2} ${y0} L ${tx + w / 2} ${y0} L ${tx + w / 2} ${y1 - 7} Q ${tx + w / 2} ${y1} ${tx} ${y1} Q ${tx - w / 2} ${y1} ${tx - w / 2} ${y1 - 7} Z"
+            fill="${fill}" stroke="${BLACK}" stroke-width="4.5" stroke-linejoin="round"/>`;
+}).join('');
+
+/** Tongue resting in the bottom of the interior. */
+const tongueIn = (g, tx, w) => {
+  const gap = g(tx);
+  if (!gap) return '';
+  const ry = Math.max(10, (gap.bot - gap.top) * 0.55);
+  return `<ellipse cx="${tx}" cy="${gap.bot + 6}" rx="${w}" ry="${ry}" fill="#E8536B" stroke="${BLACK}" stroke-width="4.5"/>`;
 };
 
 const run = async () => {
   const jobs = {
-    // Wide happy open beak, no teeth, tongue visible inside.
-    smile: () => build(`
-      ${openBeak({ depth: 52, halfW: 82 })}
-      <path d="M ${CX - 30} ${BB + 4} Q ${CX} ${BB + 34} ${CX + 30} ${BB + 4} Z" fill="#E8536B"/>
-    `),
+    // Beak parted in a gentle curve, tongue at the bottom.
+    smile: () => buildOpen(sine(16), (g) => tongueIn(g, MX + 4, 32)),
 
-    // Lopsided: open only toward the right corner, left corner closed. Own
-    // path rather than openBeak({ skew }): skewing openBeak's symmetric rim
-    // pinched it to a crossing sliver on the short side (builder capture,
-    // 2026-09-11). The rim here is a separate band that tapers to nothing at
-    // both corners, so it can't cross itself.
-    smirk: () => build(`
-      <path d="M ${CX - 78} ${BB - 12} L ${CX + 80} ${BB - 12}
-               C ${CX + 86} ${BB + 26}, ${CX + 64} ${BB + 52}, ${CX + 28} ${BB + 52}
-               C ${CX - 14} ${BB + 52}, ${CX - 60} ${BB + 20}, ${CX - 78} ${BB - 12} Z"
-            fill="#3A1A12" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-      <path d="M ${CX - 78} ${BB - 12}
-               C ${CX - 60} ${BB + 20}, ${CX - 14} ${BB + 52}, ${CX + 28} ${BB + 52}
-               C ${CX + 64} ${BB + 52}, ${CX + 86} ${BB + 26}, ${CX + 80} ${BB - 12}
-               C ${CX + 66} ${BB + 16}, ${CX + 52} ${BB + 30}, ${CX + 26} ${BB + 30}
-               C ${CX - 6} ${BB + 30}, ${CX - 48} ${BB + 12}, ${CX - 78} ${BB - 12} Z"
-            fill="${ORANGE}" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-    `),
+    // Opens toward the right corner only; left stays shut.
+    smirk: () => buildOpen(
+      (u) => 12 * Math.pow(Math.max(0, Math.sin(Math.PI * Math.pow(u, 2.2))), 0.9),
+      (g) => tongueIn(g, TIP_L + Math.round((TIP_R - TIP_L) * 0.68), 20),
+    ),
 
-    // Big laugh: tall open beak with a full white tooth row.
-    // Tooth rows sized for the builder's 599px canvas, not just the 512 API
-    // render: 24px-tall teeth were ~8px there. 36px leaves ~15px visible.
-    'open-laugh': () => build(`
-      ${openBeak({ depth: 84, halfW: 84 })}
-      ${teeth({ count: 5, halfW: 66, h: 36 })}
-    `),
+    // Wide open, top teeth row and tongue.
+    'open-laugh': () => buildOpen(sine(24, 0.6), (g) =>
+      tongueIn(g, MX + 6, 40) +
+      toothRow(g, { xs: [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5].map((k) => MX + k * 22), w: 22, h: 18 })),
 
-    // Two big front teeth hanging under the CLOSED real beak, with a gap
-    // between them - the classic cartoon gap-tooth. Painted under the beak so
-    // its bottom outline is the lip the teeth come out from.
-    'gap-tooth': () => build(`
-      <path d="M ${CX - 44} ${BB - 12} L ${CX - 8} ${BB - 12} L ${CX - 8} ${BB + 34} Q ${CX - 8} ${BB + 44} ${CX - 18} ${BB + 44} L ${CX - 34} ${BB + 44} Q ${CX - 44} ${BB + 44} ${CX - 44} ${BB + 34} Z"
-            fill="white" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-      <path d="M ${CX + 8} ${BB - 12} L ${CX + 44} ${BB - 12} L ${CX + 44} ${BB + 34} Q ${CX + 44} ${BB + 44} ${CX + 34} ${BB + 44} L ${CX + 18} ${BB + 44} Q ${CX + 8} ${BB + 44} ${CX + 8} ${BB + 34} Z"
-            fill="white" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-    `),
+    // Two front teeth from the upper lip with a clear gap between them.
+    'gap-tooth': () => buildOpen(sine(24, 0.55), (g) =>
+      tongueIn(g, MX + 4, 34) +
+      toothRow(g, { xs: [MX - 19, MX + 19], w: 28, h: 38 })),
 
-    'gold-tooth': () => build(`
-      ${openBeak({ depth: 84, halfW: 84 })}
-      ${teeth({ count: 4, gold: 1, halfW: 64, h: 36 })}
-    `),
+    'gold-tooth': () => buildOpen(sine(20, 0.6), (g) =>
+      tongueIn(g, MX + 6, 36) +
+      toothRow(g, { xs: [-1.5, -0.5, 0.5, 1.5].map((k) => MX + k * 26), w: 26, h: 20, gold: 1 })),
 
-    // Tongue emerges from under the real beak: painted before it so the
-    // beak's bottom outline reads as the lip it comes out of.
-    'tongue-out': () => build(`
-      <path d="M ${CX - 34} ${BB - 10} L ${CX + 34} ${BB - 10} L ${CX + 34} ${BB + 40} Q ${CX + 34} ${BB + 76} ${CX} ${BB + 76} Q ${CX - 34} ${BB + 76} ${CX - 34} ${BB + 40} Z"
-            fill="#E8536B" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-      <path d="M ${CX} ${BB + 6} L ${CX} ${BB + 56}" stroke="${BLACK}" stroke-width="5" stroke-linecap="round" opacity="0.45"/>
-    `),
+    // Slightly parted, tongue lolling out over the lower jaw.
+    'tongue-out': () => buildOpen(sine(9), null, (g) => {
+      const gap = g(MX + 10);
+      const y0 = gap ? gap.top + 4 : BB - 20;
+      return `<path d="M ${MX - 22} ${y0} L ${MX + 42} ${y0} L ${MX + 42} ${BB + 26} Q ${MX + 42} ${BB + 58} ${MX + 10} ${BB + 58} Q ${MX - 22} ${BB + 58} ${MX - 22} ${BB + 26} Z"
+                fill="#E8536B" stroke="${BLACK}" stroke-width="7" stroke-linejoin="round"/>
+              <path d="M ${MX + 10} ${y0 + 20} L ${MX + 10} ${BB + 40}" stroke="${BLACK}" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>`;
+    }),
 
-    // Bubble in front of the beak, overlapping its bottom edge.
-    'gum-bubble': () => build('', `
-      <circle cx="${CX}" cy="${BB + 54}" r="66" fill="#F2A6C4" stroke="${BLACK}" stroke-width="9"/>
-      <path d="M ${CX - 30} ${BB + 22} Q ${CX - 46} ${BB + 40} ${CX - 40} ${BB + 62}" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.8"/>
+    // Bubble blown out of a barely parted beak, in front of it.
+    'gum-bubble': () => buildOpen(sine(6), null, () => `
+      <circle cx="${MX + 6}" cy="${BB + 22}" r="52" fill="#F2A6C4" stroke="${BLACK}" stroke-width="7"/>
+      <path d="M ${MX - 22} ${BB - 2} Q ${MX - 34} ${BB + 12} ${MX - 30} ${BB + 30}" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
     `),
 
     // Under the beak (the beak is the nose), same placement logic as the
     // existing beard trait. Above the beak is impossible: the 9px gap to the
     // eyes can't fit a mustache at any readable size.
-    'mustache-only': () => build('', `
-      <path d="M ${CX} ${BB - 2}
-               C ${CX - 30} ${BB + 34}, ${CX - 90} ${BB + 34}, ${CX - 118} ${BB + 4}
-               C ${CX - 96} ${BB + 10}, ${CX - 70} ${BB + 8}, ${CX - 54} ${BB + 24}
-               C ${CX - 74} ${BB + 12}, ${CX - 100} ${BB + 16}, ${CX - 108} ${BB + 34}
-               C ${CX - 74} ${BB + 40}, ${CX - 30} ${BB + 48}, ${CX} ${BB + 20}
-               C ${CX + 30} ${BB + 48}, ${CX + 74} ${BB + 40}, ${CX + 108} ${BB + 34}
-               C ${CX + 100} ${BB + 16}, ${CX + 74} ${BB + 12}, ${CX + 54} ${BB + 24}
-               C ${CX + 70} ${BB + 8}, ${CX + 96} ${BB + 10}, ${CX + 118} ${BB + 4}
-               C ${CX + 90} ${BB + 34}, ${CX + 30} ${BB + 34}, ${CX} ${BB - 2} Z"
-            fill="#2B2320" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>
-    `),
+    'mustache-only': async () => {
+      // Handlebar tucked under the beak: painted first so the beak's bottom
+      // outline covers its top edge, tips curling up beside the beak.
+      const half = (m) => `
+        C ${CX + m * 20} ${BB - 22}, ${CX + m * 60} ${BB - 18}, ${CX + m * 88} ${BB - 6}
+        C ${CX + m * 104} ${BB + 2}, ${CX + m * 114} ${BB - 8}, ${CX + m * 116} ${BB - 26}
+        C ${CX + m * 132} ${BB - 6}, ${CX + m * 118} ${BB + 26}, ${CX + m * 86} ${BB + 28}
+        C ${CX + m * 56} ${BB + 32}, ${CX + m * 22} ${BB + 26}, ${CX} ${BB + 14}`;
+      const canvas = blankCanvas();
+      over(canvas, wobble(await rasterize(`
+        <path d="M ${CX} ${BB - 14} ${half(-1)} M ${CX} ${BB - 14} ${half(1)}"
+              fill="#2B2320" stroke="${BLACK}" stroke-width="8" stroke-linejoin="round"/>`)), 0, 0);
+      over(canvas, beak, BEAK_X, BEAK_Y);
+      return canvas;
+    },
   };
 
+  console.log(`orange tips x${TIP_L}-${TIP_R} (trait), mid ${MX}`);
   for (const [name, make] of Object.entries(jobs)) {
     const canvas = await make();
     writeFileSync(`${OUT}/trait-${name}_mouth.png`, encodeRgba(canvas));
