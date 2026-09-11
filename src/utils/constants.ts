@@ -59,7 +59,7 @@ export const ROADMAP_STEPS: RoadmapStep[] = [
     id: "phase-1",
     title: "Character generator",
     description:
-      "293 traits across eight slots, a browser trait editor, and an open image API that renders any combination on demand. All shipped and in use.",
+      "299 traits across eight slots, a browser trait editor, and an open image API that renders any combination on demand. All shipped and in use.",
     status: "completed" as const,
   },
   {
