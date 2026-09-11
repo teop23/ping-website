@@ -308,3 +308,62 @@ five times. **Show mockups at builder size (599px canvas, face crop plus
 full frame) and get a yes before regenerating, committing or pushing.**
 The pipeline, receiver on PORT=9912, capture snippet and gates all work.
 See "Verification standard" above and the generator header.
+
+## Mouth follow-up, 2026-09-11: code generation dropped, image model in
+
+**Owner's decision on the five:** "re design to be better or cut". A sixth
+round of code-drawn mockups (bent beak with corner creases, tilted smirk,
+recolored gold beak) was rejected outright. **Stop drawing traits in code.**
+New art now comes from an image model and the owner's approval.
+
+**Plan (not yet executed):** cut `smile`, `smirk`, `open-laugh`,
+`gap-tooth` and `gold-tooth`, and replace them with prop-style mouth traits.
+Nothing is cut or changed on the site yet. The five rejected ones are still
+live. Cut them only once replacements are approved, and handle the count
+through `check-copy-count` (238 now).
+
+**The prompt:** `docs/trait-generation-prompt.md`. It covers every category,
+with 61 concepts that have been checked against the library for duplicates.
+Model: GPT Image 2 first, Nano Banana Pro (Gemini) as the fallback. The
+attachments are in `docs/trait-refs/`:
+- `ping-on-white.png` is the image to edit.
+- `originals-sheet.png` has 16 of the owner's originals, 2 per category, at
+  512.
+
+**Gemini test (Flash, free tier; the 3.1 Pro picker wouldn't select):**
+- The owner approved `fish-in-beak` take 1 as a look. It's saved as
+  `.trait-work/gemini/fish-in-beak-take1.jpg`, a 1024 JPG straight from the
+  "Download full size image" button. Gemini also saves JPG, not PNG.
+- Gemini returns the **whole redrawn image**, never a layer. Framing holds:
+  the penguin's bbox matches the base to a pixel or two, and the mean diff
+  outside the mouth is 0.68/255.
+- Getting pixels out of the Gemini tab: fetch/XHR to localhost is blocked by
+  CSP, and a `window.open` bridge was refused by the auto-mode classifier.
+  Canvas `toDataURL` works but is too big to route through context. Use the
+  download button.
+
+**Next step: extract the trait layer.** Nothing is written for this yet.
+1. Diff `fish-in-beak-take1.jpg` against `docs/trait-refs/ping-on-white.png`.
+   Allow for JPG noise, so threshold around 25-40 and clean up the mask with
+   a morphological open.
+2. Restrict the diff to a mouth-region mask. Build alpha from the diff
+   strength and take the colour from Gemini's pixels.
+3. Map native 1024 to trait space with `trait = native * 1.5682 - 229.4`
+   onto a 1147 transparent canvas, and save it as
+   `public/traits/trait-fish-in-beak_mouth.png`.
+4. **Watch for:** if Gemini redrew the beak, the diff picks up a ghost beak
+   inside the mask. Check the extracted layer on its own before compositing.
+5. Run the gates:
+   - `check-eye-clearance`
+   - `node scripts/sim-builder.mjs out.png <trait>` at 599. It's new,
+     persisted from scratch work and checked against a real capture.
+   - The 512 contact sheet next to cigar/joint/lollipop/whistle.
+   - The real builder capture (8790, PORT=9912).
+   - `generate-index`
+   - One wrangler render.
+6. Show the owner, then repeat for the other mouth concepts, then the other
+   categories. Commit only on a yes.
+
+In `.trait-work/gemini/` you'll also find the reference images that were
+attached in Gemini: `ref-cigar`, `ref-ciggy` and `ref-beard` on white, and
+the sheet at 1600.
