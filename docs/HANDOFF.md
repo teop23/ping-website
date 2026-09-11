@@ -566,10 +566,10 @@ built by `.trait-work/sheet.mjs`). 53 traits: 6 mouth (incl. pacifier take 2), 8
 gold-tooth) are cut, PNGs and generator entries. Library 239 - 5 + 53 = 287. No real builder capture or
 wrangler render was taken; the sheets use sim-builder geometry.
 
-**Aura, not committed:** the owner wants auras "cooler, can be full images too" (like american-aura).
-Takes so far are parked in `.trait-work/pending/` (moved out of `public/traits/` so generate-index
-skips them): northern-lights take 2, money-rain, hearts (huge halo), green-candles take 2. Still to do:
-confetti, bubbles. Chat `/app/5daaaf9b1a9abe8b`; page helpers `__wrapV(item, full)` with `__rulesV`
+**Aura, committed (second commit):** the owner wanted auras "cooler, can be full images too" and approved
+northern-lights, money-rain, green-candles, confetti, bubbles (full canvas) and hearts (huge halo). Library 293.
+Extra auras beyond the list are parked in `.trait-work/pending/` (out of `public/traits/` so
+generate-index skips them) until the owner says yes. Chat `/app/5daaaf9b1a9abe8b`; page helpers `__wrapV(item, full)` with `__rulesV`
 (full canvas) / `__rulesH` (huge halo).
 
 **New tool flags:**
