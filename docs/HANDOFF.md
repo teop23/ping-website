@@ -1034,3 +1034,106 @@ actually works now, found the hard way:
 
 Check `ta.sh`'s fit line every time. Non-aura: ~0.1-2/255 is a good register,
 4+ means Gemini redrew the penguin.
+
+## LIVE BUG, diagnosed not fixed: auras composite ON TOP of the base
+
+Reported by the owner against the deployed site. **This is the first thing to
+fix next session.** The diagnosis below is complete — no re-investigation
+needed, go straight to the edit.
+
+**Cause.** `TRAIT_RENDER_ORDER` (`src/data/traitOrder.ts:15`) lists `aura`
+first, which correctly makes it the bottom-most *trait*. But every renderer
+paints **the base image first, then the ordered traits**. So `aura`, being
+merely the first trait, still lands on top of the penguin. The order array is
+not wrong; nothing tells the renderers that the base belongs *between* `aura`
+and every other category.
+
+**Every affected site — all the identical shape (base `<img>`/`drawImage`,
+then the ordered traits):**
+
+| file | line | what |
+|---|---|---|
+| `src/components/HeroCharacter.tsx` | 57 | base, then `layersFor(combo).map` |
+| `src/components/CharacterPreview.tsx` | 95 | live preview canvas |
+| `src/components/CharacterPreview.tsx` | 215 | download canvas |
+| `src/components/CharacterPreview.tsx` | 312 | copy canvas |
+| `functions/api/image/custom.png.tsx` | 80 | image API |
+| `functions/api/image/random.png.tsx` | 72 | image API |
+| `functions/api/og/banner.png.tsx` | 114 | OG banner |
+| `functions/api/image/shirt.png.tsx` | 43 | three `<img>`; read before editing, not yet confirmed |
+
+**Why nothing caught it.** The 107-test suite passes because no test asserts
+that an aura composites *under* the base — the tests check the order array,
+which is correct. And every review sheet looked right all along because
+`.trait-work/sheet.mjs` special-cases auras behind the base on its own
+(`n.endsWith('_aura') ? [trait, base] : [base, trait]`). That divergence
+between the sheet script and the real renderers is exactly why this survived
+seven sessions of sheet review.
+
+**Intended fix.** One helper next to `TRAIT_RENDER_ORDER` that splits the
+ordered traits into `under` / `over` at the base, mirrored into
+`functions/_lib.ts` per the three-authorities pattern already documented in
+that file's comment. Then a test asserting an aura sorts under the base and a
+non-aura over it — that test is the actual regression guard; without it this
+comes back. Eight call sites, all mechanical.
+
+Note this bug is already live, so it does not block pushing — but the fix
+should ride along with whatever gets pushed.
+
+## Seventh session: generation state at handoff
+
+**Commits (11 unpushed total on `relaunch/robinhood-chain`).** New this
+session: `02f01f2` (Solana five cut), `8efac95` (Gemini path documented).
+Pushing auto-deploys to production; still no go-ahead.
+
+**Generated and parked in `.trait-work/pending/` — REMEMBER THIS IS
+GITIGNORED AND UNBACKED-UP:**
+- 13 auras from earlier sessions, still awaiting the owner's rejects. Sheet
+  `.trait-work/extract/auras-pending-13.png` was sent this session; the owner
+  said he would **name the rejects**. That answer never arrived — ask again.
+- **mouth 8/8**, all first takes, fits 0.12-0.35: corn-cob, straw-drink,
+  candy-cane, carrot, ice-pop, paperclip-bite, birthday-candle, harmonica.
+  Sheet `.trait-work/extract/mouth-batch8.png` sent.
+- **face 9/9**, all first takes, fits 0.12-0.32: x-ray-glasses, googly-eyes,
+  glowing-scanner-eye, newspaper-eye-holes, peace-sign-stickers,
+  groucho-glasses, tape-x-eyes, static-tv-eyes, coin-slot-eyes. Sheet
+  `.trait-work/extract/face-batch8.png` sent.
+- **accessory 0/8** — `vending-machine` take 1 is parked but is a REJECT:
+  clipped at the right canvas edge (bbox reaches x=1146 of 1147) and its fit
+  was 8.37/255, inflated because the object sits outside the extract box, not
+  because the penguin was redrawn. Take 2 was generated in the chat but never
+  captured. Delete the parked take 1 or move it to `rejected/`.
+
+**Remaining from `.trait-work/next-batch.md`: 42 concepts** — accessory 8,
+left_hand 9, body 11, head 11, right_hand 7. The owner approved **all 59**;
+mouth and face are done.
+
+**Live Gemini chats, one per category, all with both refs attached:**
+- mouth `/app/72d6849382a5d5ad` (8 edits)
+- face `/app/9fe529d0340d63cc` (9 edits)
+- accessory `/app/75976b7b77f36cf4` (2 edits)
+
+Start a fresh chat per remaining category. Watch the ~20-edit drift ceiling.
+
+**Accessory rule text was tightened after the vending-machine reject** — the
+working version now demands "about one third of the penguin's height - small,
+not tall" and "the WHOLE object must sit fully inside the picture with a clear
+white margin on every side: it must never touch or run off the edge of the
+frame". Reuse that wording; the original 1/3-to-1/2 phrasing produced an
+object that ran off the canvas.
+
+**One more browser gotcha, beyond the list above:** coordinates must be scaled
+per axis — `x * 1568/innerWidth` and `y * 744/innerHeight`. Using the x ratio
+for y silently misses whenever the window is not the expected aspect, which is
+how the accessory chat's upload button was missed three times. Also: `Enter`
+does NOT need a preceding screenshot; only clicks do.
+
+### Owner rulings still outstanding
+1. The 13 auras — he chose "I'll name the rejects" and has not named them.
+2. master-chief-helmet, infinity-gauntlet, redbull x2 — he ruled to keep Hello
+   Kitty ("this is not a commercial site") but did not rule on these four.
+   I flagged once that these are enforced trademarks on a site attached to a
+   token launch; he kept Hello Kitty knowing that. Do not re-litigate, just
+   get the ruling on the remaining four.
+3. The rest of the fit audit (~22 traits after the Solana five) — the other
+   trademark cases and the two flag auras, still unjudged.
