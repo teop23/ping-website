@@ -95,6 +95,38 @@ export const TRAIT_ORDER = [
   'accessory',
 ];
 
+/**
+ * Categories that paint BEHIND the base character art.
+ *
+ * TRAIT_ORDER orders the traits among themselves only; the base penguin is
+ * drawn separately, and drawing it before every trait put `aura` on top of the
+ * character instead of behind it. The stack is: these categories, then the
+ * base art, then the rest of TRAIT_ORDER.
+ *
+ * App-side authority is src/data/traitOrder.ts; traitOrder.test.ts asserts the
+ * two agree.
+ */
+export const UNDER_BASE_CATEGORIES = ['aura'];
+
+export const paintsUnderBase = (category: string): boolean =>
+  UNDER_BASE_CATEGORIES.includes(category);
+
+/**
+ * Splits trait selections into what paints before the base art and what paints
+ * after it, each sorted into TRAIT_ORDER.
+ */
+export const splitAtBase = <T extends { category: string }>(
+  items: T[]
+): { under: T[]; over: T[] } => {
+  const ordered = [...items].sort(
+    (a, b) => TRAIT_ORDER.indexOf(a.category) - TRAIT_ORDER.indexOf(b.category)
+  );
+  return {
+    under: ordered.filter((item) => paintsUnderBase(item.category)),
+    over: ordered.filter((item) => !paintsUnderBase(item.category)),
+  };
+};
+
 // kebab-case to Title Case, matching the transform the builder UI uses.
 export const toTitleCase = (value: string): string =>
   value.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());

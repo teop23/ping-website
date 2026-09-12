@@ -1,5 +1,5 @@
 import { baseCharacterImage } from '@/data/traits';
-import { TRAIT_RENDER_ORDER } from '@/data/traitOrder';
+import { splitAtBase } from '@/data/traitOrder';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasConstants';
 import { motion } from 'framer-motion';
 import { Check, Copy, Download, Move, Shuffle } from 'lucide-react';
@@ -91,34 +91,19 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     const x = (canvas.width - scaledWidth) / 2;
     const y = (canvas.height - scaledHeight) / 2;
 
-    // Draw base image
+    // Auras glow behind the penguin; everything else sits on it. The base art
+    // is painted between the two halves - see UNDER_BASE_CATEGORIES.
+    const { under, over } = splitAtBase(selectedTraits);
+
+    const paint = (trait: Trait) => {
+      const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
+      // Scale trait image to match canvas dimensions
+      if (traitImg) ctx.drawImage(traitImg, 0, 0, canvas.width, canvas.height);
+    };
+
+    under.forEach(paint);
     ctx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
-
-    const traitOrder = TRAIT_RENDER_ORDER;
-
-    // Group selected traits by category and draw in order
-    const traitsByCategory = selectedTraits.reduce((acc, trait) => {
-      if (!acc[trait.category]) {
-        acc[trait.category] = [];
-      }
-      acc[trait.category].push(trait);
-      return acc;
-    }, {} as Record<string, Trait[]>);
-
-    traitOrder.forEach(category => {
-      const categoryTraits = traitsByCategory[category] || [];
-      categoryTraits.forEach(trait => {
-        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
-        if (traitImg) {
-          // Scale trait image to match canvas dimensions (same as CreateTraits)
-          ctx.drawImage(
-            traitImg,
-            0, 0, // Source position
-            canvas.width, canvas.height // Destination size (full canvas)
-          );
-        }
-      });
-    });
+    over.forEach(paint);
 
   }, [baseImage, traitImages, selectedTraits, textElements]);
 
@@ -211,35 +196,19 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const x = (downloadCanvas.width - scaledWidth) / 2;
       const y = (downloadCanvas.height - scaledHeight) / 2;
 
-      // Draw base image
+      // Auras glow behind the penguin; everything else sits on it. The base art
+      // is painted between the two halves - see UNDER_BASE_CATEGORIES.
+      const { under, over } = splitAtBase(selectedTraits);
+
+      const paint = (trait: Trait) => {
+        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
+        // Scale trait image to match canvas dimensions
+        if (traitImg) downloadCtx.drawImage(traitImg, 0, 0, downloadCanvas.width, downloadCanvas.height);
+      };
+
+      under.forEach(paint);
       downloadCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
-
-      // Draw traits in order
-      const traitOrder = TRAIT_RENDER_ORDER;
-
-      // Group selected traits by category and draw in order
-      const traitsByCategory = selectedTraits.reduce((acc, trait) => {
-        if (!acc[trait.category]) {
-          acc[trait.category] = [];
-        }
-        acc[trait.category].push(trait);
-        return acc;
-      }, {} as Record<string, Trait[]>);
-
-      traitOrder.forEach(category => {
-        const categoryTraits = traitsByCategory[category] || [];
-        categoryTraits.forEach(trait => {
-          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
-          if (traitImg) {
-            // Scale trait to full canvas size
-            downloadCtx.drawImage(
-              traitImg,
-              0, 0,
-              downloadCanvas.width, downloadCanvas.height
-            );
-          }
-        });
-      });
+      over.forEach(paint);
 
       // Draw text elements on download canvas
       textElements.forEach(textElement => {
@@ -308,35 +277,19 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       const x = (copyCanvas.width - scaledWidth) / 2;
       const y = (copyCanvas.height - scaledHeight) / 2;
 
-      // Draw base image
+      // Auras glow behind the penguin; everything else sits on it. The base art
+      // is painted between the two halves - see UNDER_BASE_CATEGORIES.
+      const { under, over } = splitAtBase(selectedTraits);
+
+      const paint = (trait: Trait) => {
+        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
+        // Scale trait image to match canvas dimensions
+        if (traitImg) copyCtx.drawImage(traitImg, 0, 0, copyCanvas.width, copyCanvas.height);
+      };
+
+      under.forEach(paint);
       copyCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
-
-      // Draw traits in order
-      const traitOrder = TRAIT_RENDER_ORDER;
-
-      // Group selected traits by category and draw in order
-      const traitsByCategory = selectedTraits.reduce((acc, trait) => {
-        if (!acc[trait.category]) {
-          acc[trait.category] = [];
-        }
-        acc[trait.category].push(trait);
-        return acc;
-      }, {} as Record<string, Trait[]>);
-
-      traitOrder.forEach(category => {
-        const categoryTraits = traitsByCategory[category] || [];
-        categoryTraits.forEach(trait => {
-          const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
-          if (traitImg) {
-            // Scale trait to full canvas size
-            copyCtx.drawImage(
-              traitImg,
-              0, 0,
-              copyCanvas.width, copyCanvas.height
-            );
-          }
-        });
-      });
+      over.forEach(paint);
 
       // Draw text elements on copy canvas
       textElements.forEach(textElement => {

@@ -5,8 +5,8 @@ import {
   RENDER_BASE_IMAGE,
   cardGeometry,
   RENDER_TRAITS_DIR,
-  TRAIT_ORDER,
   pickBgColor,
+  splitAtBase,
   seedFromParams,
 } from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
@@ -30,7 +30,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       traitTop: traitImageTopOffset,
       traitLeft: traitImageLeftOffset,
     } = cardGeometry(isBanner);
-    const traitOrder = TRAIT_ORDER;
     // Load the traits index JSON from the public directory
     const traitsIndexUrl = new URL('/traits-index.json', request.url);
     const traitsIndexRes = await fetch(traitsIndexUrl.href);
@@ -59,12 +58,12 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       traitSelectionsByCategory.push({ category, trait });
     }
 
-    traitSelectionsByCategory.sort((a, b) => traitOrder.indexOf(a.category) - traitOrder.indexOf(b.category));
-
-    const selectedTraits = traitSelectionsByCategory.map(({ category, trait }) => {
-      const traitKey = `trait-${trait}_${category}`;
-      return `${baseURL}${RENDER_TRAITS_DIR}/${traitKey}.png`;
-    });
+    // Auras go behind the penguin, the rest in front of it, both in paint order.
+    const toUrl = ({ category, trait }: { category: string; trait: string }) =>
+      `${baseURL}${RENDER_TRAITS_DIR}/trait-${trait}_${category}.png`;
+    const { under, over } = splitAtBase(traitSelectionsByCategory);
+    const underBase = under.map(toUrl);
+    const overBase = over.map(toUrl);
 
     // 🖼️ Generate the composited image
     return new ImageResponse(
@@ -77,6 +76,15 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           backgroundColor: bgColor,
         }}
       >
+        {underBase.map((src) => (
+          <img
+            key={src}
+            src={src}
+            width={traitSize}
+            height={traitSize}
+            style={{ position: 'absolute', top: traitImageTopOffset, left: traitImageLeftOffset }}
+          />
+        ))}
         <img
           key="base-character"
           src={baseCharacterImage}
@@ -84,9 +92,9 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           height={baseImageSize}
           style={{ position: 'absolute', top: baseImageTopOffset, left: baseImageLeftOffset }}
         />
-        {selectedTraits.map((src, i) => (
+        {overBase.map((src) => (
           <img
-            key={i}
+            key={src}
             src={src}
             width={traitSize}
             height={traitSize}

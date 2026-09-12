@@ -1,7 +1,7 @@
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import * as React from 'react';
-import { OG_THEME, RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, TRAIT_ORDER } from '../../_lib';
+import { OG_THEME, RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, TRAIT_ORDER, paintsUnderBase } from '../../_lib';
 
 // Derived from the real trait library, not hand-typed - see
 
@@ -41,9 +41,13 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       fetch(`${origin}/fonts/Archivo-ExtraBold.ttf`).then((r) => r.arrayBuffer()),
     ]);
 
-    const layers = TRAIT_ORDER.filter((category) => FEATURED[category]).map(
-      (category) => `${origin}${RENDER_TRAITS_DIR}/trait-${FEATURED[category]}_${category}.png`
-    );
+    // Auras would go behind the base art; FEATURED has none today, but the card
+    // composites the same way the builder does so it stays right if one is added.
+    const present = TRAIT_ORDER.filter((category) => FEATURED[category]);
+    const srcFor = (category: string) =>
+      `${origin}${RENDER_TRAITS_DIR}/trait-${FEATURED[category]}_${category}.png`;
+    const underBase = present.filter(paintsUnderBase).map(srcFor);
+    const overBase = present.filter((category) => !paintsUnderBase(category)).map(srcFor);
 
     // The character is composited exactly as the builder does it: the base is
     // drawn at 1.4x behind trait layers that fill the frame.
@@ -111,6 +115,15 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             </div>
           </div>
 
+          {underBase.map((src) => (
+            <img
+              key={src}
+              src={src}
+              width={frame}
+              height={frame}
+              style={{ position: 'absolute', left: characterLeft, top: characterTop }}
+            />
+          ))}
           <img
             src={`${origin}${RENDER_BASE_IMAGE}`}
             width={baseSize}
@@ -121,7 +134,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               top: characterTop - (baseSize - frame) / 2,
             }}
           />
-          {layers.map((src) => (
+          {overBase.map((src) => (
             <img
               key={src}
               src={src}

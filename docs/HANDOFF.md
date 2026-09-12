@@ -1035,11 +1035,33 @@ actually works now, found the hard way:
 Check `ta.sh`'s fit line every time. Non-aura: ~0.1-2/255 is a good register,
 4+ means Gemini redrew the penguin.
 
-## LIVE BUG, diagnosed not fixed: auras composite ON TOP of the base
+## FIXED (eighth session): auras composited ON TOP of the base
 
-Reported by the owner against the deployed site. **This is the first thing to
-fix next session.** The diagnosis below is complete — no re-investigation
-needed, go straight to the edit.
+Fixed, verified in all three renderer families, and covered by a regression
+test. The diagnosis below is kept because it explains *why* the shape of the
+fix is what it is. What changed:
+
+- `UNDER_BASE_CATEGORIES` + `paintsUnderBase` + `splitAtBase` in
+  `src/data/traitOrder.ts`, mirrored in `functions/_lib.ts`. The stack is now
+  under-base categories (today: `aura`), then the base art, then the rest in
+  `TRAIT_RENDER_ORDER`.
+- All seven real call sites rewritten: `HeroCharacter.tsx`, the three canvases
+  in `CharacterPreview.tsx`, `custom.png.tsx`, `random.png.tsx`,
+  `banner.png.tsx`. `shirt.png.tsx` was read and left alone — it composites one
+  fixed `blank-tee` body trait and can never carry an aura.
+- `src/data/baseLayering.test.ts` is the guard. Unit tests on `splitAtBase`
+  are the cheap half; the half that actually matters scans each renderer's
+  **source** and asserts the under-base layers are painted before the base and
+  the base before the rest. A correct order array never forced the base into
+  the middle, which is exactly how this shipped, so the test asserts the
+  renderers, not the array.
+- Verified visually: hero cycle, builder preview canvas (blue-aura), and
+  `/api/image/custom.png?aura=blue-aura&head=crown&right_hand=bitcoin` under
+  `wrangler pages dev`. Aura behind the penguin in all three.
+- 117 tests pass, typecheck clean, build clean.
+
+`.trait-work/sheet.mjs`'s aura special-case is now *correct* rather than a
+divergence — the renderers finally do what the sheet always did.
 
 **Cause.** `TRAIT_RENDER_ORDER` (`src/data/traitOrder.ts:15`) lists `aura`
 first, which correctly makes it the bottom-most *trait*. But every renderer
@@ -1070,15 +1092,15 @@ which is correct. And every review sheet looked right all along because
 between the sheet script and the real renderers is exactly why this survived
 seven sessions of sheet review.
 
-**Intended fix.** One helper next to `TRAIT_RENDER_ORDER` that splits the
+**Fix as shipped.** One helper next to `TRAIT_RENDER_ORDER` that splits the
 ordered traits into `under` / `over` at the base, mirrored into
 `functions/_lib.ts` per the three-authorities pattern already documented in
 that file's comment. Then a test asserting an aura sorts under the base and a
 non-aura over it — that test is the actual regression guard; without it this
 comes back. Eight call sites, all mechanical.
 
-Note this bug is already live, so it does not block pushing — but the fix
-should ride along with whatever gets pushed.
+The fix is committed but **not pushed** — pushing auto-deploys, and there is
+still no go-ahead.
 
 ## Seventh session: generation state at handoff
 

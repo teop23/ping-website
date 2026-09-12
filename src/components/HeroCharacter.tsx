@@ -2,7 +2,7 @@ import { useReducedMotion } from 'framer-motion';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { baseCharacterImage } from '../data/traits';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '../utils/canvasConstants';
-import { TRAIT_RENDER_ORDER } from '../data/traitOrder';
+import { TRAIT_RENDER_ORDER, paintsUnderBase } from '../data/traitOrder';
 import { TraitCategory } from '../types';
 
 /**
@@ -36,10 +36,25 @@ const HOLD_MS = 1900;
  */
 const DISSOLVE_MS = 600;
 
-const layersFor = (combo: Combo): string[] =>
-  TRAIT_RENDER_ORDER.filter((category) => combo[category]).map(
-    (category) => `/traits/trait-${combo[category]}_${category}.png`
-  );
+const srcFor = (combo: Combo, category: TraitCategory): string =>
+  `/traits/trait-${combo[category]}_${category}.png`;
+
+/**
+ * The layers of one character, split where the base art goes: auras glow
+ * behind the penguin, everything else sits on it. See UNDER_BASE_CATEGORIES.
+ */
+const layersFor = (combo: Combo): { under: string[]; over: string[] } => {
+  const present = TRAIT_RENDER_ORDER.filter((category) => combo[category]);
+  return {
+    under: present.filter(paintsUnderBase).map((c) => srcFor(combo, c)),
+    over: present.filter((c) => !paintsUnderBase(c)).map((c) => srcFor(combo, c)),
+  };
+};
+
+const allLayersOf = (combo: Combo): string[] => {
+  const { under, over } = layersFor(combo);
+  return [...under, ...over];
+};
 
 const describe = (combo: Combo): string => {
   const names = TRAIT_RENDER_ORDER.filter((c) => combo[c]).map((c) =>
@@ -51,19 +66,25 @@ const describe = (combo: Combo): string => {
 // Hoisted: declared inside HeroCharacter this would be a new component type on
 // every render, so React would unmount and remount every <img> and the layers
 // would blink instead of dissolving.
-const Character: React.FC<{ combo: Combo }> = ({ combo }) => (
-  <>
-    <img
-      src={baseCharacterImage}
-      alt=""
-      className="absolute inset-0 size-full object-contain"
-      style={{ transform: `scale(${BASE_IMAGE_SCALE_MULTIPLIER})` }}
-    />
-    {layersFor(combo).map((src) => (
-      <img key={src} src={src} alt="" className="absolute inset-0 size-full object-contain" />
-    ))}
-  </>
-);
+const Character: React.FC<{ combo: Combo }> = ({ combo }) => {
+  const { under, over } = layersFor(combo);
+  const layer = (src: string) => (
+    <img key={src} src={src} alt="" className="absolute inset-0 size-full object-contain" />
+  );
+
+  return (
+    <>
+      {under.map(layer)}
+      <img
+        src={baseCharacterImage}
+        alt=""
+        className="absolute inset-0 size-full object-contain"
+        style={{ transform: `scale(${BASE_IMAGE_SCALE_MULTIPLIER})` }}
+      />
+      {over.map(layer)}
+    </>
+  );
+};
 
 const HeroCharacter: React.FC = () => {
   const reduceMotion = useReducedMotion();
@@ -72,7 +93,7 @@ const HeroCharacter: React.FC = () => {
   const previousIndex = useRef(0);
   const [ready, setReady] = useState(false);
 
-  const allLayers = useMemo(() => COMBOS.flatMap(layersFor), []);
+  const allLayers = useMemo(() => COMBOS.flatMap(allLayersOf), []);
 
   // Preload every layer before the first swap, so a cycle never shows a
   // half-composited character.
