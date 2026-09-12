@@ -1,7 +1,15 @@
 import { RoadmapStep } from "@/components/Roadmap";
+import launchConfig from "../../launch.config.mjs";
+import traitsManifest from "../../public/traits-manifest.json";
 
 /**
  * Launch configuration.
+ *
+ * The actual values now live in /launch.config.mjs at the repo root - that
+ * is the one file the owner edits on launch day (see its header for what
+ * each value does and why it's a plain .mjs file, shared by src/, functions/
+ * and index.html). This module re-exports them under their existing names so
+ * every component that already imports from here keeps working unchanged.
  *
  * $PING is relaunching on Pons, on Robinhood Chain. Until the token is
  * deployed there is no contract address, and showing the old Solana pump.fun
@@ -9,19 +17,19 @@ import { RoadmapStep } from "@/components/Roadmap";
  * Flip TOKEN_LIVE once CONTRACT_ADDRESS is real; every surface reads this
  * flag and degrades to a pre-launch state on its own.
  */
-export const TOKEN_LIVE = false;
+export const TOKEN_LIVE = launchConfig.tokenLive;
 
 /** 0x address from the Pons launch. Empty until deployed. */
-export const CONTRACT_ADDRESS = "";
+export const CONTRACT_ADDRESS = launchConfig.contractAddress;
 
 // --- Chain facts. These are fixed by Pons and Robinhood Chain, not by us. ---
-export const CHAIN_NAME = "Robinhood Chain";
-export const CHAIN_ID = 4663;
-export const LAUNCHPAD_NAME = "Pons";
-export const LAUNCHPAD_URL = "https://www.ponslaunchpad.com/";
+export const CHAIN_NAME = launchConfig.chain.name;
+export const CHAIN_ID = launchConfig.chain.id;
+export const LAUNCHPAD_NAME = launchConfig.launchpad.name;
+export const LAUNCHPAD_URL = launchConfig.launchpad.url;
 /** Pons mints a fixed 1B supply straight to the bonding curve. No creator allocation. */
-export const TOKEN_SUPPLY = 1_000_000_000;
-export const EXPLORER_BASE = "https://robinhoodchain.blockscout.com";
+export const TOKEN_SUPPLY = launchConfig.tokenSupply;
+export const EXPLORER_BASE = launchConfig.explorerBase;
 
 export const EXPLORER_LINK = CONTRACT_ADDRESS
   ? `${EXPLORER_BASE}/token/${CONTRACT_ADDRESS}`
@@ -32,24 +40,35 @@ export const BUY_LINK = CONTRACT_ADDRESS
   : LAUNCHPAD_URL;
 
 /** TODO(relaunch): repoint once the new pair exists. */
-export const CHART_LINK = "";
+export const CHART_LINK = launchConfig.chartLink;
 
 // --- Social ---
 export const SOCIAL_LINKS = {
-  TWITTER: "https://x.com/i/communities/1933201526584963118",
-  TELEGRAM: "https://t.me/pingtoken",
+  TWITTER: launchConfig.social.twitter,
+  TELEGRAM: launchConfig.social.telegram,
   DEXSCREENER: CHART_LINK,
 };
 
+export const SITE_URL = launchConfig.siteUrl;
+
 // --- Countdown ---
 /** Unix ms. Set to the Pons launch slot, then flip SHOW_COUNTDOWN. */
-export const COUNTDOWN_TARGET = 0;
-export const SHOW_COUNTDOWN = false;
+export const COUNTDOWN_TARGET = launchConfig.countdownTarget;
+export const SHOW_COUNTDOWN = launchConfig.showCountdown;
 
 // --- Builder ---
-export const EMPTY_TRAIT_CHANCE = 0.3; // 30% chance of no trait in a category
-export const TOKEN_SYMBOL = "PING";
-export const TOKEN_NAME = "PING";
+export const EMPTY_TRAIT_CHANCE = launchConfig.emptyTraitChance; // 30% chance of no trait in a category
+export const TOKEN_SYMBOL = launchConfig.tokenSymbol;
+export const TOKEN_NAME = launchConfig.tokenName;
+
+/**
+ * Derived from the real trait library (public/traits-manifest.json, built by
+ * scripts/generate-index.mjs from public/traits/*.png) - never hand-typed.
+ * This used to be a literal duplicated across 4 files that drifted; now
+ * every consumer (this file, index.html via a build-time token, and
+ * functions/api/og/banner.png.tsx) reads the same manifest.
+ */
+export const TRAIT_COUNT = traitsManifest.traits.length;
 
 // --- Roadmap ---
 // Deadpan: state what is done and what is next. No "revolutionising", no
@@ -59,7 +78,7 @@ export const ROADMAP_STEPS: RoadmapStep[] = [
     id: "phase-1",
     title: "Character generator",
     description:
-      "299 traits across eight slots, a browser trait editor, and an open image API that renders any combination on demand. All shipped and in use.",
+      `${TRAIT_COUNT} traits across eight slots, a browser trait editor, and an open image API that renders any combination on demand. All shipped and in use.`,
     status: "completed" as const,
   },
   {

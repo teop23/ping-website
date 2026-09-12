@@ -2,6 +2,11 @@ import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import * as React from 'react';
 import { OG_THEME, RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, TRAIT_ORDER } from '../../_lib';
+import traitsManifest from '../../../public/traits-manifest.json';
+
+// Derived from the real trait library, not hand-typed - see
+// src/utils/constants.ts's TRAIT_COUNT for the other consumer of the same manifest.
+const TRAIT_COUNT = traitsManifest.traits.length;
 
 /**
  * The share card for the site itself.
@@ -87,7 +92,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               $PING
             </div>
             <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75, marginTop: 14 }}>
-              299 traits, eight slots.
+              {TRAIT_COUNT} traits, eight slots.
             </div>
             <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75 }}>
               An open image API.

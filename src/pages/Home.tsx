@@ -11,15 +11,12 @@ import {
   LAUNCHPAD_NAME,
   SHOW_COUNTDOWN,
   TOKEN_SUPPLY,
+  TRAIT_COUNT,
 } from '../utils/constants';
 
-/**
- * Hard-coded because the manifest only exists after prebuild. Checked
- * against the real library by scripts/generate-index.mjs, which fails the
- * build if this drifts from public/traits - it sat at 176 for a while after
- * the library reached 239.
- */
-const TRAIT_COUNT = 299;
+// TRAIT_COUNT is derived from public/traits-manifest.json (see
+// src/utils/constants.ts) - it used to be hand-typed here and sat at 176 for
+// a while after the library reached 239. It cannot drift now.
 const TRAIT_SLOTS = 8;
 
 /**

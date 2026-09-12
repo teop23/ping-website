@@ -1,5 +1,7 @@
 // Shared helpers for the Pages Functions. Files prefixed with _ are not routed.
 
+import launchConfig from '../launch.config.mjs';
+
 /**
  * Backgrounds for generated character images.
  *
@@ -218,6 +220,8 @@ export const cardGeometry = (isBanner: boolean) => {
   };
 };
 
-/** Mirrors EMPTY_TRAIT_CHANCE in src/utils/constants.ts: a real character
- *  usually has empty slots, so a random one should too. */
-export const EMPTY_TRAIT_CHANCE = 0.3;
+/** A real character usually has empty slots, so a random one should too.
+ *  Sourced from /launch.config.mjs, the same place src/utils/constants.ts
+ *  reads it from - this used to be a second hand-typed copy that had to be
+ *  kept in sync by hand. */
+export const EMPTY_TRAIT_CHANCE = launchConfig.emptyTraitChance;

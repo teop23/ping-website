@@ -25,24 +25,30 @@
 
   <title>PING</title>
   <meta name="description"
-    content="Build a PING character from 299 traits. An open image API, a trait editor, and a token on Robinhood Chain." />
-  <link rel="canonical" href="https://buildaping.com/" />
+    content="Build a PING character from __TRAIT_COUNT__ traits. An open image API, a trait editor, and a token on Robinhood Chain." />
+  <link rel="canonical" href="__SITE_URL__/" />
 
-  <!-- These are the only tags in the project carrying a hardcoded host.
-       Everything server-rendered derives its own origin, and the API examples
-       in the docs read window.location.origin, so a preview deployment
-       describes itself rather than production.
+  <!-- The site URL and trait count placeholders below are swapped for real
+       values at build time (see the injectLaunchValues plugin in
+       vite.config.ts) from /launch.config.mjs and
+       public/traits-manifest.json - index.html is static HTML and can't
+       import either at runtime, so this is the one place values get baked in
+       as text instead of read as a module. These are the only tags in the
+       project carrying a hardcoded host. Everything server-rendered derives
+       its own origin, and the API examples in the docs read
+       window.location.origin, so a preview deployment describes itself
+       rather than production.
 
        og:image must be absolute: a relative path is resolved against the
        scraper's own context, not the page, so most of them - X included -
        fetch nothing and the card falls back to a bare link. -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="PING" />
-  <meta property="og:url" content="https://buildaping.com/" />
+  <meta property="og:url" content="__SITE_URL__/" />
   <meta property="og:title" content="PING" />
   <meta property="og:description"
-    content="Build a PING character from 299 traits. An open image API, a trait editor, and a token on Robinhood Chain." />
-  <meta property="og:image" content="https://buildaping.com/opengraph-ping.png" />
+    content="Build a PING character from __TRAIT_COUNT__ traits. An open image API, a trait editor, and a token on Robinhood Chain." />
+  <meta property="og:image" content="__SITE_URL__/opengraph-ping.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="A PING character in a cowboy hat and sunglasses, holding a bitcoin." />
@@ -50,8 +56,8 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="PING" />
   <meta name="twitter:description"
-    content="Build a PING character from 299 traits. An open image API, a trait editor, and a token on Robinhood Chain." />
-  <meta name="twitter:image" content="https://buildaping.com/opengraph-ping.png" />
+    content="Build a PING character from __TRAIT_COUNT__ traits. An open image API, a trait editor, and a token on Robinhood Chain." />
+  <meta name="twitter:image" content="__SITE_URL__/opengraph-ping.png" />
   <meta name="twitter:image:alt" content="A PING character in a cowboy hat and sunglasses, holding a bitcoin." />
 </head>
 

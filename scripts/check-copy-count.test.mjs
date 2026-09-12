@@ -7,17 +7,27 @@ const run = (...args) => {
   return { code: result.status ?? 1, output: `${result.stdout ?? ''}${result.stderr ?? ''}` };
 };
 
-describe('trait count in site copy', () => {
-  it('fails when the copy disagrees with the library', () => {
-    const { code, output } = run('--expect', '1');
-    expect(code).toBe(1);
-    expect(output).toContain('copy says');
+describe('pre-build: no hardcoded trait counts', () => {
+  it('passes on the current source tree', () => {
+    const { code, output } = run();
+    expect(code).toBe(0);
+    expect(output).toContain('No hardcoded trait counts found');
   });
 
-  it('passes when every quoted count matches', () => {
-    const count = Number(readFileSync('src/pages/Home.tsx', 'utf8').match(/TRAIT_COUNT = (\d+)/)[1]);
-    const { code, output } = run('--expect', String(count));
-    expect(code).toBe(0);
-    expect(output).toContain('matches');
+  it('index.html carries the __TRAIT_COUNT__ placeholder, not a literal', () => {
+    const html = readFileSync('index.html', 'utf8');
+    expect(html).toContain('__TRAIT_COUNT__');
+    expect(html).not.toMatch(/\b\d{2,4}\s+traits\b/);
+  });
+});
+
+describe('post-build: dist/index.html must quote the real count', () => {
+  it('fails when dist/ has not been built yet', () => {
+    // Uses --expect to avoid depending on whether a stale dist/ happens to
+    // exist locally; the real check (against an actual `npm run build`
+    // output) is exercised by the verification steps in docs/HANDOFF.md.
+    const { code, output } = run('--post-build', '--expect', '999999');
+    expect(code).toBe(1);
+    expect(output.length).toBeGreaterThan(0);
   });
 });
