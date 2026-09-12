@@ -8,6 +8,9 @@ import {
   noStore,
   pickBgColor,
   seedFromParams,
+  canonicalTraits,
+  shareId,
+  validateTraits,
   titleFromTraits,
   toTitleCase,
 } from './_lib';
@@ -168,5 +171,54 @@ describe('cardGeometry', () => {
     const banner = cardGeometry(true);
     expect(banner.character / banner.width).toBeCloseTo(512 / 1200, 2);
     expect(square.baseSize / square.character).toBeCloseTo(banner.baseSize / banner.character);
+  });
+});
+
+describe('canonicalTraits', () => {
+  it('is independent of the order params were written in', () => {
+    const a = canonicalTraits(new URLSearchParams('head=crown&aura=blue-aura'));
+    const b = canonicalTraits(new URLSearchParams('aura=blue-aura&head=crown'));
+    expect(a).toBe(b);
+    expect(a).toBe('aura=blue-aura&head=crown');
+  });
+
+  it('drops empty slots and anything outside the eight categories', () => {
+    const canonical = canonicalTraits(new URLSearchParams('head=crown&type=banner&ts=123'));
+    expect(canonical).toBe('head=crown');
+  });
+
+  it('is empty for a bare character', () => {
+    expect(canonicalTraits(new URLSearchParams(''))).toBe('');
+  });
+});
+
+describe('shareId', () => {
+  it('is stable for the same character', async () => {
+    const canonical = 'aura=blue-aura&head=crown';
+    expect(await shareId(canonical)).toBe(await shareId(canonical));
+  });
+
+  it('differs between characters', async () => {
+    expect(await shareId('head=crown')).not.toBe(await shareId('head=beanie'));
+  });
+
+  it('is a short url-safe token', async () => {
+    expect(await shareId('head=crown')).toMatch(/^[0-9a-z]{12}$/);
+  });
+});
+
+describe('validateTraits', () => {
+  const index = { head: ['crown', 'beanie'], aura: ['blue-aura'] };
+
+  it('accepts a selection drawn from the index', () => {
+    expect(validateTraits(new URLSearchParams('head=crown&aura=blue-aura'), index)).toBeNull();
+  });
+
+  it('rejects an unknown category', () => {
+    expect(validateTraits(new URLSearchParams('wings=big'), index)).toMatch(/category/);
+  });
+
+  it('rejects a trait that is not in its category', () => {
+    expect(validateTraits(new URLSearchParams('head=sombrero'), index)).toMatch(/trait/);
   });
 });

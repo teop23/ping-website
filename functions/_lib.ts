@@ -257,3 +257,89 @@ export const cardGeometry = (isBanner: boolean) => {
  *  reads it from - this used to be a second hand-typed copy that had to be
  *  kept in sync by hand. */
 export const EMPTY_TRAIT_CHANCE = launchConfig.emptyTraitChance;
+
+/* ------------------------------------------------------------------ *
+ * Stored share cards
+ *
+ * A share used to be a query string: the card URL carried the traits, and
+ * every scrape of that URL ran a fresh satori render. That render is the
+ * single thing that has broken in production twice (an empty 200 when the
+ * isolate exhausted its CPU budget mid-response, and a zero-length PNG cached
+ * at the edge), and it is the reason a card can be slow or blank in the
+ * composer. Rendering once, when the user clicks Tweet, and storing the bytes
+ * turns the bot's request into a static read.
+ *
+ * Ids are content-addressed - the same character always produces the same id -
+ * so a re-share is a read, sharing is idempotent, and storage grows with
+ * distinct characters rather than with clicks.
+ * ------------------------------------------------------------------ */
+
+export interface CardStore {
+  get(key: string): Promise<{ body: ArrayBuffer; traits: string } | null>;
+  put(key: string, body: ArrayBuffer, traits: string): Promise<void>;
+}
+
+/**
+ * KV today, R2 the day it is enabled on the account. Everything above this
+ * line is storage-agnostic; only this adapter knows which one is in play.
+ */
+export const kvCardStore = (namespace: KVNamespace): CardStore => ({
+  async get(key) {
+    const { value, metadata } = await namespace.getWithMetadata<{ traits: string }>(key, {
+      type: 'arrayBuffer',
+    });
+    if (!value) return null;
+    return { body: value, traits: metadata?.traits ?? '' };
+  },
+  async put(key, body, traits) {
+    // The trait string rides in metadata rather than a second key: one write
+    // per character keeps the 1,000-writes/day free ceiling meaningful, and
+    // metadata (1 KiB) is far more room than eight short slot names need.
+    await namespace.put(key, body, { metadata: { traits } });
+  },
+});
+
+/**
+ * The canonical form of a character: trait slots in paint order, empties
+ * dropped. Two users who build the same character produce the same string,
+ * hence the same id, hence one stored card between them.
+ */
+export const canonicalTraits = (params: URLSearchParams): string =>
+  TRAIT_ORDER.map((category) => [category, params.get(category)] as const)
+    .filter((entry): entry is [string, string] => Boolean(entry[1]))
+    .map(([category, trait]) => `${category}=${trait}`)
+    .join('&');
+
+/**
+ * Content-addressed id. SHA-256 rather than the FNV hash used for background
+ * colours: at 32 bits a collision becomes likely in the tens of thousands of
+ * characters, and a collision here would serve one user's card for another's
+ * link. 12 base36 characters is ~62 bits, which is not close to a problem.
+ */
+export const shareId = async (canonical: string): Promise<string> => {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical));
+  const bytes = new Uint8Array(digest);
+  let value = 0n;
+  for (let i = 0; i < 8; i++) value = (value << 8n) | BigInt(bytes[i]);
+  return value.toString(36).padStart(13, '0').slice(0, 12);
+};
+
+/** A card smaller than this is the empty-body failure, not a picture. */
+export const MIN_CARD_BYTES = 1024;
+
+/**
+ * Validates a trait selection against the generated index, which is the same
+ * closed enum the image endpoints enforce. Returns an error string rather than
+ * throwing so callers can decide the status code.
+ */
+export const validateTraits = (
+  params: URLSearchParams,
+  index: Record<string, string[]>
+): string | null => {
+  const categories = Object.keys(index);
+  for (const [category, trait] of params.entries()) {
+    if (!categories.includes(category)) return `Invalid category "${category}"`;
+    if (!index[category].includes(trait)) return `Invalid trait "${trait}" for "${category}"`;
+  }
+  return null;
+};

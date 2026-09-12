@@ -6,8 +6,34 @@ compatibility_date = "2024-01-01"
 # it inside [env.preview] and Pages reported the field as missing entirely.
 pages_build_output_dir = "dist"
 
+# Share cards. A created PING is rendered once, at Tweet time, and the PNG is
+# stored here under a content-addressed id; the scraper then fetches a stored
+# object instead of triggering a render. That is the whole point - the two
+# production failures this project has had (an empty 200 when the isolate ran
+# out of CPU mid-response, and a zero-length PNG cached at the edge) were both
+# renders happening inside the request a bot made. A stored object cannot time
+# out.
+#
+# KV rather than R2 only because R2 is not enabled on this Cloudflare account
+# (it needs a dashboard opt-in with a payment method, even on the free tier).
+# KV's free ceilings - 1 GB, 25 MiB per value, 100k reads/day, 1,000 writes/day
+# to distinct keys - are fine at this scale because ids are content-addressed,
+# so a write happens once per DISTINCT character ever shared, not per share.
+# functions/_lib.ts CARD_STORE is the seam to swap for R2 later.
+[[kv_namespaces]]
+binding = "PING_CARDS"
+id = "70f930398a80470dae64b5bedc0cce69"
+
 [env.production]
 name = "ping-character-api"
 
+[[env.production.kv_namespaces]]
+binding = "PING_CARDS"
+id = "70f930398a80470dae64b5bedc0cce69"
+
 [env.preview]
 name = "ping-character-api-preview"
+
+[[env.preview.kv_namespaces]]
+binding = "PING_CARDS"
+id = "70f930398a80470dae64b5bedc0cce69"

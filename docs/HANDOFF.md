@@ -1035,6 +1035,57 @@ actually works now, found the hard way:
 Check `ta.sh`'s fit line every time. Non-aura: ~0.1-2/255 is a good register,
 4+ means Gemini redrew the penguin.
 
+## Sharing: stored cards at /p/<id> (2026-09-12)
+
+The owner's requirement: **the only two buttons pressed are Tweet on
+buildaping.com and Post on X.** No paste step, no extra tap.
+
+That rules out the clipboard route (it costs a Ctrl+V) and the X API (pay per
+post, OAuth consent, and it bypasses the composer entirely). It leaves the OG
+unfurl - which already delivers two clicks - so the work was making the card
+appear without a wait and without the failures. Research and citations:
+`docs/research/sharing-ping-characters.md`.
+
+**What was wrong.** `handleShareOnX` set an `image` param on the tweet intent.
+The intent has never had one; it was a silent no-op, so nothing was ever being
+attached. Hashtags still said `PING,Solana,Crypto`. Both fixed.
+
+**What now happens.** Tweet click POSTs the trait selection to `/api/share`,
+which renders the card **once, in that request**, verifies the body is not the
+known empty-200 failure, stores the PNG in KV under a content-addressed id, and
+returns `/p/<id>`. The composer opens on that URL. When X's scraper arrives,
+`/p/<id>` serves OG tags whose image is `/api/image/p/<id>.png` - a stored
+object with `immutable` caching, no render on the request path.
+
+- Ids are `sha256(canonical trait string)` truncated to 12 base36 chars, so
+  sharing is idempotent: the same character always yields the same id, a
+  re-share is a read, and two users who build the same character share one
+  stored card. Storage grows with distinct characters, not with clicks - which
+  is also what keeps KV's 1,000-writes/day free ceiling comfortable.
+- **KV, not R2, only because R2 is not enabled on the account** (dashboard
+  opt-in, needs a payment method even on the free tier). `CARD_STORE`/
+  `kvCardStore` in `functions/_lib.ts` is the seam; swapping to R2 is one
+  adapter. Namespace `PING_CARDS` = `70f930398a80470dae64b5bedc0cce69`, bound
+  in `wrangler.toml` for both environments.
+- Every failure falls back to the legacy `?head=...` URL, which still works.
+  Old share links in old tweets keep working forever - `/api/og` is untouched
+  and both routes coexist permanently, by design, since the query-param route
+  has no server state to migrate.
+- A human opening `/p/<id>` is redirected to the builder with that character
+  restored; an unknown id goes to the builder rather than a 404.
+
+**Verified locally under `wrangler pages dev`:** create, idempotent re-create
+(`cached:true`), bot OG tags, stored PNG (`103877` bytes, correct
+`Cache-Control`), human redirect restoring traits, invalid trait rejected 400,
+unknown id redirected. And end-to-end in the browser: clicking Tweet produced
+`.../intent/tweet?...&url=.../p/1tunzm1aek2s`, whose card resolves to
+"PING with Crown".
+
+**Still open on this:** whether the zone Cache Rule bypassing `/api/*` was ever
+actually created in the Cloudflare dashboard (`functions/_lib.ts` documents it
+as required; there is no IaC record of it). The new route does not depend on
+it - it wants to be cached - but `/api/image/custom.png` still does.
+
 ## STANDING RULE (2026-09-12): every trait is GOOD unless named
 
 The owner's directive: **all traits have status GOOD and are left alone.** He

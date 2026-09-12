@@ -356,32 +356,69 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     return `${baseUrl}${paramsString}`;
   };
 
-  const handleShareOnX = () => {
+  /** The trait selection as the share and image endpoints expect it. */
+  const traitSelection = (): Record<string, string> =>
+    Object.fromEntries(
+      selectedTraits
+        .filter(Boolean)
+        .map((trait) => [
+          trait.category,
+          trait.id.slice(0, trait.id.lastIndexOf('_' + trait.category)),
+        ])
+    );
+
+  /**
+   * Stores the character server-side and returns its short share URL.
+   *
+   * This is what makes the card appear in the composer without a wait: the
+   * render happens now, in this request, and the scraper that follows gets a
+   * stored PNG. Returns null if storage is unavailable (no binding, render
+   * failure), and the caller falls back to the legacy query-param URL, which
+   * still works and still unfurls - just by rendering on the bot's request.
+   */
+  const createShareUrl = async (): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(traitSelection()),
+      });
+      if (!response.ok) return null;
+      const { url } = (await response.json()) as { url?: string };
+      return url ?? null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleShareOnX = async () => {
     setIsSharing(true);
 
-    try {
-      const apiUrl = generateApiUrl();
-      const tweetText = "Just created my custom $PING!\nCreate your own at:\n";
-      const hashtags = "PING,Solana,Crypto";
+    // Opened before the await: a popup opened from inside an async
+    // continuation has lost the user gesture and browsers block it. It gets
+    // pointed at the real URL once there is one.
+    const composer = window.open('', '_blank');
 
-      // Construct the Twitter share URL
+    try {
+      const shareUrl = (await createShareUrl()) ?? generateApiUrl();
+      const tweetText = "Just created my custom $PING!\nCreate your own at:\n";
+      const hashtags = "PING,RobinhoodChain,Crypto";
+
       const twitterUrl = new URL('https://twitter.com/intent/tweet');
       twitterUrl.searchParams.set('text', tweetText);
       twitterUrl.searchParams.set('hashtags', hashtags);
-      twitterUrl.searchParams.set('url', apiUrl);
+      // The card comes from this URL unfurling. The intent has no parameter
+      // for attaching an image - one used to be set here and had never done
+      // anything - so the unfurl is the picture.
+      twitterUrl.searchParams.set('url', shareUrl);
 
-      // Add the custom character image
-      if (apiUrl.includes('?')) {
-        twitterUrl.searchParams.set('image', apiUrl);
-      }
+      if (composer) composer.location.href = twitterUrl.toString();
+      else window.open(twitterUrl.toString(), '_blank');
 
-      // Open Twitter in a new window
-      window.open(twitterUrl.toString(), '_blank');
-
-      // Reset sharing state after a delay
       setTimeout(() => setIsSharing(false), 2000);
     } catch (error) {
       console.error('Error sharing on X:', error);
+      composer?.close();
       setIsSharing(false);
     }
   };
