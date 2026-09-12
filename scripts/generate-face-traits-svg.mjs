@@ -59,22 +59,6 @@ const TRAITS = {
     <path d="M 633 383 Q 658 398 683 383" fill="none" stroke="${BLACK}" stroke-width="10" stroke-linecap="round"/>
   `),
 
-  // Crypto-twitter's own meme, not third-party IP: glowing eye beams. First
-  // pass used thin 1px-ish lines fanning out - invisible at thumbnail scale,
-  // same failure mode as the early mouth traits. Solid wide triangular beams
-  // and much bigger glowing eyes fix it the same way: make the one defining
-  // shape bigger and higher-contrast rather than adding detail.
-  'laser-eyes': svg(`
-    ${coverEyes(34, 30)}
-    <path d="M ${LEFT_EYE[0]} ${LEFT_EYE[1] - 20} L 40 250 L 40 340 Z" fill="#FF3B1A"/>
-    <path d="M ${LEFT_EYE[0]} ${LEFT_EYE[1] - 8} L 60 290 L 60 335 Z" fill="#FFC94A"/>
-    <path d="M ${RIGHT_EYE[0]} ${RIGHT_EYE[1] - 20} L 1112 250 L 1112 340 Z" fill="#FF3B1A"/>
-    <path d="M ${RIGHT_EYE[0]} ${RIGHT_EYE[1] - 8} L 1092 290 L 1092 335 Z" fill="#FFC94A"/>
-    <circle cx="${LEFT_EYE[0]}" cy="${LEFT_EYE[1]}" r="20" fill="#FF3B1A"/>
-    <circle cx="${LEFT_EYE[0]}" cy="${LEFT_EYE[1]}" r="10" fill="#FFE8A0"/>
-    <circle cx="${RIGHT_EYE[0]}" cy="${RIGHT_EYE[1]}" r="20" fill="#FF3B1A"/>
-    <circle cx="${RIGHT_EYE[0]}" cy="${RIGHT_EYE[1]}" r="10" fill="#FFE8A0"/>
-  `),
 
   // Spiral "dazed" eyes - a cartoon-universal, not any specific IP.
   'dizzy-eyes': (() => {
