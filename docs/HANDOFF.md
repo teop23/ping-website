@@ -806,3 +806,77 @@ strictly one agent at a time. Everything else in this session parallelized
 fine. The owner's standing direction as of this session: **decompose work into
 pieces small enough for a weak model** — one exact command, one verifiable
 output, no judgment calls inside the task.
+
+## Sixth session, continued: OG copy, aura batches 6 and 7
+
+**`2a81b06` — the trait count is out of the share copy.** The meta/OG/twitter
+descriptions and the OG banner quoted a live count. The number was correct
+(derived from the manifest) but a share card is the wrong place for it: every
+platform that scrapes the card caches the description and re-serves it for
+months, so whatever ships is wrong out in the world regardless of how
+correctly it was derived. Copy is now durable and count-free — "Build your own
+PING. A trait editor, an open image API, and a token on Robinhood Chain." and
+"Eight slots. Endless characters." **The on-page copy still quotes the derived
+count** — that's read live, so it's accurate whenever anyone looks.
+`check-copy-count.mjs` now guards both directions and takes `--file` so its
+three failure modes are covered by fixtures in `scripts/fixtures/`.
+
+**14 auras pending review** in `.trait-work/pending/`, none shipped:
+- batch 6 (`.trait-work/extract/aura-batch6.png`): rave-lasers, server-room,
+  cherry-soda, candy-land, autumn-leaves, lava-lamp, void.
+- batch 7 (`.trait-work/extract/aura-batch7.png`), replacements for the orphan
+  flame-halos: tie-dye, black-hole, meteor-shower, comic-burst, casino-jackpot,
+  crystal-cave.
+All 13 came back first-take at s=1, d=0, fit 1.6-1.8/255. `void` scored 17/255
+purely because Gemini drew a bright rim-light against pure black and a hard
+black-to-white edge maximizes per-pixel diff — penguin unmoved, image square,
+so it passes the real reject bar. **A high fit is not automatically a reject:
+check whether the penguin moved or scaled before rerolling.**
+
+### Owner directives from this session
+
+- **Regeneration, not removal, for 16 traits.** All 6 Hello Kitty traits,
+  `master-chief-helmet`, `infinity-gauntlet`, `redbull` (both hands), and the 6
+  orphan auras. The auras are covered by batch 7 above. The other 10 need
+  replacement *concepts* designed before anything is generated — "replace Hello
+  Kitty" is a design decision, not a prompt. Open question put to the owner:
+  fill the six slots with unrelated ideas, or invent one original mascot and
+  reuse it across all six the way Hello Kitty was.
+- **The fit audit is done** — `.trait-work/audit/does-not-fit.md`, 43 traits
+  across 4 reasons, sheets `fit-1/2/3.png`. Owner has ruled only on the 16
+  above; the rest of the list (the other trademark cases, the Solana-era five,
+  the two flag auras) is still awaiting a verdict.
+- **New working mode:** generate in bulk, self-vet, and leave sheets for the
+  owner to review in the morning rather than asking per-trait. Note the honest
+  limit — mechanical defects (framing, clipping, eye clearance, empty layers,
+  duplicates, grip point) can be vetted automatically; "uncanny" cannot, and
+  that is the axis that killed five rounds of mouth work. Expect sheets to be
+  filtered, not pre-approved.
+- **Decompose work small enough for a weak model**: one exact command, one
+  verifiable output, no judgment inside the task. Two haiku agents did the
+  stroke measurements and the dilate script this way in seconds.
+
+### Gemini gotchas found this session (new, beyond the fifth-session list)
+
+1. **A JS `.click()` on "Copy newest image" is not a trusted user gesture.**
+   The clipboard write silently no-ops and `clip.ps1` picks up the *previous*
+   image. Use a real `computer.left_click`, taking a screenshot first to
+   convert the button's `getBoundingClientRect()` into the screenshot's
+   coordinate frame (the ratio was consistently `1568/innerWidth`).
+2. **The tab viewport can collapse to near-zero at any screenshot scale**, not
+   just 0.3 as previously documented — it happened at 0.5, and `resize_window`
+   did not fix it. The fix is still a fresh tab: create it *and navigate it*
+   before closing the old one, then re-check `tabs_context_mcp` afterwards.
+3. Enter on a wrongly-focused element opens Gemini's full-screen image editor
+   instead of copying. Recover with the back arrow at the top left.
+4. `Page.captureScreenshot` and `zoom` time out ("renderer may be frozen") on
+   backgrounded tabs; retrying the same call usually works a moment later.
+5. `document.visibilityState` can sit at `"hidden"` on the working tab even
+   when it is the only selected tab in the group. Clipboard writes still work
+   once the button is properly focused.
+6. The first Copy click of a session often leaves the clipboard empty — click
+   the same button a second time.
+
+The aura chat `/app/02ba2598ce24ac78` is at roughly 17 edits with no drift
+symptoms yet, but that is close to the ~20 where previous chats went bad.
+**Start a fresh chat before the next batch.**
