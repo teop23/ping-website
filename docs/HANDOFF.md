@@ -1035,6 +1035,31 @@ actually works now, found the hard way:
 Check `ta.sh`'s fit line every time. Non-aura: ~0.1-2/255 is a good register,
 4+ means Gemini redrew the penguin.
 
+## STANDING RULE (2026-09-12): every trait is GOOD unless named
+
+The owner's directive: **all traits have status GOOD and are left alone.** He
+names individual ids when he wants something changed — `HE07 FIX`,
+`AU24 REMOVE`. Silence means keep.
+
+Consequences, so no future session re-opens any of this:
+
+- Do **not** propose trait removals unprompted, and do not re-surface
+  `.trait-work/audit/does-not-fit.md`. That audit is reference material, not a
+  queue. The 32 still-unruled items on it (24 trademark cases, the two flag
+  auras, the six flat-vector orphan auras) stay live unless he names them.
+- The 31 traits in `.trait-work/pending/` are approved by default too. The
+  only exception already known to be bad is `vending-machine_accessory`
+  take 1, which is clipped at the canvas edge.
+- The "owner rulings still outstanding" list further down this file is
+  **closed**, not pending. Nothing there blocks anything.
+- Ids come from `node .trait-work/vet-sheets.mjs`, which writes numbered
+  contact sheets and `vet-index.md` to `.trait-work/vet-sheets/`. Category
+  codes: AU BO FA MO HE RH LH AC, `P`-prefixed for pending. Re-run it after any
+  cut, since ids are positional within a category.
+
+Generation is also stopped as of this directive — the 42 approved concepts in
+`.trait-work/next-batch.md` stay parked, no new Gemini chats.
+
 ## FIXED (eighth session): auras composited ON TOP of the base
 
 Fixed, verified in all three renderer families, and covered by a regression
