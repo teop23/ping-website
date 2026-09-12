@@ -708,3 +708,101 @@ gold-hoard, fireworks, deep-sea). Library 293 -> 299, copy check passes, tests 1
    dupe-checked against the list. Aura ideas not yet tried: tie-dye, laser-rave, black-hole, matrix-code,
    candyland, meteor-shower, comic-burst, casino-jackpot. Non-aura categories need a fresh chat per
    category, set up with the paste trick.
+
+## Sixth session, 2026-09-12: auras shipped, 11 cut, launch config, flipper fixes
+
+Four commits, **not pushed** (pushing `relaunch/robinhood-chain` auto-deploys to
+production, so that stayed the owner's call). Library **299 -> 298**.
+
+**`35ddae5` — 8 full-canvas auras in, 11 traits cut.**
+In: volcano, jungle, neon-city, pixel-sky, red-candles, cherry-blossom, desert,
+haunted (the batch parked in `.trait-work/pending/` last session).
+Cut, on the owner's verdict over `vet-remove.png` and a follow-up sheet:
+- The entire small-gradient-halo aura family: `bazooka`, `storm`, `shadow`,
+  `toxic`, `ice`, `holy`, `galaxy`. The owner's words were "all auras that look
+  similar to storm/shadow should be removed"; a sheet of the 16 old auras
+  (`.trait-work/extract/aura-halo-family.png`) settled the boundary at "the
+  whole first row". Their `CONCEPTS` entries are gone from
+  `generate-aura-traits-svg.mjs`, not just the PNGs.
+- `green-candle-injection`, both hand slots.
+**The rest of the two vetting passes' 25-item REMOVE list was reviewed and
+KEPT** — the fumos, chill-guy, the tattoo/crossover tees, helm-of-domination,
+monocle, both gun-hands and poobis all stay. Do not re-propose them.
+
+**`b167340` — `launch.config.mjs`, one file to edit at launch.**
+The five launch-day values (`tokenLive`, `contractAddress`, `chartLink`,
+`countdownTarget`, `showCountdown`) sit at the top under a commented block
+saying what each does; chain/launchpad/social/domain facts below. No values
+changed — `tokenLive` is still false.
+Plain ESM, not JSON or TS, because the four consumers share no module graph:
+Vite-bundled `src/`, esbuild-bundled Pages Functions, plain `node scripts/*.mjs`,
+and static `index.html`. The last can't import anything, so a Vite plugin swaps
+`__TRAIT_COUNT__` / `__SITE_URL__` at build time.
+**The trait count is deliberately NOT in the config.** It is derived from
+`public/traits-manifest.json` everywhere, so the four-file hand-typed
+duplication is structurally impossible now. `check-copy-count.mjs` was
+rewritten to police the new invariant instead: it fails if a literal count
+reappears in a file that should derive it, and `--post-build` checks
+`dist/index.html` actually got substituted. **You no longer bump a count by
+hand when the library changes.**
+Also folded in: `functions/_lib.ts` had its own hand-synced copy of
+`EMPTY_TRAIT_CHANCE` (with a comment admitting it mirrored constants.ts) —
+now imported. And the root `tsconfig.json` stray `moduleResolution` +
+trailing comma, listed as "never actually fixed" since 2026-09-10, is fixed;
+`npx tsc --build` works.
+
+**`9f1fd2b` — seven held props moved onto the flipper tip.**
+sparkler (both), money-bag, flower, bong, drumstick, rubber-duck. Each prop's
+own grip point — stick end, stem base, bag neck, handle end — translated onto
+the flipper tip for its slot (left tip native `(297,595)`, right `(706,575)`,
+mapped through the compositor's fraction formula
+`frac = 1.4*(native/1024) - 0.2`). No scaling needed.
+`devil-trident` was left exactly as shipped, by the owner's call.
+New tool: `scripts/shift-trait.mjs --dx N --dy N --out-dir DIR <trait>` —
+translate a finished trait without re-authoring it. `rescale-trait.mjs` could
+only scale about an anchor.
+
+### The measurement lesson from this session
+
+The first attempt at the flipper fix measured **nearest opaque pixel to a 45px
+radius around the flipper tip**, got 0.0px for seven of the eight, and
+concluded they were already correct and the vetting pass was wrong. It wasn't.
+A prop can overlap the body silhouette anywhere along its height and score zero
+while its grip point floats somewhere else entirely — the sparklers scored 0.0px
+while sitting at *head height*. **Measure the grip point, not the silhouette.**
+This is the same shape of error as the four bugs at the top of this document:
+a number that is technically correct answering a question nobody asked. The
+defect was obvious the moment anyone looked at a composited contact sheet.
+
+### Still open
+
+- **`matrix-code` aura** in `.trait-work/pending/`, unreviewed. Salvaged from a
+  Gemini run that was stopped early for budget. Sheet:
+  `.trait-work/extract/matrix-check.png`.
+- **Style fixes not done**: `shopping-cart`, `laser-eyes`, `hello-kitty-mask`,
+  `nerd-glasses`. The owner asked for these; the agent doing them was stopped
+  for budget before producing anything. Thin lines / unreadable at render size
+  is the recorded defect. A raster dilate of the dark pixels is the approach —
+  see `.trait-work/measure-strokes.mjs` for the measurements.
+- **`.trait-work/next-batch.md`**: 67 dupe-checked concepts across all 8
+  categories, each with a Gemini prompt phrase and the region-box flags for
+  `take.sh`. Ready to run; no thinking needed before starting.
+  Category counts, thinnest first: mouth 16, aura 30, face 34, accessory 38,
+  left_hand 41, head 44, body 44, right_hand 53.
+- **Never done on any trait since the 53-trait batch**: a real builder capture
+  or a `wrangler pages dev` render. Everything since has been verified on
+  sim-builder geometry only.
+- **The X share button still tags `PING,Solana,Crypto`**
+  (`src/components/CharacterPreview.tsx:410`) — left over from the Solana era.
+  Flagged to the owner, not changed.
+- `.trait-work/` is now gitignored. `check_gap.mjs` at the repo root is a stray
+  scratch file from an earlier session; nobody has claimed it.
+
+### Working note on agents
+
+`.trait-work/take.sh` still shares the clipboard and
+`Downloads/Gemini_Generated_Image_*` globally, so Gemini capture remains
+strictly one agent at a time. Everything else in this session parallelized
+fine. The owner's standing direction as of this session: **decompose work into
+pieces small enough for a weak model** — one exact command, one verifiable
+output, no judgment calls inside the task.
