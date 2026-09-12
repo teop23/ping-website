@@ -948,3 +948,89 @@ expensive to detect late. Use the paste-upload procedure in the fifth-session
 section — the file input no longer works. Read the two gotcha lists (fifth
 session and the one above) before driving the browser; the untrusted-`.click()`
 one in particular fails silently and produces a wrong trait with no error.
+
+## Seventh session, 2026-09-12: Solana cut, mouth batch, a rebuilt Gemini path
+
+**`02f01f2` — the five Solana-era traits are out.** `solana-coin` (both
+hands), `solana-tattoo`, `wif_accessory`, `wif-tattoo-v2`. Owner ruled cut.
+Deliberately kept: `wif-tattoo_body` and `pump-fun-tattoo_body` (earlier keep
+ruling) and `reimu-x-wif-tee_body` (flagged under a different reason, still
+unjudged). The three generator scripts mention solana-coin/solana-tattoo only
+in comments, as the source of their registration measurements — provenance,
+not generated output, so nothing regenerates them. Library 298 -> 293.
+
+**Owner rulings this session:** ship the 13 pending auras minus whatever he
+names as rejects (sheet `auras-pending-13.png` sent, verdict outstanding); cut
+the Solana five (done); **keep the Hello Kitty traits** — "this is not a
+commercial site", which also resolves 6 of the 10 trademark replacements, with
+master-chief-helmet / infinity-gauntlet / redbull x2 not explicitly ruled on;
+run **all 59** concepts from `.trait-work/next-batch.md`.
+
+**Mouth batch done: 8 of 8, all first takes**, fits 0.12-0.35/255, parked in
+`.trait-work/pending/`, sheet `.trait-work/extract/mouth-batch8.png` sent.
+corn-cob, straw-drink, candy-cane, carrot, ice-pop, paperclip-bite,
+birthday-candle, harmonica. Every one clears the 512 bar with room to spare
+(smallest, straw-drink, is 126x70 at 512 against a 53x14 beak). Chat is
+`/app/72d6849382a5d5ad`.
+
+### The Gemini automation path changed. Read this before driving the browser.
+
+The fifth-session procedure no longer matches what the page does. What
+actually works now, found the hard way:
+
+1. **A trusted click only lands if a screenshot is taken immediately before
+   it, in the same batch.** This is the single most important fact here.
+   Without the preceding screenshot the click is delivered, reports success,
+   and reaches no element at all — `document.addEventListener('click')` sees
+   nothing. Every failed click in the first hour of this session was this.
+2. **Send with the Enter key, never by clicking the send button.** Focus the
+   editor, collapse the selection to the end, and press Return with a real
+   `computer.key`. The window's `innerWidth` flips between 2560 and 2844
+   between calls, which silently invalidates any coordinate measured in a
+   previous call — the send button was the most frequent victim. Enter needs
+   no coordinates and has not failed once.
+3. **The paste-upload trick is obsolete.** Plain `file_upload` into Gemini's
+   own live file input attaches the files directly. The critical detail the
+   old procedure got wrong: **do not move the input in the DOM.** Appending it
+   to `document.body` detaches it from its Angular component and it stops
+   working — that is why the old notes needed the `ClipboardEvent` paste at
+   all. Restyle it in place (`position:fixed;z-index:99999;opacity:1`) so it
+   gets an accessibility ref, then upload into it. Setup:
+   - navigate to `/app`, screenshot, measure "Upload & tools" with
+     `getBoundingClientRect()` scaled by `k = 1568/innerWidth`, screenshot,
+     click. `input[type=file]` appears (two of them).
+   - `fileinput0`, the one inside `IMAGES-FILES-UPLOADER`, is the composer's.
+     Label it, `find` its ref, `file_upload` both refs into it. They attach.
+   - Verify the count before sending: `img[src^="blob:"]` must be exactly 2.
+     Retried paste attempts queue up silently — one run left 5 attachments,
+     which breaks "image 1"/"image 2" addressing.
+4. **Never close a tab.** `tabs_close_mcp` destroyed the whole MCP tab group
+   twice, orphaning the working tab, even with two tabs in the group. Leave
+   stale tabs open; the cost is clutter, the cost of closing is the group.
+5. **Keyboard focus cannot be used for Copy.** Focusing the copy button and
+   pressing Enter fails: Gemini pulls focus back to the prompt editor within
+   the same tick, so Enter goes to the composer. Copy still needs the
+   screenshot-then-click coordinate path.
+6. **Re-measure the copy button after every generation**, with a screenshot
+   forcing a frame first. Element rects read as `0x0` on this tab until a
+   screenshot forces layout, and the image size varies (708px and 807px both
+   seen), which moves the toolbar. A stale coordinate copies the *previous*
+   image — `take.sh`'s repeat guard catches it, which it did once here.
+7. "Download full size image" is not a usable fallback. The download stalls
+   as a `.tmp` in Downloads awaiting a Chrome permission that never surfaces.
+8. `Page.captureScreenshot` still times out intermittently; retrying a few
+   seconds later works, as previously documented.
+
+### Working loop, per trait (5 calls)
+
+1. JS: insert the prompt into `.ql-editor`, wait, refocus, collapse selection
+   to end.
+2. batch: screenshot, `key Return`, wait 10, JS poll for the copy button.
+3. batch: screenshot, JS `__copy()` — marks the newest image and returns the
+   button's coordinates.
+4. batch: screenshot, click those coordinates, wait.
+5. `powershell -STA -File .trait-work/clip.ps1`, then
+   `sh .trait-work/ta.sh <cat> <name> <n> --box ...`.
+
+Check `ta.sh`'s fit line every time. Non-aura: ~0.1-2/255 is a good register,
+4+ means Gemini redrew the penguin.
