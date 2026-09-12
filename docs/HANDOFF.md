@@ -880,3 +880,71 @@ check whether the penguin moved or scaled before rerolling.**
 The aura chat `/app/02ba2598ce24ac78` is at roughly 17 edits with no drift
 symptoms yet, but that is close to the ~20 where previous chats went bad.
 **Start a fresh chat before the next batch.**
+
+## Next session: start here
+
+### State at handoff (2026-09-12)
+
+- **Library: 298 traits.** `node scripts/generate-index.mjs` regenerates the
+  manifest and the 512 renders; the count is derived from the manifest
+  everywhere, so nothing needs bumping by hand.
+- **7 commits on `relaunch/robinhood-chain`, NONE PUSHED.** Pushing that branch
+  auto-deploys to buildaping.com production, and the owner has not given the
+  go-ahead. In order: `35ddae5` (8 auras in, 11 cut), `b167340` (launch config
+  + derived count + tsconfig fix), `9f1fd2b` (seven props onto the flipper),
+  `3479c6f` (handoff), `302c39e` (matrix-code in, laser-eyes out, two outlines
+  thickened), `2a81b06` (trait count out of share copy), `774a2b3` (handoff).
+- Gates all green as of the last commit: **107/107 tests**, clean build,
+  `tsc --noEmit` clean on both projects, `check-copy-count` clean pre- and
+  post-build.
+
+### WARNING: `.trait-work/` is gitignored
+
+Everything parked there is **local to this machine and not in any commit** —
+the 13 pending auras, the audit, the review sheets, the Gemini raws, the
+staged `.trait-work/fixflipper/` and `stylefix/` PNGs. A fresh clone has none
+of it. Do not assume a file referenced in this document exists until you have
+listed the directory. If the owner ever wants the pending work preserved
+off-machine, that needs deciding — right now it is one `rm -rf` from gone.
+
+### Blocked on the owner — nothing here should be guessed
+
+1. **13 pending auras** in `.trait-work/pending/`, sheets already sent:
+   batch 6 (`aura-batch6.png`) rave-lasers, server-room, cherry-soda,
+   candy-land, autumn-leaves, lava-lamp, void; batch 7 (`aura-batch7.png`)
+   tie-dye, black-hole, meteor-shower, comic-burst, casino-jackpot,
+   crystal-cave. To ship the yeses: move to `public/traits/`, run
+   `generate-index`, `npx vitest run`, commit. Rejects go to
+   `.trait-work/rejected/`.
+2. **The fit audit**, `.trait-work/audit/does-not-fit.md` — 43 traits flagged,
+   the owner has ruled on 16 (regenerate, not remove). The remaining ~27 are
+   unjudged: the other trademark cases, the Solana-era five (`solana-coin`
+   both hands, `solana-tattoo`, `wif` x2 — the clearest cut in the library),
+   and the two flag auras. Sheets are `fit-1/2/3.png`.
+3. **10 trademark replacements need concepts designed before generating.**
+   All 6 Hello Kitty traits, `master-chief-helmet`, `infinity-gauntlet`,
+   `redbull` x2. The open question, already put to the owner and unanswered:
+   fill the six Hello Kitty slots with unrelated ideas (a fox mask, three
+   different print tees, a different keychain and pet), or invent one original
+   mascot and reuse it across all six the way Hello Kitty was. **Do not pick
+   unilaterally** — this is the same class of decision the earlier sessions
+   correctly refused to make alone about flags and logos.
+4. **Overnight run scope.** The owner asked for bulk generation, self-vetting,
+   and sheets waiting in the morning, but has not said how many traits or
+   which categories. `.trait-work/next-batch.md` has 59 concepts left across
+   7 categories (mouth 8, face 9, accessory 8, left_hand 9, body 11, head 11,
+   right_hand 7), all dupe-checked with prompt phrases and region boxes.
+   **Honest limit to restate when this comes up:** mechanical defects can be
+   vetted automatically (framing fit, clipping, eye clearance, empty layers,
+   duplicates, grip point) but "uncanny" cannot, and that is precisely the
+   axis that killed five consecutive rounds of mouth work. Sheets will be
+   filtered, not pre-approved.
+
+### Before generating anything
+
+Start a **fresh Gemini chat**. `/app/02ba2598ce24ac78` is at roughly 17 edits
+with no drift symptoms yet, but past chats went bad around 20, and drift is
+expensive to detect late. Use the paste-upload procedure in the fifth-session
+section — the file input no longer works. Read the two gotcha lists (fifth
+session and the one above) before driving the browser; the untrusted-`.click()`
+one in particular fails silently and produces a wrong trait with no error.
