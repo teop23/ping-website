@@ -445,7 +445,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     setIsNativeSharing(true);
     try {
       const shareUrl = await getShareUrl();
-      await navigator.share({ url: shareUrl, title: 'My PING character' });
+      await navigator.share({ url: shareUrl, title: 'You have 1 new PING.' });
     } catch (error) {
       // The user closing the share sheet is not a failure.
       if ((error as { name?: string })?.name !== 'AbortError') {
@@ -466,7 +466,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
     try {
       const shareUrl = await getShareUrl();
-      const tweetText = "Just created my custom $PING!\nCreate your own at:\n";
+      const tweetText = "You have 1 new PING.\nSend one back:\n";
       const hashtags = "PING,RobinhoodChain,Crypto";
 
       const twitterUrl = new URL('https://twitter.com/intent/tweet');

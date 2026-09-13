@@ -39,6 +39,6 @@ export const onRequestGet = async ({ request, env, params }: PageContext): Promi
     imageUrl: `${url.origin}/api/image/p/${id}.png`,
     pageUrl: url.href,
     title: titleFromTraits(traits),
-    description: `Build your own PING at ${url.host}`,
+    description: `Send one back at ${url.host}`,
   });
 };

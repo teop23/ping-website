@@ -26,6 +26,6 @@ export async function onRequest(context: OgContext) {
     imageUrl,
     pageUrl: url.href,
     title: titleFromTraits(url.searchParams),
-    description: `Build your own PING at ${url.host}`,
+    description: `Send one back at ${url.host}`,
   });
 }

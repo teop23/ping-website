@@ -95,7 +95,7 @@ describe('escapeHtml', () => {
 
 describe('titleFromTraits', () => {
   it('falls back when nothing is selected', () => {
-    expect(titleFromTraits(new URLSearchParams())).toBe('Build your own PING');
+    expect(titleFromTraits(new URLSearchParams())).toBe('You have 1 new PING');
   });
 
   it('names the traits in paint order, not query order', () => {

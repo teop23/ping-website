@@ -80,12 +80,12 @@ const Home: React.FC = () => {
           <div className="flex flex-col gap-8 sm:gap-8 lg:gap-10">
             <div className="w-full max-w-2xl">
               <motion.h1 {...rise(0)} className="type-display font-display text-hero font-extrabold">
-                Build a PING.
+                Send a PING
               </motion.h1>
 
               <motion.p {...rise(0.08)} className="type-prose mt-6 text-lead text-ink-muted">
-                {TRAIT_COUNT} traits. An open image API that renders any combination on
-                demand.
+                Build one from {TRAIT_COUNT} traits and send it. An open image API renders
+                any combination on demand.
               </motion.p>
             </div>
 

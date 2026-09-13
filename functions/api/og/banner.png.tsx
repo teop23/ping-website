@@ -93,10 +93,10 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               $PING
             </div>
             <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75, marginTop: 14 }}>
-              Eight slots. Endless characters.
+              You have 1 new PING.
             </div>
             <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75 }}>
-              An open image API.
+              Build one. Send it.
             </div>
             <div
               style={{

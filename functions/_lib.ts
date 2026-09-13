@@ -143,7 +143,7 @@ export const titleFromTraits = (params: URLSearchParams): string => {
     .filter((value): value is string => Boolean(value))
     .map(toTitleCase);
 
-  if (names.length === 0) return 'Build your own PING';
+  if (names.length === 0) return 'You have 1 new PING';
   if (names.length <= 3) return `PING with ${listPhrase(names)}`;
   return `PING with ${listPhrase(names.slice(0, 3))} +${names.length - 3} more`;
 };

@@ -6,7 +6,7 @@ test.describe('site', () => {
     const problems = watchForBreakage(page);
     await page.goto('/');
 
-    await expect(page.getByRole('heading', { level: 1, name: 'Build a PING.' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Send a PING' })).toBeVisible();
     await expect(page.getByText(`${manifest.traits.length} across 8 slots`)).toBeVisible();
     await expect(page.getByRole('heading', { name: 'The generator' })).toBeVisible();
 
@@ -56,6 +56,6 @@ test.describe('site', () => {
     await expect(page).toHaveURL(/\/community$/);
     await expect(page.getByRole('heading', { level: 1, name: 'Community' })).toBeVisible();
     await page.getByRole('link', { name: 'Home' }).first().click();
-    await expect(page.getByRole('heading', { level: 1, name: 'Build a PING.' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Send a PING' })).toBeVisible();
   });
 });
