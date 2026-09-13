@@ -17,6 +17,9 @@ import {
   toTitleCase,
   isValidXHandle,
   unavatarUrl,
+  addToGallery,
+  galleryPage,
+  parseGallery,
 } from './_lib';
 
 /**
@@ -267,5 +270,34 @@ describe('unavatarUrl', () => {
 
   it('encodes the handle', () => {
     expect(unavatarUrl('a b')).toContain(encodeURIComponent('a b'));
+  });
+});
+
+describe('gallery index', () => {
+  const entry = (id: string, at: number) => ({ id, traits: `head=${id}`, at });
+
+  it('puts the newest first and caps the list', () => {
+    let entries = [] as ReturnType<typeof parseGallery>;
+    for (let i = 0; i < 5; i++) entries = addToGallery(entries, entry(`c${i}`, i), 3);
+    expect(entries.map((e) => e.id)).toEqual(['c4', 'c3', 'c2']);
+  });
+
+  it('keeps one slot per id, moving a repeat to the front', () => {
+    const entries = addToGallery([entry('a', 1), entry('b', 2)], entry('b', 3));
+    expect(entries.map((e) => [e.id, e.at])).toEqual([['b', 3], ['a', 1]]);
+  });
+
+  it('treats a missing or malformed document as empty', () => {
+    expect(parseGallery(null)).toEqual([]);
+    expect(parseGallery({ id: 'x' })).toEqual([]);
+    expect(parseGallery([entry('ok', 1), { id: 3 }, null, 'junk'])).toEqual([entry('ok', 1)]);
+  });
+
+  it('pages with a next offset until the end', () => {
+    const entries = Array.from({ length: 5 }, (_, i) => entry(`c${i}`, i));
+    expect(galleryPage(entries, 0, 2)).toMatchObject({ next: 2 });
+    expect(galleryPage(entries, 4, 2)).toMatchObject({ items: [entry('c4', 4)], next: null });
+    expect(galleryPage(entries, -7, 2).items[0].id).toBe('c0');
+    expect(galleryPage(entries, NaN, 2).items[0].id).toBe('c0');
   });
 });

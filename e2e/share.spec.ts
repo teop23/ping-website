@@ -73,6 +73,25 @@ test.describe('share flow: Tweet -> /api/share -> /p/<id>', () => {
     expect(res.status()).toBe(302);
   });
 
+  test('a first-time share appears at the top of the gallery, and the Community page shows it', async ({ page, request }) => {
+    // A character local KV has never stored, so this share is a real write.
+    const index = (await (await request.get('/traits-index.json')).json()) as Record<string, string[]>;
+    const pick = (category: string) => index[category][Math.floor(Math.random() * index[category].length)];
+    const character = { head: pick('head'), face: pick('face'), body: pick('body'), aura: pick('aura') };
+    const shared = (await (await request.post('/api/share', { data: character })).json()) as { id: string; cached: boolean };
+    test.skip(shared.cached, 'random character already stored locally');
+
+    // The index write runs in waitUntil, after the response.
+    await expect
+      .poll(async () => ((await (await request.get('/api/gallery')).json()) as { items: { id: string }[] }).items[0]?.id)
+      .toBe(shared.id);
+
+    await page.goto('/community');
+    const card = page.getByTestId('shared-gallery').locator(`a[href="/p/${shared.id}"]`);
+    await expect(card).toBeVisible();
+    await expect(card.locator('img')).toHaveJSProperty('complete', true);
+  });
+
   test('share rejects traits that are not in the library', async ({ request }) => {
     const res = await request.post('/api/share', { data: { head: 'no-such-hat' } });
     expect(res.status()).toBe(400);

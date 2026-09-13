@@ -363,6 +363,53 @@ export const shareId = async (canonical: string): Promise<string> => {
 /** A card smaller than this is the empty-body failure, not a picture. */
 export const MIN_CARD_BYTES = 1024;
 
+/* ------------------------------------------------------------------
+ * Gallery of shared characters.
+ *
+ * One KV document holding the newest ids, not a KV list over the card keys:
+ * list operations are capped at 1,000/day on the free plan while reads are
+ * 100,000/day, and a single get serves a whole page. The cost is one extra
+ * write per new character, and a lost entry if two first-time shares land in
+ * the same second (KV is last-write-wins). Losing a gallery slot is harmless;
+ * the card itself is already stored.
+ * ------------------------------------------------------------------ */
+
+export const GALLERY_KEY = 'gallery:index';
+export const GALLERY_MAX = 480;
+export const GALLERY_PAGE_SIZE = 24;
+
+export interface GalleryEntry {
+  id: string;
+  traits: string;
+  /** Unix ms. */
+  at: number;
+}
+
+/** Newest first, one slot per id, capped. Pure so it can be tested without KV. */
+export const addToGallery = (
+  entries: GalleryEntry[],
+  entry: GalleryEntry,
+  max = GALLERY_MAX
+): GalleryEntry[] => [entry, ...entries.filter((e) => e.id !== entry.id)].slice(0, max);
+
+/** A malformed or missing document is an empty gallery, never an error. */
+export const parseGallery = (raw: unknown): GalleryEntry[] =>
+  Array.isArray(raw)
+    ? raw.filter(
+        (e): e is GalleryEntry =>
+          Boolean(e) &&
+          typeof e.id === 'string' &&
+          typeof e.traits === 'string' &&
+          typeof e.at === 'number'
+      )
+    : [];
+
+export const galleryPage = (entries: GalleryEntry[], offset: number, size = GALLERY_PAGE_SIZE) => {
+  const start = Number.isInteger(offset) && offset > 0 ? offset : 0;
+  const items = entries.slice(start, start + size);
+  return { items, next: start + size < entries.length ? start + size : null };
+};
+
 /**
  * Validates a trait selection against the generated index, which is the same
  * closed enum the image endpoints enforce. Returns an error string rather than

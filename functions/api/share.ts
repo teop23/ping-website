@@ -1,5 +1,8 @@
 import {
+  GALLERY_KEY,
   MIN_CARD_BYTES,
+  addToGallery,
+  parseGallery,
   canonicalTraits,
   kvCardStore,
   shareId,
@@ -29,7 +32,18 @@ interface Env {
 interface ShareContext {
   request: Request;
   env: Env;
+  waitUntil: (promise: Promise<unknown>) => void;
 }
+
+/** Best-effort: a gallery write failing must never fail the share. */
+const recordInGallery = async (kv: KVNamespace, id: string, traits: string): Promise<void> => {
+  try {
+    const entries = parseGallery(await kv.get(GALLERY_KEY, 'json'));
+    await kv.put(GALLERY_KEY, JSON.stringify(addToGallery(entries, { id, traits, at: Date.now() })));
+  } catch {
+    // Swallowed on purpose; see above.
+  }
+};
 
 const json = (body: unknown, status = 200): Response =>
   new Response(JSON.stringify(body), {
@@ -37,7 +51,7 @@ const json = (body: unknown, status = 200): Response =>
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   });
 
-export const onRequestPost = async ({ request, env }: ShareContext): Promise<Response> => {
+export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): Promise<Response> => {
   try {
     // Absent binding is not an error the user should see: the client falls
     // back to the legacy query-param share URL, which still works.
@@ -81,6 +95,9 @@ export const onRequestPost = async ({ request, env }: ShareContext): Promise<Res
     if (!card) return json({ error: 'Card render failed' }, 502);
 
     await store.put(id, card, canonical);
+    // Only first-time characters reach this line, so the gallery gains one
+    // entry per distinct character, never per click.
+    waitUntil(recordInGallery(env.PING_CARDS, id, canonical));
     return json({ id, url: `${origin}/p/${id}`, cached: false });
   } catch (err) {
     return json({ error: `Internal error: ${err}` }, 500);

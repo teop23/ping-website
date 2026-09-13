@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Heart, Grid, List } from 'lucide-react';
+import { Users, Heart, Grid, List, Share2 } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -11,6 +11,7 @@ import {
   type CommunityPing, 
   type PingMeme 
 } from '../utils/communityData';
+import SharedGallery from '../components/SharedGallery';
 
 type ViewMode = 'grid' | 'list';
 type SortBy = 'newest' | 'oldest';
@@ -91,8 +92,12 @@ const Community: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
         >
-          <Tabs defaultValue="pings" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+          <Tabs defaultValue="shared" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 max-w-xl mx-auto mb-8">
+              <TabsTrigger value="shared" className="flex items-center gap-2">
+                <Share2 size={16} />
+                Shared
+              </TabsTrigger>
               <TabsTrigger value="pings" className="flex items-center gap-2">
                 <Users size={16} />
                 Community Pings
@@ -102,6 +107,10 @@ const Community: React.FC = () => {
                 Ping Memes
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="shared">
+              <SharedGallery />
+            </TabsContent>
 
             {/* Community Pings Tab */}
             <TabsContent value="pings">
