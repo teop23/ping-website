@@ -1617,3 +1617,24 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   "close beside"), pS5-(right), pet-apu, pet-cheese, plant-pot, rocket,
   shopping-cart, snowman, stove, treasure-chest, washing-machine,
   xbox-gamer; then the 10 retakes in `.trait-work/prompts-retake.md`.
+
+### Thirteenth session, handoff (end)
+
+- Pushed through `e526eb8`. Branch clean and in sync with origin.
+- **Narrative decided (owner): PING is the notification.** Recorded in
+  `PRODUCT.md` "Narrative". Pairing USDG or ETH, no stock-token pair.
+- Research on other Robinhood Chain memecoins (CASHCAT, HMM, TENDIES,
+  STONKBROKER, Artificial Inu): HMM wins on reaction images + PFP generator +
+  Telegram buy tools; CASHCAT got a Robinhood app listing (+90%). Axiom
+  supports Robinhood Chain (owner may open a tab; read-only for us).
+- **Next, in order:**
+  1. Rewrite homepage hero, share text and OG card copy in the notification
+     voice (flat system-notification lines, per `PRODUCT.md`).
+  2. Reaction image / Telegram sticker maker framed as "send a PING".
+  3. Robin Hood / stonks trait drop (feathered cap, bow and arrow, green hood,
+     candle-chart shirt, tendies, stonks suit) once Gemini's image limit resets.
+  4. `/brand` listing kit: logo pack, 1B fixed supply, contract, links,
+     Dexscreener 1500x500 banner + icon from our API.
+  5. Remaining trait generation list: see "Thirteenth session" above.
+  6. Still open from `docs/feature-ideas.md`: #3 trait names on the card,
+     #5 homepage spotlight, #15 trademark traits ruling.
