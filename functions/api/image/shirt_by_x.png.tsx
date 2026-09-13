@@ -1,18 +1,5 @@
 import type { APIRoute } from 'astro';
-
-type TwitterUserInfo = {
-    username: string;
-    name: string;
-    description: string;
-    followers_count: number;
-    following_count: number;
-    tweet_count: number;
-    location: string;
-    profile_image_url: string;
-    profile_banner_url: string;
-    created_at: string;
-    user_id: string;
-};
+import { isValidXHandle, unavatarUrl, UNAVATAR_TTL_SECONDS } from '../../_lib';
 
 export const onRequestGet: APIRoute = async ({ request }) => {
     const { searchParams, origin } = new URL(request.url);
@@ -23,31 +10,41 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         return new Response('Missing Twitter handle', { status: 400 });
     }
 
-    try {
-        const userInfoEndpoint = `https://twittermedia.b-cdn.net/x-id/?id=${handle}`;
-
-        const response = await fetch(userInfoEndpoint, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; TwitterBot/1.0; +https://twitter.com/bot)',
-                "Origin": "https://snaplytics.io",
-                "Referer": "https://snaplytics.io/"
-            },
-        });
-
-        if (!response.ok) {
-            return new Response('Failed to fetch user info', { status: response.status });
-        }
-
-        const userInfo: TwitterUserInfo = await response.json();
-        const twitterPPUrl = userInfo.profile_image_url;
-        console.log('Twitter profile picture URL:', twitterPPUrl);
-        if (!twitterPPUrl) {
-            return new Response('Twitter profile picture not found', { status: 404 });
-        }
-
-        const redirectUrl = `${origin}/api/image/shirt.png?${type ? `type=${type}&` : ''}photo=${encodeURIComponent(twitterPPUrl)}`;
-        return Response.redirect(redirectUrl, 307); // Temporary redirect with method preserved
-    } catch (err) {
-        return new Response(`Error resolving handle: ${err}`, { status: 500 });
+    if (!isValidXHandle(handle)) {
+        return new Response('Invalid Twitter handle', { status: 400 });
     }
+
+    const avatarUrl = unavatarUrl(handle);
+
+    let response: Response;
+    try {
+        response = await fetch(avatarUrl);
+    } catch (err) {
+        return new Response(`Error resolving handle: ${err}`, { status: 502 });
+    }
+
+    if (response.status === 404) {
+        return new Response('Twitter profile picture not found', { status: 404 });
+    }
+
+    if (!response.ok) {
+        return new Response('Failed to fetch user info', { status: 502 });
+    }
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.startsWith('image/')) {
+        return new Response('Failed to fetch user info', { status: 502 });
+    }
+
+    const redirectUrl = `${origin}/api/image/shirt.png?${type ? `type=${type}&` : ''}photo=${encodeURIComponent(avatarUrl)}`;
+    // The avatar URL depends only on the handle, so cache this redirect for
+    // UNAVATAR_TTL_SECONDS - a repeat
+    // request never re-touches the rate-limited upstream.
+    return new Response(null, {
+        status: 307,
+        headers: {
+            Location: redirectUrl,
+            'Cache-Control': `public, max-age=${UNAVATAR_TTL_SECONDS}`,
+        },
+    });
 };

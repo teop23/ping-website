@@ -15,6 +15,8 @@ import {
   validateTraits,
   titleFromTraits,
   toTitleCase,
+  isValidXHandle,
+  unavatarUrl,
 } from './_lib';
 
 /**
@@ -235,5 +237,35 @@ describe('rollRandomTraits', () => {
     for (let seed = 1; seed <= 50; seed++) {
       expect(rollRandomTraits(pools, 0.45, lcg(seed))).toEqual(rollInBuilder(pools, 0.45, lcg(seed)));
     }
+  });
+});
+
+describe('isValidXHandle', () => {
+  it('accepts real-shaped handles', () => {
+    expect(isValidXHandle('elonmusk')).toBe(true);
+    expect(isValidXHandle('jack')).toBe(true);
+    expect(isValidXHandle('a_b_c_123')).toBe(true);
+    expect(isValidXHandle('a'.repeat(15))).toBe(true);
+  });
+
+  it('rejects anything that is not a bare handle', () => {
+    expect(isValidXHandle('')).toBe(false);
+    expect(isValidXHandle('a'.repeat(16))).toBe(false);
+    expect(isValidXHandle('has space')).toBe(false);
+    expect(isValidXHandle('has-dash')).toBe(false);
+    expect(isValidXHandle('@elonmusk')).toBe(false);
+    expect(isValidXHandle('../etc/passwd')).toBe(false);
+    expect(isValidXHandle('https://evil.example')).toBe(false);
+  });
+});
+
+describe('unavatarUrl', () => {
+  it('builds a fallback=false unavatar.io URL for the handle', () => {
+    const url = unavatarUrl('jack');
+    expect(url).toBe('https://unavatar.io/x/jack?fallback=false');
+  });
+
+  it('encodes the handle', () => {
+    expect(unavatarUrl('a b')).toContain(encodeURIComponent('a b'));
   });
 });

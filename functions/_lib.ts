@@ -198,6 +198,25 @@ export const renderOgPage = ({ imageUrl, pageUrl, title, description }: OgPageOp
 export const BOT_USER_AGENT =
   /Twitterbot|Slackbot|Discordbot|facebookexternalhit|TelegramBot|WhatsApp|LinkedInBot|Pinterest|redditbot/i;
 
+// X/Twitter handles: letters, digits, underscore, 1-15 chars. Anything else
+// isn't a real handle and shouldn't reach the upstream avatar resolver.
+const X_HANDLE_PATTERN = /^[A-Za-z0-9_]{1,15}$/;
+
+export const isValidXHandle = (handle: string): boolean => X_HANDLE_PATTERN.test(handle);
+
+// How long our own redirect gets cached. unavatar.io's free tier caches each
+// resolved avatar behind Cloudflare for 28 days on its own (a `ttl` override
+// is a paid-plan-only param and 403s with ETTL for free callers) - this just
+// controls how long OUR redirect response is reused before re-checking.
+export const UNAVATAR_TTL_SECONDS = 86400;
+
+// unavatar.io/x/<handle> is a keyless, public avatar resolver (no scraped
+// endpoint, no spoofed headers). `fallback=false` makes it 404 instead of
+// serving a generic placeholder image for a handle with no avatar, which is
+// what lets the caller tell "unknown user" apart from "has default avatar".
+export const unavatarUrl = (handle: string): string =>
+  `https://unavatar.io/x/${encodeURIComponent(handle)}?fallback=false`;
+
 /**
  * Where the image endpoints load art from.
  *
