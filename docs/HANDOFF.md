@@ -1500,3 +1500,22 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   Shared tab on /community, e2e covered), `scripts/check-launch-config.mjs`
   in prebuild (+ `--reachable`), share render-failure logging. Production KV
   was empty, so the gallery needs no backfill.
+
+### Eleventh session, handoff (end)
+
+- Vetting page (artifact, owner vetting now):
+  https://claude.ai/code/artifact/7957cf68-1389-46c9-873e-39175cbc6304 .
+  Regenerate with `node .trait-work/vet-page.mjs .trait-work/fix/vet-fixes.html`
+  and republish to the same URL. First version's buttons were dead: a `'\n'`
+  inside the generator's template literal became a raw newline in the inline
+  script (syntax error). Check with `node --check` on the extracted script.
+- Owner verdicts arrive as `FIX <name>_<cat>` / `REMOVE <name>_<cat>` lines;
+  unlisted = GOOD. Apply: move FIX files out of `.trait-work/fixes/` for a
+  retake; REMOVE per trait-verdicts rules.
+- Launchpad URL is **https://www.ponsfamily.com/launchpad** (owner). BUY_LINK
+  is `${LAUNCHPAD_URL}?token=<address>`, format unverified against Pons.
+- Unpushed commits (push auto-deploys; ask owner): gallery, launch-config
+  check, share failure logging, launchpad URL, handoff notes.
+- Next: left_hand 17 remaining (see above), accessory 20, then ship fixes with
+  `.trait-work/ship-fixes.mjs --apply` after owner vetting. Before driving
+  Chrome, check memory (commit charge was 71/75 GB from other sessions).
