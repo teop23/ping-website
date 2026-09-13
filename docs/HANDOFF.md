@@ -1684,3 +1684,6 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   logo / ETH / Pons traits in the Robin Hood drop (PRODUCT.md bans RH marks on
   the site surface itself, not in traits; owner call).
 - Gemini: owner cleared the frozen tab, OK to drive Chrome.
+- Vetting pass 2 applied (see `docs/trait-verdicts.md`): 16 shipped, 11 more
+  parked, library 265. Regen queue = 40 parked + 2 pending FIX + 10 retakes,
+  then the Robin Hood drop (incl. Robinhood logo, ETH, Pons traits).

@@ -66,3 +66,18 @@ an accepted rebuild; the parked file is the old art, kept for reference.
 - master-chief-helmet, infinity-gauntlet, redbull (both hands): keep as is.
 - wif-tattoo, reimu-x-wif-tee: keep. Owner wants the same treatment for
   Robinhood Chain: Robinhood logo, ETH, Pons traits (add to the Robin Hood drop).
+
+## Vetting pass 2, 2026-09-13 (pending + code-drawn live)
+
+- **Shipped (16, GOOD):** auras autumn-leaves, black-hole, candy-land,
+  casino-jackpot, cherry-soda, comic-burst, crystal-cave, lava-lamp,
+  meteor-shower, rave-lasers, server-room, tie-dye, void; faces
+  glowing-scanner-eye, googly-eyes, groucho-glasses.
+- **FIX, pending (2):** candy-cane_mouth, vending-machine_accessory (clips the
+  frame edge). In `.trait-work/retake/`.
+- **FIX, live (11), parked** in `.trait-work/parked/`: halo, viking-helmet,
+  3d-glasses, bandana-mask, sleepy-eyes, wink, gum-bubble, tongue-out, whistle,
+  anchor-tattoo, matrix-code.
+- Code-drawn live traits left unmarked are GOOD: bong, camera, dizzy-eyes,
+  flannel-shirt, hawaiian-shirt, heart-tattoo, hoodie, kite, lightning-tattoo,
+  mustache-only, rubber-duck, sailor-shirt, star-tattoo.
