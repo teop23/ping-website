@@ -1574,3 +1574,46 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
    republish to the vetting artifact URL, owner vets, then
    `ship-fixes.mjs --apply`, `rm -rf public/traits-512`,
    `node scripts/generate-index.mjs`, vitest + tsc, commit, push.
+
+### Thirteenth session, 2026-09-13 (night)
+
+- Shipped and pushed 14 rebuilds: left_hand dumbbell, fishing-rod, flower,
+  money-bag, paintbrush, wallet, ping-gameboy, ping-gameboy(Pink),
+  pizza-slice, popcorn, redbull; accessory birdhouse, hello-kitty-pet,
+  mailbox. Not owner-vetted (owner said push); FIX/REMOVE as usual.
+- **Mirror trick for left_hand.** Gemini puts held items on the viewer's
+  RIGHT no matter what the prompt says. Prompt for the right side instead
+  (right_hand category, `__RS` suffix below), then
+  `sh .trait-work/mtake.sh <name>`: moves the download to the next free
+  take, registers, extracts as right_hand, flips about the penguin axis
+  (native x=501.5, `.trait-work/mirror.mjs`), parks
+  `pending/trait-<name>_left_hand.png` and writes `fix/z-<name>.png`.
+  Text/logos come out reversed; say "no text" in the description.
+  `__RS` = " It is held at the tip of the flipper on the viewer's RIGHT,
+  outside the body, drawn compact so it stays well inside the picture. The
+  penguin keeps its exact original colors: jet-black back and flippers,
+  cream-white belly, orange beak and feet. Do NOT make the penguin grey.
+  Keep the penguin exactly the same size and position as image 1."
+- **Reject any take whose fit line is not `s=1.0000`.** Rescaled penguins
+  leak the whole redrawn body outline into the layer. The old chat
+  `/app/1a088e0ade4abeb3` rescaled 5 in a row and is retired. Fresh chat
+  **`/app/ee51a0a8c59b4a4c`** (both refs, 7 sends, all s=1).
+- **Accessory: say "close beside the penguin".** The builder crops the base
+  at 1.4x, so items placed at the canvas edge clip. arcade-machine, boombox,
+  fire-hydrant, pC-gamer, nuke, campfire all clipped (rejected).
+- Fresh-chat setup that worked: tab must be the active tab (screenshots
+  time out on hidden tabs; a hidden fresh `/app` tab never sends). Hook
+  `HTMLInputElement.prototype.click`, click "Upload & tools" by ref (take a
+  screenshot first), click "Upload files" by ref, label + restyle the hooked
+  input in place, `file_upload` both refs. Do NOT also dispatch the paste
+  event: it adds a duplicate attachment. Then `__t(...)` and click Send by
+  coordinate. Later sends via `__send` work from a hidden tab.
+- Tools: `.trait-work/mont.mjs` (raw vs zoom grid), `.trait-work/zm.mjs`
+  (zoom tiles), `.trait-work/queue-13.md` (per-take verdicts).
+- **Gemini image limit hit** after ~30 images today. Remaining when it
+  resets: left_hand skateboard, snowball, sparkler, thor-hammer, handbag,
+  umbrella (small canopy, it clipped the frame top); accessory
+  arcade-machine, boombox, campfire, fire-hydrant, nuke, pC-gamer (retakes,
+  "close beside"), pS5-(right), pet-apu, pet-cheese, plant-pot, rocket,
+  shopping-cart, snowman, stove, treasure-chest, washing-machine,
+  xbox-gamer; then the 10 retakes in `.trait-work/prompts-retake.md`.
