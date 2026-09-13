@@ -1276,3 +1276,170 @@ does NOT need a preceding screenshot; only clicks do.
    get the ruling on the remaining four.
 3. The rest of the fit audit (~22 traits after the Solana five) — the other
    trademark cases and the two flag auras, still unjudged.
+
+## Eighth session, 2026-09-12: regenerating the owner's FIX list
+
+Working list: `docs/trait-verdicts.md`. Everything not named there is GOOD.
+FIX = regenerate the art, never re-judge the concept. Hello Kitty is a FIX;
+do not re-raise the trademark question. Categories in order: body, face,
+mouth, head, right_hand, left_hand, accessory, then the pending FIXes.
+
+### Done (nothing shipped, nothing committed except this doc + verdicts)
+
+21 accepted regenerations in `.trait-work/fixes/` (GITIGNORED, UNBACKED-UP):
+- body 6/6: tuxedo-shirt, skull-tattoo, lab-coat, hello-kitty-shirt-(black/pink/white)
+- face 10/10: nerd-glasses, aviators, round-glasses, monocle, angry,
+  tears-of-joy, minion-eyes, blindfold, hello-kitty-mask, master-chief-helmet
+- mouth 1/1 live: lollipop
+- mouth pending 4/4: carrot, corn-cob, harmonica, ice-pop (fits 0.13)
+
+Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
+`.trait-work/rejected/`; verdicts.md lists it under pending REMOVE
+(`docs/trait-verdicts.md` is modified, not committed).
+
+`.trait-work/pending-orig/` backs up the original pending PNGs, because
+`ta.sh` overwrites `pending/<file>` when regenerating a pending trait.
+
+### Continued (same day, after /clear)
+
+- pending face 3/3 accepted: coin-slot-eyes (fit 0.27), x-ray-glasses take 2
+  (take 1 hid the eyes behind the spirals, in `rejected/`; take 2 uses light
+  blue spirals around a visible black eye), tape-x-eyes (eye drawn on the
+  tape crossing). All in `.trait-work/fixes/`.
+- head started in a fresh chat **`/app/8af45ab9b78d30b6`** (both refs
+  attached, 3 sends). Accepted: antlers, beanie. The live heads are the old
+  code-drawn SVG-ish art, too small; the regen prompt just asks for the
+  concept bold and hand-drawn. Head takes use `--box 180,0,840,600 --fit-top 165`.
+- **Stopped on Gemini's image quota**: the bucket-hat send returned "I can
+  create more images as soon as your limit resets" and the model picker fell
+  to Flash-Lite. bucket-hat must be resent once the limit resets (it is the
+  last user-query in the head chat, no image).
+- Fixes total: 26 in `.trait-work/fixes/`.
+- New helper `.trait-work/cap.sh <cat> <name> <n> [box opts]`: clip.ps1 ->
+  ta.sh (170s timeout; 60s was too short once) -> restore public/traits ->
+  sheet at `.trait-work/fix/f-<name>.png`.
+- In the head tab, `window.__run(key, desc)` / `__label(key,t)` are defined
+  (lost on navigation): send, wait, label copynow. A hidden tab may not render
+  the response until a screenshot forces a frame; a long poll timed out CDP.
+
+### Next, in order
+
+1. After the quota resets: head remaining 9 (bucket-hat, cat-ears, chef-hat,
+   devil-horns, flower-crown, graduation-cap, headphones, pirate-hat,
+   wizard-hat) in `/app/8af45ab9b78d30b6`.
+2. right_hand 23, left_hand 21, accessory 20 (live list), then
+   pending accessory vending-machine (chat `/app/75976b7b77f36cf4`; use the
+   tightened "one third of the penguin's height, fully inside with a white
+   margin" wording).
+3. Ship: copy `.trait-work/fixes/*` over `public/traits/` (pending ones are
+   new files), delete the REMOVE files (live head cat-ears-v2; pending mouth
+   birthday-candle, paperclip-bite, straw-drink; pending face static-tv-eyes,
+   peace-sign-stickers, newspaper-eye-holes), re-run generate-index, review a
+   sheet, commit. Do NOT push `relaunch/robinhood-chain` (auto-deploys).
+
+### Per-trait loop that works
+
+1. In the category's Gemini tab: `eval(localStorage.__h); window.__cat='<cat>';
+   __t("<description>")`, then JS-click `button[aria-label="Send message"]`.
+   `__t` fills the prompt with the category rule itself; do not wrap it in
+   `__ins`. `__h` lives only in gemini.google.com localStorage of that Chrome
+   profile (reading it out via the MCP is blocked). The older
+   `.trait-work/helpers.js` is not the same code.
+2. Wait for `[aria-label="Stop response"]` to disappear (poll in 5s steps,
+   keep each JS call under ~45s).
+3. Label the newest Copy image button `copynow`, only if the last
+   user-query's **textContent** (innerText is truncated) contains a key phrase
+   of this prompt and precedes the last model-response. `find "copynow
+   button"` for a ref, then batch screenshot + left_click(ref) + wait 3.
+4. Capture:
+   `powershell -NoProfile -ExecutionPolicy Bypass -STA -File .trait-work/clip.ps1 && timeout 60 sh .trait-work/ta.sh <cat> <name> 1 [--box ...] | tail -4; git checkout -- public/traits/; DIR=.trait-work/pending node .trait-work/sheet.mjs .trait-work/fix/f-<x>.png "<title>" <name>_<cat>`
+5. Read the sheet. Fit must be well under 4/255 (accepted: 0.12-0.27). Accept:
+   `mv .trait-work/pending/trait-<name>_<cat>.png .trait-work/fixes/`.
+   Reject: move to `.trait-work/rejected/`.
+
+### Gotchas hit this session
+
+- Too many tabs on the same chats froze CDP and triggered Google's bot check
+  (`google.com/sorry`). Keep ONE tab per chat. Never solve the CAPTCHA; the
+  owner clears it. It cleared on its own after a break.
+- After a block, a stale tab can show "Couldn't load entire chats. Try
+  reloading this page." and a send appears to vanish. Reload the tab and
+  check the last user-query before resending: the send had in fact gone
+  through server-side (carrot, and again coin-slot-eyes), and resending would
+  have duplicated it.
+- Return key does not send in fresh tabs; JS `.click()` on Send does.
+- Copy image works while the Chrome window is hidden; screenshots can time
+  out transiently, just retry.
+- The DOM is virtualized: only the last ~10 user-query/model-response nodes
+  exist.
+
+### Ninth session, 2026-09-13: head done
+
+- Gemini quota had reset. The head chat had fallen to Flash-Lite; switch the
+  mode picker back to **3.6 Flash** by JS (`[aria-label^="Open mode picker"]`,
+  then the menu item) before sending, or no image comes back.
+- **head 11/11 accepted**, all first takes, fits 0.14-0.31: bucket-hat,
+  cat-ears, chef-hat, devil-horns, flower-crown, graduation-cap, headphones
+  (`--box 120,0,900,660`), pirate-hat, wizard-hat (plus antlers, beanie).
+  Fixes total: 35.
+- The 300px sheet hides the penguin's eyes under any hat brim. Before
+  rejecting for "covers the eyes", check `.trait-work/zoomface.mjs out.png
+  <trait.png>...` (face crop at builder geometry). bucket-hat looked like it
+  hid the eyes on the sheet and did not.
+- Head chat `/app/8af45ab9b78d30b6` now has ~12 sends.
+
+### Ninth session, continued: right_hand in progress
+
+- **right_hand 14/23 accepted** in fresh chat **`/app/4a05fd9233cb942c`** (tab
+  137597728, both refs, ~15 sends): balloon-animal, blue-sword, boxing-glove,
+  broom, ciggy, devil-trident, drumstick, dynamite, glock, guitar,
+  hello-kitty-keychain, ice-cream-cone, infinity-gauntlet, monster.
+  Fixes total: 49.
+- **pistol (silver revolver) was SENT but not captured.** Check the last
+  user-query, label, copy, `cap.sh right_hand pistol 1 --box 590,146,1023,1023 --fit-right 862`.
+- Remaining right_hand: redbull, skull-dagger, sparkler, telescope,
+  tennis-racket, trophy, wand, white-monster. Near the ~20-send drift ceiling:
+  start another fresh chat after ~5 more.
+- Boxes used: items that rise above the shoulder `--box 590,0,1023,820`;
+  items hanging to the feet `--box 590,146,1023,1023`.
+- Per-tab helpers (lost on reload; re-define): `__send(desc)` (evals `__h`,
+  sets `__cat`, `__t`, clicks Send) and `__lab2(keyphrase)` (waits <=30s,
+  labels the newest Copy image `copynow`). Keep each JS call under 45s.
+  Flow per trait: batch [__send, wait 10, screenshot, __lab2, find copynow],
+  then batch [wait 2, screenshot, click ref, wait 3] in parallel with
+  `sleep 9; sh .trait-work/cap.sh ...`.
+- `cap.sh` patched: a stale clipboard ("repeat") used to make ta.sh park the
+  LIVE public file into pending; it now deletes that and exits.
+- Owner asked to parallelize with agents. The browser/clipboard/quota path is
+  single-driver only (shared clipboard, bot check); agents do off-browser work:
+  - `.trait-work/prompts-lh-acc.md` (haiku draft): descriptions for left_hand 21
+    + accessory 20. Quality is rough (ZYN described as a satchel, both gameboys
+    identical, redbull/xbox vague); fix each line against the live sheets
+    `.trait-work/fix/live-lh.png` / `live-acc.png` before sending.
+  - `.trait-work/ship-fixes.mjs` (sonnet): dry-run by default, `--apply` copies
+    fixes over public/traits (42 REPLACE, 7 NEW at time of writing), deletes
+    REMOVE entries parsed from trait-verdicts.md (all already gone), runs
+    `scripts/generate-index.mjs` + `scripts/check-copy-count.mjs`. Not yet run
+    with --apply.
+- left_hand chat setup was started in tab 137597794 (navigated to `/app`) but
+  the upload input did not appear after clicking "Upload & tools"; redo the
+  setup there. The accessory chat `/app/75976b7b77f36cf4` (tab 137597638)
+  already has both refs, use it for accessory.
+- Plan: send in right_hand / left_hand / accessory tabs concurrently, capture
+  serially (one clipboard).
+
+
+### Tenth session, 2026-09-13
+
+- Committed `00edf30` (local, not pushed): shared `rollRandomTraits` for
+  builder + random.png, empty chance 0.45, Playwright e2e suite. vitest
+  131/131, both tsc projects, eslint clean, e2e 21/21 (the home-fold test
+  flaked once on 3 thumbnail 500s under local wrangler; 3/3 on rerun).
+- `.trait-work/prompts-lh-acc.md` rewritten against the live PNGs (sonnet):
+  all 21 left_hand + 20 accessory FIX names covered. `mailbox` is a crude
+  red mailbox with flag on a post (the agent misread it as a popsicle; fixed).
+- Backup of the 49 accepted fixes: `../_trait-backup/fixes-2026-09-13`.
+- **pistol still not captured.** Copy image did not reach the clipboard,
+  then every Gemini tab's renderer froze (CDP timeouts, tabs respawning with
+  new ids). Head tab closed (done). Restart Chrome before resuming; then
+  check the right_hand chat's last user-query (silver revolver) and capture.

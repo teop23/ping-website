@@ -23,15 +23,15 @@ eyewear does not show the eyes behind it.
 
 - **head** (1): cat-ears-v2
 
-## FIX - pending, not shipped (9)
+## FIX - pending, not shipped (8)
 
-- **mouth** (5): birthday-candle, carrot, corn-cob, harmonica, ice-pop
+- **mouth** (4): carrot, corn-cob, harmonica, ice-pop
 - **face** (3): coin-slot-eyes, x-ray-glasses, tape-x-eyes
 - **accessory** (1): vending-machine
 
-## REMOVE - pending, delete the file (5)
+## REMOVE - pending, delete the file (6)
 
-- **mouth** (2): paperclip-bite, straw-drink
+- **mouth** (3): birthday-candle, paperclip-bite, straw-drink
 - **face** (3): static-tv-eyes, peace-sign-stickers, newspaper-eye-holes
 
 
