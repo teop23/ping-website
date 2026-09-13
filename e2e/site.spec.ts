@@ -28,6 +28,7 @@ test.describe('site', () => {
   for (const { path, heading } of [
     { path: '/community', heading: 'Community' },
     { path: '/docs', heading: 'API Documentation' },
+    { path: '/brand', heading: 'Brand kit' },
   ]) {
     test(`${path} renders`, async ({ page }) => {
       const problems = watchForBreakage(page);

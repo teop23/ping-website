@@ -19,7 +19,31 @@ import { OG_THEME, RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, TRAIT_ORDER, paintsUnde
  * not known until launch.
  */
 
-const CARD = { width: 1200, height: 630 };
+/**
+ * One renderer, two frames: the 1200x630 share card and the 1500x500 header
+ * listing sites ask for (Dexscreener wants 3:1, at least 600px wide). Both
+ * paint the character through the same compositing code below, so a header
+ * can never layer traits differently from the card.
+ */
+export type CardLayout = {
+  width: number;
+  height: number;
+  /** Side of the square trait frame the character is drawn in. */
+  frame: number;
+  /** Gap between the character and the right edge. */
+  rightInset: number;
+  textLeft: number;
+  scale: number;
+};
+
+export const SHARE_CARD: CardLayout = {
+  width: 1200,
+  height: 630,
+  frame: 520,
+  rightInset: 90,
+  textLeft: 90,
+  scale: 1,
+};
 
 /** Reads well at thumbnail size and shows off that traits layer. */
 const FEATURED: Record<string, string> = {
@@ -29,8 +53,9 @@ const FEATURED: Record<string, string> = {
   right_hand: 'bitcoin',
 };
 
-export const onRequestGet: APIRoute = async ({ request }) => {
+export const renderCard = async (request: Request, CARD: CardLayout): Promise<Response> => {
   try {
+    const px = (value: number) => Math.round(value * CARD.scale);
     const origin = new URL(request.url).origin;
 
     // satori cannot read woff2, which is all the site ships for the browser, so
@@ -51,9 +76,9 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
     // The character is composited exactly as the builder does it: the base is
     // drawn at 1.4x behind trait layers that fill the frame.
-    const frame = 520;
+    const frame = CARD.frame;
     const baseSize = frame * 1.4;
-    const characterLeft = CARD.width - frame - 90;
+    const characterLeft = CARD.width - frame - CARD.rightInset;
     const characterTop = (CARD.height - frame) / 2;
 
     return new ImageResponse(
@@ -74,7 +99,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               position: 'absolute',
               left: 0,
               top: 0,
-              width: 14,
+              width: px(14),
               height: CARD.height,
               backgroundColor: OG_THEME.accent,
             }}
@@ -83,32 +108,34 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           <div
             style={{
               position: 'absolute',
-              left: 90,
-              top: 190,
+              left: CARD.textLeft,
+              top: 0,
+              height: CARD.height,
               display: 'flex',
               flexDirection: 'column',
+              justifyContent: 'center',
             }}
           >
-            <div style={{ fontSize: 104, fontWeight: 800, color: OG_THEME.ink, letterSpacing: -3 }}>
+            <div style={{ fontSize: px(104), fontWeight: 800, color: OG_THEME.ink, letterSpacing: px(-3) }}>
               $PING
             </div>
-            <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75, marginTop: 14 }}>
+            <div style={{ fontSize: px(34), color: OG_THEME.ink, opacity: 0.75, marginTop: px(14) }}>
               You have 1 new PING.
             </div>
-            <div style={{ fontSize: 34, color: OG_THEME.ink, opacity: 0.75 }}>
+            <div style={{ fontSize: px(34), color: OG_THEME.ink, opacity: 0.75 }}>
               Build one. Send it.
             </div>
             <div
               style={{
-                marginTop: 34,
+                marginTop: px(34),
                 display: 'flex',
                 alignSelf: 'flex-start',
                 backgroundColor: OG_THEME.accent,
                 color: OG_THEME.accentInk,
-                fontSize: 26,
+                fontSize: px(26),
                 fontWeight: 700,
-                padding: '12px 26px',
-                borderRadius: 8,
+                padding: `${px(12)}px ${px(26)}px`,
+                borderRadius: px(8),
               }}
             >
               Robinhood Chain
@@ -158,3 +185,5 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     return new Response(`Internal error: ${err}`, { status: 500 });
   }
 };
+
+export const onRequestGet: APIRoute = ({ request }) => renderCard(request, SHARE_CARD);

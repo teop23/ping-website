@@ -22,6 +22,7 @@ const NAV_LINKS = [
   { label: 'Trait editor', to: '/create-traits' },
   { label: 'Watermark tool', to: '/watermark' },
   { label: 'API docs', to: '/docs' },
+  { label: 'Brand kit', to: '/brand' },
 ];
 
 const Footer: React.FC = () => (

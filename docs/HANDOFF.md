@@ -1655,3 +1655,18 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
 - e2e builder + site specs 14/14 (new send-a-PING test; the Copy test's
   locator needed `exact: true` because "Copy link" also matched).
 - Not pushed. Next: roadmap items 3-6 from the thirteenth-session list.
+
+### Fifteenth session, 2026-09-13 (late)
+
+- Pushed `c25ca7a` + `d2cb3f1` (notification copy, Send a PING card).
+- Roadmap item 4 done: `/brand` listing kit (`src/pages/Brand.tsx`, footer
+  link, e2e route). Token facts from launch config (contract shows "Not yet
+  deployed" until `tokenLive`), copyable description, links, logos, colors.
+- `/api/og/header.png`: 1500x500 header (Dexscreener asks 3:1, min 600px
+  wide). `banner.png.tsx` now exports `renderCard(request, layout)`; the
+  header route passes its own `CardLayout`, so compositing stays in one file.
+- `public/opengraph-ping.png` was stale (still "176 community-made traits"
+  after the copy rewrite). Resnapshotted with `node scripts/snapshot-og.mjs
+  http://localhost:8790`. Rerun it whenever banner copy changes.
+- Next: item 3 (Robin Hood trait drop, needs Gemini + Chrome at the machine),
+  item 5 (trait generation list), item 6 (feature-ideas #3, #5, #15).
