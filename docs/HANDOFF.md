@@ -1443,3 +1443,30 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   then every Gemini tab's renderer froze (CDP timeouts, tabs respawning with
   new ids). Head tab closed (done). Restart Chrome before resuming; then
   check the right_hand chat's last user-query (silver revolver) and capture.
+
+### Tenth session, continued (overnight)
+
+- Pushed 9 commits; live at buildaping.com (`/p/` share links, removals,
+  Copy link / Share, remix banner). `b87ef44` (shirt_by_x via unavatar.io)
+  is committed but NOT pushed. Open questions: `docs/QUESTIONS-FOR-OWNER.md`.
+- right_hand: pistol and redbull accepted. Fixes total 51, backed up in
+  `../_trait-backup/fixes-2026-09-13`. Remaining right_hand: skull-dagger
+  (live art is an icy frost sword with a skull crossguard; prompt written),
+  sparkler, telescope, tennis-racket, trophy, wand, white-monster.
+- **Capture route changed.** Chrome's async clipboard write hangs the
+  renderer, and Gemini's CSP blocks both fetch and form POST to a local
+  receiver (`recv.mjs`). What works: draw the response `<img>` to a canvas
+  and download it as `Gemini_Generated_Image_<name>.png` (owner approved
+  downloads for this run and allowed multiple downloads for
+  gemini.google.com). Helpers live in `localStorage.__mine` on
+  gemini.google.com: `eval(localStorage.__mine)`, then
+  `__send(cat, desc)` and `await __dl(keyphrase, name)`. Capture with
+  `sh .trait-work/cap3.sh <cat> <name> <n> [box opts]`.
+- `rtk ls` in this shell hides files: check Downloads with PowerShell
+  `Get-ChildItem`, not `ls | grep`.
+- The right_hand chat (`/app/4a05fd9233cb942c`, ~17 sends) freezes on load
+  and was closed. The accessory chat has the same refs, so any category can
+  run there (`__send` sets the category). It fell back to Flash-Lite and
+  then froze. See the questions file.
+- Agents left 9 `wrangler pages dev` / workerd processes running; killed.
+  Tell agents to stop their dev servers, and check for strays after.
