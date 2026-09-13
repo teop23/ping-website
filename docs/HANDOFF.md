@@ -1549,3 +1549,28 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   left_hand <name> <n>`; dumbbell is take 3.
 - RAM is the blocker: 0.3 GB free, node steps take >100s, Gemini tabs freeze
   and respawn. One Gemini driver at a time; two drivers froze both tabs.
+
+### Twelfth session: start here next time
+
+1. Check RAM first (`Get-CimInstance Win32_OperatingSystem`, FreePhysicalMemory).
+   Under ~2 GB free, node capture steps and Gemini tabs both stall.
+2. Capture the 24 downloads serially, one `capz.sh` at a time (never in
+   parallel: cap3 restores `public/traits` with git checkout). left_hand:
+   `LEFT=0 TOP=210 sh .trait-work/capz.sh left_hand <name> <n>` (dumbbell
+   is take 3; others take 3 if earlier takes exist in `.trait-work/gemini/`,
+   else 1). Check each zoom for left-side placement and recolouring.
+3. Gemini, ONE driver: left_hand umbrella (check the accessory chat
+   `/app/75976b7b77f36cf4` for an existing image first) and wallet. Then
+   accessory: pS5-(right), pet-apu, pet-cheese, plant-pot, rocket,
+   shopping-cart, snowman, stove, treasure-chest, washing-machine,
+   xbox-gamer (descriptions in `.trait-work/prompts-lh-acc.md`). Then the 10
+   retakes from `.trait-work/prompts-retake.md`.
+4. Helpers: `eval(localStorage.__mine)`, `__send(cat, desc)`,
+   `await __dl(keyphrase, name)`. `__dl` can exceed the 45s CDP limit; on a
+   timeout check `Stop response` before resending, or you send over a
+   running generation. To grab an earlier response image, draw
+   `model-response` `.at(-2)` img to a canvas and download it.
+5. After captures: `node .trait-work/vet-page.mjs .trait-work/fix/vet-fixes.html`,
+   republish to the vetting artifact URL, owner vets, then
+   `ship-fixes.mjs --apply`, `rm -rf public/traits-512`,
+   `node scripts/generate-index.mjs`, vitest + tsc, commit, push.
