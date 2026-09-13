@@ -83,16 +83,26 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     // compositing JSX - one renderer, one place for it to be right.
     const cardUrl = `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner`;
     let card: ArrayBuffer | null = null;
+    const failures: string[] = [];
     for (let attempt = 0; attempt < 2 && !card; attempt++) {
       const rendered = await fetch(cardUrl, { headers: { 'Cache-Control': 'no-cache' } });
-      if (!rendered.ok) continue;
+      if (!rendered.ok) {
+        failures.push(`status ${rendered.status}`);
+        continue;
+      }
       const bytes = await rendered.arrayBuffer();
       // The known failure mode is a 200 carrying nothing. Storing that would
       // make a broken card permanent, which is worse than not storing it.
       if (bytes.byteLength >= MIN_CARD_BYTES) card = bytes;
+      else failures.push(`200 with ${bytes.byteLength} bytes`);
     }
 
-    if (!card) return json({ error: 'Card render failed' }, 502);
+    if (!card) {
+      // "200 with 0 bytes" is the isolate running out of CPU mid-render; a
+      // status code is something else. Visible in `wrangler pages deployment tail`.
+      console.error(`share ${id}: card render failed (${failures.join('; ')}) for ${canonical}`);
+      return json({ error: 'Card render failed' }, 502);
+    }
 
     await store.put(id, card, canonical);
     // Only first-time characters reach this line, so the gallery gains one
