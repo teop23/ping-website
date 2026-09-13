@@ -1687,3 +1687,31 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
 - Vetting pass 2 applied (see `docs/trait-verdicts.md`): 16 shipped, 11 more
   parked, library 265. Regen queue = 40 parked + 2 pending FIX + 10 retakes,
   then the Robin Hood drop (incl. Robinhood logo, ETH, Pons traits).
+
+### Fifteenth session: start here next time
+
+State: branch `relaunch/robinhood-chain` pushed through `acedb19`, clean.
+Library 265 live. Nothing unpushed.
+
+1. **Gemini is cleared** (owner closed the frozen popup, chat on Flash). Check
+   RAM first (under ~2 GB free, tabs stall). One driver at a time. Read
+   "Thirteenth session" for the mirror trick, `s=1.0000` fit rule and
+   "close beside the penguin" for accessories.
+2. **Regen queue** (all FIX, owner-named; rebuild art, do not re-judge):
+   - 40 parked in `.trait-work/parked/` (lists in `docs/trait-verdicts.md`
+     "Parked" + "Vetting pass 2"). Old art is there for reference.
+   - 2 pending in `.trait-work/retake/`: candy-cane_mouth,
+     vending-machine_accessory (clipped the frame edge).
+   - 10 earlier retakes, prompts in `.trait-work/prompts-retake.md`.
+3. **Robin Hood drop**: feathered cap, bow and arrow, green hood, candle-chart
+   shirt, tendies, stonks suit, plus owner-requested Robinhood logo, ETH and
+   Pons traits (same spirit as the kept wif traits).
+4. **Vet, then ship**: build a page with
+   `node .trait-work/vet-page.mjs out.html <srcDir> [liveOnlyList] [key]`
+   (groups rebuilds / pending / live-only automatically), republish to
+   https://claude.ai/code/artifact/990085c0-e930-4593-a21f-85233be716fc or a
+   new artifact. Unmarked = GOOD. Ship: copy to `public/traits/`,
+   `rm -rf public/traits-512`, `node scripts/generate-index.mjs`, vitest, tsc,
+   commit, push (owner has said push).
+5. Still open: feature-ideas #3 (trait names on card), #5 (homepage
+   spotlight). `/brand` kit and `/api/og/header.png` are done.
