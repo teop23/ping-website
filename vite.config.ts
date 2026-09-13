@@ -1,4 +1,5 @@
-import { defineConfig, type Plugin } from 'vite';
+import type { Plugin } from 'vite';
+import { configDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import launchConfig from './launch.config.mjs';
@@ -33,5 +34,9 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
-  }
+  },
+  test: {
+    // e2e/ is the Playwright suite (npm run test:e2e), not vitest's.
+    exclude: [...configDefaults.exclude, 'e2e/**'],
+  },
 });

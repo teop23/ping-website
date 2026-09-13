@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
 import TextToolsModal, { TextElement } from '../components/TextToolsModal';
 import TraitSelector from '../components/TraitSelector';
+import { rollRandomTraits } from '../data/randomCharacter';
+import { traitsFromSearch } from '../data/shareSelection';
 import { initializeTraits } from '../data/traits';
 import { CategoryOption, Trait } from '../types';
 import { EMPTY_TRAIT_CHANCE } from '../utils/constants';
@@ -23,6 +25,7 @@ const Builder: React.FC = () => {
         const { traits: loadedTraits, categories: loadedCategories } = await initializeTraits();
         setTraits(loadedTraits);
         setCategories(loadedCategories);
+        setSelectedTraits(traitsFromSearch(window.location.search, loadedTraits));
       } catch (error) {
         console.error('Error loading traits:', error);
       } finally {
@@ -48,18 +51,10 @@ const Builder: React.FC = () => {
   const handleSearchChange = (query: string) => setSearchQuery(query);
 
   const handleRandomize = () => {
-    const next: Trait[] = [];
-
-    categories.forEach((category) => {
-      if (Math.random() >= EMPTY_TRAIT_CHANCE) {
-        const categoryTraits = traits.filter((trait) => trait.category === category.id);
-        if (categoryTraits.length > 0) {
-          next.push(categoryTraits[Math.floor(Math.random() * categoryTraits.length)]);
-        }
-      }
-    });
-
-    setSelectedTraits(next);
+    const pools = categories.map((category) =>
+      traits.filter((trait) => trait.category === category.id)
+    );
+    setSelectedTraits(rollRandomTraits(pools, EMPTY_TRAIT_CHANCE));
   };
 
   if (isLoading) {

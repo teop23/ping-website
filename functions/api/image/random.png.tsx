@@ -8,6 +8,7 @@ import {
   RENDER_TRAITS_DIR,
   noStore,
   pickBgColor,
+  rollRandomTraits,
   splitAtBase,
 } from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
@@ -32,23 +33,24 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const traitsIndex: Record<string, string[]> = await traitsIndexRes.json();
 
         const validCategories = Object.keys(traitsIndex);
-        const traitSelectionsByCategory: { category: string; trait: string }[] = [];
         // Output differs every call anyway, so seed the colour off the roll.
         const bgColor = pickBgColor(String(Math.random()));
 
-        // Roll each category, sometimes leaving it empty. The builder does the
-        // same (EMPTY_TRAIT_CHANCE), so this matches what a real character looks
-        // like instead of always wearing all eight slots - which also made this
-        // endpoint the heaviest possible render on every single call.
         for (const category of validCategories) {
-            const traits = traitsIndex[category];
-            if (traits.length === 0) {
+            if (traitsIndex[category].length === 0) {
                 return new Response(`No traits found for category "${category}"`, { status: 400 });
             }
-            if (Math.random() < EMPTY_TRAIT_CHANCE) continue;
-            const randomTrait = traits[Math.floor(Math.random() * traits.length)];
-            traitSelectionsByCategory.push({ category, trait: randomTrait });
         }
+
+        // Same roll as the builder's Randomize: at most one trait per category,
+        // each category empty with EMPTY_TRAIT_CHANCE. Fewer layers reads
+        // cleaner and is also a lighter render.
+        const traitSelectionsByCategory = rollRandomTraits(
+            validCategories.map((category) =>
+                traitsIndex[category].map((trait) => ({ category, trait }))
+            ),
+            EMPTY_TRAIT_CHANCE
+        );
 
         // Auras go behind the penguin, the rest in front of it, both in paint order.
         const toUrl = ({ category, trait }: { category: string; trait: string }) =>

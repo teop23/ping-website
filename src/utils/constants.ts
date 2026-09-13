@@ -57,7 +57,7 @@ export const COUNTDOWN_TARGET = launchConfig.countdownTarget;
 export const SHOW_COUNTDOWN = launchConfig.showCountdown;
 
 // --- Builder ---
-export const EMPTY_TRAIT_CHANCE = launchConfig.emptyTraitChance; // 30% chance of no trait in a category
+export const EMPTY_TRAIT_CHANCE = launchConfig.emptyTraitChance; // chance a category rolls empty on Randomize
 export const TOKEN_SYMBOL = launchConfig.tokenSymbol;
 export const TOKEN_NAME = launchConfig.tokenName;
 

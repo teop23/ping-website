@@ -80,9 +80,11 @@ const launchConfig = {
 
   // --- Builder ---
   /** Chance a given trait category renders empty, so a random character looks
-   *  like a real one. Read by both the client builder (src/components/Builder.tsx)
+   *  clean rather than wearing every slot (0.45 = about 4 of 8 slots filled;
+   *  the owner asked for 40-50%). Each category gets at most one trait.
+   *  Read by both the client builder (src/components/Builder.tsx)
    *  and the server-side random image endpoint (functions/api/image/random.png.tsx). */
-  emptyTraitChance: 0.3,
+  emptyTraitChance: 0.45,
 };
 
 export default launchConfig;

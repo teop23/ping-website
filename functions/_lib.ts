@@ -258,6 +258,23 @@ export const cardGeometry = (isBanner: boolean) => {
  *  kept in sync by hand. */
 export const EMPTY_TRAIT_CHANCE = launchConfig.emptyTraitChance;
 
+/** At most one trait per category, each category empty with `emptyChance`.
+ *  App-side authority is src/data/randomCharacter.ts; its test asserts the
+ *  two pick identically for the same rng. */
+export const rollRandomTraits = <T>(
+  pools: ReadonlyArray<ReadonlyArray<T>>,
+  emptyChance: number,
+  rng: () => number = Math.random
+): T[] => {
+  const picked: T[] = [];
+  for (const pool of pools) {
+    if (pool.length === 0) continue;
+    if (rng() < emptyChance) continue;
+    picked.push(pool[Math.min(pool.length - 1, Math.floor(rng() * pool.length))]);
+  }
+  return picked;
+};
+
 /* ------------------------------------------------------------------ *
  * Stored share cards
  *

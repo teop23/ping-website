@@ -41,3 +41,7 @@ public/ping-768.png
 
 # Trait generation scratch (Gemini raws, extractions, review sheets, pending/rejected)
 .trait-work/
+
+# Playwright
+test-results/
+playwright-report/

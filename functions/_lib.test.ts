@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { rollRandomTraits as rollInBuilder } from '../src/data/randomCharacter';
 import {
   TRAIT_ORDER,
   escapeHtml,
@@ -7,6 +8,7 @@ import {
   cardGeometry,
   noStore,
   pickBgColor,
+  rollRandomTraits,
   seedFromParams,
   canonicalTraits,
   shareId,
@@ -220,5 +222,18 @@ describe('validateTraits', () => {
 
   it('rejects a trait that is not in its category', () => {
     expect(validateTraits(new URLSearchParams('head=sombrero'), index)).toMatch(/trait/);
+  });
+});
+
+describe('rollRandomTraits', () => {
+  // The builder's Randomize and /api/image/random.png must roll the same way.
+  it('picks identically to the builder copy for the same rng', () => {
+    const lcg = (seed: number) => () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+    const pools = ['aura', 'body', 'face', 'mouth', 'head'].map((c) =>
+      Array.from({ length: 7 }, (_, i) => `${c}-${i}`)
+    );
+    for (let seed = 1; seed <= 50; seed++) {
+      expect(rollRandomTraits(pools, 0.45, lcg(seed))).toEqual(rollInBuilder(pools, 0.45, lcg(seed)));
+    }
   });
 });
