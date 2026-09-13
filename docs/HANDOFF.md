@@ -1470,3 +1470,33 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   then froze. See the questions file.
 - Agents left 9 `wrangler pages dev` / workerd processes running; killed.
   Tell agents to stop their dev servers, and check for strays after.
+
+### Eleventh session, 2026-09-13 (afternoon)
+
+- Owner: pushed `b87ef44`; closed all Gemini tabs; downloads allowed for this run.
+- **right_hand 23/23 accepted.** skull-dagger, sparkler, telescope (take 3;
+  take 1 had a ghost flipper arc, take 2 a grey body), tennis-racket, trophy,
+  wand (take 2; take 1 grey penguin), white-monster. First captures lacked
+  `--fit-right 862` and clipped past native x 878; re-extracted from the saved
+  raws with new `.trait-work/rex.sh <cat> <name> <n> [box]` (no download).
+- **left_hand 4/21**: banana (take 2), ZYN, book, donut (take 2). New chat
+  **`/app/1a088e0ade4abeb3`** (both refs, ~9 sends). After the donut, Gemini
+  put dumbbell and fishing-rod on the viewer's RIGHT twice (rejected). A
+  "POSITION IS CRITICAL ... LEFT third" dumbbell prompt may or may not have
+  been sent: check the last user-query before resending. If it keeps drifting
+  right, start another fresh chat. Remaining: dumbbell, fishing-rod, flower,
+  handbag, money-bag, paintbrush, ping-gameboy, ping-gameboy(Pink),
+  pizza-slice, popcorn, redbull, skateboard, snowball, sparkler, thor-hammer,
+  umbrella, wallet. Then accessory 20.
+- Fixes total 62. `.trait-work/capz.sh` = cap3 + builder zoom
+  (`LEFT=0 TOP=210` for left_hand). Adding "The penguin keeps its exact
+  original colors" to the description stopped the grey recolour.
+- Vetting page for the owner: `node .trait-work/vet-page.mjs out.html`
+  (live vs rebuilt, FIX/REMOVE marks, copy verdicts).
+- **Chrome renderer freezes were memory**: commit charge 71/75 GB from other
+  sessions' `next build`/tsc (dev-works). Gemini tab ids respawn; re-read
+  `tabs_context_mcp` after any "not in tab group" error.
+- Built (committed, NOT pushed): shared-character gallery (`/api/gallery`,
+  Shared tab on /community, e2e covered), `scripts/check-launch-config.mjs`
+  in prebuild (+ `--reachable`), share render-failure logging. Production KV
+  was empty, so the gallery needs no backfill.
