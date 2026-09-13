@@ -2,10 +2,11 @@ import { baseCharacterImage } from '@/data/traits';
 import { splitAtBase } from '@/data/traitOrder';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasConstants';
 import { motion } from 'framer-motion';
-import { Check, Copy, Download, Link2, Move, Share2, Shuffle } from 'lucide-react';
+import { BellRing, Check, Copy, Download, Link2, Move, Share2, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Trait } from '../types';
 import { TwitterIcon } from './Navbar';
+import SendPingModal from './SendPingModal';
 import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 
@@ -25,6 +26,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   const [isSharing, setIsSharing] = useState(false);
   const [isCopyingLink, setIsCopyingLink] = useState(false);
   const [isNativeSharing, setIsNativeSharing] = useState(false);
+  const [isSendPingOpen, setIsSendPingOpen] = useState(false);
   const [linkCopyAnnouncement, setLinkCopyAnnouncement] = useState('');
   const shareUrlCacheRef = useRef<{ key: string; url: string } | null>(null);
   const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
@@ -68,13 +70,45 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     loadTraitImages();
   }, [selectedTraits]);
 
+  /**
+   * The character alone - auras, base, traits - in a square canvas of `size`.
+   * Download, Copy and Send a PING all start from this, so the three exports
+   * cannot register traits differently.
+   */
+  const composeCharacter = useCallback(
+    (size: number): HTMLCanvasElement | null => {
+      if (!baseImage) return null;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+
+      const scale = Math.min(size / baseImage.width, size / baseImage.height) * BASE_IMAGE_SCALE_MULTIPLIER;
+      const scaledWidth = baseImage.width * scale;
+      const scaledHeight = baseImage.height * scale;
+
+      // Auras glow behind the penguin; everything else sits on it. The base art
+      // is painted between the two halves - see UNDER_BASE_CATEGORIES.
+      const { under, over } = splitAtBase(selectedTraits);
+      const paint = (trait: Trait) => {
+        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
+        if (traitImg) ctx.drawImage(traitImg, 0, 0, size, size);
+      };
+
+      under.forEach(paint);
+      ctx.drawImage(baseImage, (size - scaledWidth) / 2, (size - scaledHeight) / 2, scaledWidth, scaledHeight);
+      over.forEach(paint);
+      return canvas;
+    },
+    [baseImage, traitImages, selectedTraits]
+  );
+
   // Render canvas when images are loaded
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !baseImage) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
 
     // Set canvas size to match container
     const container = containerRef.current;
@@ -85,31 +119,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       canvas.height = size;
     }
 
-    // Clear canvas
+    const character = composeCharacter(canvas.width);
+    if (!character) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Calculate scale to fit base image
-    const scale = Math.min(canvas.width / baseImage.width, canvas.height / baseImage.height) * BASE_IMAGE_SCALE_MULTIPLIER;
-    const scaledWidth = baseImage.width * scale;
-    const scaledHeight = baseImage.height * scale;
-    const x = (canvas.width - scaledWidth) / 2;
-    const y = (canvas.height - scaledHeight) / 2;
-
-    // Auras glow behind the penguin; everything else sits on it. The base art
-    // is painted between the two halves - see UNDER_BASE_CATEGORIES.
-    const { under, over } = splitAtBase(selectedTraits);
-
-    const paint = (trait: Trait) => {
-      const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
-      // Scale trait image to match canvas dimensions
-      if (traitImg) ctx.drawImage(traitImg, 0, 0, canvas.width, canvas.height);
-    };
-
-    under.forEach(paint);
-    ctx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
-    over.forEach(paint);
-
-  }, [baseImage, traitImages, selectedTraits, textElements]);
+    ctx.drawImage(character, 0, 0);
+  }, [composeCharacter]);
 
   // Render canvas when dependencies change
   useEffect(() => {
@@ -179,67 +193,33 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     }
   }, [isDragging, dragOffset, textElements, onTextElementsChange]);
 
-  const handleDownload = async () => {
-    if (!baseImage) return;
+  /** composeCharacter at 1024 plus the draggable text labels, for Download and Copy. */
+  const composeExport = (): HTMLCanvasElement | null => {
+    const canvas = composeCharacter(1024);
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return null;
 
+    textElements.forEach((textElement) => {
+      if (!textElement.text.trim()) return;
+      ctx.font = `${textElement.fontSize * (canvas.width / 500)}px Inter, Arial, sans-serif`;
+      ctx.fillStyle = textElement.color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      // Add text shadow for better visibility
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
+      ctx.fillText(textElement.text, textElement.x * canvas.width, textElement.y * canvas.height);
+    });
+    return canvas;
+  };
+
+  const handleDownload = async () => {
     setIsLoading(true);
     try {
-      // Create a high-resolution canvas for download
-      const downloadCanvas = document.createElement('canvas');
-      const downloadCtx = downloadCanvas.getContext('2d');
-      if (!downloadCtx) return;
-
-      // Set high resolution (1024x1024)
-      downloadCanvas.width = 1024;
-      downloadCanvas.height = 1024;
-
-      // Calculate scale for base image
-      const scale = Math.min(downloadCanvas.width / baseImage.width, downloadCanvas.height / baseImage.height) * BASE_IMAGE_SCALE_MULTIPLIER;
-      const scaledWidth = baseImage.width * scale;
-      const scaledHeight = baseImage.height * scale;
-      const x = (downloadCanvas.width - scaledWidth) / 2;
-      const y = (downloadCanvas.height - scaledHeight) / 2;
-
-      // Auras glow behind the penguin; everything else sits on it. The base art
-      // is painted between the two halves - see UNDER_BASE_CATEGORIES.
-      const { under, over } = splitAtBase(selectedTraits);
-
-      const paint = (trait: Trait) => {
-        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
-        // Scale trait image to match canvas dimensions
-        if (traitImg) downloadCtx.drawImage(traitImg, 0, 0, downloadCanvas.width, downloadCanvas.height);
-      };
-
-      under.forEach(paint);
-      downloadCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
-      over.forEach(paint);
-
-      // Draw text elements on download canvas
-      textElements.forEach(textElement => {
-        if (textElement.text.trim()) {
-          downloadCtx.font = `${textElement.fontSize * (downloadCanvas.width / 500)}px Inter, Arial, sans-serif`;
-          downloadCtx.fillStyle = textElement.color;
-          downloadCtx.textAlign = 'center';
-          downloadCtx.textBaseline = 'middle';
-
-          const x = textElement.x * downloadCanvas.width;
-          const y = textElement.y * downloadCanvas.height;
-
-          // Add text shadow for better visibility
-          downloadCtx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-          downloadCtx.shadowBlur = 4;
-          downloadCtx.shadowOffsetX = 2;
-          downloadCtx.shadowOffsetY = 2;
-
-          downloadCtx.fillText(textElement.text, x, y);
-
-          // Reset shadow
-          downloadCtx.shadowColor = 'transparent';
-          downloadCtx.shadowBlur = 0;
-          downloadCtx.shadowOffsetX = 0;
-          downloadCtx.shadowOffsetY = 0;
-        }
-      });
+      const downloadCanvas = composeExport();
+      if (!downloadCanvas) return;
 
       // Convert to blob and download
       downloadCanvas.toBlob((blob) => {
@@ -260,67 +240,14 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   };
 
   const handleCopy = async () => {
-    if (!baseImage) return;
-
     setIsCopying(true);
     setIsLoading(true);
     try {
-      // Create a high-resolution canvas for copying
-      const copyCanvas = document.createElement('canvas');
-      const copyCtx = copyCanvas.getContext('2d');
-      if (!copyCtx) return;
-
-      // Set high resolution
-      copyCanvas.width = 1024;
-      copyCanvas.height = 1024;
-
-      // Calculate scale for base image
-      const scale = Math.min(copyCanvas.width / baseImage.width, copyCanvas.height / baseImage.height) * BASE_IMAGE_SCALE_MULTIPLIER;
-      const scaledWidth = baseImage.width * scale;
-      const scaledHeight = baseImage.height * scale;
-      const x = (copyCanvas.width - scaledWidth) / 2;
-      const y = (copyCanvas.height - scaledHeight) / 2;
-
-      // Auras glow behind the penguin; everything else sits on it. The base art
-      // is painted between the two halves - see UNDER_BASE_CATEGORIES.
-      const { under, over } = splitAtBase(selectedTraits);
-
-      const paint = (trait: Trait) => {
-        const traitImg = traitImages.get(`${trait.name}-${trait.category}`);
-        // Scale trait image to match canvas dimensions
-        if (traitImg) copyCtx.drawImage(traitImg, 0, 0, copyCanvas.width, copyCanvas.height);
-      };
-
-      under.forEach(paint);
-      copyCtx.drawImage(baseImage, x, y, scaledWidth, scaledHeight);
-      over.forEach(paint);
-
-      // Draw text elements on copy canvas
-      textElements.forEach(textElement => {
-        if (textElement.text.trim()) {
-          copyCtx.font = `${textElement.fontSize * (copyCanvas.width / 500)}px Inter, Arial, sans-serif`;
-          copyCtx.fillStyle = textElement.color;
-          copyCtx.textAlign = 'center';
-          copyCtx.textBaseline = 'middle';
-
-          const x = textElement.x * copyCanvas.width;
-          const y = textElement.y * copyCanvas.height;
-
-          // Add text shadow for better visibility
-          copyCtx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-          copyCtx.shadowBlur = 4;
-          copyCtx.shadowOffsetX = 2;
-          copyCtx.shadowOffsetY = 2;
-
-          copyCtx.fillText(textElement.text, x, y);
-
-          // Reset shadow
-          copyCtx.shadowColor = 'transparent';
-          copyCtx.shadowBlur = 0;
-          copyCtx.shadowOffsetX = 0;
-          copyCtx.shadowOffsetY = 0;
-        }
-      });
+      const copyCanvas = composeExport();
+      if (!copyCanvas) {
+        setIsCopying(false);
+        return;
+      }
 
       // Convert to blob and copy to clipboard
       copyCanvas.toBlob(async (blob) => {
@@ -546,6 +473,15 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         <div className="flex flex-wrap justify-center gap-1 sm:gap-2 p-1 sm:p-2 flex-shrink-0">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
+              icon={<BellRing size={16} />}
+              label="Send a PING"
+              onClick={() => setIsSendPingOpen(true)}
+              variant="secondary"
+              disabled={isLoading || !baseImage}
+            />
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <ActionButton
               icon={<Download size={16} />}
               label="Download"
               onClick={handleDownload}
@@ -607,6 +543,12 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         </div>
         <span aria-live="polite" className="sr-only">{linkCopyAnnouncement}</span>
       </div>
+
+      <SendPingModal
+        isOpen={isSendPingOpen}
+        onClose={() => setIsSendPingOpen(false)}
+        composeCharacter={composeCharacter}
+      />
     </>
   );
 };

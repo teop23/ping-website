@@ -125,6 +125,36 @@ test.describe('builder', () => {
     expect(pngSize(bytes)).toEqual({ width: 1024, height: 1024 });
   });
 
+  test('send a PING exports a 1024 card and a 512 sticker', async ({ page }) => {
+    const { picker, preview } = await openBuilder(page);
+    await traitCard(picker, 'Crown').click();
+    await expect.poll(() => readSelectedCount(page)).toBe(1);
+
+    await preview.getByRole('button', { name: 'Send a PING' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByRole('button', { name: 'Order filled.' }).click();
+    await expect(dialog.getByRole('img', { name: 'PING notification card: Order filled.' })).toBeVisible();
+
+    const [card] = await Promise.all([
+      page.waitForEvent('download'),
+      dialog.getByRole('button', { name: 'Download image' }).click(),
+    ]);
+    expect(card.suggestedFilename()).toBe('ping-order-filled.png');
+    const cardBytes = readFileSync((await card.path())!);
+    expect(isPng(cardBytes)).toBe(true);
+    expect(pngSize(cardBytes)).toEqual({ width: 1024, height: 1024 });
+
+    // Telegram's static sticker spec: PNG, 512px side, under 512KB.
+    const [sticker] = await Promise.all([
+      page.waitForEvent('download'),
+      dialog.getByRole('button', { name: 'Telegram sticker' }).click(),
+    ]);
+    const stickerBytes = readFileSync((await sticker.path())!);
+    expect(isPng(stickerBytes)).toBe(true);
+    expect(pngSize(stickerBytes)).toEqual({ width: 512, height: 512 });
+    expect(stickerBytes.length).toBeLessThan(512 * 1024);
+  });
+
   test('copy puts a PNG on the clipboard', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     const problems = watchForBreakage(page);
@@ -134,7 +164,7 @@ test.describe('builder', () => {
 
     // "Copied!" shows as soon as the click lands, before the write has even
     // started, so the button text proves nothing. Read the clipboard back.
-    await preview.getByRole('button', { name: 'Copy' }).click();
+    await preview.getByRole('button', { name: 'Copy', exact: true }).click();
     await expect
       .poll(
         () =>

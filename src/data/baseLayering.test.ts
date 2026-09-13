@@ -67,7 +67,8 @@ const SITES: { file: string; under: RegExp; base: RegExp; over: RegExp; sites: n
     under: /under\.forEach\(paint\)/g,
     base: /drawImage\(baseImage,/g,
     over: /over\.forEach\(paint\)/g,
-    sites: 3,
+    // composeCharacter: the live canvas, Download, Copy and Send a PING all use it.
+    sites: 1,
   },
   {
     file: 'functions/api/image/custom.png.tsx',

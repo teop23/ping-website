@@ -1638,3 +1638,20 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   5. Remaining trait generation list: see "Thirteenth session" above.
   6. Still open from `docs/feature-ideas.md`: #3 trait names on the card,
      #5 homepage spotlight, #15 trademark traits ruling.
+
+### Fourteenth session, 2026-09-13 (late)
+
+- `c25ca7a`: notification-voice copy. Hero headline "Send a PING" (owner's
+  pick over "Build a PING"); meta/OG/X share text "You have 1 new PING.",
+  shared-link descriptions "Send one back at <host>".
+- Send a PING dialog (builder preview, secondary button; Download stays the
+  primary, plain character exports unchanged, owner wants this optional):
+  `src/utils/pingCard.ts` draws a flat notification banner (lime favicon
+  tile, "PING  now", message) over the character. Presets + custom text
+  (40 chars, font shrinks to 72% before ellipsizing), "No banner" option.
+  Exports: 1024 PNG on cream, 512 transparent Telegram sticker, copy.
+  `composeCharacter` in CharacterPreview is now the single compositing site
+  for the live canvas, Download, Copy and the card (baseLayering test: 1).
+- e2e builder + site specs 14/14 (new send-a-PING test; the Copy test's
+  locator needed `exact: true` because "Copy link" also matched).
+- Not pushed. Next: roadmap items 3-6 from the thirteenth-session list.
