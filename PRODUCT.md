@@ -28,6 +28,19 @@ Three jobs, none of which can be sacrificed for the others:
 
 Success is a Pons trader landing from a listing, spending thirty seconds, and concluding this one is not a rug.
 
+## Narrative
+
+**PING is the notification.** The sound every trader lives for: the price
+alert, the order filled, the pump. PING is that sound, with a penguin attached.
+
+- Owner-chosen 2026-09-13, over "cold storage", "face of the chain" and "the
+  outsider" angles.
+- It rides on the brand voice: copy reads like system notifications, stated
+  flatly. "Order filled." "You have 1 new PING." No hype words.
+- The builder is how holders send a PING: every shared character, reaction
+  image or sticker is a notification out into the timeline.
+- Pairing is USDG or ETH. No stock-token pairing; no stock matches the story.
+
 ## Brand Personality
 
 **Deadpan, precise, confident.**
