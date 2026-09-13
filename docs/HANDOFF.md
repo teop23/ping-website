@@ -1519,3 +1519,33 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
 - Next: left_hand 17 remaining (see above), accessory 20, then ship fixes with
   `.trait-work/ship-fixes.mjs --apply` after owner vetting. Before driving
   Chrome, check memory (commit charge was 71/75 GB from other sessions).
+
+### Twelfth session, 2026-09-13 (evening)
+
+- Owner verdicts on the vetting page applied and pushed (`1d6c052`, deploy
+  verified: 289 traits). 46 rebuilds shipped. REMOVE: beanie, chef-hat,
+  lollipop (live), coin-slot-eyes, tape-x-eyes, x-ray-glasses (pending).
+  Retake 10 (rebuilds in `.trait-work/retake/`): wizard-hat, aviators,
+  blindfold, monocle, tears-of-joy, carrot, corn-cob, harmonica, ice-pop,
+  skull-dagger. Improved prompts: `.trait-work/prompts-retake.md`.
+- `public/traits-512` must be deleted and regenerated after ship-fixes:
+  generate-index skips by mtime and copyFile keeps the old mtime.
+- **Generated, NOT captured** (all in `~/Downloads` as
+  `Gemini_Generated_Image_<name>.png`):
+  left_hand dumbbell, fishing-rod, flower, handbag, money-bag, paintbrush,
+  ping-gameboy, ping-gameboy(Pink), pizza-slice, popcorn, redbull,
+  skateboard, snowball, sparkler, thor-hammer (umbrella sent, not
+  downloaded; wallet not sent). accessory arcade-machine, birdhouse,
+  boombox, campfire, fire-hydrant, hello-kitty-pet, mailbox, nuke, pC-gamer
+  (pC-gamer may be incomplete). Haiku pre-screen called fishing-rod,
+  paintbrush, both gameboys "right side" and the pink gameboy recoloured;
+  unreliable, check at capture.
+- Left-side prompt suffix that worked: "It is gripped at the tip of the
+  flipper on the viewer's LEFT (the left edge of the picture, the opposite
+  side from the wand and the cans in earlier images), outside the body. The
+  penguin keeps its exact original colors."
+- `take.sh` now prefers `Gemini_Generated_Image_<name>.png` and only
+  consumes that file. Capture with `LEFT=0 TOP=210 sh .trait-work/capz.sh
+  left_hand <name> <n>`; dumbbell is take 3.
+- RAM is the blocker: 0.3 GB free, node steps take >100s, Gemini tabs freeze
+  and respawn. One Gemini driver at a time; two drivers froze both tabs.
