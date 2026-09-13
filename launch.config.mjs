@@ -61,7 +61,7 @@ const launchConfig = {
   },
   launchpad: {
     name: "Pons",
-    url: "https://www.ponslaunchpad.com/",
+    url: "https://www.ponsfamily.com/launchpad",
   },
   /** Pons mints a fixed 1B supply straight to the bonding curve. No creator allocation. */
   tokenSupply: 1_000_000_000,
