@@ -35,8 +35,9 @@ export const EXPLORER_LINK = CONTRACT_ADDRESS
   ? `${EXPLORER_BASE}/token/${CONTRACT_ADDRESS}`
   : EXPLORER_BASE;
 
+/** Pons token pages live at /launchpad/<address>, checked against a real listing. */
 export const BUY_LINK = CONTRACT_ADDRESS
-  ? `${LAUNCHPAD_URL}?token=${CONTRACT_ADDRESS}`
+  ? `${LAUNCHPAD_URL}/${CONTRACT_ADDRESS}`
   : LAUNCHPAD_URL;
 
 /** TODO(relaunch): repoint once the new pair exists. */

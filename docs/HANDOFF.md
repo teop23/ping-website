@@ -1513,7 +1513,7 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   unlisted = GOOD. Apply: move FIX files out of `.trait-work/fixes/` for a
   retake; REMOVE per trait-verdicts rules.
 - Launchpad URL is **https://www.ponsfamily.com/launchpad** (owner). BUY_LINK
-  is `${LAUNCHPAD_URL}?token=<address>`, format unverified against Pons.
+  is `${LAUNCHPAD_URL}/<address>` (owner confirmed from a real Pons listing).
 - Unpushed commits (push auto-deploys; ask owner): gallery, launch-config
   check, share failure logging, launchpad URL, handoff notes.
 - Next: left_hand 17 remaining (see above), accessory 20, then ship fixes with
