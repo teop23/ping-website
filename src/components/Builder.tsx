@@ -1,6 +1,7 @@
 import { Type } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
+import RemixBanner from '../components/RemixBanner';
 import TextToolsModal, { TextElement } from '../components/TextToolsModal';
 import TraitSelector from '../components/TraitSelector';
 import { rollRandomTraits } from '../data/randomCharacter';
@@ -17,6 +18,7 @@ const Builder: React.FC = () => {
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTextModalOpen, setIsTextModalOpen] = useState(false);
+  const [showRemixBanner, setShowRemixBanner] = useState(false);
 
   useEffect(() => {
     const loadTraits = async () => {
@@ -25,7 +27,10 @@ const Builder: React.FC = () => {
         const { traits: loadedTraits, categories: loadedCategories } = await initializeTraits();
         setTraits(loadedTraits);
         setCategories(loadedCategories);
-        setSelectedTraits(traitsFromSearch(window.location.search, loadedTraits));
+        const shared = traitsFromSearch(window.location.search, loadedTraits);
+        setSelectedTraits(shared);
+        // Only a share link's redirect preloads traits; a stray ?utm_source must not.
+        setShowRemixBanner(shared.length > 0);
       } catch (error) {
         console.error('Error loading traits:', error);
       } finally {
@@ -38,15 +43,20 @@ const Builder: React.FC = () => {
 
   const handleTraitSelect = (trait: Trait) => {
     setSelectedTraits((prev) => [...prev, trait]);
+    setShowRemixBanner(false);
   };
 
   const handleTraitRemove = (trait: Trait) => {
     setSelectedTraits((prev) =>
       prev.filter((selected) => !(selected.id === trait.id && selected.category === trait.category))
     );
+    setShowRemixBanner(false);
   };
 
-  const handleClearAll = () => setSelectedTraits([]);
+  const handleClearAll = () => {
+    setSelectedTraits([]);
+    setShowRemixBanner(false);
+  };
   const handleTextElementsChange = (elements: TextElement[]) => setTextElements(elements);
   const handleSearchChange = (query: string) => setSearchQuery(query);
 
@@ -55,6 +65,7 @@ const Builder: React.FC = () => {
       traits.filter((trait) => trait.category === category.id)
     );
     setSelectedTraits(rollRandomTraits(pools, EMPTY_TRAIT_CHANCE));
+    setShowRemixBanner(false);
   };
 
   if (isLoading) {
@@ -89,6 +100,8 @@ const Builder: React.FC = () => {
           className="flex h-1/2 min-h-0 w-full flex-col gap-3 pb-5 lg:h-full lg:w-1/2 lg:pb-0 lg:pr-5"
         >
           <h2 className="shrink-0 font-display text-meta font-semibold text-ink">Your character</h2>
+
+          {showRemixBanner && <RemixBanner onDismiss={() => setShowRemixBanner(false)} />}
 
           <div className="min-h-0 flex-1">
             <CharacterPreview
