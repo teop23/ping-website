@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, stat, writeFile } from 'fs/promises';
+import { mkdir, readdir, readFile, stat, unlink, writeFile } from 'fs/promises';
 import path from 'path';
 import { decodePng, encodeRgba, readPngSize, resizeRgba } from './lib/png.mjs';
 
@@ -209,6 +209,17 @@ for (const trait of traits) {
   await downscale(source, derived, RENDER_PX);
   rebuilt++;
 }
+
+// A trait deleted or renamed in public/traits would otherwise keep being
+// served from here by `wrangler pages dev` (production builds start clean).
+const shipped = new Set(traits.map((t) => path.basename(t.file)));
+let pruned = 0;
+for (const name of await readdir(RENDER_DIR)) {
+  if (shipped.has(name)) continue;
+  await unlink(path.join(RENDER_DIR, name));
+  pruned++;
+}
+if (pruned > 0) console.log(`Pruned ${pruned} stale file(s) from public/traits-${RENDER_PX}.`);
 
 if (await isStale(BASE_SRC, BASE_OUT)) {
   await downscale(BASE_SRC, BASE_OUT, BASE_RENDER_PX);
