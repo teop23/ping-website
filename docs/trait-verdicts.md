@@ -47,3 +47,22 @@ x-ray-glasses (pending) were ruled REMOVE in the same pass, listed above.
 - **right_hand** (1): skull-dagger
 
 _Every name resolved to a real file._
+
+## Parked - pulled from prod, 2026-09-13
+
+Owner: "nothing but good traits in prod". The 29 FIX traits whose rebuild
+had not shipped were moved out of `public/traits/` to
+`.trait-work/parked/` (gitignored, local only). A trait goes back only as
+an accepted rebuild; the parked file is the old art, kept for reference.
+
+- **face** (4): aviators, blindfold, monocle, tears-of-joy
+- **head** (1): wizard-hat
+- **right_hand** (1): skull-dagger
+- **left_hand** (6): handbag, skateboard, snowball, sparkler, thor-hammer, umbrella
+- **accessory** (17): arcade-machine, boombox, campfire, fire-hydrant, nuke, pC-gamer, pS5-(right), pet-apu, pet-cheese, plant-pot, rocket, shopping-cart, snowman, stove, treasure-chest, washing-machine, xbox-gamer
+
+## Owner rulings, 2026-09-13
+
+- master-chief-helmet, infinity-gauntlet, redbull (both hands): keep as is.
+- wif-tattoo, reimu-x-wif-tee: keep. Owner wants the same treatment for
+  Robinhood Chain: Robinhood logo, ETH, Pons traits (add to the Robin Hood drop).

@@ -1670,3 +1670,17 @@ Owner ruled **birthday-candle REMOVE** mid-session. Both copies are in
   http://localhost:8790`. Rerun it whenever banner copy changes.
 - Next: item 3 (Robin Hood trait drop, needs Gemini + Chrome at the machine),
   item 5 (trait generation list), item 6 (feature-ideas #3, #5, #15).
+- Buy link is `/launchpad/<address>` (owner showed a real Pons URL). Pushed.
+- Owner said bandana-mask "escaped": it was never on a FIX list. 24 live
+  code-drawn traits were never vetted (list in the vetting page below).
+- **29 FIX traits parked** out of prod (see `docs/trait-verdicts.md`
+  "Parked"). Library is 260. A parked trait returns only as an accepted
+  rebuild: put the new art in `public/traits/`, `rm -rf public/traits-512`,
+  `node scripts/generate-index.mjs`.
+- `.trait-work/vet-page.mjs` now takes `out.html [srcDir] [liveOnlyList]
+  [storageKey]`. Pending vetting page = `.trait-work/pending` (18) + the 24
+  code-drawn live traits.
+- Rulings: 4 trademark traits keep; wif traits keep; owner wants Robinhood
+  logo / ETH / Pons traits in the Robin Hood drop (PRODUCT.md bans RH marks on
+  the site surface itself, not in traits; owner call).
+- Gemini: owner cleared the frozen tab, OK to drive Chrome.

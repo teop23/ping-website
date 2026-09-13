@@ -78,8 +78,8 @@ const Docs: React.FC = () => {
   "aura": ["blue-aura", "fire-aura", "fart-aura"],
   "mouth": ["cigar", "joint", "beard"],
   "right_hand": ["wand", "pistol", "bitcoin"],
-  "left_hand": ["beer", "mop", "handbag"],
-  "accessory": ["nuke", "lily", "pet-apu"]
+  "left_hand": ["beer", "mop", "wallet"],
+  "accessory": ["lily", "mailbox", "birdhouse"]
 }`}
               onCopy={() => copyToClipboard(`${ORIGIN}/traits-index.json`)}
             />
