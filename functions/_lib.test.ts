@@ -6,7 +6,6 @@ import {
   hashString,
   CARD,
   cardGeometry,
-  captionFromTraits,
   noStore,
   pickBgColor,
   rollRandomTraits,
@@ -18,7 +17,9 @@ import {
   titleFromTraits,
   toTitleCase,
   isValidXHandle,
-  isValidPingMessage,
+  cleanPingMessage,
+  CARD_RENDER_VERSION,
+  MAX_MESSAGE_LENGTH,
   PING_MESSAGES,
   unavatarUrl,
   addToGallery,
@@ -114,17 +115,6 @@ describe('titleFromTraits', () => {
   it('summarises once past three traits', () => {
     const params = new URLSearchParams('aura=fire-aura&body=dress&face=monocle&head=crown');
     expect(titleFromTraits(params)).toContain('+1 more');
-  });
-});
-
-describe('captionFromTraits', () => {
-  it('names up to three traits in paint order and counts the rest', () => {
-    const params = new URLSearchParams('head=crown&face=monocle&aura=fire-aura&body=dress&type=banner');
-    expect(captionFromTraits(params)).toEqual({ names: ['Fire Aura', 'Dress', 'Monocle'], more: 1 });
-  });
-
-  it('is empty for a bare PING', () => {
-    expect(captionFromTraits(new URLSearchParams('type=banner'))).toEqual({ names: [], more: 0 });
   });
 });
 
@@ -242,19 +232,15 @@ describe('shareId', () => {
 });
 
 describe('shareInput', () => {
-  it('is exactly the canonical string when there is no message - unchanged from before this feature existed', async () => {
+  it('carries the render version, so a redesign never reuses a card stored with the old picture', async () => {
     const canonical = 'aura=blue-aura&head=crown';
-    expect(shareInput(canonical)).toBe(canonical);
-    expect(shareInput(canonical, undefined)).toBe(canonical);
-    // Which means a message-less id is identical to what shipped before messages did.
-    expect(await shareId(shareInput(canonical))).toBe(await shareId(canonical));
+    expect(shareInput(canonical)).toBe(`v${CARD_RENDER_VERSION}|${canonical}`);
+    expect(await shareId(shareInput(canonical))).not.toBe(await shareId(canonical));
   });
 
   it('appends the message, so the same character with a message is a different id', async () => {
     const canonical = 'head=crown';
-    const withMessage = shareInput(canonical, 'gm.');
-    expect(withMessage).not.toBe(canonical);
-    expect(await shareId(withMessage)).not.toBe(await shareId(canonical));
+    expect(await shareId(shareInput(canonical, 'gm.'))).not.toBe(await shareId(shareInput(canonical)));
   });
 
   it('is idempotent for the same character and message', async () => {
@@ -268,15 +254,33 @@ describe('shareInput', () => {
 // functions/tsconfig.json's "esnext"-only lib does not carry, and importing
 // it here would break `tsc -p functions --noEmit`.
 
-describe('isValidPingMessage', () => {
-  it('accepts every preset', () => {
-    for (const message of PING_MESSAGES) expect(isValidPingMessage(message)).toBe(true);
+describe('cleanPingMessage', () => {
+  it('accepts every preset unchanged', () => {
+    for (const message of PING_MESSAGES) expect(cleanPingMessage(message)).toBe(message);
   });
 
-  it('rejects free text, even a close variant of a preset', () => {
-    expect(isValidPingMessage('gm')).toBe(false);
-    expect(isValidPingMessage('')).toBe(false);
-    expect(isValidPingMessage('Your wallet is compromised')).toBe(false);
+  it('accepts free text and tidies its whitespace', () => {
+    expect(cleanPingMessage('  wen   lambo ')).toBe('wen lambo');
+    expect(cleanPingMessage('Déjà vu, 100x!')).toBe('Déjà vu, 100x!');
+  });
+
+  it('rejects empty and over-long text', () => {
+    expect(cleanPingMessage('   ')).toBeNull();
+    expect(cleanPingMessage('a'.repeat(MAX_MESSAGE_LENGTH))).toBe('a'.repeat(MAX_MESSAGE_LENGTH));
+    expect(cleanPingMessage('a'.repeat(MAX_MESSAGE_LENGTH + 1))).toBeNull();
+  });
+
+  it('rejects characters the card font cannot draw', () => {
+    expect(cleanPingMessage('gm 🚀')).toBeNull();
+    expect(cleanPingMessage('привет')).toBeNull();
+    expect(cleanPingMessage('gm​')).toBeNull();
+  });
+
+  it('rejects links and handles, including dodged spellings', () => {
+    for (const text of ['claim at https://x', 'www.scam', 'free-eth.xyz', 'visit ping . com', 'site[.]io', 'DM @support', 't.me/scam']) {
+      expect(cleanPingMessage(text)).toBeNull();
+    }
+    expect(cleanPingMessage('Order filled. gm.')).toBe('Order filled. gm.');
   });
 });
 

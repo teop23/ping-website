@@ -3,7 +3,7 @@ import {
   PING_MESSAGES,
   addToGallery,
   canonicalTraits,
-  isValidPingMessage,
+  cleanPingMessage,
   selectCardStore,
   shareId,
   shareInput,
@@ -85,16 +85,16 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
       if (typeof trait === 'string' && trait) params.set(category, trait);
     }
 
-    // A PING's message: presets only (PING_MESSAGES, mirrored from
-    // src/utils/pingCard.ts). Anything else - free text, a typo, an empty
-    // string sent explicitly - is a 400, not a silently dropped field.
+    // A PING's message: a suggestion chip or the sender's own words, cleaned
+    // by cleanPingMessage (length, font-drawable characters, no links or
+    // handles). Text that fails those rules is a 400, not a silently dropped
+    // field, so the dialog can say why.
     const rawMessage = typeof body.message === 'string' ? body.message : undefined;
-    if (rawMessage !== undefined && !isValidPingMessage(rawMessage)) {
-      return json({ error: 'Invalid message' }, 400);
-    }
-    // The default preset is what a message-less card already says, so it
+    const cleaned = rawMessage === undefined ? undefined : cleanPingMessage(rawMessage);
+    if (cleaned === null) return json({ error: 'Invalid message' }, 400);
+    // The default message is what a message-less card already says, so it
     // shares the message-less id rather than storing a second identical card.
-    const message = rawMessage && rawMessage !== PING_MESSAGES[0] ? rawMessage : undefined;
+    const message = cleaned && cleaned !== PING_MESSAGES[0] ? cleaned : undefined;
 
     const index: Record<string, string[]> = await fetch(new URL('/traits-index.json', request.url).href)
       .then((response) => response.json());
@@ -103,8 +103,7 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     if (invalid) return json({ error: invalid }, 400);
 
     const canonical = canonicalTraits(params);
-    // Message-less hashes exactly `canonical`, unchanged from before this
-    // feature existed - see shareInput in _lib.ts.
+    // Versioned by CARD_RENDER_VERSION - see shareInput in _lib.ts.
     const id = await shareId(shareInput(canonical, message));
 
     const existing = await store.get(id);
@@ -112,7 +111,7 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
 
     // Render through the existing endpoint rather than a second copy of the
     // compositing JSX - one renderer, one place for it to be right. Every
-    // card is the captioned banner; a message fills its notification pill.
+    // card is the captioned banner: the character beside a phone showing the message.
     const cardUrl = `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner&caption=1${
       message ? `&message=${encodeURIComponent(message)}` : ''
     }`;

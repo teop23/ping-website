@@ -8,7 +8,7 @@
  * static sticker spec (one side exactly 512, PNG, well under 512KB).
  */
 
-/** Deadpan, no price claims: a card that says "+40%" would be a fake number. */
+/** Suggestions, deadpan, no price claims. The first is what a card without a message says. */
 export const PING_MESSAGES = [
   'You have 1 new PING.',
   'Order filled.',
@@ -32,6 +32,25 @@ const HAIRLINE = '#DDD9CC';
 const INK = '#111C16';
 const INK_FAINT = '#5E6B63';
 const FONT = 'Archivo, Arial, sans-serif';
+
+/**
+ * Printable ASCII plus accented Latin letters: what Archivo, the card font,
+ * can draw. Mirrors functions/_lib.ts; pingCard.test.ts asserts they agree.
+ */
+export const MESSAGE_CHARS = /^[\x20-\x7EÀ-ɏ]+$/;
+
+/** Links and handles never go on a card. Mirrors functions/_lib.ts. */
+export const LINK_LIKE = /https?:|www\.|t\.me|@\w|\b[a-z0-9-]+\s*(\.|\[\.\]|\(\.\))\s*(com|io|xyz|net|org|app|gg|co|me|finance|link|site|fun|lol|to|ly|so|ai)\b/i;
+
+/** Why a typed message cannot be sent, or null when it can. Same rules as cleanPingMessage on the server. */
+export const messageProblem = (raw: string): string | null => {
+  const text = raw.replace(/\s+/g, ' ').trim();
+  if (!text) return 'Write a message first.';
+  if (text.length > MAX_MESSAGE_LENGTH) return `Keep it under ${MAX_MESSAGE_LENGTH + 1} characters.`;
+  if (!MESSAGE_CHARS.test(text)) return 'Letters, numbers and punctuation only. No emoji.';
+  if (LINK_LIKE.test(text)) return 'No links or @handles.';
+  return null;
+};
 
 /** Collapses whitespace and caps length, so the banner can never overflow its row count. */
 export const normalizeMessage = (text: string): string =>

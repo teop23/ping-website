@@ -143,14 +143,8 @@ const traitNames = (params: URLSearchParams): string[] =>
     .filter((value): value is string => Boolean(value))
     .map(toTitleCase);
 
-/** How many trait names a caption or title spells out before summarising. */
+/** How many trait names a title spells out before summarising. */
 export const NAMED_TRAITS = 3;
-
-/** The names a share card prints: the first few in paint order, plus how many were left out. */
-export const captionFromTraits = (params: URLSearchParams): { names: string[]; more: number } => {
-  const names = traitNames(params);
-  return { names: names.slice(0, NAMED_TRAITS), more: Math.max(0, names.length - NAMED_TRAITS) };
-};
 
 export const titleFromTraits = (params: URLSearchParams): string => {
   const names = traitNames(params);
@@ -580,15 +574,11 @@ export const canonicalTraits = (params: URLSearchParams): string =>
     .join('&');
 
 /**
- * Presets a shared PING's message may be. Mirrors the array of the same name
- * in src/utils/pingCard.ts - two authorities because the client canvas and
- * this Cloudflare Functions bundle cannot share a module cheaply, the same
- * situation TRAIT_ORDER above is in. _lib.test.ts asserts the two agree.
- *
- * Presets-only, no free text: a custom string rendered into an image hosted
- * on our domain and pushed into X's preview cache is an abuse surface
- * (slurs, phishing-style text wearing our brand) that a fixed, reviewed list
- * does not have. See docs/proposals/send-a-ping-link.md.
+ * Suggested messages, shown as chips. Mirrors the array of the same name in
+ * src/utils/pingCard.ts - two authorities because the client canvas and this
+ * Cloudflare Functions bundle cannot share a module cheaply, the same
+ * situation TRAIT_ORDER above is in. pingCard.test.ts asserts the two agree.
+ * The first one is what a card without a message says.
  */
 export const PING_MESSAGES = [
   'You have 1 new PING.',
@@ -601,19 +591,48 @@ export const PING_MESSAGES = [
   'Liquidated.',
 ] as const;
 
-export const isValidPingMessage = (message: string): boolean =>
-  (PING_MESSAGES as readonly string[]).includes(message);
+/** Same cap as the client's input (MAX_MESSAGE_LENGTH in src/utils/pingCard.ts). */
+export const MAX_MESSAGE_LENGTH = 40;
 
 /**
- * The string hashed into a share id. A message-less PING hashes exactly
- * `canonical` - unchanged from before this feature existed, so every /p link
- * and card stored before messages shipped keeps resolving. A message is
- * appended only when present, so the same character with a different message
- * is a different id (a different stored card), while the same character with
- * no message is untouched. See _lib.test.ts.
+ * Printable ASCII plus Latin letters with accents: what the card font
+ * (Archivo) can draw. Emoji or other scripts would render as empty boxes.
+ */
+const MESSAGE_CHARS = /^[\x20-\x7EÀ-ɏ]+$/;
+
+/**
+ * Anything that reads as a link or a handle. A card is an image on our domain
+ * pushed into X's preview cache, so "claim at <site>" or "DM @someone" wearing
+ * our brand is the abuse to refuse; plain words are the owner's call to allow.
+ */
+const LINK_LIKE = /https?:|www\.|t\.me|@\w|\b[a-z0-9-]+\s*(\.|\[\.\]|\(\.\))\s*(com|io|xyz|net|org|app|gg|co|me|finance|link|site|fun|lol|to|ly|so|ai)\b/i;
+
+/**
+ * A shared PING's message, cleaned: whitespace collapsed, trimmed. Null when
+ * it is empty, longer than MAX_MESSAGE_LENGTH, uses characters the font cannot
+ * draw, or looks like a link or handle.
+ */
+export const cleanPingMessage = (raw: string): string | null => {
+  const text = raw.replace(/\s+/g, ' ').trim();
+  if (!text || text.length > MAX_MESSAGE_LENGTH) return null;
+  if (!MESSAGE_CHARS.test(text) || LINK_LIKE.test(text)) return null;
+  return text;
+};
+
+/**
+ * Bumped when the stored card's picture changes, so a character shared after
+ * a redesign gets a fresh render instead of the stored old one. Links made
+ * before a bump keep resolving to the card they were made with.
+ */
+export const CARD_RENDER_VERSION = 2;
+
+/**
+ * The string hashed into a share id: the render version, the traits, and the
+ * message when there is one. The same character with a different message is
+ * a different id (a different stored card). See _lib.test.ts.
  */
 export const shareInput = (canonical: string, message?: string): string =>
-  message ? `${canonical}&msg=${message}` : canonical;
+  `v${CARD_RENDER_VERSION}|${canonical}${message ? `&msg=${message}` : ''}`;
 
 /**
  * Content-addressed id. SHA-256 rather than the FNV hash used for background

@@ -1,6 +1,37 @@
 import { readFileSync } from 'fs';
 import { describe, expect, it } from 'vitest';
-import { MAX_MESSAGE_LENGTH, PING_MESSAGES, cardLayout, fitLine, normalizeMessage } from './pingCard';
+import {
+  LINK_LIKE,
+  MAX_MESSAGE_LENGTH,
+  MESSAGE_CHARS,
+  PING_MESSAGES,
+  cardLayout,
+  fitLine,
+  messageProblem,
+  normalizeMessage,
+} from './pingCard';
+
+describe('messageProblem', () => {
+  it('passes presets and plain text', () => {
+    for (const message of [...PING_MESSAGES, 'wen lambo', 'Déjà vu, 100x!']) expect(messageProblem(message)).toBeNull();
+  });
+
+  it('names the problem with text the server would refuse', () => {
+    expect(messageProblem('  ')).toMatch(/Write/);
+    expect(messageProblem('a'.repeat(MAX_MESSAGE_LENGTH + 1))).toMatch(/characters/);
+    expect(messageProblem('gm 🚀')).toMatch(/emoji/);
+    expect(messageProblem('claim at free-eth.xyz')).toMatch(/links/);
+    expect(messageProblem('DM @support')).toMatch(/handles/);
+  });
+
+  /** Same mirroring as PING_MESSAGES below: the server's copy must be the same rules. */
+  it('uses the same rules as functions/_lib.ts', () => {
+    const lib = readFileSync('functions/_lib.ts', 'utf8');
+    expect(lib).toContain(`const MESSAGE_CHARS = ${MESSAGE_CHARS};`);
+    expect(lib).toContain(`const LINK_LIKE = ${LINK_LIKE};`);
+    expect(lib).toContain(`export const MAX_MESSAGE_LENGTH = ${MAX_MESSAGE_LENGTH};`);
+  });
+});
 
 // A monospace stand-in: every character is 10 units wide.
 const measure = (s: string) => s.length * 10;

@@ -52,8 +52,13 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
     expect(isPng(bytes)).toBe(true);
     expect(pngSize(bytes).width).toBeGreaterThan(pngSize(bytes).height);
 
+    // Suggestions only appear once "Add a message" is ticked.
+    await expect(dialog.getByRole('button', { name: 'gm.' })).toHaveCount(0);
+    await dialog.getByRole('checkbox', { name: 'Add a message' }).check();
     // Picking a message re-shares as a new card; the default message is the bare id.
-    const withMessage = page.waitForResponse((r) => r.url().endsWith('/api/share'));
+    const withMessage = page.waitForResponse(
+      (r) => r.url().endsWith('/api/share') && r.request().postDataJSON()?.message === 'gm.'
+    );
     await dialog.getByRole('button', { name: 'gm.' }).click();
     const messaged = (await (await withMessage).json()) as { id: string; url: string };
     expect(messaged.id).not.toBe(id);
@@ -62,6 +67,22 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
     const messagedIntent = new URL((await dialog.getByRole('link', { name: 'Post on X' }).getAttribute('href'))!);
     expect(messagedIntent.searchParams.get('text')).toContain('gm.');
     await dialog.getByRole('button', { name: 'You have 1 new PING.' }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(url);
+
+    // A message the sender writes is stored as its own card once typing pauses.
+    const custom = page.waitForResponse(
+      (r) => r.url().endsWith('/api/share') && r.request().postDataJSON()?.message === 'wen lambo'
+    );
+    await dialog.getByRole('textbox', { name: 'Message' }).fill('wen lambo');
+    const customShared = (await (await custom).json()) as { id: string; url: string };
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(customShared.url);
+
+    // A link is refused in the dialog, before any request.
+    await dialog.getByRole('textbox', { name: 'Message' }).fill('claim at free-eth.xyz');
+    await expect(dialog.getByText('No links or @handles.')).toBeVisible();
+
+    // Unticking goes back to the default card.
+    await dialog.getByRole('checkbox', { name: 'Add a message' }).uncheck();
     await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(url);
 
     // Sharing the same character again is a read of the same id.
@@ -144,9 +165,13 @@ test.describe('merged PING sharing: a message on the same /p/<id>', () => {
     expect(withMessage.id).not.toBe(bare.id);
   });
 
-  test('rejects a message that is not one of the presets', async ({ request }) => {
-    const res = await request.post('/api/share', { data: { head: 'crown', message: 'you have been liquidated forever' } });
-    expect(res.status()).toBe(400);
+  test('accepts a message the sender wrote, and refuses links, handles and emoji', async ({ request }) => {
+    const ok = await request.post('/api/share', { data: { head: 'crown', message: 'wen lambo' } });
+    expect(ok.status()).toBe(200);
+    for (const message of ['claim at free-eth.xyz', 'DM @support', 'gm 🚀', 'x'.repeat(41)]) {
+      const res = await request.post('/api/share', { data: { head: 'crown', message } });
+      expect(res.status()).toBe(400);
+    }
   });
 
   test('/api/card/<id> returns the message, and the stored card is the crop-safe banner', async ({ request }) => {

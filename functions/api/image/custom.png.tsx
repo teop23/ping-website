@@ -5,19 +5,21 @@ import {
   CAPTION_INSET,
   OG_THEME,
   RENDER_BASE_IMAGE,
-  captionFromTraits,
   cardGeometry,
   PING_MESSAGES,
-  isValidPingMessage,
+  cleanPingMessage,
   RENDER_TRAITS_DIR,
   pickBgColor,
   splitAtBase,
   seedFromParams,
 } from '../../_lib';
-// Query params that shape the image rather than name a trait.
-/** Left margin of a captioned banner's text column. */
-const CAPTION_LEFT = CAPTION_INSET;
 
+/** The lock-screen phone on a captioned banner, left of the character. */
+const PHONE = { left: CAPTION_INSET, top: 34, width: 318, radius: 46, bezel: 9 };
+/** Screen padding 14 a side, notification padding 14 + 16, icon 52 and its 12 gap. */
+const NOTIFICATION_TEXT_WIDTH = PHONE.width - 2 * PHONE.bezel - 2 * 14 - 30 - 52 - 12;
+
+// Query params that shape the image rather than name a trait.
 const OPTION_PARAMS = ['type', 'ts', 'caption', 'message'];
 
 export const onRequestGet: APIRoute = async ({ request }) => {
@@ -29,21 +31,18 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       Object.entries(queryParams).filter(([key]) => !OPTION_PARAMS.includes(key))
     );
     const isBanner = queryParams.type === 'banner';
-    // Trait names printed on the card, so a saved or screenshotted image keeps
-    // the context the page title carries. Opt-in and banner-only: /api/share
-    // asks for it on its one render per character, while the open API and the
-    // bot-scraped legacy route keep the cheaper text-free render.
+    // The phone notification. Opt-in and banner-only: /api/share asks for it
+    // on its one render per card, while the open API and the bot-scraped
+    // legacy route keep the cheaper text-free render.
     const captioned = isBanner && queryParams.caption === '1';
 
-    // A PING's message prints in the captioned banner's notification pill.
-    // Presets only - it reaches here from /api/share (already validated) or
-    // directly from this open endpoint, which validates it itself. It used to
-    // be a separate square layout with the notification on top, which X's
-    // ~1.91:1 center crop cut off entirely.
-    if (queryParams.message !== undefined && !isValidPingMessage(queryParams.message)) {
-      return new Response('message must be one of the PING presets', { status: 400 });
+    // A PING's message prints in the captioned banner's phone notification.
+    // It reaches here from /api/share (already cleaned) or directly from this
+    // open endpoint, which applies the same rules itself.
+    const message = queryParams.message === undefined ? PING_MESSAGES[0] : cleanPingMessage(queryParams.message);
+    if (message === null) {
+      return new Response('message must be 1-40 plain characters with no links or handles', { status: 400 });
     }
-    const message = queryParams.message || PING_MESSAGES[0];
 
     const baseURL = new URL(request.url).origin;
     const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
@@ -102,7 +101,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           { name: 'Archivo', data: extraBold, weight: 800 as const, style: 'normal' as const },
         ])
       : undefined;
-    const caption = captionFromTraits(new URLSearchParams(traitParams));
     const iconUrl = `${baseURL}/favicon-180.png`;
 
     // 🖼️ Generate the composited image
@@ -117,55 +115,62 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         }}
       >
         {captioned && (
+          // A phone peeking up from the bottom edge, lock screen on, one
+          // notification from PING. Trait names used to sit here; nobody read
+          // the small pill above them as a phone notification.
           <div
             style={{
               position: 'absolute',
-              left: CAPTION_LEFT,
-              top: 0,
-              // The gap keeps the notification pill off an aura's square edge.
-              width: traitImageLeftOffset - CAPTION_LEFT - 32,
-              height: baseContainerHeight,
+              left: PHONE.left,
+              top: PHONE.top,
+              width: PHONE.width,
+              height: baseContainerHeight - PHONE.top + PHONE.radius,
               display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
+              padding: PHONE.bezel,
+              borderRadius: PHONE.radius,
+              backgroundColor: OG_THEME.ink,
               fontFamily: 'Archivo',
-              color: OG_THEME.ink,
             }}
           >
             <div
               style={{
+                width: '100%',
+                height: '100%',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                padding: '12px 16px 12px 12px',
-                borderRadius: 18,
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #DDD9CC',
+                borderRadius: PHONE.radius - PHONE.bezel,
+                backgroundImage: 'linear-gradient(180deg, #2B3A31 0%, #16211B 100%)',
+                padding: '12px 14px 0',
               }}
             >
-              <img src={iconUrl} width={48} height={48} style={{ borderRadius: 11 }} />
-              <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 12, flexGrow: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <div style={{ fontSize: 17, fontWeight: 800 }}>PING</div>
-                  <div style={{ fontSize: 14, color: '#5E6B63' }}>now</div>
+              <div style={{ width: 84, height: 24, borderRadius: 12, backgroundColor: OG_THEME.ink }} />
+              <div style={{ fontSize: 72, fontWeight: 800, color: '#F3F1EA', lineHeight: 1, marginTop: 14, letterSpacing: -2 }}>
+                9:41
+              </div>
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  marginTop: 22,
+                  padding: '14px 16px 16px 14px',
+                  borderRadius: 24,
+                  backgroundColor: 'rgba(255,255,255,0.94)',
+                  color: OG_THEME.ink,
+                }}
+              >
+                <img src={iconUrl} width={52} height={52} style={{ borderRadius: 12, flexShrink: 0 }} />
+                {/* satori sizes a growing column to its text, not the space left, so the width is explicit. */}
+                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 12, width: NOTIFICATION_TEXT_WIDTH }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <div style={{ fontSize: 18, fontWeight: 800 }}>PING</div>
+                    <div style={{ fontSize: 15, color: '#5E6B63' }}>now</div>
+                  </div>
+                  <div style={{ fontSize: 26, fontWeight: 800, lineHeight: 1.12, marginTop: 4 }}>{message}</div>
                 </div>
-                <div style={{ fontSize: 22, lineHeight: 1.15, marginTop: 2 }}>{message}</div>
               </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 22 }}>
-              {caption.names.length === 0 ? (
-                <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.15 }}>PING</div>
-              ) : (
-                caption.names.map((name) => (
-                  // The gap separates two names; a name that wraps stays tight.
-                  <div key={name} style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.05, marginBottom: 8 }}>
-                    {name}
-                  </div>
-                ))
-              )}
-            </div>
-            {caption.more > 0 && (
-              <div style={{ fontSize: 22, opacity: 0.7, marginTop: 10 }}>{`+${caption.more} more`}</div>
-            )}
           </div>
         )}
         {underBase.map((src) => (

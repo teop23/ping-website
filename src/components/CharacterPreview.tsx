@@ -314,18 +314,27 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
    * still works and still unfurls - just by rendering on the bot's request.
    */
   const createShareUrl = async (message: string | null): Promise<string | null> => {
-    try {
-      const response = await fetch('/api/share', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(message ? { ...traitSelection(), message } : traitSelection()),
-      });
-      if (!response.ok) return null;
-      const { url } = (await response.json()) as { url?: string };
-      return url ?? null;
-    } catch {
-      return null;
+    // A heavy character's render occasionally runs out of CPU on the first
+    // try; a second request a moment later almost always lands. Only after
+    // that does the caller fall back to the long legacy URL.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 1200));
+      try {
+        const response = await fetch('/api/share', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(message ? { ...traitSelection(), message } : traitSelection()),
+        });
+        // A 400 is the request itself (a message the server refuses); retrying cannot fix it.
+        if (response.status === 400) return null;
+        if (!response.ok) continue;
+        const { url } = (await response.json()) as { url?: string };
+        if (url) return url;
+      } catch {
+        // Network blip: try again.
+      }
     }
+    return null;
   };
 
   /**

@@ -35,8 +35,8 @@ const AUTH_TOKEN = process.env.AUTH_TOKEN || '';
 const MAX_CARD_BYTES = 2 * 1024 * 1024;
 /** Largest gallery document. ~480 entries of {id,traits,at} is well under 200 KB. */
 const MAX_GALLERY_BYTES = 2 * 1024 * 1024;
-/** The Functions layer only ever sends a preset from PING_MESSAGES (functions/_lib.ts),
- *  the longest of which is well under this - this is a defensive backstop, not the
+/** The Functions layer only sends messages cleanPingMessage (functions/_lib.ts) accepted:
+ *  40 characters, at most 240 bytes URI-encoded - this is a defensive backstop, not the
  *  source of truth for what a valid message is. */
 const MAX_MESSAGE_BYTES = 256;
 
