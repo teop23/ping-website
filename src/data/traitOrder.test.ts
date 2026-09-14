@@ -27,6 +27,18 @@ describe('byRenderOrder', () => {
     expect(sorted.indexOf('body')).toBeLessThan(sorted.indexOf('head'));
     expect(sorted.indexOf('face')).toBeLessThan(sorted.indexOf('head'));
   });
+
+  // Floor accessories (pets, plant pot, PC tower) stand where a flipper holds
+  // its item; painted last they hid the held item completely.
+  it('keeps held items over the accessory beside PING', () => {
+    const sorted = byRenderOrder([
+      { category: 'accessory' },
+      { category: 'left_hand' },
+      { category: 'right_hand' },
+    ]).map((t) => t.category);
+    expect(sorted.indexOf('accessory')).toBeLessThan(sorted.indexOf('left_hand'));
+    expect(sorted.indexOf('accessory')).toBeLessThan(sorted.indexOf('right_hand'));
+  });
 });
 
 describe('TRAIT_RENDER_ORDER', () => {

@@ -46,9 +46,9 @@ const RENDER_ORDER = [
   'face',
   'mouth',
   'head',
+  'accessory',
   'right_hand',
   'left_hand',
-  'accessory',
 ];
 
 /** Traits below this render soft when the API scales them up. */

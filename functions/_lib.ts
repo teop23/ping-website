@@ -90,9 +90,9 @@ export const TRAIT_ORDER = [
   'face',
   'mouth',
   'head',
+  'accessory',
   'right_hand',
   'left_hand',
-  'accessory',
 ];
 
 /**

@@ -19,9 +19,9 @@ export const TRAIT_RENDER_ORDER: TraitCategory[] = [
   'face',
   'mouth',
   'head',
+  'accessory',
   'right_hand',
   'left_hand',
-  'accessory',
 ];
 
 /** Sorts any objects carrying a `category` into paint order. */
