@@ -36,7 +36,10 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   test: {
-    // e2e/ is the Playwright suite (npm run test:e2e), not vitest's.
-    exclude: [...configDefaults.exclude, 'e2e/**'],
+    // e2e/ is the Playwright suite (npm run test:e2e). storage/ is the card
+    // storage service's own suite, run with `node --test` (see storage/README.md) -
+    // it uses node:test's describe/it, which vitest picks up as a file but
+    // can't execute, always failing with "No test suite found".
+    exclude: [...configDefaults.exclude, 'e2e/**', 'storage/**'],
   },
 });

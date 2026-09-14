@@ -1,4 +1,4 @@
-import { GALLERY_KEY, galleryPage, parseGallery, titleFromTraits } from '../_lib';
+import { galleryPage, selectCardStore, titleFromTraits } from '../_lib';
 
 /**
  * Newest shared characters, a page at a time.
@@ -13,6 +13,8 @@ import { GALLERY_KEY, galleryPage, parseGallery, titleFromTraits } from '../_lib
 
 interface Env {
   PING_CARDS?: KVNamespace;
+  CARD_STORE_URL?: string;
+  CARD_STORE_TOKEN?: string;
 }
 
 interface GalleryContext {
@@ -26,9 +28,8 @@ export const onRequestGet = async ({ request, env }: GalleryContext): Promise<Re
   const url = new URL(request.url);
   const offset = Number(url.searchParams.get('offset') ?? 0);
 
-  const entries = env.PING_CARDS
-    ? parseGallery(await env.PING_CARDS.get(GALLERY_KEY, { type: 'json', cacheTtl: CACHE_SECONDS }))
-    : [];
+  const store = selectCardStore(env);
+  const entries = store ? await store.getGallery() : [];
   const { items, next } = galleryPage(entries, offset);
 
   const body = {

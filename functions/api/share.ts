@@ -1,12 +1,11 @@
 import {
-  GALLERY_KEY,
   MIN_CARD_BYTES,
   addToGallery,
-  parseGallery,
   canonicalTraits,
-  kvCardStore,
+  selectCardStore,
   shareId,
   validateTraits,
+  type CardStore,
 } from '../_lib';
 
 /**
@@ -27,6 +26,8 @@ import {
 
 interface Env {
   PING_CARDS?: KVNamespace;
+  CARD_STORE_URL?: string;
+  CARD_STORE_TOKEN?: string;
 }
 
 interface ShareContext {
@@ -36,10 +37,10 @@ interface ShareContext {
 }
 
 /** Best-effort: a gallery write failing must never fail the share. */
-const recordInGallery = async (kv: KVNamespace, id: string, traits: string): Promise<void> => {
+const recordInGallery = async (store: CardStore, id: string, traits: string): Promise<void> => {
   try {
-    const entries = parseGallery(await kv.get(GALLERY_KEY, 'json'));
-    await kv.put(GALLERY_KEY, JSON.stringify(addToGallery(entries, { id, traits, at: Date.now() })));
+    const entries = await store.getGallery();
+    await store.putGallery(addToGallery(entries, { id, traits, at: Date.now() }));
   } catch {
     // Swallowed on purpose; see above.
   }
@@ -53,9 +54,11 @@ const json = (body: unknown, status = 200): Response =>
 
 export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): Promise<Response> => {
   try {
-    // Absent binding is not an error the user should see: the client falls
-    // back to the legacy query-param share URL, which still works.
-    if (!env.PING_CARDS) return json({ error: 'Card storage is not configured' }, 503);
+    // No store configured (neither the remote box nor KV) is not an error
+    // the user should see: the client falls back to the legacy query-param
+    // share URL, which still works.
+    const store = selectCardStore(env);
+    if (!store) return json({ error: 'Card storage is not configured' }, 503);
 
     const origin = new URL(request.url).origin;
     const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
@@ -74,7 +77,6 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
 
     const canonical = canonicalTraits(params);
     const id = await shareId(canonical);
-    const store = kvCardStore(env.PING_CARDS);
 
     const existing = await store.get(id);
     if (existing) return json({ id, url: `${origin}/p/${id}`, cached: true });
@@ -107,7 +109,7 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     await store.put(id, card, canonical);
     // Only first-time characters reach this line, so the gallery gains one
     // entry per distinct character, never per click.
-    waitUntil(recordInGallery(env.PING_CARDS, id, canonical));
+    waitUntil(recordInGallery(store, id, canonical));
     return json({ id, url: `${origin}/p/${id}`, cached: false });
   } catch (err) {
     console.error('share failed:', err);
