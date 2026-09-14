@@ -2030,3 +2030,40 @@ Nothing below is pushed. `relaunch/robinhood-chain` is ahead of origin; pushing 
 
 - vitest picks up `.claude/worktrees/**`; run with `--exclude ".claude/**"` (worktrees ignored in git).
 - Agents must never cat .env or pass secrets as CLI args; handle them in a script with redaction.
+
+## Twentieth session, 2026-09-14: pushed, KV cards migrated, chill-guy, shirt lockdown
+
+### Done (all pushed and live)
+
+- Pushed the 19th-session commits. Self-hosted store was reading an empty box: the 5 KV cards +
+  `gallery:index` were never migrated, so every old /p link would have 404'd. Migrated via the
+  Cloudflare API (key list + metadata) and the public image route, written through the box's own
+  HTTP API from inside the container. Live check passed: messaged share (`0qdyqm9zyqms`, "gm.") and
+  plain share (`0phx4ih59aem`) both land in `/data/cards`, gallery updates, OG tags + image 200,
+  showcase renders. So the secret rotation is consistent end to end. X composer preview unchecked
+  (owner). wrangler's OAuth token cannot list KV (auth error 10000); use the cloudflare-api MCP.
+- DexScreener banner: already rendered with `/p/0qnnfsagl8cx` (FINAL_TRAITS in
+  `.trait-work/banners/make.mjs`) -> `banner-final.png`. The owner named that PING last session.
+- `382fd3b` chill-guy_accessory: white sticker outline stripped (owner said FIX). Tool
+  `.trait-work/layer/unsticker.mjs in out` (flood from transparent through near-white, MIN env).
+- `c346183` shirt.png prints only `https://unavatar.io/x/<handle>` (loadPhoto, +1 test); Custom
+  shirt removed from Docs. Live: arbitrary photo 400, shirt_by_x 200.
+- Storage `/data` gotcha: Git Bash rewrites `/data/...` in `docker exec` args; prefix
+  `MSYS_NO_PATHCONV=1`. Root fs is read-only, so `docker cp` fails; pipe via stdin.
+
+### Layering scan (`.trait-work/layer/overlap.mjs`, output `overlap.json`)
+
+Every cross-slot pair, share of the lower trait covered by the upper one at 256px.
+- **Real problem, owner call pending:** floor accessories sit where hand items are held and paint
+  after hands, so the held item vanishes (85-100% covered). Worst: pC-gamer, pet-apu, plant-pot,
+  fire-hydrant, rocket, boombox, iceberg, trading-desk, igloo, birdhouse, mini-fridge, campfire.
+  Comparison sheet tool: `.trait-work/layer/orders.mjs out.png a_cat+b_cat ...` (current vs
+  accessory under hands).
+- Not defects: hats over face items (brows under brims, sayian-1 hair swoop over an eye), mouth
+  items under held ice cream / sparkler.
+
+### Still to do
+
+- Regen list (not started): shopping-cart, snowman, stove, treasure-chest, washing-machine,
+  xbox-gamer, arcade-machine, pS5, sparkler, umbrella; pet-cheese redo; snowball_left_hand.
+- Rate limit POST /api/share (owner dashboard). Docker Desktop AutoStart (owner).
