@@ -48,32 +48,6 @@ export const watchForBreakage = (page: Page) => {
   return problems;
 };
 
-/**
- * window.open is stubbed so the Tweet flow can be asserted without a real X
- * popup: every URL the page tries to open (directly or by setting the
- * composer's location) lands in window.__opened.
- */
-export const stubWindowOpen = async (page: Page) => {
-  await page.addInitScript(() => {
-    const opened: string[] = [];
-    (window as unknown as { __opened: string[] }).__opened = opened;
-    window.open = ((url?: string | URL) => {
-      if (url) opened.push(String(url));
-      return {
-        location: {
-          set href(value: string) {
-            opened.push(value);
-          },
-        },
-        close() {},
-      } as unknown as Window;
-    }) as typeof window.open;
-  });
-};
-
-export const openedUrls = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __opened: string[] }).__opened.filter(Boolean));
-
 /** The builder section, scrolled into view, with its trait grid loaded. */
 export const openBuilder = async (page: Page, path = '/#builder') => {
   await page.goto(path);

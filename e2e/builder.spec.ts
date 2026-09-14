@@ -7,7 +7,6 @@ import {
   openBuilder,
   pngSize,
   readSelectedCount,
-  stubWindowOpen,
   watchForBreakage,
 } from './helpers';
 
@@ -70,7 +69,6 @@ test.describe('builder', () => {
   });
 
   test('randomize rolls at most one trait per category and leaves slots empty', async ({ page }) => {
-    await stubWindowOpen(page);
     const bodies: Record<string, string>[] = [];
     await page.route('**/api/share', async (route) => {
       bodies.push(route.request().postDataJSON());
@@ -79,7 +77,7 @@ test.describe('builder', () => {
 
     const { preview } = await openBuilder(page);
     const randomize = preview.getByRole('button', { name: 'Randomize' });
-    const tweet = preview.getByRole('button', { name: 'Tweet' });
+    const share = preview.getByRole('button', { name: 'Share' });
 
     const rolls = 30;
     const counts: number[] = [];
@@ -93,9 +91,10 @@ test.describe('builder', () => {
       // would collapse into one key and the counts would disagree.
       if (i < 8 && chips > 0) {
         const before = bodies.length;
-        await tweet.click();
+        await share.click();
         await expect.poll(() => bodies.length).toBe(before + 1);
-        await expect(tweet).toBeEnabled({ timeout: 5000 });
+        await page.keyboard.press('Escape');
+        await expect(page.getByRole('dialog', { name: 'Share' })).toBeHidden();
         expect(Object.keys(bodies.at(-1)!)).toHaveLength(chips);
       }
     }

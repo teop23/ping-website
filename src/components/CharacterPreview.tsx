@@ -2,11 +2,11 @@ import { baseCharacterImage } from '@/data/traits';
 import { splitAtBase } from '@/data/traitOrder';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasConstants';
 import { motion } from 'framer-motion';
-import { BellRing, Check, Copy, Download, Link2, Move, Share2, Shuffle } from 'lucide-react';
+import { BellRing, Check, Copy, Download, Move, Share2, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Trait } from '../types';
-import { TwitterIcon } from './Navbar';
 import SendPingModal from './SendPingModal';
+import ShareModal, { type ShareLink } from './ShareModal';
 import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 
@@ -23,12 +23,9 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   const overlayRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
-  const [isCopyingLink, setIsCopyingLink] = useState(false);
-  const [isNativeSharing, setIsNativeSharing] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const [isSendPingOpen, setIsSendPingOpen] = useState(false);
-  const [linkCopyAnnouncement, setLinkCopyAnnouncement] = useState('');
-  const shareUrlCacheRef = useRef<{ key: string; url: string } | null>(null);
+  const shareLinkCacheRef = useRef<{ key: string; link: ShareLink } | null>(null);
   const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
   const [traitImages, setTraitImages] = useState<Map<string, HTMLImageElement>>(new Map());
   const [isDragging, setIsDragging] = useState<string | null>(null);
@@ -323,96 +320,31 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   };
 
   /**
-   * Resolves the share URL for the current trait selection, reusing a
-   * previously stored URL instead of re-POSTing to /api/share when the
+   * Resolves the share link for the current trait selection, reusing a
+   * previously stored one instead of re-POSTing to /api/share when the
    * selection hasn't changed since the last successful call.
    */
-  const getShareUrl = async (): Promise<string> => {
+  const getShareLink = async (): Promise<ShareLink> => {
     const key = JSON.stringify(traitSelection());
-    if (shareUrlCacheRef.current?.key === key) {
-      return shareUrlCacheRef.current.url;
+    if (shareLinkCacheRef.current?.key === key) {
+      return shareLinkCacheRef.current.link;
     }
 
     const storedUrl = await createShareUrl();
     if (storedUrl) {
-      shareUrlCacheRef.current = { key, url: storedUrl };
-      return storedUrl;
+      const id = storedUrl.slice(storedUrl.lastIndexOf('/') + 1);
+      const link = { url: storedUrl, imageUrl: `/api/image/p/${id}.png` };
+      shareLinkCacheRef.current = { key, link };
+      return link;
     }
 
     // Storage failed - fall back without caching, so a later retry can
-    // still succeed once storage is available again.
-    return generateApiUrl();
-  };
-
-  const handleCopyLink = async () => {
-    setIsCopyingLink(true);
-    try {
-      // Safari drops the click's user activation across the /api/share await
-      // and rejects a late writeText; handing ClipboardItem the pending value
-      // claims the clipboard synchronously inside the click.
-      if (typeof ClipboardItem !== 'undefined' && navigator.clipboard.write) {
-        const blob = getShareUrl().then((url) => new Blob([url], { type: 'text/plain' }));
-        await navigator.clipboard.write([new ClipboardItem({ 'text/plain': blob })]);
-      } else {
-        await navigator.clipboard.writeText(await getShareUrl());
-      }
-      setLinkCopyAnnouncement('Link copied to clipboard');
-      // Keep the animation visible longer to show success
-      setTimeout(() => {
-        setIsCopyingLink(false);
-        setLinkCopyAnnouncement('');
-      }, 1500);
-    } catch (error) {
-      console.error('Error copying link:', error);
-      setIsCopyingLink(false);
-    }
-  };
-
-  const handleNativeShare = async () => {
-    setIsNativeSharing(true);
-    try {
-      const shareUrl = await getShareUrl();
-      await navigator.share({ url: shareUrl, title: 'You have 1 new PING.' });
-    } catch (error) {
-      // The user closing the share sheet is not a failure.
-      if ((error as { name?: string })?.name !== 'AbortError') {
-        console.error('Error sharing:', error);
-      }
-    } finally {
-      setIsNativeSharing(false);
-    }
-  };
-
-  const handleShareOnX = async () => {
-    setIsSharing(true);
-
-    // Opened before the await: a popup opened from inside an async
-    // continuation has lost the user gesture and browsers block it. It gets
-    // pointed at the real URL once there is one.
-    const composer = window.open('', '_blank');
-
-    try {
-      const shareUrl = await getShareUrl();
-      const tweetText = "You have 1 new PING.\nSend one back:\n";
-      const hashtags = "PING,RobinhoodChain,Crypto";
-
-      const twitterUrl = new URL('https://twitter.com/intent/tweet');
-      twitterUrl.searchParams.set('text', tweetText);
-      twitterUrl.searchParams.set('hashtags', hashtags);
-      // The card comes from this URL unfurling. The intent has no parameter
-      // for attaching an image - one used to be set here and had never done
-      // anything - so the unfurl is the picture.
-      twitterUrl.searchParams.set('url', shareUrl);
-
-      if (composer) composer.location.href = twitterUrl.toString();
-      else window.open(twitterUrl.toString(), '_blank');
-
-      setTimeout(() => setIsSharing(false), 2000);
-    } catch (error) {
-      console.error('Error sharing on X:', error);
-      composer?.close();
-      setIsSharing(false);
-    }
+    // still succeed once storage is available again. The preview renders the
+    // same card on demand.
+    const params = new URLSearchParams(traitSelection());
+    params.set('type', 'banner');
+    params.set('caption', '1');
+    return { url: generateApiUrl(), imageUrl: `/api/image/custom.png?${params}` };
   };
 
   return (
@@ -501,25 +433,13 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
-              icon={isCopyingLink ? <Check size={16} /> : <Link2 size={16} />}
-              label="Copy link"
-              onClick={handleCopyLink}
+              icon={<Share2 size={16} />}
+              label="Share"
+              onClick={() => setIsShareOpen(true)}
               variant="secondary"
-              disabled={isLoading || isCopyingLink}
-              isCopying={isCopyingLink}
+              disabled={isLoading}
             />
           </motion.div>
-          {typeof navigator !== 'undefined' && !!navigator.share && (
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <ActionButton
-                icon={<Share2 size={16} />}
-                label={isNativeSharing ? "Sharing..." : "Share"}
-                onClick={handleNativeShare}
-                variant="secondary"
-                disabled={isLoading || isNativeSharing}
-              />
-            </motion.div>
-          )}
           {onRandomize && (
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <ActionButton
@@ -531,18 +451,14 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               />
             </motion.div>
           )}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <ActionButton
-              icon={<TwitterIcon />}
-              label={isSharing ? "Sharing..." : "Tweet"}
-              onClick={handleShareOnX}
-              variant="secondary"
-              disabled={isLoading || isSharing}
-            />
-          </motion.div>
         </div>
-        <span aria-live="polite" className="sr-only">{linkCopyAnnouncement}</span>
       </div>
+
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        getShareLink={getShareLink}
+      />
 
       <SendPingModal
         isOpen={isSendPingOpen}

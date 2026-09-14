@@ -1,11 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { isPng, manifest, openBuilder, openedUrls, pngSize, readSelectedCount, stubWindowOpen } from './helpers';
+import { isPng, manifest, openBuilder, pngSize, readSelectedCount } from './helpers';
 
 const TWITTERBOT = 'Twitterbot/1.0';
 
-test.describe('share flow: Tweet -> /api/share -> /p/<id>', () => {
-  test('Tweet stores the card and opens the composer on its short link', async ({ page, request }) => {
-    await stubWindowOpen(page);
+test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
+  test('Share stores the card, previews it, and points every target at its short link', async ({ page, request }) => {
     const { picker, preview } = await openBuilder(page);
 
     await picker.getByRole('img', { name: 'Crown', exact: true }).first().click();
@@ -13,14 +12,22 @@ test.describe('share flow: Tweet -> /api/share -> /p/<id>', () => {
     await expect.poll(() => readSelectedCount(page)).toBe(2);
 
     const shareResponse = page.waitForResponse((r) => r.url().endsWith('/api/share'));
-    await preview.getByRole('button', { name: 'Tweet' }).click();
+    await preview.getByRole('button', { name: 'Share' }).click();
     const share = await shareResponse;
     expect(share.status()).toBe(200);
     const { id, url } = (await share.json()) as { id: string; url: string };
     expect(url).toMatch(new RegExp(`/p/${id}$`));
 
-    await expect.poll(async () => (await openedUrls(page)).length).toBeGreaterThan(0);
-    const intent = new URL((await openedUrls(page)).at(-1)!);
+    const dialog = page.getByRole('dialog', { name: 'Share' });
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(url);
+    await expect(dialog.getByRole('img', { name: 'Link preview card for this PING' })).toHaveAttribute('src', `/api/image/p/${id}.png`);
+    await expect(dialog.getByRole('img', { name: 'Link preview card for this PING' })).toHaveJSProperty('complete', true);
+
+    const telegram = new URL((await dialog.getByRole('link', { name: 'Telegram' }).getAttribute('href'))!);
+    expect(telegram.host).toBe('t.me');
+    expect(telegram.searchParams.get('url')).toBe(url);
+
+    const intent = new URL((await dialog.getByRole('link', { name: 'Post on X' }).getAttribute('href'))!);
     expect(intent.host).toBe('twitter.com');
     expect(intent.pathname).toBe('/intent/tweet');
     expect(intent.searchParams.get('url')).toBe(url);
