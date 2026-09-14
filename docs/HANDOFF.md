@@ -1892,3 +1892,92 @@ Owner pings with the CA. Then:
    - OG card: `/api/og/banner.png` renders; share a link in the X composer.
 6. After graduation: reload home, Chart icon appears by itself (no deploy).
    Confirm it opens the pair on Dexscreener.
+
+## Eighteenth session (cont.), 2026-09-14: polish, security, share showcase
+
+### Ask the owner first (next session start)
+
+1. **Share storage.** Share cards live in KV (`PING_CARDS`): free tier is
+   1,000 writes/day, 2 per new character (card + gallery index) = ~500 new
+   shares/day, then sharing fails. Owner asked about UploadThing. Cards are
+   55-135 KB (measured live; ~80 KB avg). UploadThing free plan reportedly
+   2 GB storage, uploads/downloads not capped (third-party pricing pages,
+   confirm on uploadthing.com). Options: (a) UploadThing for card bytes, KV
+   only for id->url + gallery (1 write/new char); (b) R2 (code comment in
+   `functions/_lib.ts` already plans "KV today, R2 the day it is enabled");
+   (c) keep KV + Cloudflare rate-limit rule on POST /api/share + fall back
+   to the legacy query-param share URL when a KV write fails. Owner rejected
+   nothing yet; "own storage locally" discussed and not recommended for launch
+   (self-hosted box in the critical path; browser storage can't serve X's
+   scraper). UNVERIFIED before building (a): UploadThing server SDK in a
+   Pages Function (Workers, not Node), same-key re-upload behaviour, URL
+   stability. Owner must create the UploadThing app and add the token as a
+   Pages secret.
+2. **shirt.png** prints ANY https PNG/JPEG on a PING hosted at buildaping.com
+   (offensive-image risk at launch). Restrict to unavatar (X avatars) only?
+3. **Rate limit** POST /api/share in the Cloudflare dashboard (owner action)?
+4. Major dep bumps (fabric 7, react-router 7) after launch? Recommended: yes,
+   after. The rest of `npm audit` is build-time or unreachable (no
+   fabric toSVG/loadSVG; no untrusted router navigation).
+
+### Shipped and pushed (all live on buildaping.com)
+
+- `28f40c7` Trait tiles zoom to the item: `scripts/lib/thumb-box.mjs` (+test)
+  computes a padded square bbox per trait in `generate-index.mjs`, stored as
+  `thumb` in the manifest; `TraitSelector` crops with it. Lime only on the
+  active category chip. Community and Docs rebuilt in the /brand layout (no
+  icon tiles, no staggered fades); Docs h1 is now "API" (e2e updated).
+- `e037edb` pet-apu shipped with his full face; nuke reverted to the parked
+  original (owner call). Cause of the "cut right side" on all three fixes-18:
+  the diff extractor drops item pixels drawn over the penguin's black (outline
+  and pupils match the base). New tool `.trait-work/recut.mjs <registered edit>
+  <out-r.png> [box] [R]` (env `OPEN`, used `600,480,1023,1023 4` + `OPEN=4`):
+  diff component hull, holes filled, dark outline within R, opened, largest
+  component. Then `mirror.mjs` + `fitin.mjs 40` as usual.
+- `00eb838` Image API hardening: `loadPhoto` in `_lib.ts` (+5 tests) fetches
+  the shirt photo first (https only, PNG/JPEG, <=2 MB, 5 s timeout) and passes
+  a data URI to satori. 500s no longer echo `${err}` (logged instead).
+  shirt_by_x forwards only `type=banner`. `public/_headers`: nosniff,
+  referrer policy, X-Frame-Options DENY, permissions policy. Verified live.
+- `150b42b` **Share showcase.** A person opening `/p/<id>` got redirected to
+  the home hero. Now `functions/p/[id].ts` serves the app shell
+  (`env.ASSETS.fetch('/')`) and route `/p/:id` (`src/pages/Showcase.tsx`)
+  shows the stored card, title, Remix this PING (`/?traits#builder`), Make
+  your own, Copy link, and the trait list; card first on mobile. New
+  `GET /api/card/<id>` -> `{id,title,traits,image}` (immutable cache, 404
+  no-store). Bots still get the OG page. e2e share + site 18/18. Not yet
+  checked on the live site.
+
+Tests at end: vitest 175/175, tsc (app + functions) clean, full e2e 24/24
+earlier; builder "clear all" test flaked once under load, 21/21 on
+`--repeat-each 3`.
+
+### Gotchas from this session
+
+- `npx tsc -p functions` WITHOUT `--noEmit` writes .js next to every function
+  (Pages would route them). Always pass `--noEmit`; delete strays if it
+  happens.
+- `npm audit fix` (non-breaking) broke @types/node resolution (tsc: fs,
+  NodeJS, __dirname). Reverted. `npm ci` fails EPERM while the Vite dev server
+  runs; stop it first or node_modules gets half-deleted.
+- A URL requested before a deploy stays edge-cached (ImageResponse is
+  immutable); test live changes with a fresh query string.
+- `rtk grep` with a glob over src/components can hang; use plain paths.
+
+### Still to do
+
+- **pet-cheese redo** (owner: same expression as the original art). The old
+  prompt in chat `/app/f3d0b018226aa4c1` said "big droopy half-lidded Pepe
+  eyes", which caused the sleepy face. New prompt: wide round eyes with black
+  pupils and white shine dots looking at the viewer, big open red grin with
+  two buck teeth, tail visible; rest of the old prompt unchanged (it is in
+  that chat). Model was Flash-Lite (3.6 Flash limit reset 05:57). Then
+  register (amtake flow, `MIRROR=1 LEFT=0 TOP=300`) but cut with `recut.mjs`,
+  mirror, fitin, review2 sheet, show owner.
+- **snowball_left_hand** regen (fresh chat, ref3 snowball, right_hand prompt,
+  `mir.sh`; use recut if it overlaps the flipper).
+- Remaining regen list: shopping-cart (downloaded not captured), snowman,
+  stove, treasure-chest, washing-machine, xbox-gamer, arcade-machine, pS5,
+  sparkler, umbrella, then other parked + retakes.
+- Check the showcase live: share a character, open the /p link logged out
+  and in the X composer.
