@@ -311,6 +311,21 @@ export const RENDER_TRAITS_DIR = '/traits-512';
 export const RENDER_BASE_IMAGE = '/ping-768.png';
 
 /**
+ * The same art at the 800x420 banner's draw size (character 341px, base
+ * 341 * BASE_SCALE). A share card is a banner, and a heavy character's banner
+ * render handed the 512px copies still ran out of CPU on Pages: under half the
+ * source pixels is the margin. _lib.test.ts pins these to cardGeometry.
+ */
+export const BANNER_TRAITS_DIR = '/traits-341';
+export const BANNER_BASE_IMAGE = '/ping-478.png';
+
+/** Where a render of this card shape loads its art from. */
+export const renderArt = (isBanner: boolean) =>
+  isBanner
+    ? { traitsDir: BANNER_TRAITS_DIR, baseImage: BANNER_BASE_IMAGE }
+    : { traitsDir: RENDER_TRAITS_DIR, baseImage: RENDER_BASE_IMAGE };
+
+/**
  * Card geometry, shared by every image endpoint.
  *
  * The banner is 800x420 rather than the conventional 1200x630. Output raster
@@ -595,8 +610,9 @@ export const PING_MESSAGES = [
 export const MAX_MESSAGE_LENGTH = 40;
 
 /**
- * Printable ASCII plus Latin letters with accents: what the card font
- * (Archivo) can draw. Emoji or other scripts would render as empty boxes.
+ * Printable ASCII plus Latin letters with accents: what the card's message
+ * font (Inter, falling back to Archivo for glyphs outside Inter's subset)
+ * can draw. Emoji or other scripts would render as empty boxes.
  */
 const MESSAGE_CHARS = /^[\x20-\x7EÀ-ɏ]+$/;
 
@@ -624,7 +640,7 @@ export const cleanPingMessage = (raw: string): string | null => {
  * a redesign gets a fresh render instead of the stored old one. Links made
  * before a bump keep resolving to the card they were made with.
  */
-export const CARD_RENDER_VERSION = 2;
+export const CARD_RENDER_VERSION = 3;
 
 /**
  * The string hashed into a share id: the render version, the traits, and the

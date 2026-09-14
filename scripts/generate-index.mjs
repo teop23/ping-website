@@ -75,10 +75,21 @@ const RENDER_PX = 512;
 /** The base is drawn at 512 * 1.4; give it enough pixels to not be upscaled. */
 const BASE_RENDER_PX = 768;
 
+/**
+ * The 800x420 banner (every share card) draws the character at 341px and the
+ * base at 341 * 1.4. Handing it the 512 copies still exhausted the CPU budget
+ * for heavy characters. Must match BANNER_TRAITS_DIR / BANNER_BASE_IMAGE in
+ * functions/_lib.ts (pinned there by a test).
+ */
+const BANNER_RENDER_PX = 341;
+const BANNER_BASE_RENDER_PX = 478;
+
 const TRAITS_DIR = path.resolve('public/traits');
 const RENDER_DIR = path.resolve(`public/traits-${RENDER_PX}`);
+const BANNER_RENDER_DIR = path.resolve(`public/traits-${BANNER_RENDER_PX}`);
 const BASE_SRC = path.resolve('public/ping.png');
 const BASE_OUT = path.resolve(`public/ping-${BASE_RENDER_PX}.png`);
+const BANNER_BASE_OUT = path.resolve(`public/ping-${BANNER_BASE_RENDER_PX}.png`);
 const INDEX_OUT = path.resolve('public/traits-index.json');
 const MANIFEST_OUT = path.resolve('public/traits-manifest.json');
 
@@ -188,27 +199,28 @@ for (const trait of traits) {
 
 
 // --- render-sized art for the image Functions ---
-await mkdir(RENDER_DIR, { recursive: true });
-
 let rebuilt = 0;
-for (const trait of traits) {
-  const source = path.join(TRAITS_DIR, path.basename(trait.file));
-  const derived = path.join(RENDER_DIR, path.basename(trait.file));
-  if (!(await isStale(source, derived))) continue;
-  await downscale(source, derived, RENDER_PX);
-  rebuilt++;
-}
-
-// A trait deleted or renamed in public/traits would otherwise keep being
-// served from here by `wrangler pages dev` (production builds start clean).
 const shipped = new Set(traits.map((t) => path.basename(t.file)));
-let pruned = 0;
-for (const name of await readdir(RENDER_DIR)) {
-  if (shipped.has(name)) continue;
-  await unlink(path.join(RENDER_DIR, name));
-  pruned++;
+for (const [dir, px] of [[RENDER_DIR, RENDER_PX], [BANNER_RENDER_DIR, BANNER_RENDER_PX]]) {
+  await mkdir(dir, { recursive: true });
+  for (const trait of traits) {
+    const source = path.join(TRAITS_DIR, path.basename(trait.file));
+    const derived = path.join(dir, path.basename(trait.file));
+    if (!(await isStale(source, derived))) continue;
+    await downscale(source, derived, px);
+    rebuilt++;
+  }
+
+  // A trait deleted or renamed in public/traits would otherwise keep being
+  // served from here by `wrangler pages dev` (production builds start clean).
+  let pruned = 0;
+  for (const name of await readdir(dir)) {
+    if (shipped.has(name)) continue;
+    await unlink(path.join(dir, name));
+    pruned++;
+  }
+  if (pruned > 0) console.log(`Pruned ${pruned} stale file(s) from public/traits-${px}.`);
 }
-if (pruned > 0) console.log(`Pruned ${pruned} stale file(s) from public/traits-${RENDER_PX}.`);
 
 // Measured on the render copies: same shape as the masters, a fifth the pixels.
 for (const trait of traits) {
@@ -229,14 +241,15 @@ const manifest = {
 await writeFile(INDEX_OUT, JSON.stringify(index, null, 2));
 await writeFile(MANIFEST_OUT, JSON.stringify(manifest, null, 2));
 
-if (await isStale(BASE_SRC, BASE_OUT)) {
-  await downscale(BASE_SRC, BASE_OUT, BASE_RENDER_PX);
+for (const [out, px] of [[BASE_OUT, BASE_RENDER_PX], [BANNER_BASE_OUT, BANNER_BASE_RENDER_PX]]) {
+  if (!(await isStale(BASE_SRC, out))) continue;
+  await downscale(BASE_SRC, out, px);
   rebuilt++;
 }
 
 console.log(
   rebuilt > 0
-    ? `Rendered ${rebuilt} image(s) at <=${RENDER_PX}px into public/traits-${RENDER_PX}.`
+    ? `Rendered ${rebuilt} render-sized image(s) into public/traits-${RENDER_PX} and public/traits-${BANNER_RENDER_PX}.`
     : `Render-sized art already current in public/traits-${RENDER_PX}.`
 );
 

@@ -4,8 +4,24 @@
   .type-display in index.css). Martian Mono is loaded alongside it and is used
   only for contract addresses and hashes.
 
-  The old self-hosted Inter faces are gone. Inter is the default every launchpad
-  site reaches for, including Pons, and matching it was working against the
-  point. The .woff2 files remain in /public/fonts and can be deleted once
-  nothing references them.
+  Inter is not used for the site's own type - matching every other launchpad's
+  default was working against the point. It's self-hosted here only for the
+  phone-lock-screen notification on the share card, so the canvas render in
+  pingCard.ts matches the server's satori render in
+  functions/api/image/custom.png.tsx, which reads the same .woff2-derived
+  .ttf files directly and needs no @font-face.
 */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}

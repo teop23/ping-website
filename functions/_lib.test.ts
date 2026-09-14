@@ -29,6 +29,8 @@ import {
   MAX_PHOTO_BYTES,
   httpCardStore,
   selectCardStore,
+  BASE_SCALE,
+  renderArt,
 } from './_lib';
 
 /**
@@ -151,6 +153,26 @@ describe('TRAIT_ORDER', () => {
 
   it('has no duplicates', () => {
     expect(new Set(TRAIT_ORDER).size).toBe(TRAIT_ORDER.length);
+  });
+});
+
+describe('renderArt', () => {
+  // generate-index.mjs emits these sizes; a banner handed bigger art burns CPU
+  // decoding pixels it throws away, and heavy share cards failed on Pages.
+  const size = (path: string) => Number(path.match(/-(\d+)(?:\.png)?$/)?.[1]);
+
+  it('hands the banner art at the size it draws', () => {
+    const { traitsDir, baseImage } = renderArt(true);
+    const banner = cardGeometry(true, true);
+    expect(size(traitsDir)).toBe(banner.character);
+    expect(size(baseImage)).toBe(Math.ceil(banner.character * BASE_SCALE));
+  });
+
+  it('never hands the square card less than it draws', () => {
+    const { traitsDir, baseImage } = renderArt(false);
+    const square = cardGeometry(false);
+    expect(size(traitsDir)).toBeGreaterThanOrEqual(square.character);
+    expect(size(baseImage)).toBeGreaterThanOrEqual(square.baseSize);
   });
 });
 

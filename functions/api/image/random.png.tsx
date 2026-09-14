@@ -3,9 +3,8 @@ import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import {
   EMPTY_TRAIT_CHANCE,
-  RENDER_BASE_IMAGE,
   cardGeometry,
-  RENDER_TRAITS_DIR,
+  renderArt,
   noStore,
   pickBgColor,
   rollRandomTraits,
@@ -16,7 +15,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const url = new URL(request.url);
         const isBanner = url.searchParams.get('type') === 'banner';
         const baseURL = new URL(request.url).origin;
-        const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
+        const art = renderArt(isBanner);
+        const baseCharacterImage = `${baseURL}${art.baseImage}`;
     const {
       width: baseContainerWidth,
       height: baseContainerHeight,
@@ -54,7 +54,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
         // Auras go behind the penguin, the rest in front of it, both in paint order.
         const toUrl = ({ category, trait }: { category: string; trait: string }) =>
-            `${baseURL}${RENDER_TRAITS_DIR}/trait-${trait}_${category}.png`;
+            `${baseURL}${art.traitsDir}/trait-${trait}_${category}.png`;
         const { under, over } = splitAtBase(traitSelectionsByCategory);
         const underBase = under.map(toUrl);
         const overBase = over.map(toUrl);

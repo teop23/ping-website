@@ -4,11 +4,10 @@ import type { APIRoute } from 'astro';
 import {
   CAPTION_INSET,
   OG_THEME,
-  RENDER_BASE_IMAGE,
   cardGeometry,
   PING_MESSAGES,
   cleanPingMessage,
-  RENDER_TRAITS_DIR,
+  renderArt,
   pickBgColor,
   splitAtBase,
   seedFromParams,
@@ -45,7 +44,9 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     }
 
     const baseURL = new URL(request.url).origin;
-    const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
+    // The banner draws smaller than the square, so it gets smaller art.
+    const art = renderArt(isBanner);
+    const baseCharacterImage = `${baseURL}${art.baseImage}`;
     const {
       width: baseContainerWidth,
       height: baseContainerHeight,
@@ -86,19 +87,26 @@ export const onRequestGet: APIRoute = async ({ request }) => {
 
     // Auras go behind the penguin, the rest in front of it, both in paint order.
     const toUrl = ({ category, trait }: { category: string; trait: string }) =>
-      `${baseURL}${RENDER_TRAITS_DIR}/trait-${trait}_${category}.png`;
+      `${baseURL}${art.traitsDir}/trait-${trait}_${category}.png`;
     const { under, over } = splitAtBase(traitSelectionsByCategory);
     const underBase = under.map(toUrl);
     const overBase = over.map(toUrl);
 
-    // satori cannot read woff2; the TTF cuts are the same family the site uses.
+    // satori cannot read woff2; the TTF cuts are the notification's fonts.
+    // The Inter subset covers ASCII and Latin-1 but not Latin Extended-A/B,
+    // which MESSAGE_CHARS allows, so Archivo joins as a fallback family only
+    // for a message that needs it: every font parsed is CPU off a tight budget.
+    const loadFont = (file: string) => fetch(`${baseURL}/fonts/${file}`).then((r) => r.arrayBuffer());
+    const needsFallback = /[^\x20-\xFF]/.test(message);
     const fonts = captioned
       ? await Promise.all([
-          fetch(`${baseURL}/fonts/Archivo-Regular.ttf`).then((r) => r.arrayBuffer()),
-          fetch(`${baseURL}/fonts/Archivo-ExtraBold.ttf`).then((r) => r.arrayBuffer()),
-        ]).then(([regular, extraBold]) => [
-          { name: 'Archivo', data: regular, weight: 400 as const, style: 'normal' as const },
-          { name: 'Archivo', data: extraBold, weight: 800 as const, style: 'normal' as const },
+          loadFont('Inter-Regular.ttf'),
+          loadFont('Inter-SemiBold.ttf'),
+          needsFallback ? loadFont('Archivo-Regular.ttf') : null,
+        ]).then(([regular, semiBold, archivo]) => [
+          { name: 'Inter', data: regular, weight: 400 as const, style: 'normal' as const },
+          { name: 'Inter', data: semiBold, weight: 600 as const, style: 'normal' as const },
+          ...(archivo ? [{ name: 'Archivo', data: archivo, weight: 400 as const, style: 'normal' as const }] : []),
         ])
       : undefined;
     const iconUrl = `${baseURL}/favicon-180.png`;
@@ -129,7 +137,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               padding: PHONE.bezel,
               borderRadius: PHONE.radius,
               backgroundColor: OG_THEME.ink,
-              fontFamily: 'Archivo',
+              fontFamily: 'Inter, Archivo',
             }}
           >
             <div
@@ -145,7 +153,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               }}
             >
               <div style={{ width: 84, height: 24, borderRadius: 12, backgroundColor: OG_THEME.ink }} />
-              <div style={{ fontSize: 72, fontWeight: 800, color: '#F3F1EA', lineHeight: 1, marginTop: 14, letterSpacing: -2 }}>
+              <div style={{ fontSize: 72, fontWeight: 600, color: '#F3F1EA', lineHeight: 1, marginTop: 14, letterSpacing: -2 }}>
                 9:41
               </div>
               <div
@@ -164,10 +172,10 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                 {/* satori sizes a growing column to its text, not the space left, so the width is explicit. */}
                 <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 12, width: NOTIFICATION_TEXT_WIDTH }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <div style={{ fontSize: 18, fontWeight: 800 }}>PING</div>
-                    <div style={{ fontSize: 15, color: '#5E6B63' }}>now</div>
+                    <div style={{ fontSize: 18, fontWeight: 600 }}>PING</div>
+                    <div style={{ fontSize: 15, fontWeight: 400, color: '#5E6B63' }}>now</div>
                   </div>
-                  <div style={{ fontSize: 26, fontWeight: 800, lineHeight: 1.12, marginTop: 4 }}>{message}</div>
+                  <div style={{ fontSize: 24, fontWeight: 400, lineHeight: 1.2, letterSpacing: 0, marginTop: 4 }}>{message}</div>
                 </div>
               </div>
             </div>

@@ -15,7 +15,7 @@ import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 
 export interface ShareLink {
-  /** The link people paste: /p/<id>, or the legacy /api/og URL when storage is down. */
+  /** The link people paste: /p/<id>. */
   url: string;
   /** The card that link unfurls to. */
   imageUrl: string;
@@ -26,7 +26,8 @@ interface ShareModalProps {
   onClose: () => void;
   /**
    * Stores the current character with a message (null for the default one)
-   * and resolves its link. Called again whenever the message changes.
+   * and resolves its link, rejecting when the card could not be stored.
+   * Called again whenever the message changes.
    */
   getShareLink: (message: string | null) => Promise<ShareLink>;
   /** The current character composited into a square canvas, or null before the base art loads. */
@@ -68,6 +69,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, getShareLink, 
   // The last card that resolved, kept on screen while the next one renders.
   const [shown, setShown] = useState<ShareLink | null>(null);
   const [failed, setFailed] = useState(false);
+  // Bumped by Try again to re-run the link effect for the same message.
+  const [attempt, setAttempt] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [copied, setCopied] = useState<'link' | 'image' | null>(null);
   const [icon, setIcon] = useState<HTMLImageElement | null>(null);
@@ -111,7 +114,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, getShareLink, 
     return () => { cancelled = true; };
     // getShareLink reads the selection at open time; reopening refreshes it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, message]);
+  }, [isOpen, message, attempt]);
 
   const flash = (what: 'link' | 'image') => {
     setCopied(what);
@@ -199,9 +202,12 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, getShareLink, 
         <div className="relative aspect-[800/420] w-full overflow-hidden rounded-md border border-hairline bg-artboard">
           {!imageLoaded && !failed && <div className="absolute inset-0 animate-pulse bg-panel" />}
           {failed && (
-            <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-meta text-ink-muted">
-              Could not create the link. Close and try again.
-            </p>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center">
+              <p className="text-meta text-ink-muted">Could not create the link.</p>
+              <Button size="sm" variant="secondary" onClick={() => setAttempt((n) => n + 1)}>
+                Try again
+              </Button>
+            </div>
           )}
           {shown && !failed && (
             <img

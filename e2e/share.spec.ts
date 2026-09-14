@@ -144,6 +144,32 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
     await expect(card.locator('img')).toHaveJSProperty('complete', true);
   });
 
+  test('a failed share says so and retries, instead of handing out the long /api/og link', async ({ page }) => {
+    const { picker, preview } = await openBuilder(page);
+    await picker.getByRole('img', { name: 'Crown', exact: true }).first().click();
+    await expect.poll(() => readSelectedCount(page)).toBe(1);
+
+    // The server's render running out of CPU: both of the client's attempts fail.
+    let failing = true;
+    let posts = 0;
+    await page.route('**/api/share', async (route) => {
+      posts++;
+      if (failing) await route.fulfill({ status: 502, contentType: 'application/json', body: '{"error":"Card render failed"}' });
+      else await route.continue();
+    });
+
+    await preview.getByRole('button', { name: 'Share' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Share' });
+    await expect(dialog.getByText('Could not create the link.')).toBeVisible();
+    expect(posts).toBe(2);
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue('');
+    await expect(dialog.getByRole('link', { name: 'Post on X' })).toHaveCount(0);
+
+    failing = false;
+    await dialog.getByRole('button', { name: 'Try again' }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(/\/p\/[0-9a-z]+$/);
+  });
+
   test('share rejects traits that are not in the library', async ({ request }) => {
     const res = await request.post('/api/share', { data: { head: 'no-such-hat' } });
     expect(res.status()).toBe(400);

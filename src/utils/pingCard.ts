@@ -31,11 +31,12 @@ const SURFACE = '#FFFFFF';
 const HAIRLINE = '#DDD9CC';
 const INK = '#111C16';
 const INK_FAINT = '#5E6B63';
-const FONT = 'Archivo, Arial, sans-serif';
+const FONT = 'Inter, Arial, sans-serif';
 
 /**
- * Printable ASCII plus accented Latin letters: what Archivo, the card font,
- * can draw. Mirrors functions/_lib.ts; pingCard.test.ts asserts they agree.
+ * Printable ASCII plus accented Latin letters: what Inter (the card font;
+ * the server render adds Archivo for glyphs outside its subset) can draw. Mirrors
+ * functions/_lib.ts; pingCard.test.ts asserts they agree.
  */
 export const MESSAGE_CHARS = /^[\x20-\x7EÀ-ɏ]+$/;
 
@@ -157,20 +158,20 @@ export const drawPingCard = (ctx: CanvasRenderingContext2D, options: PingCardOpt
   ctx.textAlign = 'right';
   ctx.fillText('now', layout.textRight, layout.titleBaseline);
 
-  ctx.font = `700 ${layout.titleSize}px ${FONT}`;
+  ctx.font = `600 ${layout.titleSize}px ${FONT}`;
   ctx.fillStyle = INK;
   ctx.textAlign = 'left';
   ctx.fillText('PING', layout.textX, layout.titleBaseline);
 
   const text = normalizeMessage(options.message);
   const maxWidth = layout.textRight - layout.textX;
-  ctx.font = `500 ${layout.messageSize}px ${FONT}`;
+  ctx.font = `400 ${layout.messageSize}px ${FONT}`;
   // Shrink before cutting: a message someone typed should arrive whole.
   // MIN_MESSAGE_SCALE fits MAX_MESSAGE_LENGTH characters of typical text.
   // Glyph widths don't scale exactly linearly with font size, hence the 2% slack.
   const fullWidth = ctx.measureText(text).width;
   const scale = fullWidth <= maxWidth ? 1 : Math.max(MIN_MESSAGE_SCALE, (maxWidth / fullWidth) * 0.98);
-  ctx.font = `500 ${layout.messageSize * scale}px ${FONT}`;
+  ctx.font = `400 ${layout.messageSize * scale}px ${FONT}`;
   const message = fitLine(text, maxWidth, (s) => ctx.measureText(s).width);
   ctx.fillText(message, layout.textX, layout.messageBaseline);
 };
@@ -179,6 +180,6 @@ export const drawPingCard = (ctx: CanvasRenderingContext2D, options: PingCardOpt
 export const loadCardFonts = async () => {
   if (typeof document === 'undefined' || !document.fonts) return;
   await Promise.all(
-    ['400', '500', '700'].map((weight) => document.fonts.load(`${weight} 40px Archivo`).catch(() => undefined))
+    ['400', '600'].map((weight) => document.fonts.load(`${weight} 40px Inter`).catch(() => undefined))
   );
 };

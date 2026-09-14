@@ -82,7 +82,9 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
    */
   const composeCharacter = useCallback(
     (size: number): HTMLCanvasElement | null => {
-      if (!baseImage) return null;
+      // A hidden or collapsed container measures 0, and drawImage throws on a
+      // 0-size canvas source, which blanked the whole app.
+      if (!baseImage || size < 1) return null;
       const canvas = document.createElement('canvas');
       canvas.width = size;
       canvas.height = size;
@@ -119,7 +121,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     const container = containerRef.current;
     if (container) {
       const rect = container.getBoundingClientRect();
-      const size = Math.min(rect.width, rect.height);
+      const size = Math.floor(Math.min(rect.width, rect.height));
       canvas.width = size;
       canvas.height = size;
     }
@@ -277,21 +279,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     }
   };
 
-  const generateApiUrl = () => {
-    // Share links have to point at whatever host is serving the page.
-    const baseUrl = `${window.location.origin}/api/og`;
-    const params = new URLSearchParams();
-
-    // Add selected traits as query parameters
-    selectedTraits.forEach((trait) => {
-      if (trait) {
-        params.append(trait.category, trait.id.slice(0, trait.id.lastIndexOf('_' + trait.category)));
-      }
-    });
-    const paramsString = params.size > 0 ? `?${params.toString()}` : '';
-    return `${baseUrl}${paramsString}`;
-  };
-
   /** The trait selection as the share and image endpoints expect it. */
   const traitSelection = (): Record<string, string> =>
     Object.fromEntries(
@@ -309,9 +296,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
    *
    * This is what makes the card appear in the composer without a wait: the
    * render happens now, in this request, and the scraper that follows gets a
-   * stored PNG. Returns null if storage is unavailable (no binding, render
-   * failure), and the caller falls back to the legacy query-param URL, which
-   * still works and still unfurls - just by rendering on the bot's request.
+   * stored PNG. Returns null if storage is unavailable or the render failed.
    */
   const createShareUrl = async (message: string | null): Promise<string | null> => {
     // A heavy character's render occasionally runs out of CPU on the first
@@ -355,14 +340,11 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
       return link;
     }
 
-    // Storage failed - fall back without caching, so a later retry can
-    // still succeed once storage is available again. The preview renders the
-    // same card on demand.
-    const params = new URLSearchParams(traitSelection());
-    params.set('type', 'banner');
-    params.set('caption', '1');
-    if (message) params.set('message', message);
-    return { url: generateApiUrl(), imageUrl: `/api/image/custom.png?${params}` };
+    // No silent fallback to the long /api/og URL: it drops the message and
+    // renders on the scraper's request, the exact failure storing avoids. The
+    // dialog says it failed and offers a retry; nothing is cached, so the
+    // retry POSTs again.
+    throw new Error('Could not create the share link');
   };
 
   return (
