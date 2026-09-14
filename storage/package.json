@@ -1,0 +1,12 @@
+{
+  "name": "ping-card-storage",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Self-hosted storage for PING share cards (PNG + gallery index), run behind a Cloudflare Tunnel.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  }
+}

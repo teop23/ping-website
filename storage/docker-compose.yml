@@ -1,0 +1,36 @@
+# Two services: the storage API, and cloudflared tunneling it to a public
+# hostname Cloudflare Pages Functions can reach. Both come up with:
+#   docker compose up -d
+#
+# Requires a .env file next to this one (copy .env.example) with AUTH_TOKEN
+# and TUNNEL_TOKEN filled in. See README.md for how to get TUNNEL_TOKEN from
+# the Zero Trust dashboard - that step happens in Cloudflare's UI, not here.
+services:
+  storage:
+    build: .
+    container_name: ping-card-storage
+    restart: unless-stopped
+    environment:
+      - PORT=8787
+      - DATA_DIR=/data
+      - AUTH_TOKEN=${AUTH_TOKEN}
+    volumes:
+      - ping-cards-data:/data
+    # No published ports: cloudflared reaches this container over the
+    # compose network by service name (http://storage:8787). Nothing here
+    # needs to be exposed to the host's own network.
+    expose:
+      - '8787'
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: ping-cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - storage
+
+volumes:
+  ping-cards-data:

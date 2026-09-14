@@ -45,3 +45,8 @@ public/ping-768.png
 # Playwright
 test-results/
 playwright-report/
+
+# Self-hosted card storage service: local data volume and its node_modules
+# (the service has none today, but this is future-proofing).
+storage/data/
+storage/node_modules
