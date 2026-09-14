@@ -80,8 +80,9 @@ const Showcase: React.FC = () => {
   const slots = card ? [...new URLSearchParams(card.traits).entries()] : [];
 
   return (
-    <main className="container max-w-6xl py-6 sm:py-10">
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-10">
+    <main className="container max-w-7xl px-4 py-4 sm:px-8 sm:py-10">
+      {/* The card is an 800x420 raster; its column stops at 50rem so it is never upscaled. */}
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,50rem)_minmax(18rem,1fr)] lg:gap-12">
         <figure className="overflow-hidden rounded-lg border border-hairline bg-raised">
           <div className="aspect-[800/420] bg-panel">
             {card && (
@@ -96,7 +97,7 @@ const Showcase: React.FC = () => {
             {card ? card.title : ' '}
           </h1>
 
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
             <Button asChild size="lg">
               <Link to={card ? `/?${card.traits}#builder` : '/#builder'}>Remix this PING</Link>
             </Button>
