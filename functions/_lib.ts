@@ -165,9 +165,19 @@ interface OgPageOptions {
   pageUrl: string;
   title: string;
   description: string;
+  /** Defaults to the banner shape; a message'd PING's stored card is square. */
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
-export const renderOgPage = ({ imageUrl, pageUrl, title, description }: OgPageOptions): Response => {
+export const renderOgPage = ({
+  imageUrl,
+  pageUrl,
+  title,
+  description,
+  imageWidth = CARD.banner.width,
+  imageHeight = CARD.banner.height,
+}: OgPageOptions): Response => {
   const image = escapeHtml(imageUrl);
   const page = escapeHtml(pageUrl);
   const safeTitle = escapeHtml(title);
@@ -189,8 +199,8 @@ export const renderOgPage = ({ imageUrl, pageUrl, title, description }: OgPageOp
   <meta property="og:title" content="${safeTitle}" />
   <meta property="og:description" content="${safeDescription}" />
   <meta property="og:image" content="${image}" />
-  <meta property="og:image:width" content="${CARD.banner.width}" />
-  <meta property="og:image:height" content="${CARD.banner.height}" />
+  <meta property="og:image:width" content="${imageWidth}" />
+  <meta property="og:image:height" content="${imageHeight}" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${page}" />
 </head>
@@ -342,6 +352,55 @@ export const cardGeometry = (isBanner: boolean, captioned = false) => {
   };
 };
 
+/**
+ * Geometry for a PING with a message: a banner (icon, "PING", "now", the
+ * message) over the character, filling the rest of a square frame.
+ *
+ * Fractions mirror `cardLayout` in src/utils/pingCard.ts, the client canvas
+ * version this reproduces in satori for the stored/scraped card - see
+ * docs/proposals/send-a-ping-link.md ("a rewrite, not a port"). Kept in sync
+ * by convention rather than a shared module, the same situation TRAIT_ORDER
+ * and PING_MESSAGES are in.
+ */
+export const notificationLayout = (size: number) => {
+  const u = (fraction: number) => fraction * size;
+  const banner = { x: u(0.04), y: u(0.035), w: u(0.92), h: u(0.165), r: u(0.04) };
+  const iconSize = u(0.105);
+  const iconX = banner.x + u(0.03);
+  const iconY = banner.y + (banner.h - iconSize) / 2;
+  const textX = iconX + iconSize + u(0.03);
+  const textRight = banner.x + banner.w - u(0.035);
+  return {
+    size,
+    banner,
+    icon: { size: iconSize, x: iconX, y: iconY },
+    textX,
+    textRight,
+    titleBaseline: banner.y + u(0.068),
+    messageBaseline: banner.y + u(0.126),
+    titleSize: u(0.036),
+    metaSize: u(0.03),
+    messageSize: u(0.046),
+    character: { x: u(0.1), y: u(0.2), size: u(0.8) },
+  };
+};
+
+/** notificationLayout, plus where the base art and trait art register. */
+export const notificationGeometry = (size: number) => {
+  const layout = notificationLayout(size);
+  const { x, y, size: charSize } = layout.character;
+  const baseSize = charSize * BASE_SCALE;
+  return {
+    ...layout,
+    traitLeft: x,
+    traitTop: y,
+    traitSize: charSize,
+    baseLeft: x - (baseSize - charSize) / 2,
+    baseTop: y - (baseSize - charSize) / 2,
+    baseSize,
+  };
+};
+
 /** A real character usually has empty slots, so a random one should too.
  *  Sourced from /launch.config.mjs, the same place src/utils/constants.ts
  *  reads it from - this used to be a second hand-typed copy that had to be
@@ -382,8 +441,8 @@ export const rollRandomTraits = <T>(
  * ------------------------------------------------------------------ */
 
 export interface CardStore {
-  get(key: string): Promise<{ body: ArrayBuffer; traits: string } | null>;
-  put(key: string, body: ArrayBuffer, traits: string): Promise<void>;
+  get(key: string): Promise<{ body: ArrayBuffer; traits: string; message?: string } | null>;
+  put(key: string, body: ArrayBuffer, traits: string, message?: string): Promise<void>;
 }
 
 /**
@@ -392,17 +451,18 @@ export interface CardStore {
  */
 export const kvCardStore = (namespace: KVNamespace): CardStore => ({
   async get(key) {
-    const { value, metadata } = await namespace.getWithMetadata<{ traits: string }>(key, {
+    const { value, metadata } = await namespace.getWithMetadata<{ traits: string; message?: string }>(key, {
       type: 'arrayBuffer',
     });
     if (!value) return null;
-    return { body: value, traits: metadata?.traits ?? '' };
+    return { body: value, traits: metadata?.traits ?? '', message: metadata?.message };
   },
-  async put(key, body, traits) {
-    // The trait string rides in metadata rather than a second key: one write
-    // per character keeps the 1,000-writes/day free ceiling meaningful, and
-    // metadata (1 KiB) is far more room than eight short slot names need.
-    await namespace.put(key, body, { metadata: { traits } });
+  async put(key, body, traits, message) {
+    // The trait string (and, for a PING with a message, the message) rides in
+    // metadata rather than a second key: one write per card keeps the
+    // 1,000-writes/day free ceiling meaningful, and metadata (1 KiB) is far
+    // more room than eight short slot names plus a 40-char preset need.
+    await namespace.put(key, body, { metadata: message ? { traits, message } : { traits } });
   },
 });
 
@@ -416,6 +476,42 @@ export const canonicalTraits = (params: URLSearchParams): string =>
     .filter((entry): entry is [string, string] => Boolean(entry[1]))
     .map(([category, trait]) => `${category}=${trait}`)
     .join('&');
+
+/**
+ * Presets a shared PING's message may be. Mirrors the array of the same name
+ * in src/utils/pingCard.ts - two authorities because the client canvas and
+ * this Cloudflare Functions bundle cannot share a module cheaply, the same
+ * situation TRAIT_ORDER above is in. _lib.test.ts asserts the two agree.
+ *
+ * Presets-only, no free text: a custom string rendered into an image hosted
+ * on our domain and pushed into X's preview cache is an abuse surface
+ * (slurs, phishing-style text wearing our brand) that a fixed, reviewed list
+ * does not have. See docs/proposals/send-a-ping-link.md.
+ */
+export const PING_MESSAGES = [
+  'You have 1 new PING.',
+  'Order filled.',
+  'Price alert.',
+  'Seen.',
+  'gm.',
+  'Still holding.',
+  'Bought the dip.',
+  'Liquidated.',
+] as const;
+
+export const isValidPingMessage = (message: string): boolean =>
+  (PING_MESSAGES as readonly string[]).includes(message);
+
+/**
+ * The string hashed into a share id. A message-less PING hashes exactly
+ * `canonical` - unchanged from before this feature existed, so every /p link
+ * and card stored before messages shipped keeps resolving. A message is
+ * appended only when present, so the same character with a different message
+ * is a different id (a different stored card), while the same character with
+ * no message is untouched. See _lib.test.ts.
+ */
+export const shareInput = (canonical: string, message?: string): string =>
+  message ? `${canonical}&msg=${message}` : canonical;
 
 /**
  * Content-addressed id. SHA-256 rather than the FNV hash used for background
@@ -454,6 +550,8 @@ export interface GalleryEntry {
   traits: string;
   /** Unix ms. */
   at: number;
+  /** Set when the shared PING carries a message, for the gallery's badge. */
+  message?: string;
 }
 
 /** Newest first, one slot per id, capped. Pure so it can be tested without KV. */

@@ -37,6 +37,7 @@ export const onRequestGet = async ({ env, params }: CardContext): Promise<Respon
       title: titleFromTraits(new URLSearchParams(card.traits)),
       traits: card.traits,
       image: `/api/image/p/${id}.png`,
+      ...(card.message ? { message: card.message } : {}),
     },
     200,
     'public, max-age=31536000, immutable'

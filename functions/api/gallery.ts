@@ -38,6 +38,7 @@ export const onRequestGet = async ({ request, env }: GalleryContext): Promise<Re
       image: `/api/image/p/${entry.id}.png`,
       url: `/p/${entry.id}`,
       at: entry.at,
+      ...(entry.message ? { message: entry.message } : {}),
     })),
     next,
   };

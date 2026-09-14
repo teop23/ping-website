@@ -1,4 +1,4 @@
-import { BOT_USER_AGENT, kvCardStore, renderOgPage, titleFromTraits } from '../_lib';
+import { BOT_USER_AGENT, CARD, kvCardStore, renderOgPage, titleFromTraits } from '../_lib';
 
 /**
  * The share link itself: buildaping.com/p/<id>.
@@ -38,10 +38,14 @@ export const onRequestGet = async ({ request, env, params }: PageContext): Promi
     return env.ASSETS.fetch(new URL('/', url.origin));
   }
 
+  // A message'd PING leads with the message; the stored card behind it is
+  // the square notification layout rather than the plain banner, so the OG
+  // dimensions have to match (see functions/api/image/custom.png.tsx).
   return renderOgPage({
     imageUrl: `${url.origin}/api/image/p/${id}.png`,
     pageUrl: url.href,
-    title: titleFromTraits(traits),
+    title: card.message ? `Someone sent you a PING: ${card.message}` : titleFromTraits(traits),
     description: `Send one back at ${url.host}`,
+    ...(card.message ? { imageWidth: CARD.square.width, imageHeight: CARD.square.height } : {}),
   });
 };
