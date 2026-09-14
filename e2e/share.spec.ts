@@ -64,7 +64,7 @@ test.describe('share flow: Tweet -> /api/share -> /p/<id>', () => {
     await expect(picker.getByText('Crown', { exact: true }).first()).toBeVisible();
 
     // Junk in the query is ignored, not fatal.
-    await openBuilder(page, '/?head=no-such-hat&nonsense=1&face=3d-glasses#builder');
+    await openBuilder(page, '/?head=no-such-hat&nonsense=1&face=vr-headset#builder');
     await expect.poll(() => readSelectedCount(page)).toBe(1);
   });
 

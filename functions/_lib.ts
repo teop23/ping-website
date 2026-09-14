@@ -138,14 +138,26 @@ const listPhrase = (items: string[]): string =>
 
 // "PING with a Cowboy Hat and a Bazooka Aura" beats "Check out my custom image!"
 // on a timeline, and it costs nothing to build from params we already have.
-export const titleFromTraits = (params: URLSearchParams): string => {
-  const names = TRAIT_ORDER.map((category) => params.get(category))
+const traitNames = (params: URLSearchParams): string[] =>
+  TRAIT_ORDER.map((category) => params.get(category))
     .filter((value): value is string => Boolean(value))
     .map(toTitleCase);
 
+/** How many trait names a caption or title spells out before summarising. */
+export const NAMED_TRAITS = 3;
+
+/** The names a share card prints: the first few in paint order, plus how many were left out. */
+export const captionFromTraits = (params: URLSearchParams): { names: string[]; more: number } => {
+  const names = traitNames(params);
+  return { names: names.slice(0, NAMED_TRAITS), more: Math.max(0, names.length - NAMED_TRAITS) };
+};
+
+export const titleFromTraits = (params: URLSearchParams): string => {
+  const names = traitNames(params);
+
   if (names.length === 0) return 'You have 1 new PING';
-  if (names.length <= 3) return `PING with ${listPhrase(names)}`;
-  return `PING with ${listPhrase(names.slice(0, 3))} +${names.length - 3} more`;
+  if (names.length <= NAMED_TRAITS) return `PING with ${listPhrase(names)}`;
+  return `PING with ${listPhrase(names.slice(0, NAMED_TRAITS))} +${names.length - NAMED_TRAITS} more`;
 };
 
 interface OgPageOptions {
@@ -253,11 +265,19 @@ export const CARD = {
 /** The base art is drawn larger than the trait box; traits register to the box. */
 export const BASE_SCALE = 1.4;
 
-export const cardGeometry = (isBanner: boolean) => {
+/** Room kept right of a captioned banner's character, and left of its text. */
+export const CAPTION_INSET = 48;
+
+/**
+ * A captioned banner moves the character to the right edge so the trait names
+ * get the left side; everything else about the frame is unchanged.
+ */
+export const cardGeometry = (isBanner: boolean, captioned = false) => {
   const { width, height } = isBanner ? CARD.banner : CARD.square;
   // Traits are authored square and fill the character box.
   const character = isBanner ? Math.round((CARD.banner.width / 1200) * 512) : 512;
   const baseSize = character * BASE_SCALE;
+  const traitLeft = isBanner && captioned ? width - character - CAPTION_INSET : (width - character) / 2;
 
   return {
     width,
@@ -265,9 +285,9 @@ export const cardGeometry = (isBanner: boolean) => {
     character,
     baseSize,
     baseTop: (height - baseSize) / 2,
-    baseLeft: (width - baseSize) / 2,
+    baseLeft: traitLeft - (baseSize - character) / 2,
     traitTop: (height - character) / 2,
-    traitLeft: (width - character) / 2,
+    traitLeft,
   };
 };
 

@@ -6,6 +6,7 @@ import {
   hashString,
   CARD,
   cardGeometry,
+  captionFromTraits,
   noStore,
   pickBgColor,
   rollRandomTraits,
@@ -109,6 +110,17 @@ describe('titleFromTraits', () => {
   });
 });
 
+describe('captionFromTraits', () => {
+  it('names up to three traits in paint order and counts the rest', () => {
+    const params = new URLSearchParams('head=crown&face=monocle&aura=fire-aura&body=dress&type=banner');
+    expect(captionFromTraits(params)).toEqual({ names: ['Fire Aura', 'Dress', 'Monocle'], more: 1 });
+  });
+
+  it('is empty for a bare PING', () => {
+    expect(captionFromTraits(new URLSearchParams('type=banner'))).toEqual({ names: [], more: 0 });
+  });
+});
+
 describe('toTitleCase', () => {
   it('converts kebab-case for display', () => {
     expect(toTitleCase('cowboy-hat')).toBe('Cowboy Hat');
@@ -171,6 +183,14 @@ describe('cardGeometry', () => {
   it('stays above the size scrapers need for a large card', () => {
     expect(CARD.banner.width).toBeGreaterThanOrEqual(600);
     expect(CARD.banner.height).toBeGreaterThanOrEqual(315);
+  });
+
+  it('moves a captioned banner character to the right edge, base still centred on it', () => {
+    const g = cardGeometry(true, true);
+    expect(g.traitLeft + g.character).toBeLessThan(g.width);
+    expect(g.traitLeft).toBeGreaterThan((g.width - g.character) / 2);
+    expect(g.baseLeft + g.baseSize / 2).toBeCloseTo(g.traitLeft + g.character / 2);
+    expect(cardGeometry(false, true)).toEqual(cardGeometry(false));
   });
 
   it('scales the character with the frame', () => {

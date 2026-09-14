@@ -10,8 +10,9 @@ test.describe('site', () => {
     await expect(page.getByText(`${manifest.traits.length} across 8 slots`)).toBeVisible();
     await expect(page.getByRole('heading', { name: 'The generator' })).toBeVisible();
 
-    // The hero cycles through hardcoded combos; a trait renamed or cut from the
-    // library shows up here as a 404, not as a visible error.
+    // The hero cycles through src/data/spotlight.ts, naming the new trait under
+    // the art; a trait renamed or cut shows up here as a 404, not a visible error.
+    await expect(page.locator('figcaption').filter({ hasText: /^New / })).toBeVisible();
     await page.waitForTimeout(4000);
     await page.getByRole('heading', { name: 'The generator' }).scrollIntoViewIfNeeded();
     await page.waitForLoadState('networkidle');

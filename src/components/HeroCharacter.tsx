@@ -4,6 +4,7 @@ import { baseCharacterImage } from '../data/traits';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '../utils/canvasConstants';
 import { TRAIT_RENDER_ORDER, paintsUnderBase } from '../data/traitOrder';
 import { TraitCategory } from '../types';
+import { Combo, SPOTLIGHT, spotlightLabel } from '../data/spotlight';
 
 /**
  * The hero's proof: real characters, composited live from the same trait PNGs
@@ -12,21 +13,15 @@ import { TraitCategory } from '../types';
  * Deliberately not a pre-rendered GIF. A GIF goes stale the moment a trait is
  * added, weighs far more than these PNGs, and proves nothing about whether the
  * generator works. This is the generator, running.
+ *
+ * Each character spotlights one recent trait, named under the art. The list
+ * lives in src/data/spotlight.ts, whose test checks every trait is live.
  */
 
-type Combo = Partial<Record<TraitCategory, string>>;
+const COMBOS: Combo[] = SPOTLIGHT.map((entry) => entry.combo);
 
-/** Every entry verified against public/traits at build time. */
-const COMBOS: Combo[] = [
-  { head: 'cowboy-hat', face: 'cool-glasses', body: 'ping-tee', right_hand: 'bitcoin' },
-  { head: 'crown', aura: 'fire-aura', body: '6-figs-club-tee', left_hand: 'beer' },
-  { head: 'backwards-cap', face: 'pit-vipers', body: 'blank-tee', right_hand: 'basketball' },
-  { head: 'luffy-strawhat', face: 'star-eyes', body: 'luffy-shirt', right_hand: 'coffee-mug' },
-  { head: 'party-hat', face: 'heart-glasses', body: 'dress', accessory: 'pet-ping-(right)' },
-  { aura: 'blue-aura', head: 'devil-horns', face: 'angry', right_hand: 'devil-trident' },
-];
-
-const HOLD_MS = 1900;
+// Long enough to read the caption, not just see the character change.
+const HOLD_MS = 2600;
 /**
  * How long the outgoing character takes to fade away.
  *
@@ -36,8 +31,7 @@ const HOLD_MS = 1900;
  */
 const DISSOLVE_MS = 600;
 
-const srcFor = (combo: Combo, category: TraitCategory): string =>
-  `/traits/trait-${combo[category]}_${category}.png`;
+const srcFor = (combo: Combo, category: TraitCategory): string => `/traits/trait-${combo[category]}_${category}.png`;
 
 /**
  * The layers of one character, split where the base art goes: auras glow
@@ -57,9 +51,7 @@ const allLayersOf = (combo: Combo): string[] => {
 };
 
 const describe = (combo: Combo): string => {
-  const names = TRAIT_RENDER_ORDER.filter((c) => combo[c]).map((c) =>
-    (combo[c] as string).replace(/-/g, ' ')
-  );
+  const names = TRAIT_RENDER_ORDER.filter((c) => combo[c]).map((c) => (combo[c] as string).replace(/-/g, ' '));
   return `PING character wearing ${names.join(', ')}`;
 };
 
@@ -145,31 +137,35 @@ const HeroCharacter: React.FC = () => {
     return () => clearTimeout(timer);
   }, [outgoing]);
 
+  const label = spotlightLabel(SPOTLIGHT[index]);
+
   return (
-    <div
-      className="relative mx-auto aspect-square w-full max-w-[15rem] sm:max-w-[18rem] lg:max-w-[30rem]"
-      role="img"
-      aria-label={describe(COMBOS[index])}
-    >
-      {/*
+    <figure className="mx-auto w-full max-w-[15rem] sm:max-w-[18rem] lg:max-w-[30rem]">
+      <div className="relative aspect-square w-full" role="img" aria-label={describe(COMBOS[index])}>
+        {/*
         The incoming character sits underneath at full opacity while the
         outgoing one dissolves over it. Nothing is ever mid-fade on its own, so
         a throttled tab shows the previous character rather than a blank box.
       */}
-      <div className="absolute inset-0">
-        <Character combo={COMBOS[index]} />
-      </div>
-
-      {outgoing !== null && outgoing !== index && (
-        <div
-          key={outgoing}
-          className="absolute inset-0 motion-safe:animate-dissolve-out"
-          style={{ animationDuration: `${DISSOLVE_MS}ms` }}
-        >
-          <Character combo={COMBOS[outgoing]} />
+        <div className="absolute inset-0">
+          <Character combo={COMBOS[index]} />
         </div>
-      )}
-    </div>
+
+        {outgoing !== null && outgoing !== index && (
+          <div
+            key={outgoing}
+            className="absolute inset-0 motion-safe:animate-dissolve-out"
+            style={{ animationDuration: `${DISSOLVE_MS}ms` }}
+          >
+            <Character combo={COMBOS[outgoing]} />
+          </div>
+        )}
+      </div>
+      <figcaption className="mt-3 flex items-baseline justify-center gap-2 text-meta">
+        <span className="text-micro font-medium uppercase tracking-wider text-ink-faint">New {label.slot}</span>
+        <span className="font-semibold text-ink">{label.name}</span>
+      </figcaption>
+    </figure>
   );
 };
 

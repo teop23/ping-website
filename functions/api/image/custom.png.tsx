@@ -2,22 +2,36 @@ import * as React from 'react';
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import {
+  CAPTION_INSET,
+  OG_THEME,
   RENDER_BASE_IMAGE,
+  captionFromTraits,
   cardGeometry,
   RENDER_TRAITS_DIR,
   pickBgColor,
   splitAtBase,
   seedFromParams,
 } from '../../_lib';
+// Query params that shape the image rather than name a trait.
+/** Left margin of a captioned banner's text column. */
+const CAPTION_LEFT = CAPTION_INSET;
+
+const OPTION_PARAMS = ['type', 'ts', 'caption'];
+
 export const onRequestGet: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams.entries());
     //one param might be type, filter out any non-trait params
     const traitParams = Object.fromEntries(
-      Object.entries(queryParams).filter(([key]) => key !== 'type' && key !== 'ts')
+      Object.entries(queryParams).filter(([key]) => !OPTION_PARAMS.includes(key))
     );
     const isBanner = queryParams.type === 'banner';
+    // Trait names printed on the card, so a saved or screenshotted image keeps
+    // the context the page title carries. Opt-in and banner-only: /api/share
+    // asks for it on its one render per character, while the open API and the
+    // bot-scraped legacy route keep the cheaper text-free render.
+    const captioned = isBanner && queryParams.caption === '1';
     const baseURL = new URL(request.url).origin;
     const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
     const {
@@ -29,7 +43,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       baseLeft: baseImageLeftOffset,
       traitTop: traitImageTopOffset,
       traitLeft: traitImageLeftOffset,
-    } = cardGeometry(isBanner);
+    } = cardGeometry(isBanner, captioned);
     // Load the traits index JSON from the public directory
     const traitsIndexUrl = new URL('/traits-index.json', request.url);
     const traitsIndexRes = await fetch(traitsIndexUrl.href);
@@ -39,7 +53,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const traitSelectionsByCategory: { category: string; trait: string }[] = [];
     // Seeded on the traits alone, so the square and the banner of one character
     // match, and a card Twitter scraped matches what the user later opens.
-    const bgColor = pickBgColor(seedFromParams(url.searchParams, ['type', 'ts']));
+    const bgColor = pickBgColor(seedFromParams(url.searchParams, OPTION_PARAMS));
 
     // ✅ Validate all query parameter keys (categories)
     for (const [category, trait] of Object.entries(traitParams)) {
@@ -65,6 +79,18 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const underBase = under.map(toUrl);
     const overBase = over.map(toUrl);
 
+    // satori cannot read woff2; the TTF cuts are the same family the site uses.
+    const fonts = captioned
+      ? await Promise.all([
+          fetch(`${baseURL}/fonts/Archivo-Regular.ttf`).then((r) => r.arrayBuffer()),
+          fetch(`${baseURL}/fonts/Archivo-ExtraBold.ttf`).then((r) => r.arrayBuffer()),
+        ]).then(([regular, extraBold]) => [
+          { name: 'Archivo', data: regular, weight: 400 as const, style: 'normal' as const },
+          { name: 'Archivo', data: extraBold, weight: 800 as const, style: 'normal' as const },
+        ])
+      : undefined;
+    const caption = captionFromTraits(new URLSearchParams(traitParams));
+
     // 🖼️ Generate the composited image
     return new ImageResponse(
       <div
@@ -76,6 +102,39 @@ export const onRequestGet: APIRoute = async ({ request }) => {
           backgroundColor: bgColor,
         }}
       >
+        {captioned && (
+          <div
+            style={{
+              position: 'absolute',
+              left: CAPTION_LEFT,
+              top: 0,
+              width: traitImageLeftOffset - CAPTION_LEFT,
+              height: baseContainerHeight,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              fontFamily: 'Archivo',
+              color: OG_THEME.ink,
+            }}
+          >
+            <div style={{ fontSize: 22, opacity: 0.7 }}>You have 1 new PING.</div>
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 14 }}>
+              {caption.names.length === 0 ? (
+                <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.15 }}>PING</div>
+              ) : (
+                caption.names.map((name) => (
+                  // The gap separates two names; a name that wraps stays tight.
+                  <div key={name} style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.05, marginBottom: 8 }}>
+                    {name}
+                  </div>
+                ))
+              )}
+            </div>
+            {caption.more > 0 && (
+              <div style={{ fontSize: 22, opacity: 0.7, marginTop: 10 }}>{`+${caption.more} more`}</div>
+            )}
+          </div>
+        )}
         {underBase.map((src) => (
           <img
             key={src}
@@ -105,6 +164,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       {
         width: baseContainerWidth,
         height: baseContainerHeight,
+        fonts,
       }
     );
   } catch (err) {

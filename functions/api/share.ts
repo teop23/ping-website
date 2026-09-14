@@ -81,7 +81,7 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
 
     // Render through the existing endpoint rather than a second copy of the
     // compositing JSX - one renderer, one place for it to be right.
-    const cardUrl = `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner`;
+    const cardUrl = `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner&caption=1`;
     let card: ArrayBuffer | null = null;
     const failures: string[] = [];
     for (let attempt = 0; attempt < 2 && !card; attempt++) {
