@@ -50,3 +50,6 @@ playwright-report/
 # (the service has none today, but this is future-proofing).
 storage/data/
 storage/node_modules
+
+# agent worktrees
+.claude/worktrees/
