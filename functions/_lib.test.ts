@@ -378,6 +378,56 @@ describe('httpCardStore', () => {
     expect(decodeURIComponent(seenHeaders['X-Ping-Traits'])).toBe('head=crown');
   });
 
+  it('sends CF-Access-Client-Id/Secret when both are configured, alongside the bearer token', async () => {
+    let seenHeaders: Record<string, string> = {};
+    const fetchFn = mockFetch((_url, init) => {
+      seenHeaders = init?.headers as Record<string, string>;
+      return new Response(png, { status: 200 });
+    });
+    const store = httpCardStore({
+      baseUrl: 'https://cards.example.com',
+      token: 'secret',
+      accessClientId: 'client-id.access',
+      accessClientSecret: 'client-secret',
+      fetchFn,
+    });
+
+    await store.get('abc123');
+    expect(seenHeaders['CF-Access-Client-Id']).toBe('client-id.access');
+    expect(seenHeaders['CF-Access-Client-Secret']).toBe('client-secret');
+    expect(seenHeaders.Authorization).toBe('Bearer secret');
+  });
+
+  it('omits the Access headers entirely when they are not configured', async () => {
+    let seenHeaders: Record<string, string> = {};
+    const fetchFn = mockFetch((_url, init) => {
+      seenHeaders = init?.headers as Record<string, string>;
+      return new Response(png, { status: 200 });
+    });
+    const store = httpCardStore({ baseUrl: 'https://cards.example.com', token: 'secret', fetchFn });
+
+    await store.get('abc123');
+    expect(seenHeaders['CF-Access-Client-Id']).toBeUndefined();
+    expect(seenHeaders['CF-Access-Client-Secret']).toBeUndefined();
+  });
+
+  it('omits the Access headers when only one of the pair is configured', async () => {
+    let seenHeaders: Record<string, string> = {};
+    const fetchFn = mockFetch((_url, init) => {
+      seenHeaders = init?.headers as Record<string, string>;
+      return new Response(png, { status: 200 });
+    });
+    const store = httpCardStore({
+      baseUrl: 'https://cards.example.com',
+      token: 'secret',
+      accessClientId: 'client-id.access',
+      fetchFn,
+    });
+
+    await store.get('abc123');
+    expect(seenHeaders['CF-Access-Client-Id']).toBeUndefined();
+  });
+
   it('round-trips the gallery document through GET and PUT', async () => {
     const entries = [{ id: 'a', traits: 'head=crown', at: 1 }];
     let putBody = '';
@@ -423,6 +473,19 @@ describe('selectCardStore', () => {
 
   it('is null when neither store is configured', () => {
     expect(selectCardStore({})).toBeNull();
+  });
+
+  it('still returns a store when CARD_STORE_ACCESS_ID/SECRET are also set', () => {
+    // The Access headers themselves are httpCardStore's responsibility
+    // (covered above); this just confirms selectCardStore accepts and
+    // doesn't choke on the two new optional env fields.
+    const store = selectCardStore({
+      CARD_STORE_URL: 'https://cards.example.com',
+      CARD_STORE_TOKEN: 'secret',
+      CARD_STORE_ACCESS_ID: 'client-id.access',
+      CARD_STORE_ACCESS_SECRET: 'client-secret',
+    });
+    expect(store).not.toBeNull();
   });
 });
 

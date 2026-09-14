@@ -5,11 +5,23 @@
 # Requires a .env file next to this one (copy .env.example) with AUTH_TOKEN
 # and TUNNEL_TOKEN filled in. See README.md for how to get TUNNEL_TOKEN from
 # the Zero Trust dashboard - that step happens in Cloudflare's UI, not here.
+name: ping-storage
 services:
   storage:
     build: .
     container_name: ping-card-storage
     restart: unless-stopped
+    user: '1000:1000'
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 64
     environment:
       - PORT=8787
       - DATA_DIR=/data
@@ -18,7 +30,9 @@ services:
       - ping-cards-data:/data
     # No published ports: cloudflared reaches this container over the
     # compose network by service name (http://storage:8787). Nothing here
-    # needs to be exposed to the host's own network.
+    # needs to be exposed to the host's own network. If you ever need local
+    # debugging access, bind to 127.0.0.1 only - never 0.0.0.0 - e.g.
+    # ports: ['127.0.0.1:8787:8787']. None is configured here on purpose.
     expose:
       - '8787'
 
@@ -27,6 +41,16 @@ services:
     container_name: ping-cloudflared
     restart: unless-stopped
     command: tunnel run
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 64
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     depends_on:

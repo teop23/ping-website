@@ -202,6 +202,13 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+// A slow or stalled client (or one that never finishes sending headers)
+// would otherwise hold a connection open indefinitely - this is a small
+// trusted service, but it's still reachable from the internet through the
+// tunnel, so bound both.
+server.requestTimeout = 15_000;
+server.headersTimeout = 10_000;
+
 // Only listen when run directly, so the test file can import the server
 // without binding a port.
 if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` || import.meta.url === `file://${process.argv[1]}`) {

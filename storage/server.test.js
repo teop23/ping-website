@@ -141,3 +141,11 @@ test('gallery PUT refuses a non-array body', async () => {
   });
   assert.equal(res.status, 400);
 });
+
+test('server enforces request and headers timeouts, not just the app-level MAX_* caps', () => {
+  // A slow/stalled client on a tunnel-reachable service should not hold a
+  // connection open forever. Asserted on the config rather than by actually
+  // stalling a socket for 15s in a unit test.
+  assert.ok(server.requestTimeout > 0 && server.requestTimeout <= 30_000);
+  assert.ok(server.headersTimeout > 0 && server.headersTimeout <= server.requestTimeout);
+});

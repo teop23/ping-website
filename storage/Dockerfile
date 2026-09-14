@@ -11,7 +11,13 @@ COPY server.js ./
 ENV PORT=8787
 ENV DATA_DIR=/data
 
-RUN mkdir -p /data/cards
+# node:22-alpine already has a non-root 'node' user (uid/gid 1000). Chown
+# /data here so a fresh named volume - which Docker seeds from the image's
+# directory on first creation - inherits writable ownership for that user,
+# matching the `user: '1000:1000'` compose sets for read_only + non-root.
+RUN mkdir -p /data/cards && chown -R node:node /data /app
+
+USER node
 
 EXPOSE 8787
 

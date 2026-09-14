@@ -422,11 +422,20 @@ export const kvCardStore = (namespace: KVNamespace): CardStore => ({
 });
 
 /** Options for httpCardStore. Mirrors the Pages secrets the owner sets once
- *  the tunnel is running: CARD_STORE_URL, CARD_STORE_TOKEN. */
+ *  the tunnel is running: CARD_STORE_URL, CARD_STORE_TOKEN, and optionally
+ *  CARD_STORE_ACCESS_ID / CARD_STORE_ACCESS_SECRET. */
 export interface HttpCardStoreOptions {
   /** Public tunnel hostname, e.g. https://cards.example.com. No trailing slash. */
   baseUrl: string;
   token: string;
+  /** Cloudflare Access Service Token credentials for store.buildaping.com.
+   *  The Access application in front of the tunnel accepts only this service
+   *  token (no email/everyone policy) - a request missing these headers is
+   *  rejected at Cloudflare's edge before it ever reaches the tunnel or this
+   *  bearer token check. Optional so local dev against a bare `server.js`
+   *  (no Access in front of it) keeps working without them. */
+  accessClientId?: string;
+  accessClientSecret?: string;
   /** Kept short: a Function has its own CPU/wall budget, and the whole point
    *  is that a slow or unreachable home box must fail fast into the existing
    *  503-and-fall-back-to-query-param path, not hang the request. */
@@ -444,11 +453,19 @@ const DEFAULT_HTTP_STORE_TIMEOUT_MS = 4000;
 export const httpCardStore = ({
   baseUrl,
   token,
+  accessClientId,
+  accessClientSecret,
   timeoutMs = DEFAULT_HTTP_STORE_TIMEOUT_MS,
   fetchFn = fetch,
 }: HttpCardStoreOptions): CardStore => {
   const url = (path: string) => `${baseUrl.replace(/\/$/, '')}${path}`;
-  const headers = { Authorization: `Bearer ${token}` };
+  // Bearer token stays even with Access in front - defense in depth, and it
+  // is also what a local dev server (no Access, no tunnel) checks on its own.
+  const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
+  if (accessClientId && accessClientSecret) {
+    headers['CF-Access-Client-Id'] = accessClientId;
+    headers['CF-Access-Client-Secret'] = accessClientSecret;
+  }
 
   return {
     async get(key) {
@@ -506,9 +523,16 @@ export const selectCardStore = (env: {
   PING_CARDS?: KVNamespace;
   CARD_STORE_URL?: string;
   CARD_STORE_TOKEN?: string;
+  CARD_STORE_ACCESS_ID?: string;
+  CARD_STORE_ACCESS_SECRET?: string;
 }): CardStore | null => {
   if (env.CARD_STORE_URL && env.CARD_STORE_TOKEN) {
-    return httpCardStore({ baseUrl: env.CARD_STORE_URL, token: env.CARD_STORE_TOKEN });
+    return httpCardStore({
+      baseUrl: env.CARD_STORE_URL,
+      token: env.CARD_STORE_TOKEN,
+      accessClientId: env.CARD_STORE_ACCESS_ID,
+      accessClientSecret: env.CARD_STORE_ACCESS_SECRET,
+    });
   }
   if (env.PING_CARDS) return kvCardStore(env.PING_CARDS);
   return null;
