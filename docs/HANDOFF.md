@@ -1743,7 +1743,20 @@ Library 265 live. Nothing unpushed.
 
 ### Sixteenth session: start here next time
 
-1. Ask owner: push `13a74f2`? Share-sheet button: remove or replace?
+**RULE (owner, 2026-09-14): ask every open question below in your FIRST reply
+of the session, before any work. Never save questions for the end. Every
+future handoff puts its questions here, at the top, under "Ask the owner
+first".**
+
+**Ask the owner first:**
+- Push `13a74f2` + `088ae03` (share captions, hero spotlight, handoff)?
+  Pushing auto-deploys.
+- The OS share-sheet button: remove it (keep Tweet + Copy link) or replace it
+  (e.g. a Telegram share link)?
+
+Then:
+
+1. Apply the answers above.
 2. Regen queue exactly as in "Fifteenth session: start here" (40 parked,
    2 pending retake, 10 retakes, then Robin Hood drop). First: mode picker to
    3.6 Flash, resend snowball.
