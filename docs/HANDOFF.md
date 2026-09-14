@@ -2214,3 +2214,12 @@ yet placed. Left flipper tip ~ layer (258, 785). Chat `/app/e1ec70366a2cc0f6` (5
 - **Blank page at 0x0**: `composeCharacter` returns null for size < 1; container size floored.
 - Typing a custom message still POSTs (and stores a gallery card) on every 700ms pause; consider
   storing only on send if the gallery fills with half-typed messages.
+
+### Owner decisions (end of session 23)
+
+- **Share works on live** (owner confirmed after `9257b5e`). The share-link bug is closed.
+- **No new traits.** Stop building/adding traits; next sessions only fix the ones already in the library.
+  Work the redo queue above (`queue-13.md` FIX notes: arcade-machine, shopping-cart, snowman, stove,
+  treasure-chest, left_hand snowball, umbrella) with the solo-item method, and any other existing trait
+  the owner flags FIX. Parked/pending new traits (e.g. `sparkler_left_hand`) stay parked unless the owner
+  says otherwise.
