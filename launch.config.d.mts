@@ -7,9 +7,7 @@
  * header comment in launch.config.mjs for why.
  */
 export interface LaunchConfig {
-  tokenLive: boolean;
   contractAddress: string;
-  chartLink: string;
   countdownTarget: number;
   showCountdown: boolean;
 
@@ -23,6 +21,7 @@ export interface LaunchConfig {
   };
   tokenSupply: number;
   explorerBase: string;
+  chartBase: string;
 
   social: {
     twitter: string;

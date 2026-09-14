@@ -15,6 +15,7 @@ import {
   TOKEN_SUPPLY,
   TOKEN_SYMBOL,
 } from '../utils/constants';
+import { useChartListed } from '../utils/chartListing';
 
 /**
  * Everything a listing form asks for, in one place: Dexscreener, a Telegram
@@ -119,6 +120,7 @@ const AssetCard: React.FC<{ asset: Asset; wide?: boolean }> = ({ asset, wide }) 
 const Brand: React.FC = () => {
   const copyState = useCopy();
   const isLive = TOKEN_LIVE && CONTRACT_ADDRESS.length > 0;
+  const chartListed = useChartListed();
 
   const facts: { label: string; value: string; copy?: boolean; href?: string }[] = [
     { label: 'Name', value: TOKEN_NAME },
@@ -135,7 +137,7 @@ const Brand: React.FC = () => {
     { label: 'Website', href: SITE_URL },
     { label: 'X community', href: SOCIAL_LINKS.TWITTER },
     { label: 'Telegram', href: SOCIAL_LINKS.TELEGRAM },
-    ...(CHART_LINK ? [{ label: 'Chart', href: CHART_LINK }] : []),
+    ...(chartListed ? [{ label: 'Chart', href: CHART_LINK }] : []),
   ];
 
   return (

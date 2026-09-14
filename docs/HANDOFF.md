@@ -1849,3 +1849,46 @@ Then, in order:
 3. Ship the 9 GOOD rebuilds from `.trait-work/fixes-17/`; then the 4 FIXes
    above (attach the parked original as a third reference for apu/cheese).
 4. Trait regen with remaining time (list in "Seventeenth session" above).
+
+### Eighteenth session, 2026-09-14
+
+- **Owner: launch Sept 15-17.** Pushed `bcb583e`, `903f13f`, `eaa07f5`.
+- Chart research (primary: Dexscreener + GeckoTerminal APIs, Pons site):
+  Dexscreener and GeckoTerminal both index Robinhood Chain as `robinhood`.
+  Pons v2 tokens trade on the bonding curve (charted on the Pons page) and
+  graduate into a locked Uniswap v4 pool. Dexscreener lists graduated Pons
+  tokens (PONS, ZZZ, BUN...) and returns NO pairs for curve tokens; its page
+  then says "Token or Pair Not Found". Dexscreener is where the chain's
+  volume is, so it is the chart.
+- Launch config is now ONE value: `contractAddress`. `tokenLive` and
+  `chartLink` are gone; `TOKEN_LIVE = CONTRACT_ADDRESS !== ""`,
+  `CHART_LINK = ${chartBase}/${CA}` (`chartBase` = dexscreener.com/robinhood).
+  Navbar chart icon and the /brand Chart link show only once
+  `api.dexscreener.com/token-pairs/v1/robinhood/<CA>` returns a pair
+  (`src/utils/chartListing.ts`, CORS is open), so graduation needs no deploy.
+  `check-launch-config.mjs --reachable` also prints the listing state.
+- Verified in dev with stand-in CAs: PONS (graduated) shows Chart icon ->
+  dexscreener.com/robinhood/<CA>; an ungraduated token shows CA + BUY ->
+  ponsfamily.com/launchpad/<CA>, no chart anywhere. Reverted to "".
+  vitest 165/165, both tsc, eslint.
+
+### LAUNCH-DAY RUNBOOK
+
+Owner pings with the CA. Then:
+
+1. `launch.config.mjs` line 51: `contractAddress: "0x...",` (paste exactly,
+   checksum case is fine). Nothing else. Optional, BEFORE launch only:
+   `countdownTarget` (Unix ms) + `showCountdown: true`.
+2. `node scripts/check-launch-config.mjs --reachable` (must print
+   "Launch config OK: live"; "no Dexscreener pair yet" is normal).
+3. `npx vitest run scripts/check-launch-config.test.mjs` and
+   `npx tsc -p tsconfig.app.json --noEmit`.
+4. Commit `Launch: set contract address`, push (auto-deploys Cloudflare Pages).
+5. Live checks on https://buildaping.com once the deploy finishes:
+   - Home: contract card shows the CA, Copy works, BUY ->
+     `https://www.ponsfamily.com/launchpad/<CA>` (opens the token).
+   - Explorer link -> `robinhoodchain.blockscout.com/token/<CA>` loads.
+   - /brand: Contract row shows CA; Chart link absent until graduation.
+   - OG card: `/api/og/banner.png` renders; share a link in the X composer.
+6. After graduation: reload home, Chart icon appears by itself (no deploy).
+   Confirm it opens the pair on Dexscreener.

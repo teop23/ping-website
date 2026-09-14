@@ -13,17 +13,11 @@ describe('checkLaunchConfig', () => {
 
   it('passes a correctly filled launch-day config', () => {
     const live = withConfig({
-      tokenLive: true,
       contractAddress: ADDRESS,
-      chartLink: 'https://dexscreener.com/robinhood/0xpair',
       showCountdown: true,
       countdownTarget: NOW + 3_600_000,
     });
     expect(checkLaunchConfig(live, NOW)).toEqual([]);
-  });
-
-  it('rejects going live without an address', () => {
-    expect(checkLaunchConfig(withConfig({ tokenLive: true }), NOW).join()).toMatch(/contractAddress is empty/);
   });
 
   it('rejects malformed and zero addresses', () => {
@@ -34,9 +28,10 @@ describe('checkLaunchConfig', () => {
   });
 
   it('rejects non-https links', () => {
-    expect(checkLaunchConfig(withConfig({ chartLink: 'dexscreener.com/x' }), NOW).join()).toMatch(/chartLink/);
+    expect(checkLaunchConfig(withConfig({ chartBase: 'dexscreener.com/robinhood' }), NOW).join()).toMatch(/chartBase/);
     expect(checkLaunchConfig(withConfig({ social: { ...launchConfig.social, telegram: 'http://t.me/x' } }), NOW).join()).toMatch(/telegram/);
-    expect(checkLaunchConfig(withConfig({ explorerBase: 'https://robinhoodchain.blockscout.com/' }), NOW).join()).toMatch(/\/\/token/);
+    expect(checkLaunchConfig(withConfig({ explorerBase: 'https://robinhoodchain.blockscout.com/' }), NOW).join()).toMatch(/explorerBase ends with/);
+    expect(checkLaunchConfig(withConfig({ chartBase: 'https://dexscreener.com/robinhood/' }), NOW).join()).toMatch(/chartBase ends with/);
   });
 
   it('catches countdown mistakes', () => {

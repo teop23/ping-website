@@ -14,13 +14,12 @@ import traitsManifest from "../../public/traits-manifest.json";
  * $PING is relaunching on Pons, on Robinhood Chain. Until the token is
  * deployed there is no contract address, and showing the old Solana pump.fun
  * address on a Robinhood Chain site would be worse than showing nothing.
- * Flip TOKEN_LIVE once CONTRACT_ADDRESS is real; every surface reads this
- * flag and degrades to a pre-launch state on its own.
+ * The token is live exactly when CONTRACT_ADDRESS is set; every surface reads
+ * TOKEN_LIVE and degrades to a pre-launch state on its own.
  */
-export const TOKEN_LIVE = launchConfig.tokenLive;
-
 /** 0x address from the Pons launch. Empty until deployed. */
 export const CONTRACT_ADDRESS = launchConfig.contractAddress;
+export const TOKEN_LIVE = CONTRACT_ADDRESS !== "";
 
 // --- Chain facts. These are fixed by Pons and Robinhood Chain, not by us. ---
 export const CHAIN_NAME = launchConfig.chain.name;
@@ -40,8 +39,14 @@ export const BUY_LINK = CONTRACT_ADDRESS
   ? `${LAUNCHPAD_URL}/${CONTRACT_ADDRESS}`
   : LAUNCHPAD_URL;
 
-/** TODO(relaunch): repoint once the new pair exists. */
-export const CHART_LINK = launchConfig.chartLink;
+/**
+ * Dexscreener token page, which opens the token's top pair. Pons tokens only
+ * get a pair when the bonding curve graduates into Uniswap v4; until then
+ * this page is "Not Found", so the navbar gates it on useChartListed().
+ */
+export const CHART_LINK = CONTRACT_ADDRESS
+  ? `${launchConfig.chartBase}/${CONTRACT_ADDRESS}`
+  : "";
 
 // --- Social ---
 export const SOCIAL_LINKS = {

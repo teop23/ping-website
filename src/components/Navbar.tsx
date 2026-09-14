@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { LAUNCHPAD_NAME, LAUNCHPAD_URL, SOCIAL_LINKS } from '../utils/constants';
 import pingIcon from '../assets/ping_transparent_icon.png';
 import { DexScreenerLogo, PonsMark } from '../utils/icons';
+import { useChartListed } from '../utils/chartListing';
 
 // Twitter/X icon component
 export const TwitterIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className }) => (
@@ -41,6 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+  const chartListed = useChartListed();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -166,7 +168,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                 icon={<PonsMark size={18} />}
                 label={LAUNCHPAD_NAME}
               />
-              {SOCIAL_LINKS.DEXSCREENER && (
+              {chartListed && (
                 <SocialLink
                   href={SOCIAL_LINKS.DEXSCREENER}
                   icon={<DexScreenerLogo size={18} />}
@@ -299,7 +301,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, ...props }) => {
                       label={LAUNCHPAD_NAME}
                       isMobile
                     />
-                    {SOCIAL_LINKS.DEXSCREENER && (
+                    {chartListed && (
                       <SocialLink
                         href={SOCIAL_LINKS.DEXSCREENER}
                         icon={<DexScreenerLogo size={20} />}

@@ -4,7 +4,7 @@ import { pathToFileURL } from 'url';
  * Launch-day guard for launch.config.mjs.
  *
  * BUY_LINK, EXPLORER_LINK and CHART_LINK (src/utils/constants.ts) are all
- * templated off contractAddress and chartLink. A typo there does not fail the
+ * templated off contractAddress. A typo there does not fail the
  * build or throw at runtime; it ships a buy button that goes nowhere, at the
  * exact moment people try to use it. This catches the shapes that can be
  * checked offline, and runs in prebuild so a bad edit cannot deploy.
@@ -13,8 +13,10 @@ import { pathToFileURL } from 'url';
  *     Offline checks only (what prebuild runs).
  *
  *   node scripts/check-launch-config.mjs --reachable
- *     Also fetches every configured URL and fails on a non-2xx/3xx. Run this
- *     by hand after filling in launch-day values, before announcing.
+ *     Also fetches every configured URL and fails on a non-2xx/3xx, and
+ *     reports whether Dexscreener lists a pair yet (it will not until the
+ *     curve graduates; that is not a failure). Run by hand after pasting the
+ *     contract address, before announcing.
  */
 
 const ADDRESS = /^0x[0-9a-fA-F]{40}$/;
@@ -32,7 +34,6 @@ export const configuredUrls = (config) =>
   [
     config.launchpad?.url,
     config.explorerBase,
-    config.chartLink,
     config.social?.twitter,
     config.social?.telegram,
     config.siteUrl,
@@ -49,24 +50,19 @@ export const checkLaunchConfig = (config, now = Date.now()) => {
   if (config.contractAddress && /^0x0{40}$/.test(config.contractAddress)) {
     errors.push('contractAddress is the zero address');
   }
-  if (config.tokenLive && !config.contractAddress) {
-    errors.push('tokenLive is true but contractAddress is empty: the buy and explorer links would be dead');
-  }
-  if (config.chartLink && !isHttps(config.chartLink)) {
-    errors.push(`chartLink "${config.chartLink}" is not an https URL`);
-  }
 
   for (const [name, value] of [
     ['launchpad.url', config.launchpad?.url],
     ['explorerBase', config.explorerBase],
+    ['chartBase', config.chartBase],
     ['social.twitter', config.social?.twitter],
     ['social.telegram', config.social?.telegram],
     ['siteUrl', config.siteUrl],
   ]) {
     if (!isHttps(value)) errors.push(`${name} "${value}" is not an https URL`);
   }
-  if (config.explorerBase?.endsWith('/')) {
-    errors.push('explorerBase ends with "/": EXPLORER_LINK would contain "//token/"');
+  for (const name of ['explorerBase', 'chartBase']) {
+    if (config[name]?.endsWith('/')) errors.push(`${name} ends with "/": its links would contain "//"`);
   }
 
   if (config.showCountdown) {
@@ -74,7 +70,7 @@ export const checkLaunchConfig = (config, now = Date.now()) => {
       errors.push('showCountdown is true but countdownTarget is not set');
     } else if (config.countdownTarget < 1e12) {
       errors.push(`countdownTarget ${config.countdownTarget} looks like seconds; it must be Unix milliseconds`);
-    } else if (config.countdownTarget <= now && !config.tokenLive) {
+    } else if (config.countdownTarget <= now && !config.contractAddress) {
       errors.push(`countdownTarget ${new Date(config.countdownTarget).toISOString()} is in the past and the token is not live`);
     }
   }
@@ -99,6 +95,25 @@ const reachable = async (urls) => {
   return failures;
 };
 
+/**
+ * Dexscreener's API answers scripts where dexscreener.com itself returns a
+ * Cloudflare 403, so the chart is checked here rather than in reachable().
+ */
+const chartListing = async (config) => {
+  const chain = config.chartBase.split('/').pop();
+  try {
+    const response = await fetch(`https://api.dexscreener.com/token-pairs/v1/${chain}/${config.contractAddress}`, {
+      signal: AbortSignal.timeout(15_000),
+    });
+    const pairs = await response.json();
+    return pairs.length > 0
+      ? `Chart: Dexscreener lists ${pairs.length} pair(s), the navbar chart icon is showing.`
+      : 'Chart: no Dexscreener pair yet (normal until the curve graduates); the chart icon stays hidden.';
+  } catch (err) {
+    return `Chart: Dexscreener API did not answer (${err.cause?.code ?? err.name}); the chart icon stays hidden.`;
+  }
+};
+
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const { default: config } = await import('../launch.config.mjs');
   const errors = checkLaunchConfig(config);
@@ -110,8 +125,9 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     process.exit(1);
   }
   console.log(
-    config.tokenLive
+    config.contractAddress
       ? `Launch config OK: live, contract ${config.contractAddress}.`
-      : 'Launch config OK: pre-launch (tokenLive is false).'
+      : 'Launch config OK: pre-launch (contractAddress is empty).'
   );
+  if (config.contractAddress && process.argv.includes('--reachable')) console.log(await chartListing(config));
 }

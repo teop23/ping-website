@@ -28,14 +28,14 @@
  * ----------------------------------------------------------------------------
  * WHAT TO EDIT ON LAUNCH DAY (and what each value does):
  *
- *   tokenLive        Master switch. false = every surface on the site shows
- *                     a pre-launch state (no buy button, no contract address,
- *                     no chart). Flip to true once contractAddress is real.
- *   contractAddress  The 0x address from the Pons deployment. Leave "" until
- *                     the token actually exists — showing a stale/wrong
- *                     address is worse than showing nothing.
- *   chartLink        Dexscreener/chart URL for the new pair. Leave "" until
- *                     the pair exists; also feeds the DEXSCREENER social link.
+ *   contractAddress  The 0x address from the Pons deployment. The ONLY value
+ *                     launch day needs. "" = every surface shows a pre-launch
+ *                     state (no buy button, no contract address, no chart).
+ *                     The buy, explorer and chart links are all built from
+ *                     it (src/utils/constants.ts). Pons mints the address at
+ *                     launch, so nothing token-specific can be known earlier.
+ *                     The chart icon appears by itself once Dexscreener lists
+ *                     a pair, i.e. after the bonding curve graduates.
  *   countdownTarget  Unix ms timestamp of the Pons launch slot. Set this and
  *                     flip showCountdown to true to display a countdown.
  *   showCountdown    Whether the countdown banner renders at all.
@@ -47,10 +47,8 @@
  * ============================================================================
  */
 const launchConfig = {
-  // --- Flip these on launch day ---
-  tokenLive: false,
+  // --- Launch day: paste the Pons contract address here ---
   contractAddress: "",
-  chartLink: "",
   countdownTarget: 0,
   showCountdown: false,
 
@@ -66,6 +64,9 @@ const launchConfig = {
   /** Pons mints a fixed 1B supply straight to the bonding curve. No creator allocation. */
   tokenSupply: 1_000_000_000,
   explorerBase: "https://robinhoodchain.blockscout.com",
+  /** Dexscreener's slug for Robinhood Chain. /robinhood/<token> opens the
+   *  token's top pair; before graduation it says "Token or Pair Not Found". */
+  chartBase: "https://dexscreener.com/robinhood",
 
   // --- Social ---
   social: {
