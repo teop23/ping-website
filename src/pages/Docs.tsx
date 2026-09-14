@@ -70,7 +70,7 @@ const ENDPOINTS: Endpoint[] = [
     path: '/api/image/shirt.png',
     title: 'Custom shirt',
     description: 'PING wearing a shirt printed with any image.',
-    params: [{ name: 'photo', description: 'Image URL. Required' }],
+    params: [{ name: 'photo', description: 'https URL of a PNG or JPEG, up to 2 MB. Required' }],
     example: `${ORIGIN}/api/image/shirt.png?photo=https://example.com/my-image.jpg`,
     returns: 'PNG',
   },

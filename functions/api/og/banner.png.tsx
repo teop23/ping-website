@@ -182,7 +182,8 @@ export const renderCard = async (request: Request, CARD: CardLayout): Promise<Re
       }
     );
   } catch (err) {
-    return new Response(`Internal error: ${err}`, { status: 500 });
+    console.error('banner.png render failed:', err);
+    return new Response('Internal error', { status: 500 });
   }
 };
 

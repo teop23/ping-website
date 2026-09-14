@@ -168,6 +168,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       }
     );
   } catch (err) {
-    return new Response(`Internal error: ${err}`, { status: 500 });
+    console.error('custom.png render failed:', err);
+    return new Response('Internal error', { status: 500 });
   }
 };

@@ -4,7 +4,7 @@ import { isValidXHandle, unavatarUrl, UNAVATAR_TTL_SECONDS } from '../../_lib';
 export const onRequestGet: APIRoute = async ({ request }) => {
     const { searchParams, origin } = new URL(request.url);
     const handle = searchParams.get('handle');
-    const type = searchParams.get('type') || '';
+    const type = searchParams.get('type') === 'banner' ? 'banner' : '';
 
     if (!handle) {
         return new Response('Missing Twitter handle', { status: 400 });
@@ -20,7 +20,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     try {
         response = await fetch(avatarUrl);
     } catch (err) {
-        return new Response(`Error resolving handle: ${err}`, { status: 502 });
+        console.error('unavatar lookup failed:', err);
+        return new Response('Error resolving handle', { status: 502 });
     }
 
     if (response.status === 404) {

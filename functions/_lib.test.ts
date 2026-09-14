@@ -21,6 +21,8 @@ import {
   addToGallery,
   galleryPage,
   parseGallery,
+  loadPhoto,
+  MAX_PHOTO_BYTES,
 } from './_lib';
 
 /**
@@ -319,5 +321,42 @@ describe('gallery index', () => {
     expect(galleryPage(entries, 4, 2)).toMatchObject({ items: [entry('c4', 4)], next: null });
     expect(galleryPage(entries, -7, 2).items[0].id).toBe('c0');
     expect(galleryPage(entries, NaN, 2).items[0].id).toBe('c0');
+  });
+});
+
+describe('loadPhoto', () => {
+  const png = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+  const serve = (body: BodyInit, headers: Record<string, string>, status = 200) =>
+    (async () => new Response(body, { status, headers })) as unknown as typeof fetch;
+
+  it('returns a data URI for a small image', async () => {
+    const result = await loadPhoto('https://example.com/a.png', serve(png, { 'content-type': 'image/png' }));
+    expect(result).toEqual({ dataUri: `data:image/png;base64,${btoa(String.fromCharCode(...png))}` });
+  });
+
+  it('refuses anything but https before fetching', async () => {
+    let fetched = false;
+    const spy = (async () => { fetched = true; return new Response(png); }) as unknown as typeof fetch;
+    for (const url of ['http://example.com/a.png', 'data:image/png;base64,AAAA', 'file:///etc/passwd', 'not a url']) {
+      expect(await loadPhoto(url, spy)).toMatchObject({ status: 400 });
+    }
+    expect(fetched).toBe(false);
+  });
+
+  it('refuses SVG and non-images', async () => {
+    for (const type of ['image/svg+xml', 'text/html']) {
+      expect(await loadPhoto('https://example.com/a', serve('<svg/>', { 'content-type': type }))).toMatchObject({ status: 400 });
+    }
+  });
+
+  it('refuses a photo over the size cap even without a content-length', async () => {
+    const big = new Uint8Array(MAX_PHOTO_BYTES + 1);
+    expect(await loadPhoto('https://example.com/a.png', serve(big, { 'content-type': 'image/png' }))).toMatchObject({ status: 400 });
+  });
+
+  it('reports an upstream failure as 502', async () => {
+    expect(await loadPhoto('https://example.com/a.png', serve('', { 'content-type': 'image/png' }, 404))).toMatchObject({ status: 502 });
+    const boom = (async () => { throw new Error('timeout'); }) as unknown as typeof fetch;
+    expect(await loadPhoto('https://example.com/a.png', boom)).toMatchObject({ status: 502 });
   });
 });

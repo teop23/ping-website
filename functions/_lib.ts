@@ -229,6 +229,57 @@ export const UNAVATAR_TTL_SECONDS = 86400;
 export const unavatarUrl = (handle: string): string =>
   `https://unavatar.io/x/${encodeURIComponent(handle)}?fallback=false`;
 
+/** Largest photo /api/image/shirt.png will print. An X avatar is ~50 KB. */
+export const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+const PHOTO_TIMEOUT_MS = 5000;
+/** Raster formats satori decodes. SVG is left out on purpose: it is markup, not pixels. */
+const PHOTO_TYPES = ['image/png', 'image/jpeg'];
+
+/**
+ * Fetches a user-supplied photo for the shirt endpoint and returns it as a
+ * data URI, or an error string for a 400/502.
+ *
+ * The URL used to go straight into satori's <img>, which fetched whatever it
+ * was pointed at: any scheme, any size, no timeout. A 50 MB image or a slow
+ * host then burned the isolate's CPU budget and came back as an empty 200.
+ * Fetching it here first lets the endpoint refuse those before rendering.
+ */
+export const loadPhoto = async (
+  raw: string,
+  fetchFn: typeof fetch = fetch
+): Promise<{ dataUri: string } | { error: string; status: number }> => {
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return { error: 'photo must be a URL', status: 400 };
+  }
+  if (url.protocol !== 'https:') return { error: 'photo must be an https URL', status: 400 };
+
+  let response: Response;
+  try {
+    response = await fetchFn(url.href, { signal: AbortSignal.timeout(PHOTO_TIMEOUT_MS) });
+  } catch {
+    return { error: 'Could not fetch photo', status: 502 };
+  }
+  if (!response.ok) return { error: 'Could not fetch photo', status: 502 };
+
+  const type = (response.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  if (!PHOTO_TYPES.includes(type)) return { error: 'photo must be a PNG or JPEG image', status: 400 };
+  if (Number(response.headers.get('content-length') || 0) > MAX_PHOTO_BYTES) {
+    return { error: 'photo is too large', status: 400 };
+  }
+
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength > MAX_PHOTO_BYTES) return { error: 'photo is too large', status: 400 };
+
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return { dataUri: `data:${type};base64,${btoa(binary)}` };
+};
+
 /**
  * Where the image endpoints load art from.
  *

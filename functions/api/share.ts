@@ -110,6 +110,7 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     waitUntil(recordInGallery(env.PING_CARDS, id, canonical));
     return json({ id, url: `${origin}/p/${id}`, cached: false });
   } catch (err) {
-    return json({ error: `Internal error: ${err}` }, 500);
+    console.error('share failed:', err);
+    return json({ error: 'Internal error' }, 500);
   }
 };

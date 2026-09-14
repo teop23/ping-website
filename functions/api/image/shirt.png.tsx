@@ -1,6 +1,6 @@
 import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
-import { RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, cardGeometry, pickBgColor } from '../../_lib';
+import { RENDER_BASE_IMAGE, RENDER_TRAITS_DIR, cardGeometry, loadPhoto, pickBgColor } from '../../_lib';
 import * as React from 'react';
 
 export const onRequestGet: APIRoute = async ({ request }) => {
@@ -10,6 +10,10 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const isBanner = url.searchParams.get("type") === "banner";
         if (!userPhotoUrl) {
             return new Response("Missing photo URL parameter", { status: 400 });
+        }
+        const photo = await loadPhoto(userPhotoUrl);
+        if ('error' in photo) {
+            return new Response(photo.error, { status: photo.status });
         }
         const baseURL = url.origin;
         const basePingImage = `${baseURL}${RENDER_BASE_IMAGE}`;
@@ -55,7 +59,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                     style={{ position: 'absolute', top: traitImageTopOffset, left: traitImageLeftOffset }}
                 />
                 <img
-                    src={userPhotoUrl}
+                    src={photo.dataUri}
                     width={pfpImageSize}
                     height={pfpImageSize}
                     style={{
@@ -74,6 +78,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         );
     } catch (err) {
         console.error("Error generating profile picture:", err);
-        return new Response(`Internal error: ${err}`, { status: 500 });
+        return new Response('Internal error', { status: 500 });
     }
 };
