@@ -57,14 +57,26 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
     expect(await again.json()).toMatchObject({ id, cached: true });
   });
 
-  test('a person opening /p/<id> is sent to the builder with the traits in the URL', async ({ request }) => {
-    const { id } = (await (await request.post('/api/share', { data: { head: 'crown' } })).json()) as { id: string };
-    const human = await request.get(`/p/${id}`, { maxRedirects: 0 });
-    expect(human.status()).toBe(302);
-    expect(new URL(human.headers()['location']).search).toBe('?head=crown');
+  test('a person opening /p/<id> sees the showcase, and Remix loads that character', async ({ page, request }) => {
+    const { id } = (await (await request.post('/api/share', { data: { head: 'crown', aura: 'blue-aura' } })).json()) as { id: string };
+    await page.goto(`/p/${id}`);
+    await expect(page.getByRole('heading', { level: 1, name: /Crown/ })).toBeVisible();
+    await expect(page.getByRole('img', { name: /Crown/ })).toBeVisible();
+    await expect(page.getByText('Blue Aura', { exact: true })).toBeVisible();
+
+    await page.getByRole('link', { name: 'Remix this PING' }).click();
+    await expect(page).toHaveURL(/[?]aura=blue-aura&head=crown#builder$/);
+    await expect.poll(() => readSelectedCount(page)).toBe(2);
   });
 
-  // /p/<id> hands a person to /?head=...; the builder must load that selection.
+  test('/api/card/<id> describes a stored card and 404s an unknown one', async ({ request }) => {
+    const { id } = (await (await request.post('/api/share', { data: { head: 'crown' } })).json()) as { id: string };
+    const card = await request.get(`/api/card/${id}`);
+    expect(await card.json()).toMatchObject({ id, traits: 'head=crown', image: `/api/image/p/${id}.png` });
+    expect((await request.get('/api/card/doesnotexist1')).status()).toBe(404);
+  });
+
+  // Remix on /p/<id> hands a person to /?head=...; the builder must load that selection.
   test('the builder restores a character from the share URL', async ({ page }) => {
     const { picker } = await openBuilder(page, '/?head=crown&aura=blue-aura#builder');
     await expect.poll(() => readSelectedCount(page)).toBe(2);

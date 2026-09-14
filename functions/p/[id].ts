@@ -5,11 +5,12 @@ import { BOT_USER_AGENT, kvCardStore, renderOgPage, titleFromTraits } from '../_
  *
  * Same bot/human split as /api/og, but the card image is a stored object
  * rather than a live render, and the trait selection comes from what was
- * stored at share time instead of from the URL. A human still lands on the
- * builder with that exact character loaded.
+ * stored at share time instead of from the URL. A person gets the showcase
+ * page for that character (src/pages/Showcase.tsx).
  */
 
 interface Env {
+  ASSETS: Fetcher;
   PING_CARDS?: KVNamespace;
 }
 
@@ -30,9 +31,11 @@ export const onRequestGet = async ({ request, env, params }: PageContext): Promi
 
   const traits = new URLSearchParams(card.traits);
 
+  // A person gets the showcase page: the app shell, whose /p/:id route loads
+  // the card from /api/card/<id>. It used to redirect to the home page, which
+  // opened on the hero with the character somewhere below the fold.
   if (!BOT_USER_AGENT.test(request.headers.get('user-agent') || '')) {
-    const search = card.traits ? `?${card.traits}` : '';
-    return Response.redirect(`${url.origin}/${search}`, 302);
+    return env.ASSETS.fetch(new URL('/', url.origin));
   }
 
   return renderOgPage({

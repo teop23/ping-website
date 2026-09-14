@@ -19,6 +19,7 @@ const CreateTraits = lazy(() => import('./pages/CreateTraits'));
 const WatermarkTool = lazy(() => import('./pages/WatermarkTool'));
 const Docs = lazy(() => import('./pages/Docs'));
 const Brand = lazy(() => import('./pages/Brand'));
+const Showcase = lazy(() => import('./pages/Showcase'));
 
 /** Quiet, and matching the builder's own loading state rather than a spinner. */
 const RouteFallback: React.FC = () => (
@@ -46,6 +47,7 @@ function App() {
           <Route path="/watermark" element={<WatermarkTool />} />
           <Route path="/docs" element={<Docs />} />
           <Route path="/brand" element={<Brand />} />
+            <Route path="/p/:id" element={<Showcase />} />
         </Routes>
       </Suspense>
       <Footer />
