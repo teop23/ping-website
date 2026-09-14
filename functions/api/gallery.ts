@@ -15,6 +15,8 @@ interface Env {
   PING_CARDS?: KVNamespace;
   CARD_STORE_URL?: string;
   CARD_STORE_TOKEN?: string;
+  CARD_STORE_ACCESS_ID?: string;
+  CARD_STORE_ACCESS_SECRET?: string;
 }
 
 interface GalleryContext {
@@ -39,6 +41,7 @@ export const onRequestGet = async ({ request, env }: GalleryContext): Promise<Re
       image: `/api/image/p/${entry.id}.png`,
       url: `/p/${entry.id}`,
       at: entry.at,
+      ...(entry.message ? { message: entry.message } : {}),
     })),
     next,
   };

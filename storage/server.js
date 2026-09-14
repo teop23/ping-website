@@ -35,6 +35,10 @@ const AUTH_TOKEN = process.env.AUTH_TOKEN || '';
 const MAX_CARD_BYTES = 2 * 1024 * 1024;
 /** Largest gallery document. ~480 entries of {id,traits,at} is well under 200 KB. */
 const MAX_GALLERY_BYTES = 2 * 1024 * 1024;
+/** The Functions layer only ever sends a preset from PING_MESSAGES (functions/_lib.ts),
+ *  the longest of which is well under this - this is a defensive backstop, not the
+ *  source of truth for what a valid message is. */
+const MAX_MESSAGE_BYTES = 256;
 
 /** Same shape as the id shareId() produces in functions/_lib.ts: 12 base36 chars.
  *  Validated strictly so nothing resembling a path segment reaches fs.* calls. */
@@ -105,10 +109,20 @@ const handlePutCard = async (req, res, id) => {
   if (body.length === 0) return sendJson(res, 400, { error: 'empty body' });
 
   const traits = req.headers['x-ping-traits'] ? decodeURIComponent(req.headers['x-ping-traits']) : '';
+
+  let message;
+  const messageHeader = req.headers['x-ping-message'];
+  if (messageHeader) {
+    message = decodeURIComponent(messageHeader);
+    if (typeof message !== 'string' || message.length === 0 || message.length > MAX_MESSAGE_BYTES) {
+      return sendJson(res, 400, { error: 'invalid message' });
+    }
+  }
+
   const { png, meta } = cardPaths(id);
 
   await fsp.writeFile(png, body);
-  await fsp.writeFile(meta, JSON.stringify({ traits, createdAt: Date.now() }));
+  await fsp.writeFile(meta, JSON.stringify({ traits, message, createdAt: Date.now() }));
   return sendJson(res, 200, { id, bytes: body.length });
 };
 
@@ -124,8 +138,11 @@ const handleGetCard = async (req, res, id, headOnly) => {
   }
 
   let traits = '';
+  let message;
   try {
-    traits = JSON.parse(await fsp.readFile(meta, 'utf8')).traits ?? '';
+    const parsedMeta = JSON.parse(await fsp.readFile(meta, 'utf8'));
+    traits = parsedMeta.traits ?? '';
+    message = parsedMeta.message;
   } catch {
     // Metadata missing or corrupt: still serve the image, just without traits.
   }
@@ -135,6 +152,7 @@ const handleGetCard = async (req, res, id, headOnly) => {
     'Content-Length': String(bytes.length),
     'X-Ping-Traits': encodeURIComponent(traits),
   };
+  if (message) headers['X-Ping-Message'] = encodeURIComponent(message);
   if (headOnly) return send(res, 200, null, headers);
   return send(res, 200, bytes, headers);
 };

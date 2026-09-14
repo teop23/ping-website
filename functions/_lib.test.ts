@@ -13,10 +13,15 @@ import {
   seedFromParams,
   canonicalTraits,
   shareId,
+  shareInput,
   validateTraits,
   titleFromTraits,
   toTitleCase,
   isValidXHandle,
+  isValidPingMessage,
+  PING_MESSAGES,
+  notificationLayout,
+  notificationGeometry,
   unavatarUrl,
   addToGallery,
   galleryPage,
@@ -238,6 +243,72 @@ describe('shareId', () => {
   });
 });
 
+describe('shareInput', () => {
+  it('is exactly the canonical string when there is no message - unchanged from before this feature existed', async () => {
+    const canonical = 'aura=blue-aura&head=crown';
+    expect(shareInput(canonical)).toBe(canonical);
+    expect(shareInput(canonical, undefined)).toBe(canonical);
+    // Which means a message-less id is identical to what shipped before messages did.
+    expect(await shareId(shareInput(canonical))).toBe(await shareId(canonical));
+  });
+
+  it('appends the message, so the same character with a message is a different id', async () => {
+    const canonical = 'head=crown';
+    const withMessage = shareInput(canonical, 'gm.');
+    expect(withMessage).not.toBe(canonical);
+    expect(await shareId(withMessage)).not.toBe(await shareId(canonical));
+  });
+
+  it('is idempotent for the same character and message', async () => {
+    expect(await shareId(shareInput('head=crown', 'gm.'))).toBe(await shareId(shareInput('head=crown', 'gm.')));
+  });
+});
+
+// PING_MESSAGES vs. the client canvas copy in src/utils/pingCard.ts is
+// asserted in src/utils/pingCard.test.ts instead of here: that file imports
+// pingCard.ts, which uses DOM types (CanvasRenderingContext2D) that
+// functions/tsconfig.json's "esnext"-only lib does not carry, and importing
+// it here would break `tsc -p functions --noEmit`.
+
+describe('isValidPingMessage', () => {
+  it('accepts every preset', () => {
+    for (const message of PING_MESSAGES) expect(isValidPingMessage(message)).toBe(true);
+  });
+
+  it('rejects free text, even a close variant of a preset', () => {
+    expect(isValidPingMessage('gm')).toBe(false);
+    expect(isValidPingMessage('')).toBe(false);
+    expect(isValidPingMessage('Your wallet is compromised')).toBe(false);
+  });
+});
+
+describe('notificationLayout / notificationGeometry', () => {
+  it('keeps the banner above the character and everything inside the square', () => {
+    for (const size of [512, 1024]) {
+      const { banner, character } = notificationLayout(size);
+      expect(banner.y + banner.h).toBeLessThanOrEqual(character.y + 0.001);
+      expect(banner.x + banner.w).toBeLessThanOrEqual(size);
+      expect(character.x + character.size).toBeLessThanOrEqual(size);
+      expect(character.y + character.size).toBeLessThanOrEqual(size + 0.001);
+    }
+  });
+
+  it('scales proportionally with size', () => {
+    const small = notificationLayout(512);
+    const large = notificationLayout(1024);
+    expect(large.textX).toBeCloseTo(small.textX * 2);
+    expect(large.messageSize).toBeCloseTo(small.messageSize * 2);
+  });
+
+  it('registers the trait art to the character box, base art scaled and centred on it', () => {
+    const g = notificationGeometry(512);
+    expect(g.traitLeft).toBe(g.character.x);
+    expect(g.traitSize).toBe(g.character.size);
+    expect(g.baseLeft + g.baseSize / 2).toBeCloseTo(g.traitLeft + g.traitSize / 2);
+    expect(g.baseTop + g.baseSize / 2).toBeCloseTo(g.traitTop + g.traitSize / 2);
+  });
+});
+
 describe('validateTraits', () => {
   const index = { head: ['crown', 'beanie'], aura: ['blue-aura'] };
 
@@ -309,6 +380,13 @@ describe('gallery index', () => {
   it('keeps one slot per id, moving a repeat to the front', () => {
     const entries = addToGallery([entry('a', 1), entry('b', 2)], entry('b', 3));
     expect(entries.map((e) => [e.id, e.at])).toEqual([['b', 3], ['a', 1]]);
+  });
+
+  it('carries an optional message through unchanged', () => {
+    const withMessage = { ...entry('m', 1), message: 'gm.' };
+    const entries = addToGallery([], withMessage);
+    expect(entries[0]).toEqual(withMessage);
+    expect(parseGallery([withMessage, entry('no-message', 2)])).toEqual([withMessage, entry('no-message', 2)]);
   });
 
   it('treats a missing or malformed document as empty', () => {

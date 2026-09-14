@@ -13,6 +13,8 @@ interface Env {
   PING_CARDS?: KVNamespace;
   CARD_STORE_URL?: string;
   CARD_STORE_TOKEN?: string;
+  CARD_STORE_ACCESS_ID?: string;
+  CARD_STORE_ACCESS_SECRET?: string;
 }
 
 interface CardContext {
@@ -40,6 +42,7 @@ export const onRequestGet = async ({ env, params }: CardContext): Promise<Respon
       title: titleFromTraits(new URLSearchParams(card.traits)),
       traits: card.traits,
       image: `/api/image/p/${id}.png`,
+      ...(card.message ? { message: card.message } : {}),
     },
     200,
     'public, max-age=31536000, immutable'

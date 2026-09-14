@@ -16,6 +16,8 @@ interface Card {
   title: string;
   traits: string;
   image: string;
+  /** Set when this PING was sent with a preset message; changes the layout below. */
+  message?: string;
 }
 
 type State = { status: 'loading' } | { status: 'ready'; card: Card } | { status: 'missing' };
@@ -78,15 +80,23 @@ const Showcase: React.FC = () => {
 
   const card = state.status === 'ready' ? state.card : null;
   const slots = card ? [...new URLSearchParams(card.traits).entries()] : [];
+  const hasMessage = Boolean(card?.message);
 
   return (
     <main className="container max-w-7xl px-4 py-4 sm:px-8 sm:py-10">
-      {/* The card is an 800x420 raster; its column stops at 50rem so it is never upscaled. */}
+      {/* The card is a raster - 800x420, or square when it carries a message;
+          its column stops at 50rem so it is never upscaled. */}
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,50rem)_minmax(18rem,1fr)] lg:gap-12">
         <figure className="overflow-hidden rounded-lg border border-hairline bg-raised">
-          <div className="aspect-[800/420] bg-panel">
+          <div className={hasMessage ? 'aspect-square bg-panel' : 'aspect-[800/420] bg-panel'}>
             {card && (
-              <img src={card.image} alt={card.title} width={800} height={420} className="size-full object-cover" />
+              <img
+                src={card.image}
+                alt={card.title}
+                width={hasMessage ? 512 : 800}
+                height={hasMessage ? 512 : 420}
+                className="size-full object-cover"
+              />
             )}
           </div>
         </figure>
@@ -94,16 +104,29 @@ const Showcase: React.FC = () => {
         <div>
           <p className="text-meta text-ink-muted">Someone sent you a PING.</p>
           <h1 className="type-display mt-1 text-h3 font-bold text-ink [text-wrap:balance]" aria-busy={!card}>
-            {card ? card.title : ' '}
+            {card ? (hasMessage ? card.message : card.title) : ' '}
           </h1>
 
           <div className="mt-5 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
-            <Button asChild size="lg">
-              <Link to={card ? `/?${card.traits}#builder` : '/#builder'}>Remix this PING</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to="/#builder">Make your own</Link>
-            </Button>
+            {hasMessage ? (
+              <>
+                <Button asChild size="lg">
+                  <Link to="/?sendPing=1#builder">Send one back</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to={card ? `/?${card.traits}#builder` : '/#builder'}>Remix this PING</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild size="lg">
+                  <Link to={card ? `/?${card.traits}#builder` : '/#builder'}>Remix this PING</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to="/#builder">Make your own</Link>
+                </Button>
+              </>
+            )}
           </div>
           <Button variant="ghost" size="sm" className="mt-2 -ml-3 text-ink-muted" onClick={copyLink} disabled={!card}>
             {copied ? <Check className="size-4" aria-hidden="true" /> : <LinkIcon className="size-4" aria-hidden="true" />}

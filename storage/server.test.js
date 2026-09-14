@@ -78,6 +78,50 @@ test('PUT then GET round-trips a card and its traits', async () => {
   assert.deepEqual(body, png);
 });
 
+test('PUT then GET round-trips a card with an optional message', async () => {
+  const id = 'roundtrip002';
+  const put = await fetch(`${baseUrl}/cards/${id}`, {
+    method: 'PUT',
+    headers: {
+      ...auth,
+      'Content-Type': 'image/png',
+      'X-Ping-Traits': encodeURIComponent('head=crown'),
+      'X-Ping-Message': encodeURIComponent('gm.'),
+    },
+    body: png,
+  });
+  assert.equal(put.status, 200);
+
+  const get = await fetch(`${baseUrl}/cards/${id}`, { headers: auth });
+  assert.equal(get.status, 200);
+  assert.equal(decodeURIComponent(get.headers.get('x-ping-message')), 'gm.');
+});
+
+test('a card stored without a message has no X-Ping-Message header on GET', async () => {
+  const id = 'nomessage0001';
+  await fetch(`${baseUrl}/cards/${id}`, {
+    method: 'PUT',
+    headers: { ...auth, 'Content-Type': 'image/png' },
+    body: png,
+  });
+
+  const get = await fetch(`${baseUrl}/cards/${id}`, { headers: auth });
+  assert.equal(get.headers.get('x-ping-message'), null);
+});
+
+test('rejects a message over the bounded length', async () => {
+  const res = await fetch(`${baseUrl}/cards/toolongmsg01`, {
+    method: 'PUT',
+    headers: {
+      ...auth,
+      'Content-Type': 'image/png',
+      'X-Ping-Message': encodeURIComponent('x'.repeat(300)),
+    },
+    body: png,
+  });
+  assert.equal(res.status, 400);
+});
+
 test('HEAD reports existence without a body', async () => {
   const id = 'headcheck001';
   await fetch(`${baseUrl}/cards/${id}`, {

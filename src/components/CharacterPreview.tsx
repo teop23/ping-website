@@ -26,6 +26,17 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isSendPingOpen, setIsSendPingOpen] = useState(false);
   const shareLinkCacheRef = useRef<{ key: string; link: ShareLink } | null>(null);
+  const pingShareLinkCacheRef = useRef<{ key: string; link: ShareLink } | null>(null);
+
+  // A "Send one back" CTA on the showcase page (src/pages/Showcase.tsx) links
+  // here with ?sendPing=1 to open this dialog directly, on the visitor's own
+  // (usually blank/random) character - not the sender's, so it isn't paired
+  // with a trait query the way Remix is.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('sendPing') === '1') {
+      setIsSendPingOpen(true);
+    }
+  }, []);
   const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
   const [traitImages, setTraitImages] = useState<Map<string, HTMLImageElement>>(new Map());
   const [isDragging, setIsDragging] = useState<string | null>(null);
@@ -347,6 +358,54 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     return { url: generateApiUrl(), imageUrl: `/api/image/custom.png?${params}` };
   };
 
+  /**
+   * Same idea as createShareUrl, for the Send a PING dialog: an optional
+   * preset message rides along, so the id (and the stored card) reflect the
+   * character AND the message - see shareInput in functions/_lib.ts.
+   */
+  const createPingShareUrl = async (message: string | null): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(message ? { ...traitSelection(), message } : traitSelection()),
+      });
+      if (!response.ok) return null;
+      const { url } = (await response.json()) as { url?: string };
+      return url ?? null;
+    } catch {
+      return null;
+    }
+  };
+
+  /** getShareLink's counterpart for the Send a PING dialog's "Copy link". */
+  const getPingShareLink = async (message: string | null): Promise<ShareLink> => {
+    const key = JSON.stringify({ traits: traitSelection(), message });
+    if (pingShareLinkCacheRef.current?.key === key) {
+      return pingShareLinkCacheRef.current.link;
+    }
+
+    const storedUrl = await createPingShareUrl(message);
+    if (storedUrl) {
+      const id = storedUrl.slice(storedUrl.lastIndexOf('/') + 1);
+      const link = { url: storedUrl, imageUrl: `/api/image/p/${id}.png` };
+      pingShareLinkCacheRef.current = { key, link };
+      return link;
+    }
+
+    // Storage failed - same live-render fallback as getShareLink, routed to
+    // the notification layout when there is a message.
+    const params = new URLSearchParams(traitSelection());
+    if (message) {
+      params.set('type', 'notification');
+      params.set('message', message);
+    } else {
+      params.set('type', 'banner');
+      params.set('caption', '1');
+    }
+    return { url: generateApiUrl(), imageUrl: `/api/image/custom.png?${params}` };
+  };
+
   return (
     <>
       <div className="w-full h-full flex flex-col overflow-hidden" ref={containerRef}>
@@ -464,6 +523,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         isOpen={isSendPingOpen}
         onClose={() => setIsSendPingOpen(false)}
         composeCharacter={composeCharacter}
+        getShareLink={getPingShareLink}
       />
     </>
   );

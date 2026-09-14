@@ -2,8 +2,10 @@ import {
   MIN_CARD_BYTES,
   addToGallery,
   canonicalTraits,
+  isValidPingMessage,
   selectCardStore,
   shareId,
+  shareInput,
   validateTraits,
   type CardStore,
 } from '../_lib';
@@ -28,6 +30,8 @@ interface Env {
   PING_CARDS?: KVNamespace;
   CARD_STORE_URL?: string;
   CARD_STORE_TOKEN?: string;
+  CARD_STORE_ACCESS_ID?: string;
+  CARD_STORE_ACCESS_SECRET?: string;
 }
 
 interface ShareContext {
@@ -37,10 +41,17 @@ interface ShareContext {
 }
 
 /** Best-effort: a gallery write failing must never fail the share. */
-const recordInGallery = async (store: CardStore, id: string, traits: string): Promise<void> => {
+const recordInGallery = async (
+  store: CardStore,
+  id: string,
+  traits: string,
+  message?: string
+): Promise<void> => {
   try {
     const entries = await store.getGallery();
-    await store.putGallery(addToGallery(entries, { id, traits, at: Date.now() }));
+    await store.putGallery(
+      addToGallery(entries, { id, traits, at: Date.now(), ...(message ? { message } : {}) })
+    );
   } catch {
     // Swallowed on purpose; see above.
   }
@@ -64,10 +75,23 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
     if (!body || typeof body !== 'object') return json({ error: 'Expected a JSON object' }, 400);
 
+    // "message" names a PING's message, not a trait category - it does not
+    // go through the trait params below, or validateTraits would 400 it as
+    // an unknown category.
     const params = new URLSearchParams();
     for (const [category, trait] of Object.entries(body)) {
+      if (category === 'message') continue;
       if (typeof trait === 'string' && trait) params.set(category, trait);
     }
+
+    // A PING's message: presets only (PING_MESSAGES, mirrored from
+    // src/utils/pingCard.ts). Anything else - free text, a typo, an empty
+    // string sent explicitly - is a 400, not a silently dropped field.
+    const rawMessage = typeof body.message === 'string' ? body.message : undefined;
+    if (rawMessage !== undefined && !isValidPingMessage(rawMessage)) {
+      return json({ error: 'Invalid message' }, 400);
+    }
+    const message = rawMessage || undefined;
 
     const index: Record<string, string[]> = await fetch(new URL('/traits-index.json', request.url).href)
       .then((response) => response.json());
@@ -76,14 +100,20 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     if (invalid) return json({ error: invalid }, 400);
 
     const canonical = canonicalTraits(params);
-    const id = await shareId(canonical);
+    // Message-less hashes exactly `canonical`, unchanged from before this
+    // feature existed - see shareInput in _lib.ts.
+    const id = await shareId(shareInput(canonical, message));
 
     const existing = await store.get(id);
     if (existing) return json({ id, url: `${origin}/p/${id}`, cached: true });
 
     // Render through the existing endpoint rather than a second copy of the
-    // compositing JSX - one renderer, one place for it to be right.
-    const cardUrl = `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner&caption=1`;
+    // compositing JSX - one renderer, one place for it to be right. A
+    // message routes to the notification layout; no message is today's
+    // captioned banner, unchanged.
+    const cardUrl = message
+      ? `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=notification&message=${encodeURIComponent(message)}`
+      : `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner&caption=1`;
     let card: ArrayBuffer | null = null;
     const failures: string[] = [];
     for (let attempt = 0; attempt < 2 && !card; attempt++) {
@@ -106,10 +136,10 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
       return json({ error: 'Card render failed' }, 502);
     }
 
-    await store.put(id, card, canonical);
-    // Only first-time characters reach this line, so the gallery gains one
-    // entry per distinct character, never per click.
-    waitUntil(recordInGallery(store, id, canonical));
+    await store.put(id, card, canonical, message);
+    // Only first-time (traits, message) pairs reach this line, so the
+    // gallery gains one entry per distinct card, never per click.
+    waitUntil(recordInGallery(store, id, canonical, message));
     return json({ id, url: `${origin}/p/${id}`, cached: false });
   } catch (err) {
     console.error('share failed:', err);

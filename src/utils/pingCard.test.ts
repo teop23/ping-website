@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { describe, expect, it } from 'vitest';
 import { MAX_MESSAGE_LENGTH, PING_MESSAGES, cardLayout, fitLine, normalizeMessage } from './pingCard';
 
@@ -32,6 +33,31 @@ describe('fitLine', () => {
 
   it('returns nothing when not even the ellipsis fits', () => {
     expect(fitLine('gm.', 5, measure)).toBe('');
+  });
+});
+
+describe('PING_MESSAGES', () => {
+  it('has no duplicates', () => {
+    expect(new Set(PING_MESSAGES).size).toBe(PING_MESSAGES.length);
+  });
+
+  /**
+   * The presets are declared once per build system: here, for the client
+   * canvas, and again in functions/_lib.ts for the Cloudflare Functions
+   * bundle (which /api/share and the open image API validate a message
+   * against). They cannot share a module cheaply - the same situation
+   * TRAIT_ORDER/traitOrder.test.ts is in - so this asserts they agree rather
+   * than importing functions/_lib.ts directly, which would pull DOM types
+   * this file needs into a program that does not carry them.
+   */
+  it('matches the presets mirrored in functions/_lib.ts', () => {
+    const lib = readFileSync('functions/_lib.ts', 'utf8');
+    const block = lib.match(/export const PING_MESSAGES = \[([\s\S]*?)\] as const;/);
+    if (!block) throw new Error('PING_MESSAGES not found in functions/_lib.ts');
+    const fromFunctions = [...block[1].matchAll(/'((?:[^'\\]|\\.)*)'/g)].map((m) =>
+      m[1].replace(/\\(.)/g, '$1')
+    );
+    expect(fromFunctions).toEqual(PING_MESSAGES);
   });
 });
 

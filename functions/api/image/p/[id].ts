@@ -25,6 +25,8 @@ interface Env {
   PING_CARDS?: KVNamespace;
   CARD_STORE_URL?: string;
   CARD_STORE_TOKEN?: string;
+  CARD_STORE_ACCESS_ID?: string;
+  CARD_STORE_ACCESS_SECRET?: string;
 }
 
 interface ImageContext {
