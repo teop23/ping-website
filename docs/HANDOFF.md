@@ -2130,3 +2130,56 @@ Every cross-slot pair, share of the lower trait covered by the upper one at 256p
 
 - umbrella (after answer 2), Robin Hood drop, other parked + retakes (`docs/trait-verdicts.md`).
 - Rate limit POST /api/share, Docker Desktop AutoStart (owner).
+
+## Twenty-second session, 2026-09-14: 4 traits shipped, share dialog rework, solo-item trait method
+
+### Ask the owner first (next session start)
+
+1. Delete 3 test cards created on live while debugging ("Comic Burst and Cap": plain, "Liquidated.",
+   "Seen.") plus `02snvtn0zjy7` ("A Ping from me to Yes")? They show on Community.
+2. Vet `sparkler_left_hand` (mirror of the live right_hand sparkler, lift 0.88): `.trait-work/pending/`,
+   zoom `.trait-work/fix/z-sparkler.png`.
+
+### Done (pushed)
+
+- `82b176a` shipped washing-machine, xbox-gamer, pS5-(right), pet-cheese, snowball; `bc08523` pulled
+  snowball back to parked (owner: hand broken). Live: 280 traits.
+- `08a3443` Share dialog per owner video: "Add a message" checkbox (off = "You have 1 new PING."),
+  chips fill a free-text box (40 chars; `cleanPingMessage` server / `messageProblem` client, same
+  regexes, test-asserted; no links, @handles, emoji). Card: no trait names, phone lock screen
+  (9:41 + big notification) left, character right (`functions/api/image/custom.png.tsx`, `PHONE`).
+  `CARD_RENDER_VERSION` in `shareInput` so redesigns never reuse stored cards. Client retries
+  /api/share once before the `/api/og` fallback. vitest 201, tsc both, e2e share 17 pass.
+
+### Open bugs (owner, end of session)
+
+- **Share link still falls back to `/api/og?...`** for the owner's full character (Comic Burst, 7 Figs
+  tee, glasses, cap, chainsaw, money-bag +more) with message "A Ping from me to Yes". curl with 4 of
+  those traits + same message: POST 200 in 2s, render 200 275KB. Suspect CPU exhaustion on the full
+  set (both server attempts + client retry). Next: Cloudflare Pages logs for the failing POST, then
+  lighten the render or render on the storage box. Also show the user an error instead of silently
+  showing the long URL.
+- **Notification font: owner wants "something more natural"** (currently Archivo ExtraBold 26px for the
+  message). Go iPhone-like: Inter (TTF in `public/fonts/` needed for satori) semibold "PING", regular
+  message, smaller weight contrast. Keep client square card (`src/utils/pingCard.ts`) consistent.
+- App crashes to a blank page at 0x0 viewport (`drawImage` on a 0-size canvas, uncaught): hidden
+  preview panes/thumbnails. Guard the canvas size.
+
+### Trait redo queue (owner FIX notes in `queue-13.md`)
+
+accessory arcade-machine (cut off top), shopping-cart (morphs with hand), snowman (arm lost, speck
+breaks foot), stove + treasure-chest (morph with hand/body/foot, chest cut off right); left_hand
+snowball (hand broken), umbrella (owner OK'd a small CLOSED umbrella).
+
+**New method, stops all morphing:** ask Gemini for the item ALONE on white, no penguin, drawn at the
+penguin's scale ("diameter about 14% of the picture width, outline as thick as the penguin's in
+image 1") so strokes match at scale 1.5682. Then
+`node .trait-work/place.mjs <solo.png> <out layer> <left> <bottom> [scale=1.5682] [--behind] [--flip]`
+(flood-cuts white, scales, places on the 1147 layer; `--behind` hides it behind the penguin, so held
+items tuck under the flipper tip and accessories sit behind the body). Solo takes in
+`.trait-work/solo/`. Take 1 (`snowball-1.png`, big) placed fine but stroke too thin at scale 0.42;
+take 2 (small, same scale) is in Downloads as `Gemini_Generated_Image_snowball-solo2.png`, not
+yet placed. Left flipper tip ~ layer (258, 785). Chat `/app/e1ec70366a2cc0f6` (5 sends);
+`eval(localStorage.__mine)` then insert into `.ql-editor` + click Send, `await __dl(keyphrase, name)`.
+- Tooling: no ffmpeg; `opencv-python-headless` installed for reading screen recordings. Run vitest with
+  `--exclude ".claude/**"` (stale agent worktrees race the generate-index test).
