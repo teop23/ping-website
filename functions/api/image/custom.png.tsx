@@ -3,13 +3,12 @@ import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
 import type { APIRoute } from 'astro';
 import {
   CAPTION_INSET,
-  CARD,
   OG_THEME,
   RENDER_BASE_IMAGE,
   captionFromTraits,
   cardGeometry,
+  PING_MESSAGES,
   isValidPingMessage,
-  notificationGeometry,
   RENDER_TRAITS_DIR,
   pickBgColor,
   splitAtBase,
@@ -30,25 +29,24 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       Object.entries(queryParams).filter(([key]) => !OPTION_PARAMS.includes(key))
     );
     const isBanner = queryParams.type === 'banner';
-    // A PING with a message: character under a notification banner, the
-    // satori reproduction of src/utils/pingCard.ts's client canvas card.
-    // Presets only - the message reaches here from /api/share (already
-    // validated) or directly from this open endpoint, which validates it
-    // itself below.
-    const isNotification = queryParams.type === 'notification';
     // Trait names printed on the card, so a saved or screenshotted image keeps
     // the context the page title carries. Opt-in and banner-only: /api/share
     // asks for it on its one render per character, while the open API and the
     // bot-scraped legacy route keep the cheaper text-free render.
     const captioned = isBanner && queryParams.caption === '1';
 
-    if (isNotification && (!queryParams.message || !isValidPingMessage(queryParams.message))) {
+    // A PING's message prints in the captioned banner's notification pill.
+    // Presets only - it reaches here from /api/share (already validated) or
+    // directly from this open endpoint, which validates it itself. It used to
+    // be a separate square layout with the notification on top, which X's
+    // ~1.91:1 center crop cut off entirely.
+    if (queryParams.message !== undefined && !isValidPingMessage(queryParams.message)) {
       return new Response('message must be one of the PING presets', { status: 400 });
     }
+    const message = queryParams.message || PING_MESSAGES[0];
 
     const baseURL = new URL(request.url).origin;
     const baseCharacterImage = `${baseURL}${RENDER_BASE_IMAGE}`;
-    const notification = isNotification ? notificationGeometry(CARD.square.width) : null;
     const {
       width: baseContainerWidth,
       height: baseContainerHeight,
@@ -58,18 +56,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
       baseLeft: baseImageLeftOffset,
       traitTop: traitImageTopOffset,
       traitLeft: traitImageLeftOffset,
-    } = notification
-      ? {
-          width: notification.size,
-          height: notification.size,
-          character: notification.traitSize,
-          baseSize: notification.baseSize,
-          baseTop: notification.baseTop,
-          baseLeft: notification.baseLeft,
-          traitTop: notification.traitTop,
-          traitLeft: notification.traitLeft,
-        }
-      : cardGeometry(isBanner, captioned);
+    } = cardGeometry(isBanner, captioned);
     // Load the traits index JSON from the public directory
     const traitsIndexUrl = new URL('/traits-index.json', request.url);
     const traitsIndexRes = await fetch(traitsIndexUrl.href);
@@ -106,7 +93,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const overBase = over.map(toUrl);
 
     // satori cannot read woff2; the TTF cuts are the same family the site uses.
-    const fonts = captioned || isNotification
+    const fonts = captioned
       ? await Promise.all([
           fetch(`${baseURL}/fonts/Archivo-Regular.ttf`).then((r) => r.arrayBuffer()),
           fetch(`${baseURL}/fonts/Archivo-ExtraBold.ttf`).then((r) => r.arrayBuffer()),
@@ -135,7 +122,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               position: 'absolute',
               left: CAPTION_LEFT,
               top: 0,
-              width: traitImageLeftOffset - CAPTION_LEFT,
+              // The gap keeps the notification pill off an aura's square edge.
+              width: traitImageLeftOffset - CAPTION_LEFT - 32,
               height: baseContainerHeight,
               display: 'flex',
               flexDirection: 'column',
@@ -144,8 +132,26 @@ export const onRequestGet: APIRoute = async ({ request }) => {
               color: OG_THEME.ink,
             }}
           >
-            <div style={{ fontSize: 22, opacity: 0.7 }}>You have 1 new PING.</div>
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 14 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '12px 16px 12px 12px',
+                borderRadius: 18,
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #DDD9CC',
+              }}
+            >
+              <img src={iconUrl} width={48} height={48} style={{ borderRadius: 11 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 12, flexGrow: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <div style={{ fontSize: 17, fontWeight: 800 }}>PING</div>
+                  <div style={{ fontSize: 14, color: '#5E6B63' }}>now</div>
+                </div>
+                <div style={{ fontSize: 22, lineHeight: 1.15, marginTop: 2 }}>{message}</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 22 }}>
               {caption.names.length === 0 ? (
                 <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.15 }}>PING</div>
               ) : (
@@ -160,56 +166,6 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             {caption.more > 0 && (
               <div style={{ fontSize: 22, opacity: 0.7, marginTop: 10 }}>{`+${caption.more} more`}</div>
             )}
-          </div>
-        )}
-        {notification && (
-          <div
-            style={{
-              position: 'absolute',
-              left: notification.banner.x,
-              top: notification.banner.y,
-              width: notification.banner.w,
-              height: notification.banner.h,
-              borderRadius: notification.banner.r,
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #DDD9CC',
-            }}
-          >
-            <img
-              src={iconUrl}
-              width={notification.icon.size}
-              height={notification.icon.size}
-              style={{
-                marginLeft: notification.icon.x - notification.banner.x,
-                borderRadius: notification.icon.size * 0.22,
-              }}
-            />
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                marginLeft: notification.textX - notification.icon.x - notification.icon.size,
-                width: notification.textRight - notification.textX,
-                fontFamily: 'Archivo',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <div style={{ fontSize: notification.titleSize, fontWeight: 800, color: OG_THEME.ink }}>PING</div>
-                <div style={{ fontSize: notification.metaSize, color: '#5E6B63' }}>now</div>
-              </div>
-              <div
-                style={{
-                  fontSize: notification.messageSize,
-                  fontWeight: 500,
-                  color: OG_THEME.ink,
-                  marginTop: notification.size * 0.01,
-                }}
-              >
-                {queryParams.message}
-              </div>
-            </div>
           </div>
         )}
         {underBase.map((src) => (

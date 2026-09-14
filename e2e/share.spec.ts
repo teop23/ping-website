@@ -52,6 +52,18 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
     expect(isPng(bytes)).toBe(true);
     expect(pngSize(bytes).width).toBeGreaterThan(pngSize(bytes).height);
 
+    // Picking a message re-shares as a new card; the default message is the bare id.
+    const withMessage = page.waitForResponse((r) => r.url().endsWith('/api/share'));
+    await dialog.getByRole('button', { name: 'gm.' }).click();
+    const messaged = (await (await withMessage).json()) as { id: string; url: string };
+    expect(messaged.id).not.toBe(id);
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(messaged.url);
+    await expect(dialog.getByRole('img', { name: 'Link preview card for this PING' })).toHaveAttribute('src', `/api/image/p/${messaged.id}.png`);
+    const messagedIntent = new URL((await dialog.getByRole('link', { name: 'Post on X' }).getAttribute('href'))!);
+    expect(messagedIntent.searchParams.get('text')).toContain('gm.');
+    await dialog.getByRole('button', { name: 'You have 1 new PING.' }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(url);
+
     // Sharing the same character again is a read of the same id.
     const again = await request.post('/api/share', { data: { head: 'crown', aura: 'blue-aura' } });
     expect(await again.json()).toMatchObject({ id, cached: true });
@@ -118,9 +130,9 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
 });
 
 test.describe('merged PING sharing: a message on the same /p/<id>', () => {
-  test('a message-less share hashes exactly like today - same id as the no-message request', async ({ request }) => {
+  test('the default message shares the message-less id', async ({ request }) => {
     const a = await (await request.post('/api/share', { data: { head: 'crown', aura: 'blue-aura' } })).json();
-    const b = await (await request.post('/api/share', { data: { head: 'crown', aura: 'blue-aura' } })).json();
+    const b = await (await request.post('/api/share', { data: { head: 'crown', aura: 'blue-aura', message: 'You have 1 new PING.' } })).json();
     expect(a.id).toBe(b.id);
   });
 
@@ -137,7 +149,7 @@ test.describe('merged PING sharing: a message on the same /p/<id>', () => {
     expect(res.status()).toBe(400);
   });
 
-  test('/api/card/<id> returns the message, and the stored card is a square', async ({ request }) => {
+  test('/api/card/<id> returns the message, and the stored card is the crop-safe banner', async ({ request }) => {
     const shared = (await (
       await request.post('/api/share', { data: { head: 'graduation-cap', message: 'Order filled.' } })
     ).json()) as { id: string };
@@ -149,7 +161,8 @@ test.describe('merged PING sharing: a message on the same /p/<id>', () => {
     const bytes = await image.body();
     expect(isPng(bytes)).toBe(true);
     const size = pngSize(bytes);
-    expect(size.width).toBe(size.height);
+    // X center-crops link cards to ~1.91:1; a square card lost its notification.
+    expect(size).toEqual({ width: 800, height: 420 });
   });
 
   test('a person opening a message PING sees it led with, and can send one back or remix', async ({ page, request }) => {
@@ -166,15 +179,15 @@ test.describe('merged PING sharing: a message on the same /p/<id>', () => {
     );
   });
 
-  test('the scraper gets OG tags sized for the square notification card', async ({ request }) => {
+  test('the scraper gets OG tags sized for the banner card', async ({ request }) => {
     const shared = (await (
       await request.post('/api/share', { data: { head: 'crown', message: 'Seen.' } })
     ).json()) as { id: string };
     const bot = await request.get(`/p/${shared.id}`, { headers: { 'user-agent': 'Twitterbot/1.0' } });
     const html = await bot.text();
     expect(html).toContain('Seen.');
-    expect(html).toMatch(/<meta[^>]+property="og:image:width"[^>]+content="512"/);
-    expect(html).toMatch(/<meta[^>]+property="og:image:height"[^>]+content="512"/);
+    expect(html).toMatch(/<meta[^>]+property="og:image:width"[^>]+content="800"/);
+    expect(html).toMatch(/<meta[^>]+property="og:image:height"[^>]+content="420"/);
   });
 
   test('a message PING gets a badge in the gallery', async ({ page, request }) => {

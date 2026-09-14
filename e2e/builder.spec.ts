@@ -124,19 +124,20 @@ test.describe('builder', () => {
     expect(pngSize(bytes)).toEqual({ width: 1024, height: 1024 });
   });
 
-  test('send a PING exports a 1024 card and a 512 sticker', async ({ page }) => {
+  test('Share saves the chosen message as a 1024 notification and a 512 sticker', async ({ page }) => {
     const { picker, preview } = await openBuilder(page);
     await traitCard(picker, 'Crown').click();
     await expect.poll(() => readSelectedCount(page)).toBe(1);
 
-    await preview.getByRole('button', { name: 'Send a PING' }).click();
-    const dialog = page.getByRole('dialog');
+    await expect(preview.getByRole('button', { name: 'Send a PING' })).toHaveCount(0);
+    await preview.getByRole('button', { name: 'Share' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Share' });
     await dialog.getByRole('button', { name: 'Order filled.' }).click();
-    await expect(dialog.getByRole('img', { name: 'PING notification card: Order filled.' })).toBeVisible();
+    await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue(/\/p\//);
 
     const [card] = await Promise.all([
       page.waitForEvent('download'),
-      dialog.getByRole('button', { name: 'Download image' }).click(),
+      dialog.getByRole('button', { name: 'Notification' }).click(),
     ]);
     expect(card.suggestedFilename()).toBe('ping-order-filled.png');
     const cardBytes = readFileSync((await card.path())!);
@@ -154,25 +155,9 @@ test.describe('builder', () => {
     expect(stickerBytes.length).toBeLessThan(512 * 1024);
   });
 
-  test('send a PING: "Get link" stores the message and points at /p/<id>; custom text cannot be shared', async ({ page }) => {
-    const { picker, preview } = await openBuilder(page);
-    await traitCard(picker, 'Crown').click();
-    await expect.poll(() => readSelectedCount(page)).toBe(1);
-
-    await preview.getByRole('button', { name: 'Send a PING' }).click();
-    const dialog = page.getByRole('dialog');
-    await dialog.getByRole('button', { name: 'Order filled.' }).click();
-
-    const shareResponse = page.waitForResponse((r) => r.url().endsWith('/api/share'));
-    await dialog.getByRole('button', { name: 'Get link' }).click();
-    const share = await shareResponse;
-    const { id, url } = (await share.json()) as { id: string; url: string };
-    expect(url).toMatch(new RegExp(`/p/${id}$`));
-    await expect(dialog.getByRole('textbox', { name: 'PING link' })).toHaveValue(url);
-
-    // Custom, non-preset text is presets-only and cannot be shared.
-    await dialog.getByPlaceholder('Or write your own').fill('a totally custom message');
-    await expect(dialog.getByRole('button', { name: 'Get link' })).toBeDisabled();
+  test('"Send one back" opens the Share dialog', async ({ page }) => {
+    await openBuilder(page, '/?sendPing=1#builder');
+    await expect(page.getByRole('dialog', { name: 'Share' })).toBeVisible();
   });
 
   test('copy puts a PNG on the clipboard', async ({ page, context }) => {

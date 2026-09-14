@@ -20,8 +20,6 @@ import {
   isValidXHandle,
   isValidPingMessage,
   PING_MESSAGES,
-  notificationLayout,
-  notificationGeometry,
   unavatarUrl,
   addToGallery,
   galleryPage,
@@ -279,33 +277,6 @@ describe('isValidPingMessage', () => {
     expect(isValidPingMessage('gm')).toBe(false);
     expect(isValidPingMessage('')).toBe(false);
     expect(isValidPingMessage('Your wallet is compromised')).toBe(false);
-  });
-});
-
-describe('notificationLayout / notificationGeometry', () => {
-  it('keeps the banner above the character and everything inside the square', () => {
-    for (const size of [512, 1024]) {
-      const { banner, character } = notificationLayout(size);
-      expect(banner.y + banner.h).toBeLessThanOrEqual(character.y + 0.001);
-      expect(banner.x + banner.w).toBeLessThanOrEqual(size);
-      expect(character.x + character.size).toBeLessThanOrEqual(size);
-      expect(character.y + character.size).toBeLessThanOrEqual(size + 0.001);
-    }
-  });
-
-  it('scales proportionally with size', () => {
-    const small = notificationLayout(512);
-    const large = notificationLayout(1024);
-    expect(large.textX).toBeCloseTo(small.textX * 2);
-    expect(large.messageSize).toBeCloseTo(small.messageSize * 2);
-  });
-
-  it('registers the trait art to the character box, base art scaled and centred on it', () => {
-    const g = notificationGeometry(512);
-    expect(g.traitLeft).toBe(g.character.x);
-    expect(g.traitSize).toBe(g.character.size);
-    expect(g.baseLeft + g.baseSize / 2).toBeCloseTo(g.traitLeft + g.traitSize / 2);
-    expect(g.baseTop + g.baseSize / 2).toBeCloseTo(g.traitTop + g.traitSize / 2);
   });
 });
 

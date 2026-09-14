@@ -84,18 +84,19 @@ const Showcase: React.FC = () => {
 
   return (
     <main className="container max-w-7xl px-4 py-4 sm:px-8 sm:py-10">
-      {/* The card is a raster - 800x420, or square when it carries a message;
-          its column stops at 50rem so it is never upscaled. */}
+      {/* The card is an 800x420 raster (a message sits in its notification
+          pill); its column stops at 50rem so it is never upscaled. A few early
+          message cards were square, so the image is contained, not cropped. */}
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,50rem)_minmax(18rem,1fr)] lg:gap-12">
         <figure className="overflow-hidden rounded-lg border border-hairline bg-raised">
-          <div className={hasMessage ? 'aspect-square bg-panel' : 'aspect-[800/420] bg-panel'}>
+          <div className="aspect-[800/420] bg-panel">
             {card && (
               <img
                 src={card.image}
                 alt={card.title}
-                width={hasMessage ? 512 : 800}
-                height={hasMessage ? 512 : 420}
-                className="size-full object-cover"
+                width={800}
+                height={420}
+                className="size-full object-contain"
               />
             )}
           </div>

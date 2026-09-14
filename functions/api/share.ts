@@ -1,5 +1,6 @@
 import {
   MIN_CARD_BYTES,
+  PING_MESSAGES,
   addToGallery,
   canonicalTraits,
   isValidPingMessage,
@@ -91,7 +92,9 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     if (rawMessage !== undefined && !isValidPingMessage(rawMessage)) {
       return json({ error: 'Invalid message' }, 400);
     }
-    const message = rawMessage || undefined;
+    // The default preset is what a message-less card already says, so it
+    // shares the message-less id rather than storing a second identical card.
+    const message = rawMessage && rawMessage !== PING_MESSAGES[0] ? rawMessage : undefined;
 
     const index: Record<string, string[]> = await fetch(new URL('/traits-index.json', request.url).href)
       .then((response) => response.json());
@@ -108,12 +111,11 @@ export const onRequestPost = async ({ request, env, waitUntil }: ShareContext): 
     if (existing) return json({ id, url: `${origin}/p/${id}`, cached: true });
 
     // Render through the existing endpoint rather than a second copy of the
-    // compositing JSX - one renderer, one place for it to be right. A
-    // message routes to the notification layout; no message is today's
-    // captioned banner, unchanged.
-    const cardUrl = message
-      ? `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=notification&message=${encodeURIComponent(message)}`
-      : `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner&caption=1`;
+    // compositing JSX - one renderer, one place for it to be right. Every
+    // card is the captioned banner; a message fills its notification pill.
+    const cardUrl = `${origin}/api/image/custom.png?${canonical}${canonical ? '&' : ''}type=banner&caption=1${
+      message ? `&message=${encodeURIComponent(message)}` : ''
+    }`;
     let card: ArrayBuffer | null = null;
     const failures: string[] = [];
     for (let attempt = 0; attempt < 2 && !card; attempt++) {

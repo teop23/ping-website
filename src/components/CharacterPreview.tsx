@@ -2,10 +2,9 @@ import { baseCharacterImage } from '@/data/traits';
 import { splitAtBase } from '@/data/traitOrder';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasConstants';
 import { motion } from 'framer-motion';
-import { BellRing, Check, Copy, Download, Move, Share2, Shuffle } from 'lucide-react';
+import { Check, Copy, Download, Move, Share2, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Trait } from '../types';
-import SendPingModal from './SendPingModal';
 import ShareModal, { type ShareLink } from './ShareModal';
 import { TextElement } from './TextTools';
 import { Button } from './ui/button';
@@ -24,17 +23,15 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   const [isLoading, setIsLoading] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
-  const [isSendPingOpen, setIsSendPingOpen] = useState(false);
-  const shareLinkCacheRef = useRef<{ key: string; link: ShareLink } | null>(null);
-  const pingShareLinkCacheRef = useRef<{ key: string; link: ShareLink } | null>(null);
+  const shareLinkCacheRef = useRef<Map<string, ShareLink>>(new Map());
 
   // A "Send one back" CTA on the showcase page (src/pages/Showcase.tsx) links
-  // here with ?sendPing=1 to open this dialog directly, on the visitor's own
-  // (usually blank/random) character - not the sender's, so it isn't paired
-  // with a trait query the way Remix is.
+  // here with ?sendPing=1 to open the Share dialog directly, on the visitor's
+  // own (usually blank/random) character - not the sender's, so it isn't
+  // paired with a trait query the way Remix is.
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get('sendPing') === '1') {
-      setIsSendPingOpen(true);
+      setIsShareOpen(true);
     }
   }, []);
   const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
@@ -80,7 +77,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
 
   /**
    * The character alone - auras, base, traits - in a square canvas of `size`.
-   * Download, Copy and Send a PING all start from this, so the three exports
+   * Download, Copy and Share's saved images all start from this, so the exports
    * cannot register traits differently.
    */
   const composeCharacter = useCallback(
@@ -307,7 +304,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     );
 
   /**
-   * Stores the character server-side and returns its short share URL.
+   * Stores the character (plus an optional preset message) server-side and
+   * returns its short share URL.
    *
    * This is what makes the card appear in the composer without a wait: the
    * render happens now, in this request, and the scraper that follows gets a
@@ -315,55 +313,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
    * failure), and the caller falls back to the legacy query-param URL, which
    * still works and still unfurls - just by rendering on the bot's request.
    */
-  const createShareUrl = async (): Promise<string | null> => {
-    try {
-      const response = await fetch('/api/share', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(traitSelection()),
-      });
-      if (!response.ok) return null;
-      const { url } = (await response.json()) as { url?: string };
-      return url ?? null;
-    } catch {
-      return null;
-    }
-  };
-
-  /**
-   * Resolves the share link for the current trait selection, reusing a
-   * previously stored one instead of re-POSTing to /api/share when the
-   * selection hasn't changed since the last successful call.
-   */
-  const getShareLink = async (): Promise<ShareLink> => {
-    const key = JSON.stringify(traitSelection());
-    if (shareLinkCacheRef.current?.key === key) {
-      return shareLinkCacheRef.current.link;
-    }
-
-    const storedUrl = await createShareUrl();
-    if (storedUrl) {
-      const id = storedUrl.slice(storedUrl.lastIndexOf('/') + 1);
-      const link = { url: storedUrl, imageUrl: `/api/image/p/${id}.png` };
-      shareLinkCacheRef.current = { key, link };
-      return link;
-    }
-
-    // Storage failed - fall back without caching, so a later retry can
-    // still succeed once storage is available again. The preview renders the
-    // same card on demand.
-    const params = new URLSearchParams(traitSelection());
-    params.set('type', 'banner');
-    params.set('caption', '1');
-    return { url: generateApiUrl(), imageUrl: `/api/image/custom.png?${params}` };
-  };
-
-  /**
-   * Same idea as createShareUrl, for the Send a PING dialog: an optional
-   * preset message rides along, so the id (and the stored card) reflect the
-   * character AND the message - see shareInput in functions/_lib.ts.
-   */
-  const createPingShareUrl = async (message: string | null): Promise<string | null> => {
+  const createShareUrl = async (message: string | null): Promise<string | null> => {
     try {
       const response = await fetch('/api/share', {
         method: 'POST',
@@ -378,31 +328,31 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     }
   };
 
-  /** getShareLink's counterpart for the Send a PING dialog's "Copy link". */
-  const getPingShareLink = async (message: string | null): Promise<ShareLink> => {
+  /**
+   * Resolves the share link for the current selection and message, reusing a
+   * stored one instead of re-POSTing when the pair hasn't changed - flipping
+   * between message chips costs one request per distinct card.
+   */
+  const getShareLink = async (message: string | null): Promise<ShareLink> => {
     const key = JSON.stringify({ traits: traitSelection(), message });
-    if (pingShareLinkCacheRef.current?.key === key) {
-      return pingShareLinkCacheRef.current.link;
-    }
+    const cached = shareLinkCacheRef.current.get(key);
+    if (cached) return cached;
 
-    const storedUrl = await createPingShareUrl(message);
+    const storedUrl = await createShareUrl(message);
     if (storedUrl) {
       const id = storedUrl.slice(storedUrl.lastIndexOf('/') + 1);
       const link = { url: storedUrl, imageUrl: `/api/image/p/${id}.png` };
-      pingShareLinkCacheRef.current = { key, link };
+      shareLinkCacheRef.current.set(key, link);
       return link;
     }
 
-    // Storage failed - same live-render fallback as getShareLink, routed to
-    // the notification layout when there is a message.
+    // Storage failed - fall back without caching, so a later retry can
+    // still succeed once storage is available again. The preview renders the
+    // same card on demand.
     const params = new URLSearchParams(traitSelection());
-    if (message) {
-      params.set('type', 'notification');
-      params.set('message', message);
-    } else {
-      params.set('type', 'banner');
-      params.set('caption', '1');
-    }
+    params.set('type', 'banner');
+    params.set('caption', '1');
+    if (message) params.set('message', message);
     return { url: generateApiUrl(), imageUrl: `/api/image/custom.png?${params}` };
   };
 
@@ -464,19 +414,10 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         <div className="flex flex-wrap justify-center gap-1 sm:gap-2 p-1 sm:p-2 flex-shrink-0">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ActionButton
-              icon={<BellRing size={16} />}
-              label="Send a PING"
-              onClick={() => setIsSendPingOpen(true)}
-              variant="secondary"
-              disabled={isLoading || !baseImage}
-            />
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <ActionButton
               icon={<Download size={16} />}
               label="Download"
               onClick={handleDownload}
-              variant="default"
+              variant="secondary"
               disabled={isLoading}
             />
           </motion.div>
@@ -495,8 +436,8 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               icon={<Share2 size={16} />}
               label="Share"
               onClick={() => setIsShareOpen(true)}
-              variant="secondary"
-              disabled={isLoading}
+              variant="default"
+              disabled={isLoading || !baseImage}
             />
           </motion.div>
           {onRandomize && (
@@ -517,13 +458,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
         isOpen={isShareOpen}
         onClose={() => setIsShareOpen(false)}
         getShareLink={getShareLink}
-      />
-
-      <SendPingModal
-        isOpen={isSendPingOpen}
-        onClose={() => setIsSendPingOpen(false)}
         composeCharacter={composeCharacter}
-        getShareLink={getPingShareLink}
       />
     </>
   );

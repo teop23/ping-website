@@ -165,7 +165,7 @@ interface OgPageOptions {
   pageUrl: string;
   title: string;
   description: string;
-  /** Defaults to the banner shape; a message'd PING's stored card is square. */
+  /** Defaults to the banner shape every stored share uses. */
   imageWidth?: number;
   imageHeight?: number;
 }
@@ -361,55 +361,6 @@ export const cardGeometry = (isBanner: boolean, captioned = false) => {
     baseLeft: traitLeft - (baseSize - character) / 2,
     traitTop: (height - character) / 2,
     traitLeft,
-  };
-};
-
-/**
- * Geometry for a PING with a message: a banner (icon, "PING", "now", the
- * message) over the character, filling the rest of a square frame.
- *
- * Fractions mirror `cardLayout` in src/utils/pingCard.ts, the client canvas
- * version this reproduces in satori for the stored/scraped card - see
- * docs/proposals/send-a-ping-link.md ("a rewrite, not a port"). Kept in sync
- * by convention rather than a shared module, the same situation TRAIT_ORDER
- * and PING_MESSAGES are in.
- */
-export const notificationLayout = (size: number) => {
-  const u = (fraction: number) => fraction * size;
-  const banner = { x: u(0.04), y: u(0.035), w: u(0.92), h: u(0.165), r: u(0.04) };
-  const iconSize = u(0.105);
-  const iconX = banner.x + u(0.03);
-  const iconY = banner.y + (banner.h - iconSize) / 2;
-  const textX = iconX + iconSize + u(0.03);
-  const textRight = banner.x + banner.w - u(0.035);
-  return {
-    size,
-    banner,
-    icon: { size: iconSize, x: iconX, y: iconY },
-    textX,
-    textRight,
-    titleBaseline: banner.y + u(0.068),
-    messageBaseline: banner.y + u(0.126),
-    titleSize: u(0.036),
-    metaSize: u(0.03),
-    messageSize: u(0.046),
-    character: { x: u(0.1), y: u(0.2), size: u(0.8) },
-  };
-};
-
-/** notificationLayout, plus where the base art and trait art register. */
-export const notificationGeometry = (size: number) => {
-  const layout = notificationLayout(size);
-  const { x, y, size: charSize } = layout.character;
-  const baseSize = charSize * BASE_SCALE;
-  return {
-    ...layout,
-    traitLeft: x,
-    traitTop: y,
-    traitSize: charSize,
-    baseLeft: x - (baseSize - charSize) / 2,
-    baseTop: y - (baseSize - charSize) / 2,
-    baseSize,
   };
 };
 
