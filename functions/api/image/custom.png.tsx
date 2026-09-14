@@ -68,7 +68,8 @@ export const onRequestGet: APIRoute = async ({ request }) => {
     const traitSelectionsByCategory: { category: string; trait: string }[] = [];
     // Seeded on the traits alone, so the square and the banner of one character
     // match, and a card Twitter scraped matches what the user later opens.
-    const bgColor = pickBgColor(seedFromParams(url.searchParams, OPTION_PARAMS));
+    // The phone share card is always lime: on cream it read flat in link unfurls.
+    const bgColor = captioned ? OG_THEME.accent : pickBgColor(seedFromParams(url.searchParams, OPTION_PARAMS));
 
     // ✅ Validate all query parameter keys (categories)
     for (const [category, trait] of Object.entries(traitParams)) {
