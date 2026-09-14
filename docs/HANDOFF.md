@@ -2082,3 +2082,51 @@ Every cross-slot pair, share of the lower trait covered by the upper one at 256p
 - e2e gotcha: a `workerd` on 8790 from a preview (`ping-pages`) gets reused by Playwright with a stale
   `dist`; run `E2E_PORT=8795 npx playwright test ...`. `rtk grep` over e2e/*.ts hung again.
 - Still to do: live check of the new dialog + a message card in the X composer; regen list.
+
+## Twenty-first session, 2026-09-14: live check passed, 11 rebuilds on a vetting page
+
+### Ask the owner first (next session start)
+
+1. Verdicts on https://claude.ai/code/artifact/43cc198d-da9f-4507-98a8-c1e90ab9cd35
+   (storage key `vet-2026-09-14-s21`, source `.trait-work/fixes-21/`, backup
+   `../_trait-backup/fixes-21-2026-09-14`). Unmarked = GOOD; FIX/REMOVE lines as usual.
+   Flagged for a look: snowman (one stick arm lost over the flipper), arcade-machine (speck by
+   foot), pet-cheese (tail tip squared at canvas bottom), snowball (small bump on flipper edge).
+2. umbrella_left_hand: canopy clipped three times. OK to make it a small CLOSED umbrella?
+3. Push this handoff commit (docs only, auto-deploys)?
+
+### Done
+
+- Live check of the Share dialog on buildaping.com: 8 message chips, stored card link, X and
+  Telegram intents, 800x420 banner (plain and "gm." pill) render; `/p/<id>` serves card OG tags
+  to Twitterbot, TelegramBot, Discordbot, facebookexternalhit, WhatsApp, Slackbot (browsers get
+  the app shell, by design). Left 2 test cards in the store: `3gng7kheu33t`, `2ifn1ctqmp8t`.
+  X composer preview still unchecked (owner).
+- Rebuilt (not shipped): accessory shopping-cart, snowman, stove, treasure-chest,
+  washing-machine, xbox-gamer, arcade-machine, pS5-(right), pet-cheese (new eyes prompt, matches
+  the original expression); left_hand sparkler, snowball. Notes per take in `queue-13.md`.
+- Ship after verdicts per "Fifteenth session: start here" step 4 (copy to `public/traits/`,
+  `rm -rf public/traits-512`, `generate-index.mjs`, vitest, tsc). Parked originals of these 11
+  sit in `.trait-work/parked/`; remove them there when shipping.
+
+### Tools and chats
+
+- `.trait-work/cap21.sh <name>`: clipboard -> Downloads -> `amtake` (or `TAKE=mtake` for the
+  left_hand mirror flow); refuses a clipboard that repeats the newest raw take.
+- `.trait-work/rc21.sh <name> <take>`: recut + mirror (`MIRROR=0` for right-side items, with
+  `LEFT=239 TOP=200`) + fitin + zoom. Recut beats the plain extractor for every accessory that
+  overlaps the flipper or body outline. `recut.mjs` has a new `DT` env (diff threshold, default
+  40): near-white items (pS5 panel) need `DT=14`. `BOX=540,440,...` when the item reaches left of
+  native x 600.
+- `.trait-work/lift.mjs <layer> <scale> <bottomY> [right|left]`: scale the item about its inner
+  edge and set its bottom (cheese tail off canvas; sparkler sparks near the edge).
+- Chats: accessory `/app/137b3022c970b674` (~19 sends, still s=1), cheese `/app/f3d0b018226aa4c1`,
+  fresh right_hand/left_hand `/app/e1ec70366a2cc0f6` (both refs, 3 sends).
+- Gotcha: Copy image only lands when the Gemini TAB is the visible tab in a non-minimized window.
+  `document.visibilityState` "hidden" or innerWidth 0/128 = ask the owner to click the tab. The
+  tab id can change mid-session; re-run `tabs_context_mcp` on "not in tab group".
+
+### Still to do
+
+- umbrella (after answer 2), Robin Hood drop, other parked + retakes (`docs/trait-verdicts.md`).
+- Rate limit POST /api/share, Docker Desktop AutoStart (owner).
