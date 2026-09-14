@@ -7,7 +7,8 @@ import { defineConfig, devices } from '@playwright/test';
  *
  * `npm run test:e2e`. The first run builds the site, which takes a minute.
  */
-const PORT = 8790;
+// Overridable so a second worktree's run doesn't fight the first for 8790.
+const PORT = Number(process.env.E2E_PORT) || 8790;
 
 export default defineConfig({
   testDir: 'e2e',

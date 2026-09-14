@@ -117,6 +117,84 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
   });
 });
 
+test.describe('merged PING sharing: a message on the same /p/<id>', () => {
+  test('a message-less share hashes exactly like today - same id as the no-message request', async ({ request }) => {
+    const a = await (await request.post('/api/share', { data: { head: 'crown', aura: 'blue-aura' } })).json();
+    const b = await (await request.post('/api/share', { data: { head: 'crown', aura: 'blue-aura' } })).json();
+    expect(a.id).toBe(b.id);
+  });
+
+  test('the same character with a message gets a different id than without one', async ({ request }) => {
+    const bare = (await (await request.post('/api/share', { data: { head: 'cowboy-hat' } })).json()) as { id: string };
+    const withMessage = (await (
+      await request.post('/api/share', { data: { head: 'cowboy-hat', message: 'gm.' } })
+    ).json()) as { id: string };
+    expect(withMessage.id).not.toBe(bare.id);
+  });
+
+  test('rejects a message that is not one of the presets', async ({ request }) => {
+    const res = await request.post('/api/share', { data: { head: 'crown', message: 'you have been liquidated forever' } });
+    expect(res.status()).toBe(400);
+  });
+
+  test('/api/card/<id> returns the message, and the stored card is a square', async ({ request }) => {
+    const shared = (await (
+      await request.post('/api/share', { data: { head: 'graduation-cap', message: 'Order filled.' } })
+    ).json()) as { id: string };
+    const card = await request.get(`/api/card/${shared.id}`);
+    expect(await card.json()).toMatchObject({ id: shared.id, message: 'Order filled.' });
+
+    const image = await request.get(`/api/image/p/${shared.id}.png`);
+    expect(image.status()).toBe(200);
+    const bytes = await image.body();
+    expect(isPng(bytes)).toBe(true);
+    const size = pngSize(bytes);
+    expect(size.width).toBe(size.height);
+  });
+
+  test('a person opening a message PING sees it led with, and can send one back or remix', async ({ page, request }) => {
+    const shared = (await (
+      await request.post('/api/share', { data: { head: 'crown', message: 'Still holding.' } })
+    ).json()) as { id: string };
+    await page.goto(`/p/${shared.id}`);
+    await expect(page.getByRole('heading', { level: 1, name: 'Still holding.' })).toBeVisible();
+
+    await expect(page.getByRole('link', { name: 'Send one back' })).toHaveAttribute('href', '/?sendPing=1#builder');
+    await expect(page.getByRole('link', { name: 'Remix this PING' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('head=crown')
+    );
+  });
+
+  test('the scraper gets OG tags sized for the square notification card', async ({ request }) => {
+    const shared = (await (
+      await request.post('/api/share', { data: { head: 'crown', message: 'Seen.' } })
+    ).json()) as { id: string };
+    const bot = await request.get(`/p/${shared.id}`, { headers: { 'user-agent': 'Twitterbot/1.0' } });
+    const html = await bot.text();
+    expect(html).toContain('Seen.');
+    expect(html).toMatch(/<meta[^>]+property="og:image:width"[^>]+content="512"/);
+    expect(html).toMatch(/<meta[^>]+property="og:image:height"[^>]+content="512"/);
+  });
+
+  test('a message PING gets a badge in the gallery', async ({ page, request }) => {
+    const index = (await (await request.get('/traits-index.json')).json()) as Record<string, string[]>;
+    const pick = (category: string) => index[category][Math.floor(Math.random() * index[category].length)];
+    const shared = (await (
+      await request.post('/api/share', { data: { head: pick('head'), message: 'Bought the dip.' } })
+    ).json()) as { id: string; cached: boolean };
+    test.skip(shared.cached, 'random character + message already stored locally');
+
+    await expect
+      .poll(async () => ((await (await request.get('/api/gallery')).json()) as { items: { id: string }[] }).items[0]?.id)
+      .toBe(shared.id);
+
+    await page.goto('/community');
+    const card = page.getByTestId('shared-gallery').locator(`a[href="/p/${shared.id}"]`);
+    await expect(card.getByText('PING', { exact: true })).toBeVisible();
+  });
+});
+
 test.describe('image API', () => {
   test('random.png renders a PNG every call, and not always the same one', async ({ request }) => {
     const bodies = new Set<string>();
