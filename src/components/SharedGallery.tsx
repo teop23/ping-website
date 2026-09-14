@@ -9,6 +9,8 @@ export interface GalleryItem {
   image: string;
   url: string;
   at: number;
+  /** Set when this PING was sent with a preset message. */
+  message?: string;
 }
 
 interface GalleryResponse {
@@ -71,19 +73,24 @@ const SharedGallery: React.FC = () => {
         {items.map((item) => (
           <li key={item.id}>
             <a href={item.url} className="group block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              <Card className="overflow-hidden border border-hairline bg-raised shadow-panel transition-shadow duration-300 group-hover:shadow-xl">
-                <div className="aspect-[800/420] overflow-hidden bg-panel">
+              <Card className="relative overflow-hidden border border-hairline bg-raised shadow-panel transition-shadow duration-300 group-hover:shadow-xl">
+                {item.message && (
+                  <span className="absolute right-2 top-2 z-10 rounded-pill bg-brand px-2 py-0.5 text-micro font-semibold text-accent-ink">
+                    PING
+                  </span>
+                )}
+                <div className={item.message ? 'aspect-square overflow-hidden bg-panel' : 'aspect-[800/420] overflow-hidden bg-panel'}>
                   <img
                     src={item.image}
                     alt={item.title}
                     loading="lazy"
-                    width={800}
-                    height={420}
+                    width={item.message ? 512 : 800}
+                    height={item.message ? 512 : 420}
                     className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                   />
                 </div>
                 <CardContent className="border-t border-hairline p-4">
-                  <p className="truncate text-meta font-medium text-ink">{item.title}</p>
+                  <p className="truncate text-meta font-medium text-ink">{item.message ?? item.title}</p>
                   <p className="mt-1 text-micro text-ink-muted">
                     {new Date(item.at).toLocaleDateString()}
                   </p>
