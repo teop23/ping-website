@@ -72,21 +72,23 @@ export const fitLine = (text: string, maxWidth: number, measure: (s: string) => 
 export const cardLayout = (size: number) => {
   const u = (f: number) => f * size;
   const banner = { x: u(0.04), y: u(0.035), w: u(0.92), h: u(0.165), r: u(0.04) };
-  const icon = { size: u(0.105), r: u(0.024) };
-  const iconX = banner.x + u(0.03);
-  const iconY = banner.y + (banner.h - icon.size) / 2;
-  const textX = iconX + icon.size + u(0.03);
+  // Header row: a small icon, PING beside it, "now" on the right. The message
+  // runs the full width under it, like the server card's notification.
+  const icon = { size: u(0.052), r: u(0.013) };
+  const textX = banner.x + u(0.035);
+  const iconY = banner.y + u(0.026);
   const textRight = banner.x + banner.w - u(0.035);
   return {
     banner,
-    icon: { ...icon, x: iconX, y: iconY },
+    icon: { ...icon, x: textX, y: iconY },
     textX,
+    titleX: textX + icon.size + u(0.018),
     textRight,
-    titleBaseline: banner.y + u(0.068),
-    messageBaseline: banner.y + u(0.126),
+    titleBaseline: iconY + icon.size / 2 + u(0.013),
+    messageBaseline: banner.y + u(0.132),
     titleSize: u(0.036),
     metaSize: u(0.03),
-    messageSize: u(0.046),
+    messageSize: u(0.05),
     // The character's square sits below the banner and fills the rest.
     character: { x: u(0.1), y: u(0.2), size: u(0.8) },
   };
@@ -161,17 +163,17 @@ export const drawPingCard = (ctx: CanvasRenderingContext2D, options: PingCardOpt
   ctx.font = `600 ${layout.titleSize}px ${FONT}`;
   ctx.fillStyle = INK;
   ctx.textAlign = 'left';
-  ctx.fillText('PING', layout.textX, layout.titleBaseline);
+  ctx.fillText('PING', layout.titleX, layout.titleBaseline);
 
   const text = normalizeMessage(options.message);
   const maxWidth = layout.textRight - layout.textX;
-  ctx.font = `400 ${layout.messageSize}px ${FONT}`;
+  ctx.font = `600 ${layout.messageSize}px ${FONT}`;
   // Shrink before cutting: a message someone typed should arrive whole.
   // MIN_MESSAGE_SCALE fits MAX_MESSAGE_LENGTH characters of typical text.
   // Glyph widths don't scale exactly linearly with font size, hence the 2% slack.
   const fullWidth = ctx.measureText(text).width;
   const scale = fullWidth <= maxWidth ? 1 : Math.max(MIN_MESSAGE_SCALE, (maxWidth / fullWidth) * 0.98);
-  ctx.font = `400 ${layout.messageSize * scale}px ${FONT}`;
+  ctx.font = `600 ${layout.messageSize * scale}px ${FONT}`;
   const message = fitLine(text, maxWidth, (s) => ctx.measureText(s).width);
   ctx.fillText(message, layout.textX, layout.messageBaseline);
 };

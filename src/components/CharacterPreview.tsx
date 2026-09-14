@@ -9,6 +9,9 @@ import ShareModal, { type ShareLink } from './ShareModal';
 import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 
+/** POSTs to /api/share before the dialog reports failure. e2e/share.spec.ts counts them. */
+const SHARE_ATTEMPTS = 3;
+
 interface CharacterPreviewProps {
   selectedTraits: Trait[];
   textElements?: TextElement[];
@@ -302,8 +305,10 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     // A heavy character's render occasionally runs out of CPU on the first
     // try; a second request a moment later almost always lands. Only after
     // that does the caller fall back to the long legacy URL.
-    for (let attempt = 0; attempt < 2; attempt++) {
-      if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 1200));
+    // Cloudflare's own 502 page (not our JSON) has also been seen here, so
+    // the last try waits longer.
+    for (let attempt = 0; attempt < SHARE_ATTEMPTS; attempt++) {
+      if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 1200 * attempt));
       try {
         const response = await fetch('/api/share', {
           method: 'POST',

@@ -2207,6 +2207,10 @@ yet placed. Left flipper tip ~ layer (258, 785). Chat `/app/e1ec70366a2cc0f6` (5
   SemiBold 600, message Regular 400 24px. Archivo Regular loads only for messages with glyphs outside
   the Inter subset (Latin Extended). Client square card matches (`pingCard.ts`, `fonts.css`).
   `CARD_RENDER_VERSION` 3.
+- **Notification layout (owner follow-up)**: icon + PING on one header row, message full width below in
+  SemiBold (26px server, one line shrink-to-fit on the square card). `CARD_RENDER_VERSION` 4. Client now
+  tries `/api/share` 3 times (1.2s, 2.4s): owner hit a Cloudflare HTML 502 at 17:03:37 UTC, ~1 min after
+  the deploy went live; same character POSTed fine right after (test card `2fokaunjv4jn`, delete).
 - **Blank page at 0x0**: `composeCharacter` returns null for size < 1; container size floored.
 - Typing a custom message still POSTs (and stores a gallery card) on every 700ms pause; consider
   storing only on send if the gallery fills with half-typed messages.

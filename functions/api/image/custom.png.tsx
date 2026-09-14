@@ -15,8 +15,10 @@ import {
 
 /** The lock-screen phone on a captioned banner, left of the character. */
 const PHONE = { left: CAPTION_INSET, top: 34, width: 318, radius: 46, bezel: 9 };
-/** Screen padding 14 a side, notification padding 14 + 16, icon 52 and its 12 gap. */
-const NOTIFICATION_TEXT_WIDTH = PHONE.width - 2 * PHONE.bezel - 2 * 14 - 30 - 52 - 12;
+/** The notification card: a small icon on the header row, the message full width below. */
+const NOTIFICATION = { padding: 16, icon: 32 };
+/** Phone width less the bezels, the screen's 14 padding a side and the card's own padding. */
+const NOTIFICATION_TEXT_WIDTH = PHONE.width - 2 * PHONE.bezel - 2 * 14 - 2 * NOTIFICATION.padding;
 
 // Query params that shape the image rather than name a trait.
 const OPTION_PARAMS = ['type', 'ts', 'caption', 'message'];
@@ -160,22 +162,23 @@ export const onRequestGet: APIRoute = async ({ request }) => {
                 style={{
                   width: '100%',
                   display: 'flex',
-                  alignItems: 'flex-start',
+                  flexDirection: 'column',
                   marginTop: 22,
-                  padding: '14px 16px 16px 14px',
+                  padding: NOTIFICATION.padding,
                   borderRadius: 24,
                   backgroundColor: 'rgba(255,255,255,0.94)',
                   color: OG_THEME.ink,
                 }}
               >
-                <img src={iconUrl} width={52} height={52} style={{ borderRadius: 12, flexShrink: 0 }} />
-                {/* satori sizes a growing column to its text, not the space left, so the width is explicit. */}
-                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 12, width: NOTIFICATION_TEXT_WIDTH }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <div style={{ fontSize: 18, fontWeight: 600 }}>PING</div>
-                    <div style={{ fontSize: 15, fontWeight: 400, color: '#5E6B63' }}>now</div>
-                  </div>
-                  <div style={{ fontSize: 24, fontWeight: 400, lineHeight: 1.2, letterSpacing: 0, marginTop: 4 }}>{message}</div>
+                {/* Icon and app name share the header row; the message gets the full width under it. */}
+                <div style={{ display: 'flex', alignItems: 'center', width: NOTIFICATION_TEXT_WIDTH }}>
+                  <img src={iconUrl} width={NOTIFICATION.icon} height={NOTIFICATION.icon} style={{ borderRadius: 8 }} />
+                  <div style={{ fontSize: 18, fontWeight: 600, marginLeft: 10, flexGrow: 1 }}>PING</div>
+                  <div style={{ fontSize: 15, fontWeight: 400, color: '#5E6B63' }}>now</div>
+                </div>
+                {/* satori sizes text to its content, not the space left, so the width is explicit. */}
+                <div style={{ display: 'flex', width: NOTIFICATION_TEXT_WIDTH, fontSize: 26, fontWeight: 600, lineHeight: 1.18, marginTop: 10 }}>
+                  {message}
                 </div>
               </div>
             </div>

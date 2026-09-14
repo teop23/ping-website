@@ -149,7 +149,7 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
     await picker.getByRole('img', { name: 'Crown', exact: true }).first().click();
     await expect.poll(() => readSelectedCount(page)).toBe(1);
 
-    // The server's render running out of CPU: both of the client's attempts fail.
+    // The server's render running out of CPU: every one of the client's attempts fails.
     let failing = true;
     let posts = 0;
     await page.route('**/api/share', async (route) => {
@@ -161,7 +161,7 @@ test.describe('share flow: Share dialog -> /api/share -> /p/<id>', () => {
     await preview.getByRole('button', { name: 'Share' }).click();
     const dialog = page.getByRole('dialog', { name: 'Share' });
     await expect(dialog.getByText('Could not create the link.')).toBeVisible();
-    expect(posts).toBe(2);
+    expect(posts).toBe(3);
     await expect(dialog.getByRole('textbox', { name: 'Share link' })).toHaveValue('');
     await expect(dialog.getByRole('link', { name: 'Post on X' })).toHaveCount(0);
 
