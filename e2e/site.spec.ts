@@ -28,7 +28,7 @@ test.describe('site', () => {
 
   for (const { path, heading } of [
     { path: '/community', heading: 'Community' },
-    { path: '/docs', heading: 'API Documentation' },
+    { path: '/docs', heading: 'API' },
     { path: '/brand', heading: 'Brand kit' },
   ]) {
     test(`${path} renders`, async ({ page }) => {

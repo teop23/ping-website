@@ -1,438 +1,232 @@
-import { motion } from 'framer-motion';
-import { Code, Globe, Image, Share2, Shirt, Users } from 'lucide-react';
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Check, Copy } from 'lucide-react';
+import React, { useState } from 'react';
 
 /** Whatever host the docs are read from is the host the examples should use. */
 const ORIGIN = typeof window === 'undefined' ? '' : window.location.origin;
 
-const Docs: React.FC = () => {
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
+const TRAIT_PARAMS: Param[] = [
+  { name: 'head', description: 'Hat, hair or anything on top' },
+  { name: 'face', description: 'Glasses and expressions' },
+  { name: 'body', description: 'Shirts, tattoos, chains' },
+  { name: 'aura', description: 'Background' },
+  { name: 'mouth', description: 'Cigar, beard, pipe' },
+  { name: 'right_hand', description: 'Item in the right hand' },
+  { name: 'left_hand', description: 'Item in the left hand' },
+  { name: 'accessory', description: 'Something next to PING' },
+];
 
-  return (
-    <div className="bg-transparent w-full min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center">
-              <Code className="w-6 h-6 text-ink-inverse" />
-            </div>
-            <h1 className="text-h2 sm:text-h1 font-bold type-display text-ink">
-              API Documentation
-            </h1>
-          </div>
-          <p className="text-lead text-muted-foreground max-w-3xl mx-auto">
-            Generate custom PING characters and social media previews programmatically
-          </p>
-        </motion.div>
-
-        {/* Quick Start */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="mb-8"
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="w-5 h-5" />
-                Base URL
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock>{ORIGIN}</CodeBlock>
-              <p className="text-meta text-muted-foreground mt-2">
-                All API endpoints are relative to this base URL. No authentication required.
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Endpoints */}
-        <div className="space-y-8">
-          {/* Get Available Traits */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            <EndpointCard
-              icon={<Users className="w-5 h-5" />}
-              title="Get Available Traits"
-              endpoint="GET /traits-index.json"
-              description="Retrieve all available categories and traits for character customization."
-              example={`${ORIGIN}/traits-index.json`}
-              responseExample={`{
-  "head": ["cap", "backwards-cap", "cowboy-hat", "crown"],
-  "face": ["pit-vipers", "cool-glasses", "heart-glasses"],
-  "body": ["ping-tee", "dress", "blank-tee"],
-  "aura": ["blue-aura", "fire-aura", "fart-aura"],
-  "mouth": ["cigar", "joint", "beard"],
-  "right_hand": ["wand", "pistol", "bitcoin"],
-  "left_hand": ["beer", "mop", "wallet"],
-  "accessory": ["lily", "mailbox", "birdhouse"]
-}`}
-              onCopy={() => copyToClipboard(`${ORIGIN}/traits-index.json`)}
-            />
-          </motion.div>
-
-          {/* Generate Custom Character */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <EndpointCard
-              icon={<Image className="w-5 h-5" />}
-              title="Generate Custom Character"
-              endpoint="GET /api/image/custom.png"
-              description="Generate a custom PING character image with specified traits."
-              parameters={[
-                { name: "head", type: "string", description: "Head accessory trait (optional)" },
-                { name: "face", type: "string", description: "Face accessory trait (optional)" },
-                { name: "body", type: "string", description: "Body trait (optional)" },
-                { name: "aura", type: "string", description: "Aura effect trait (optional)" },
-                { name: "mouth", type: "string", description: "Mouth accessory trait (optional)" },
-                { name: "right_hand", type: "string", description: "Right hand item trait (optional)" },
-                { name: "left_hand", type: "string", description: "Left hand item trait (optional)" },
-                { name: "accessory", type: "string", description: "Additional accessory trait (optional)" }
-              ]}
-              example={`${ORIGIN}/api/image/custom.png?head=backwards-cap&face=pit-vipers`}
-              responseExample="Returns a PNG image of the custom PING character"
-              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/custom.png?head=backwards-cap&face=pit-vipers`)}
-            />
-          </motion.div>
-          {/* Generate Random Character */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <EndpointCard
-              icon={<Image className="w-5 h-5" />}
-              title="Generate Random Character"
-              endpoint="GET /api/image/random.png"
-              description="Generate a random PING character image"
-              parameters={[
-                { name: "t", type: "string", description: "Timestamp - used to invalidate Cloudflare cache(if there is any)" },
-              ]}
-              example={`${ORIGIN}/api/image/random.png?t=1700000000`}
-              responseExample="Returns a PNG image of the PING character with random traits"
-              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/random.png?t=1700000000`)}
-            />
-          </motion.div>
-
-          {/* Generate Social Media Preview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-          >
-            <EndpointCard
-              icon={<Share2 className="w-5 h-5" />}
-              title="Generate Social Media Preview"
-              endpoint="GET /api/og"
-              description="Generate a social media preview page for sharing custom PING characters on X (Twitter), Discord, etc."
-              parameters={[
-                { name: "head", type: "string", description: "Head accessory trait (optional)" },
-                { name: "face", type: "string", description: "Face accessory trait (optional)" },
-                { name: "body", type: "string", description: "Body trait (optional)" },
-                { name: "aura", type: "string", description: "Aura effect trait (optional)" },
-                { name: "mouth", type: "string", description: "Mouth accessory trait (optional)" },
-                { name: "right_hand", type: "string", description: "Right hand item trait (optional)" },
-                { name: "left_hand", type: "string", description: "Left hand item trait (optional)" },
-                { name: "accessory", type: "string", description: "Additional accessory trait (optional)" }
-              ]}
-              example={`${ORIGIN}/api/og?head=backwards-cap&face=pit-vipers`}
-              responseExample="Returns an HTML page with Open Graph meta tags for social media preview"
-              onCopy={() => copyToClipboard(`${ORIGIN}/api/og?head=backwards-cap&face=pit-vipers`)}
-            />
-          </motion.div>
-
-          {/* Generate Character with Custom Shirt */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-          >
-            <EndpointCard
-              icon={<Shirt className="w-5 h-5" />}
-              title="Generate Character with Custom Shirt"
-              endpoint="GET /api/image/shirt.png"
-              description="Generate a PING character wearing a shirt with your custom image."
-              parameters={[
-                { name: "photo", type: "string", description: "URL of the image to use as shirt design (required)" }
-              ]}
-              example={`${ORIGIN}/api/image/shirt.png?photo=https://example.com/my-image.jpg`}
-              responseExample="Returns a PNG image of PING character wearing the custom shirt"
-              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/shirt.png?photo=https://example.com/my-image.jpg`)}
-            />
-          </motion.div>
-
-          {/* Generate Character with X User's Profile Picture */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-          >
-            <EndpointCard
-              icon={<Users className="w-5 h-5" />}
-              title="Generate Character with X User's Profile Picture"
-              endpoint="GET /api/image/shirt_by_x.png"
-              description="Generate a PING character wearing a shirt with an X (Twitter) user's profile picture."
-              parameters={[
-                { name: "handle", type: "string", description: "X (Twitter) username without @ symbol (required)" }
-              ]}
-              example={`${ORIGIN}/api/image/shirt_by_x.png?handle=elonmusk`}
-              responseExample="Returns a PNG image of PING character wearing a shirt with the user's profile picture"
-              onCopy={() => copyToClipboard(`${ORIGIN}/api/image/shirt_by_x.png?handle=elonmusk`)}
-            />
-          </motion.div>
-
-          {/* Generate Social Preview for X User */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            <EndpointCard
-              icon={<Share2 className="w-5 h-5" />}
-              title="Generate Social Preview for X User"
-              endpoint="GET /api/og/ogx/[handle]"
-              description="Generate a social media preview page for sharing PING characters with X user's profile picture as shirt."
-              parameters={[
-                { name: "handle", type: "string", description: "X (Twitter) username without @ symbol (required, part of URL path)" }
-              ]}
-              example={`${ORIGIN}/api/og/ogx/elonmusk`}
-              responseExample="Returns an HTML page with Open Graph meta tags for social media preview"
-              onCopy={() => copyToClipboard(`${ORIGIN}/api/og/ogx/elonmusk`)}
-            />
-          </motion.div>
-        </div>
-
-        {/* Usage Examples */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
-          className="mt-12"
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Code className="w-5 h-5" />
-                Usage Examples
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h4 className="font-semibold mb-2">JavaScript/TypeScript</h4>
-                <CodeBlock language="javascript">{`// Fetch available traits
-const traits = await fetch('${ORIGIN}/traits-index.json')
-  .then(res => res.json());
-
-// Generate custom character image URL
-const characterUrl = new URL('${ORIGIN}/api/image/custom.png');
-characterUrl.searchParams.set('head', 'backwards-cap');
-characterUrl.searchParams.set('face', 'pit-vipers');
-characterUrl.searchParams.set('body', 'ping-tee');
-
-// Use in an img tag
-const img = document.createElement('img');
-img.src = characterUrl.toString();
-document.body.appendChild(img);`}</CodeBlock>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-2">HTML</h4>
-                <CodeBlock language="html">{`<!-- Direct image embedding -->
-<img src="${ORIGIN}/api/image/custom.png?head=crown&aura=fire-aura" 
-     alt="Custom PING Character" />
-
-<!-- Social media sharing -->
-<a href="${ORIGIN}/api/og?head=crown&aura=fire-aura" 
-   target="_blank">
-  Share on Social Media
-</a>`}</CodeBlock>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-2">Python</h4>
-                <CodeBlock language="python">{`import requests
-
-# Get available traits
-response = requests.get('${ORIGIN}/traits-index.json')
-traits = response.json()
-
-# Generate character image
-params = {
-    'head': 'cowboy-hat',
-    'face': 'cool-glasses',
-    'right_hand': 'pistol'
+interface Param {
+  name: string;
+  description: string;
 }
 
-image_url = '${ORIGIN}/api/image/custom.png'
-image_response = requests.get(image_url, params=params)
+interface Endpoint {
+  path: string;
+  title: string;
+  description: string;
+  params?: Param[];
+  example: string;
+  returns: string;
+}
 
-# Save image
-with open('my_ping_character.png', 'wb') as f:
-    f.write(image_response.content)`}</CodeBlock>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+const ENDPOINTS: Endpoint[] = [
+  {
+    path: '/traits-index.json',
+    title: 'List traits',
+    description: 'Every trait name, grouped by slot. Use these names as parameters below.',
+    example: `${ORIGIN}/traits-index.json`,
+    returns: `{
+  "head": ["antlers", "backwards-cap", "beret", ...],
+  "face": ["angry", "band-aid", "blushing", ...],
+  "body": ["4chan-tee", "blank-tee", "cape", ...],
+  ...
+}`,
+  },
+  {
+    path: '/api/image/custom.png',
+    title: 'Character image',
+    description: 'A PNG of PING wearing the traits you name. Every parameter is optional; leave one out and that slot stays empty.',
+    params: TRAIT_PARAMS,
+    example: `${ORIGIN}/api/image/custom.png?head=backwards-cap&face=pit-vipers`,
+    returns: 'PNG',
+  },
+  {
+    path: '/api/image/random.png',
+    title: 'Random character',
+    description: 'A PNG with random traits. Responses can be cached, so add a changing t to get a new one.',
+    params: [{ name: 't', description: 'Any value, usually a timestamp' }],
+    example: `${ORIGIN}/api/image/random.png?t=1700000000`,
+    returns: 'PNG',
+  },
+  {
+    path: '/api/og',
+    title: 'Share page',
+    description: 'An HTML page with Open Graph tags, so a link posted on X or Discord unfurls as the character. Takes the same parameters as the character image.',
+    params: TRAIT_PARAMS,
+    example: `${ORIGIN}/api/og?head=backwards-cap&face=pit-vipers`,
+    returns: 'HTML',
+  },
+  {
+    path: '/api/image/shirt.png',
+    title: 'Custom shirt',
+    description: 'PING wearing a shirt printed with any image.',
+    params: [{ name: 'photo', description: 'Image URL. Required' }],
+    example: `${ORIGIN}/api/image/shirt.png?photo=https://example.com/my-image.jpg`,
+    returns: 'PNG',
+  },
+  {
+    path: '/api/image/shirt_by_x.png',
+    title: 'X avatar shirt',
+    description: "PING wearing a shirt printed with an X account's profile picture.",
+    params: [{ name: 'handle', description: 'X username, no @. Required' }],
+    example: `${ORIGIN}/api/image/shirt_by_x.png?handle=elonmusk`,
+    returns: 'PNG',
+  },
+  {
+    path: '/api/og/ogx/[handle]',
+    title: 'X avatar share page',
+    description: 'The share page for the X avatar shirt. The handle goes in the path.',
+    example: `${ORIGIN}/api/og/ogx/elonmusk`,
+    returns: 'HTML',
+  },
+];
 
-        {/* Notes */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0, duration: 0.6 }}
-          className="mt-8"
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle>Important Notes</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="rounded-md border border-hairline bg-raised p-4">
-                <h4 className="mb-2 font-semibold text-ink">Rate Limiting</h4>
-                <p className="text-meta text-ink-muted">
-                  Please be respectful with API usage. No strict rate limits are enforced, but excessive requests may be throttled.
-                </p>
+const JS_EXAMPLE = `const url = new URL('${ORIGIN}/api/image/custom.png');
+url.searchParams.set('head', 'backwards-cap');
+url.searchParams.set('face', 'pit-vipers');
+url.searchParams.set('body', 'ping-tee');
+
+const img = document.createElement('img');
+img.src = url.toString();
+document.body.appendChild(img);`;
+
+const HTML_EXAMPLE = `<img src="${ORIGIN}/api/image/custom.png?head=crown&aura=fire-aura" alt="PING" />`;
+
+const PYTHON_EXAMPLE = `import requests
+
+params = {'head': 'cowboy-hat', 'face': 'cool-glasses', 'right_hand': 'pistol'}
+image = requests.get('${ORIGIN}/api/image/custom.png', params=params)
+
+with open('ping.png', 'wb') as f:
+    f.write(image.content)`;
+
+const CopyButton: React.FC<{ text: string }> = ({ text }) => {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setDone(true);
+      window.setTimeout(() => setDone(false), 1500);
+    } catch {
+      setDone(false);
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-md border border-hairline bg-panel px-2.5 py-1 text-micro text-ink-muted transition-colors duration-fast ease-out-quart hover:text-ink"
+      aria-label={done ? 'Copied' : 'Copy example'}
+    >
+      {done ? <Check className="size-3.5" aria-hidden="true" /> : <Copy className="size-3.5" aria-hidden="true" />}
+      {done ? 'Copied' : 'Copy'}
+    </button>
+  );
+};
+
+const CodeBlock: React.FC<{ children: string; copyable?: boolean }> = ({ children, copyable }) => (
+  <div className="relative">
+    <pre className={`overflow-x-auto rounded-md border border-hairline bg-ground p-4 text-meta text-ink ${copyable ? 'pr-24' : ''}`}>
+      <code>{children}</code>
+    </pre>
+    {copyable && <CopyButton text={children} />}
+  </div>
+);
+
+const Label: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <h4 className="mb-2 text-meta font-semibold text-ink">{children}</h4>
+);
+
+const EndpointSection: React.FC<{ endpoint: Endpoint }> = ({ endpoint }) => (
+  <section aria-labelledby={`api-${endpoint.path}`} className="border-t border-hairline py-10">
+    <h2 id={`api-${endpoint.path}`} className="type-display text-h3 font-bold text-ink">
+      {endpoint.title}
+    </h2>
+    <p className="mt-2 font-mono text-meta text-ink">
+      <span className="text-ink-faint">GET</span> {endpoint.path}
+    </p>
+    <p className="type-prose mt-3 max-w-2xl text-ink-muted">{endpoint.description}</p>
+
+    <div className="mt-6 space-y-6">
+      {endpoint.params && (
+        <div>
+          <Label>Parameters</Label>
+          <dl className="divide-y divide-hairline rounded-lg border border-hairline bg-raised">
+            {endpoint.params.map((param) => (
+              <div key={param.name} className="flex flex-col gap-1 px-4 py-2.5 sm:flex-row sm:gap-4">
+                <dt className="w-32 shrink-0 font-mono text-meta text-ink">{param.name}</dt>
+                <dd className="text-meta text-ink-muted">{param.description}</dd>
               </div>
-              <div className="rounded-md border border-hairline bg-raised p-4">
-                <h4 className="mb-2 font-semibold text-ink">Caching</h4>
-                <p className="text-meta text-ink-muted">
-                  Generated images are cached for performance. Identical requests will return cached results.
-                </p>
-              </div>
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <h4 className="font-semibold text-yellow-900 mb-2">Image Format</h4>
-                <p className="text-yellow-800 text-meta">
-                  All character images are returned as PNG format with transparent backgrounds (where applicable).
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+            ))}
+          </dl>
+        </div>
+      )}
+      <div>
+        <Label>Example</Label>
+        <CodeBlock copyable>{endpoint.example}</CodeBlock>
+      </div>
+      <div>
+        <Label>Returns</Label>
+        <CodeBlock>{endpoint.returns}</CodeBlock>
       </div>
     </div>
-  );
-};
+  </section>
+);
 
-// Helper Components
-interface EndpointCardProps {
-  icon: React.ReactNode;
-  title: string;
-  endpoint: string;
-  description: string;
-  parameters?: Array<{ name: string; type: string; description: string }>;
-  example: string;
-  responseExample: string;
-  onCopy: () => void;
-}
+const Docs: React.FC = () => (
+  <main className="container max-w-5xl py-12">
+    <h1 className="type-display text-h2 font-bold text-ink sm:text-h1">API</h1>
+    <p className="type-prose mt-3 max-w-2xl text-lead text-ink-muted">
+      Every character the builder makes is also a URL. No key, no signup. Paths below are relative to{' '}
+      <code className="font-mono text-ink">{ORIGIN || 'this site'}</code>.
+    </p>
 
-const EndpointCard: React.FC<EndpointCardProps> = ({
-  icon,
-  title,
-  endpoint,
-  description,
-  parameters,
-  example,
-  responseExample,
-  onCopy
-}) => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {icon}
-          {title}
-        </CardTitle>
-        <div className="flex items-center gap-2">
-          <span className="rounded bg-brand-wash px-2 py-1 font-mono text-micro text-accent-ink">
-            {endpoint.split(' ')[0]}
-          </span>
-          <code className="text-meta text-muted-foreground font-mono">
-            {endpoint.split(' ')[1]}
-          </code>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-muted-foreground">{description}</p>
-        
-        {parameters && (
-          <div>
-            <h4 className="font-semibold mb-2">Parameters</h4>
-            <div className="overflow-x-auto">
-              <table className="w-full text-meta">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 font-medium">Name</th>
-                    <th className="text-left py-2 font-medium">Type</th>
-                    <th className="text-left py-2 font-medium">Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {parameters.map((param, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="py-2 font-mono text-accent-ink">{param.name}</td>
-                      <td className="py-2 text-muted-foreground">{param.type}</td>
-                      <td className="py-2">{param.description}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        <div>
-          <h4 className="font-semibold mb-2">Example Request</h4>
-          <CodeBlock onCopy={onCopy}>{example}</CodeBlock>
-        </div>
-
-        <div>
-          <h4 className="font-semibold mb-2">Response</h4>
-          <CodeBlock>{responseExample}</CodeBlock>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-interface CodeBlockProps {
-  children: string;
-  language?: string;
-  onCopy?: () => void;
-}
-
-const CodeBlock: React.FC<CodeBlockProps> = ({ children, language, onCopy }) => {
-  return (
-    <div className="relative group">
-      <pre className="overflow-x-auto rounded-md border border-hairline bg-ground p-4 text-meta text-ink">
-        <code className={language ? `language-${language}` : ''}>{children}</code>
-      </pre>
-      {onCopy && (
-        <button
-          onClick={onCopy}
-          className="absolute top-2 right-2 rounded border border-hairline bg-panel p-2 text-ink-muted hover:text-ink opacity-0 group-hover:opacity-100 transition-opacity"
-          title="Copy to clipboard"
-        >
-          <Code size={14} />
-        </button>
-      )}
+    <div className="mt-10">
+      {ENDPOINTS.map((endpoint) => (
+        <EndpointSection key={endpoint.path} endpoint={endpoint} />
+      ))}
     </div>
-  );
-};
+
+    <section aria-labelledby="api-examples" className="border-t border-hairline py-10">
+      <h2 id="api-examples" className="type-display text-h3 font-bold text-ink">
+        In code
+      </h2>
+      <div className="mt-6 space-y-6">
+        <div>
+          <Label>JavaScript</Label>
+          <CodeBlock copyable>{JS_EXAMPLE}</CodeBlock>
+        </div>
+        <div>
+          <Label>HTML</Label>
+          <CodeBlock copyable>{HTML_EXAMPLE}</CodeBlock>
+        </div>
+        <div>
+          <Label>Python</Label>
+          <CodeBlock copyable>{PYTHON_EXAMPLE}</CodeBlock>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-limits" className="border-t border-hairline py-10">
+      <h2 id="api-limits" className="type-display text-h3 font-bold text-ink">
+        Limits
+      </h2>
+      <p className="type-prose mt-3 max-w-2xl text-ink-muted">
+        No hard rate limit. Images are cached, so the same request returns the same image fast. Hammer it and you get
+        throttled.
+      </p>
+    </section>
+  </main>
+);
 
 export default Docs;

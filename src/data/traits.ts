@@ -38,6 +38,8 @@ export const initializeTraits = async (): Promise<{
     name: file.uiName,
     category: file.category as Trait['category'],
     imageSrc: file.imageSrc,
+    thumbSrc: file.thumbSrc,
+    thumb: file.thumb,
   }));
 
   // Every category stays visible even when it has no traits, so the tab row

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Check, Upload, Search, X } from 'lucide-react';
 import React from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
-import { CategoryOption, Trait } from '../types';
+import { CategoryOption, ThumbBox, Trait } from '../types';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
@@ -158,10 +158,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
           <div className="flex flex-wrap gap-1 sm:gap-2">
             <button
               onClick={() => handleCategoryFilterClick('all')}
-              className={`px-2 py-1 text-micro font-semibold rounded-md transition-colors duration-fast ease-out-quart ${
+              className={`rounded-md border px-2 py-1 text-micro font-semibold transition-colors duration-fast ease-out-quart ${
                 selectedCategoryFilter === 'all'
-                  ? 'bg-brand text-ink-inverse ring-2 ring-ink/25'
-                  : 'bg-brand/70 text-ink-inverse hover:bg-brand'
+                  ? 'border-ink bg-brand text-ink-inverse'
+                  : 'border-hairline bg-raised text-ink-muted hover:border-ink/40 hover:text-ink'
               }`}
             >
               All
@@ -170,10 +170,10 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
               <button
                 key={category.id}
                 onClick={() => handleCategoryFilterClick(category.id)}
-                className={`px-2 py-1 text-micro font-semibold rounded-md transition-colors duration-fast ease-out-quart ${
+                className={`rounded-md border px-2 py-1 text-micro font-semibold transition-colors duration-fast ease-out-quart ${
                   selectedCategoryFilter === category.id
-                    ? 'bg-brand text-ink-inverse ring-2 ring-ink/25'
-                    : 'bg-brand/70 text-ink-inverse hover:bg-brand'
+                    ? 'border-ink bg-brand text-ink-inverse'
+                    : 'border-hairline bg-raised text-ink-muted hover:border-ink/40 hover:text-ink'
                 }`}
               >
                 {category.label}
@@ -183,7 +183,7 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
         </div>
 
         {/* Selected Traits Section - Always visible but compact */}
-        <div className="shrink-0 border-b border-hairline bg-brand-wash p-2">
+        <div className="shrink-0 border-b border-hairline p-2">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-meta font-semibold text-ink">
               Selected ({selectedTraits.length})
@@ -267,7 +267,6 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
                       key={`${trait.id}-${trait.category}`}
                       trait={trait}
                       isSelected={isSelected}
-                      imageSrc={trait.imageSrc}
                       onClick={() => handleTraitClick(trait)}
                     />
                   );
@@ -306,28 +305,45 @@ const TraitSelector: React.FC<TraitSelectorProps> = ({
 interface TraitCardProps {
   trait: Trait;
   isSelected: boolean;
-  imageSrc: string;
   onClick: () => void;
 }
 
-const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, imageSrc, onClick }) => {
+/**
+ * Zooms the tile onto the item (trait.thumb) instead of showing the whole
+ * character canvas, where a handheld token is a speck in one corner.
+ */
+const thumbStyle = ({ x, y, size }: ThumbBox): React.CSSProperties => ({
+  position: 'absolute',
+  width: `${100 / size}%`,
+  height: `${100 / size}%`,
+  left: `${(-x / size) * 100}%`,
+  top: `${(-y / size) * 100}%`,
+  maxWidth: 'none',
+});
+
+const FULL_FRAME: ThumbBox = { x: 0, y: 0, size: 1 };
+
+const TraitCard: React.FC<TraitCardProps> = ({ trait, isSelected, onClick }) => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <motion.div
           className={`group relative cursor-pointer overflow-hidden rounded-md border transition-all duration-200 ${isSelected
-            ? 'border-ink ring-2 ring-ink/30 bg-brand-wash shadow-panel'
+            ? 'border-ink ring-2 ring-ink/30 shadow-panel'
             : 'border-hairline bg-raised hover:border-ink/40'
             }`}
           onClick={onClick}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          <div className="relative flex aspect-square items-center justify-center bg-artboard">
+          <div className="relative aspect-square overflow-hidden bg-artboard">
             <img
-              src={imageSrc}
+              src={trait.thumbSrc ?? trait.imageSrc}
               alt={trait.name}
-              className={`w-full h-full object-contain p-1 transition-transform duration-200 ${isSelected ? 'scale-95' : 'group-hover:scale-105'
+              loading="lazy"
+              decoding="async"
+              style={thumbStyle(trait.thumb ?? FULL_FRAME)}
+              className={`transition-transform duration-200 ${isSelected ? 'scale-95' : 'group-hover:scale-105'
                 }`}
               onError={(e) => {
                 // Hide a trait whose art will not load rather than calling out to

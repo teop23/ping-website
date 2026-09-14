@@ -1,6 +1,7 @@
 import { mkdir, readdir, readFile, stat, unlink, writeFile } from 'fs/promises';
 import path from 'path';
 import { decodePng, encodeRgba, readPngSize, resizeRgba } from './lib/png.mjs';
+import { thumbBox } from './lib/thumb-box.mjs';
 
 /**
  * Builds the trait manifest from public/traits and validates the assets.
@@ -14,7 +15,8 @@ import { decodePng, encodeRgba, readPngSize, resizeRgba } from './lib/png.mjs';
  *   traits-index.json     category -> [name]. The shape the app and the
  *                         Pages Functions already consume. Unchanged.
  *   traits-manifest.json  the full picture: render order, UI order, labels,
- *                         and per-trait dimensions.
+ *                         per-trait dimensions, and the crop box builder
+ *                         tiles zoom to (see lib/thumb-box.mjs).
  *
  * It also emits render-sized copies of the art under public/traits-512 and
  * public/ping-768.png. The image Functions composite from those, not from the
@@ -184,19 +186,6 @@ for (const trait of traits) {
   (index[trait.category] ??= []).push(trait.name);
 }
 
-const manifest = {
-  version: 1,
-  generatedAt: new Date().toISOString(),
-  renderOrder: RENDER_ORDER,
-  categories: CATEGORIES.map((c) => ({
-    ...c,
-    count: traits.filter((t) => t.category === c.id).length,
-  })),
-  traits,
-};
-
-await writeFile(INDEX_OUT, JSON.stringify(index, null, 2));
-await writeFile(MANIFEST_OUT, JSON.stringify(manifest, null, 2));
 
 // --- render-sized art for the image Functions ---
 await mkdir(RENDER_DIR, { recursive: true });
@@ -220,6 +209,25 @@ for (const name of await readdir(RENDER_DIR)) {
   pruned++;
 }
 if (pruned > 0) console.log(`Pruned ${pruned} stale file(s) from public/traits-${RENDER_PX}.`);
+
+// Measured on the render copies: same shape as the masters, a fifth the pixels.
+for (const trait of traits) {
+  trait.thumb = thumbBox(decodePng(await readFile(path.join(RENDER_DIR, path.basename(trait.file)))));
+}
+
+const manifest = {
+  version: 1,
+  generatedAt: new Date().toISOString(),
+  renderOrder: RENDER_ORDER,
+  categories: CATEGORIES.map((c) => ({
+    ...c,
+    count: traits.filter((t) => t.category === c.id).length,
+  })),
+  traits,
+};
+
+await writeFile(INDEX_OUT, JSON.stringify(index, null, 2));
+await writeFile(MANIFEST_OUT, JSON.stringify(manifest, null, 2));
 
 if (await isStale(BASE_SRC, BASE_OUT)) {
   await downscale(BASE_SRC, BASE_OUT, BASE_RENDER_PX);

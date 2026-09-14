@@ -1,5 +1,5 @@
 import { TRAIT_RENDER_ORDER } from '../data/traitOrder';
-import { CategoryOption, TraitCategory } from '../types';
+import { CategoryOption, ThumbBox, TraitCategory } from '../types';
 
 /**
  * Reads the trait manifest produced by scripts/generate-index.mjs.
@@ -18,6 +18,8 @@ export interface TraitFile {
   uiName: string;
   category: string;
   imageSrc: string;
+  thumbSrc: string;
+  thumb?: ThumbBox;
   width: number;
   height: number;
 }
@@ -28,6 +30,8 @@ interface ManifestTrait {
   label: string;
   category: string;
   file: string;
+  renderFile: string;
+  thumb?: ThumbBox;
   width: number;
   height: number;
   bytes: number;
@@ -98,6 +102,8 @@ const toTraitFile = (trait: ManifestTrait): TraitFile => ({
   uiName: trait.label,
   category: trait.category,
   imageSrc: trait.file,
+  thumbSrc: trait.renderFile,
+  thumb: trait.thumb,
   width: trait.width,
   height: trait.height,
 });
