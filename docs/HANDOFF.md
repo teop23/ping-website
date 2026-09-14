@@ -2067,3 +2067,18 @@ Every cross-slot pair, share of the lower trait covered by the upper one at 256p
 - Regen list (not started): shopping-cart, snowman, stove, treasure-chest, washing-machine,
   xbox-gamer, arcade-machine, pS5, sparkler, umbrella; pet-cheese redo; snowball_left_hand.
 - Rate limit POST /api/share (owner dashboard). Docker Desktop AutoStart (owner).
+
+### Later same session (all pushed)
+
+- `49011b5` Accessory paints after head, before hands (all 3 order authorities + test). Owner chose it.
+  Existing stored cards keep their old render; ids for accessory+hand characters change.
+- One Share dialog + banner-only cards (owner: "whatever you think is best"). X center-crops link
+  cards to ~1.91:1 (third-party guides agree; X's own doc pages 402/404), which removed the
+  notification from the old 512 square card. Now: 800x420 captioned banner, preset message in a
+  white notification pill (`custom.png.tsx`), `PING_MESSAGES[0]` = no message (same id). "Send a
+  PING" toolbar button and `SendPingModal.tsx` deleted; `ShareModal.tsx` has chips, stored card,
+  link, X/Telegram, save as 1024 notification / copy / 512 sticker. Custom text and "No banner" gone.
+  Old square test card `0qdyqm9zyqms` still renders (showcase uses object-contain).
+- e2e gotcha: a `workerd` on 8790 from a preview (`ping-pages`) gets reused by Playwright with a stale
+  `dist`; run `E2E_PORT=8795 npx playwright test ...`. `rtk grep` over e2e/*.ts hung again.
+- Still to do: live check of the new dialog + a message card in the X composer; regen list.
