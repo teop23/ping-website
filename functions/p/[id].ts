@@ -1,4 +1,4 @@
-import { BOT_USER_AGENT, kvCardStore, renderOgPage, titleFromTraits } from '../_lib';
+import { BOT_USER_AGENT, selectCardStore, renderOgPage, titleFromTraits } from '../_lib';
 
 /**
  * The share link itself: buildaping.com/p/<id>.
@@ -12,6 +12,8 @@ import { BOT_USER_AGENT, kvCardStore, renderOgPage, titleFromTraits } from '../_
 interface Env {
   ASSETS: Fetcher;
   PING_CARDS?: KVNamespace;
+  CARD_STORE_URL?: string;
+  CARD_STORE_TOKEN?: string;
 }
 
 interface PageContext {
@@ -24,7 +26,8 @@ export const onRequestGet = async ({ request, env, params }: PageContext): Promi
   const url = new URL(request.url);
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const card = env.PING_CARDS && id ? await kvCardStore(env.PING_CARDS).get(id) : null;
+  const store = selectCardStore(env);
+  const card = store && id ? await store.get(id) : null;
   // An unknown id is a link to a character nobody stored - send the person to
   // the builder rather than showing them a 404 they can do nothing with.
   if (!card) return Response.redirect(url.origin, 302);

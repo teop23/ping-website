@@ -1,4 +1,4 @@
-import { kvCardStore, titleFromTraits } from '../../_lib';
+import { selectCardStore, titleFromTraits } from '../../_lib';
 
 /**
  * A stored share card's details, for the /p/<id> showcase page.
@@ -11,6 +11,8 @@ import { kvCardStore, titleFromTraits } from '../../_lib';
 
 interface Env {
   PING_CARDS?: KVNamespace;
+  CARD_STORE_URL?: string;
+  CARD_STORE_TOKEN?: string;
 }
 
 interface CardContext {
@@ -26,9 +28,10 @@ const json = (body: unknown, status: number, cache: string): Response =>
 
 export const onRequestGet = async ({ env, params }: CardContext): Promise<Response> => {
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  if (!env.PING_CARDS || !id) return json({ error: 'Not found' }, 404, 'no-store');
+  const store = selectCardStore(env);
+  if (!store || !id) return json({ error: 'Not found' }, 404, 'no-store');
 
-  const card = await kvCardStore(env.PING_CARDS).get(id);
+  const card = await store.get(id);
   if (!card) return json({ error: 'Not found' }, 404, 'no-store');
 
   return json(

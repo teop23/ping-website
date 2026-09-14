@@ -23,6 +23,8 @@ import {
   parseGallery,
   loadPhoto,
   MAX_PHOTO_BYTES,
+  httpCardStore,
+  selectCardStore,
 } from './_lib';
 
 /**
@@ -321,6 +323,106 @@ describe('gallery index', () => {
     expect(galleryPage(entries, 4, 2)).toMatchObject({ items: [entry('c4', 4)], next: null });
     expect(galleryPage(entries, -7, 2).items[0].id).toBe('c0');
     expect(galleryPage(entries, NaN, 2).items[0].id).toBe('c0');
+  });
+});
+
+describe('httpCardStore', () => {
+  const png = new Uint8Array([137, 80, 78, 71, 1, 2, 3]);
+  const mockFetch = (impl: (url: string, init?: RequestInit) => Response) =>
+    (async (url: string, init?: RequestInit) => impl(url, init)) as unknown as typeof fetch;
+
+  it('GETs a card by id, sending the bearer token, and decodes traits from the header', async () => {
+    let seenUrl = '';
+    let seenAuth = '';
+    const fetchFn = mockFetch((url, init) => {
+      seenUrl = url;
+      seenAuth = (init?.headers as Record<string, string>)?.Authorization ?? '';
+      return new Response(png, {
+        status: 200,
+        headers: { 'x-ping-traits': encodeURIComponent('head=crown&aura=blue-aura') },
+      });
+    });
+    const store = httpCardStore({ baseUrl: 'https://cards.example.com', token: 'secret', fetchFn });
+
+    const result = await store.get('abc123');
+    expect(seenUrl).toBe('https://cards.example.com/cards/abc123');
+    expect(seenAuth).toBe('Bearer secret');
+    expect(result).toEqual({ body: png.buffer.slice(0), traits: 'head=crown&aura=blue-aura' });
+  });
+
+  it('treats a 404 as a miss rather than throwing', async () => {
+    const fetchFn = mockFetch(() => new Response(null, { status: 404 }));
+    const store = httpCardStore({ baseUrl: 'https://cards.example.com', token: 'secret', fetchFn });
+    expect(await store.get('missing')).toBeNull();
+  });
+
+  it('throws on a non-404 error status, so callers can fall back', async () => {
+    const fetchFn = mockFetch(() => new Response('nope', { status: 500 }));
+    const store = httpCardStore({ baseUrl: 'https://cards.example.com', token: 'secret', fetchFn });
+    await expect(store.get('id')).rejects.toThrow();
+  });
+
+  it('PUTs a card with the traits header and image/png content type', async () => {
+    let seenHeaders: Record<string, string> = {};
+    let seenMethod = '';
+    const fetchFn = mockFetch((_url, init) => {
+      seenMethod = init?.method ?? '';
+      seenHeaders = init?.headers as Record<string, string>;
+      return new Response(null, { status: 200 });
+    });
+    const store = httpCardStore({ baseUrl: 'https://cards.example.com', token: 'secret', fetchFn });
+
+    await store.put('abc123', png.buffer, 'head=crown');
+    expect(seenMethod).toBe('PUT');
+    expect(seenHeaders['Content-Type']).toBe('image/png');
+    expect(decodeURIComponent(seenHeaders['X-Ping-Traits'])).toBe('head=crown');
+  });
+
+  it('round-trips the gallery document through GET and PUT', async () => {
+    const entries = [{ id: 'a', traits: 'head=crown', at: 1 }];
+    let putBody = '';
+    const fetchFn = mockFetch((url, init) => {
+      if (init?.method === 'PUT') {
+        putBody = init.body as string;
+        return new Response(null, { status: 200 });
+      }
+      return new Response(JSON.stringify(entries), { status: 200 });
+    });
+    const store = httpCardStore({ baseUrl: 'https://cards.example.com', token: 'secret', fetchFn });
+
+    expect(await store.getGallery()).toEqual(entries);
+    await store.putGallery(entries);
+    expect(JSON.parse(putBody)).toEqual(entries);
+  });
+});
+
+describe('selectCardStore', () => {
+  it('prefers the remote store when both CARD_STORE_URL and CARD_STORE_TOKEN are set', () => {
+    const store = selectCardStore({
+      PING_CARDS: {} as KVNamespace,
+      CARD_STORE_URL: 'https://cards.example.com',
+      CARD_STORE_TOKEN: 'secret',
+    });
+    expect(store).not.toBeNull();
+  });
+
+  it('falls back to KV when the remote store is not fully configured', async () => {
+    let calledKv = false;
+    const kv = {
+      getWithMetadata: async () => {
+        calledKv = true;
+        return { value: null, metadata: null };
+      },
+    } as unknown as KVNamespace;
+
+    const store = selectCardStore({ PING_CARDS: kv, CARD_STORE_URL: 'https://cards.example.com' });
+    expect(store).not.toBeNull();
+    await store?.get('x');
+    expect(calledKv).toBe(true);
+  });
+
+  it('is null when neither store is configured', () => {
+    expect(selectCardStore({})).toBeNull();
   });
 });
 

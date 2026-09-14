@@ -381,14 +381,23 @@ export const rollRandomTraits = <T>(
  * distinct characters rather than with clicks.
  * ------------------------------------------------------------------ */
 
+/**
+ * GalleryEntry is declared further down; forward-reference it here so
+ * CardStore can carry gallery operations too ("gallery goes through the same
+ * store" - see docs/HANDOFF.md). TypeScript resolves this fine since both
+ * live in the same module; only the reading order looks backwards.
+ */
 export interface CardStore {
   get(key: string): Promise<{ body: ArrayBuffer; traits: string } | null>;
   put(key: string, body: ArrayBuffer, traits: string): Promise<void>;
+  getGallery(): Promise<GalleryEntry[]>;
+  putGallery(entries: GalleryEntry[]): Promise<void>;
 }
 
 /**
- * KV today, R2 the day it is enabled on the account. Everything above this
- * line is storage-agnostic; only this adapter knows which one is in play.
+ * KV today, R2 the day it is enabled on the account, or the owner's own box
+ * (httpCardStore below) once the tunnel is up. Everything above this line is
+ * storage-agnostic; only this adapter knows which one is in play.
  */
 export const kvCardStore = (namespace: KVNamespace): CardStore => ({
   async get(key) {
@@ -404,7 +413,106 @@ export const kvCardStore = (namespace: KVNamespace): CardStore => ({
     // metadata (1 KiB) is far more room than eight short slot names need.
     await namespace.put(key, body, { metadata: { traits } });
   },
+  async getGallery() {
+    return parseGallery(await namespace.get(GALLERY_KEY, 'json'));
+  },
+  async putGallery(entries) {
+    await namespace.put(GALLERY_KEY, JSON.stringify(entries));
+  },
 });
+
+/** Options for httpCardStore. Mirrors the Pages secrets the owner sets once
+ *  the tunnel is running: CARD_STORE_URL, CARD_STORE_TOKEN. */
+export interface HttpCardStoreOptions {
+  /** Public tunnel hostname, e.g. https://cards.example.com. No trailing slash. */
+  baseUrl: string;
+  token: string;
+  /** Kept short: a Function has its own CPU/wall budget, and the whole point
+   *  is that a slow or unreachable home box must fail fast into the existing
+   *  503-and-fall-back-to-query-param path, not hang the request. */
+  timeoutMs?: number;
+  fetchFn?: typeof fetch;
+}
+
+const DEFAULT_HTTP_STORE_TIMEOUT_MS = 4000;
+
+/**
+ * Talks HTTP to the self-hosted storage service (storage/server.js) behind a
+ * Cloudflare Tunnel. Same CardStore shape as kvCardStore, so callers never
+ * know which one they got - see selectCardStore.
+ */
+export const httpCardStore = ({
+  baseUrl,
+  token,
+  timeoutMs = DEFAULT_HTTP_STORE_TIMEOUT_MS,
+  fetchFn = fetch,
+}: HttpCardStoreOptions): CardStore => {
+  const url = (path: string) => `${baseUrl.replace(/\/$/, '')}${path}`;
+  const headers = { Authorization: `Bearer ${token}` };
+
+  return {
+    async get(key) {
+      const response = await fetchFn(url(`/cards/${encodeURIComponent(key)}`), {
+        headers,
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error(`card store GET failed: ${response.status}`);
+      const body = await response.arrayBuffer();
+      const traitsHeader = response.headers.get('x-ping-traits');
+      return { body, traits: traitsHeader ? decodeURIComponent(traitsHeader) : '' };
+    },
+    async put(key, body, traits) {
+      const response = await fetchFn(url(`/cards/${encodeURIComponent(key)}`), {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'image/png',
+          'X-Ping-Traits': encodeURIComponent(traits),
+        },
+        body,
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (!response.ok) throw new Error(`card store PUT failed: ${response.status}`);
+    },
+    async getGallery() {
+      const response = await fetchFn(url('/gallery'), {
+        headers,
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (!response.ok) throw new Error(`card store gallery GET failed: ${response.status}`);
+      return parseGallery(await response.json());
+    },
+    async putGallery(entries) {
+      const response = await fetchFn(url('/gallery'), {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(entries),
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (!response.ok) throw new Error(`card store gallery PUT failed: ${response.status}`);
+    },
+  };
+};
+
+/**
+ * Picks the remote store when the owner has configured it, otherwise KV -
+ * kept working on purpose so nothing breaks before the tunnel exists. Returns
+ * null when neither is configured, same as an absent KV binding did before:
+ * callers turn that into the existing 503 (see functions/api/share.ts),
+ * which the client already treats as "fall back to the query-param URL".
+ */
+export const selectCardStore = (env: {
+  PING_CARDS?: KVNamespace;
+  CARD_STORE_URL?: string;
+  CARD_STORE_TOKEN?: string;
+}): CardStore | null => {
+  if (env.CARD_STORE_URL && env.CARD_STORE_TOKEN) {
+    return httpCardStore({ baseUrl: env.CARD_STORE_URL, token: env.CARD_STORE_TOKEN });
+  }
+  if (env.PING_CARDS) return kvCardStore(env.PING_CARDS);
+  return null;
+};
 
 /**
  * The canonical form of a character: trait slots in paint order, empties
