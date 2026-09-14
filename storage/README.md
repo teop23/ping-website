@@ -106,9 +106,11 @@ Cloudflare account access.
    Expect `200` on all three and a byte-identical PNG back.
 
 7. **Back up the volume** occasionally - it's the only copy of every shared
-   card and the gallery index:
+   card and the gallery index. The compose project is named `ping-storage`
+   (see `name:` in `docker-compose.yml`), so the volume is
+   `ping-storage_ping-cards-data`:
    ```
-   docker run --rm -v ping-cards-data:/data -v %cd%:/backup alpine \
+   docker run --rm -v ping-storage_ping-cards-data:/data -v %cd%:/backup alpine \
      tar czf /backup/ping-cards-backup-%date%.tar.gz -C /data .
    ```
    (PowerShell: replace `%cd%`/`%date%` with `${PWD}`/a literal date string.)
@@ -137,3 +139,58 @@ npm test
 
 Uses Node's built-in test runner (`node --test`) against a temp data
 directory - no dependencies to install.
+
+## Live setup
+
+The box is up and reachable. Names below - no secret values, ever, in this
+file or in git history.
+
+- **Compose project**: `ping-storage` (`name:` in `docker-compose.yml`).
+  Containers: `ping-card-storage`, `ping-cloudflared`. Volume:
+  `ping-storage_ping-cards-data`. Network: `ping-storage_default`.
+- **Tunnel**: `ping-card-store` (remotely-managed, `config_src: cloudflare`),
+  ingress `store.buildaping.com` -> `http://storage:8787`, catch-all
+  `http_status:404`. DNS: proxied CNAME `store.buildaping.com` ->
+  `<tunnel-id>.cfargotunnel.com` in the buildaping.com zone.
+- **Access in front of the tunnel**: a self-hosted Access application named
+  "PING card storage" covers the whole `store.buildaping.com` hostname, with
+  exactly one policy - decision `Service Auth` (`non_identity`), include
+  rule matching only the `buildaping-pages` service token. No email/everyone
+  policy exists on this app. A request without valid
+  `CF-Access-Client-Id` / `CF-Access-Client-Secret` headers is rejected at
+  Cloudflare's edge (401/redirect) before it ever reaches cloudflared or this
+  box. `Origin`/`Referer` checks were deliberately not used for this instead
+  - both are spoofable by any HTTP client and are simply absent on
+  server-to-server fetches, so they enforce nothing a real attacker would
+  notice.
+- **Secrets and where they live** (names only):
+  - `storage/.env` (gitignored, this machine only): `AUTH_TOKEN`,
+    `TUNNEL_TOKEN`.
+  - Cloudflare Pages project `buildaping`, both `production` and `preview`
+    environments: `CARD_STORE_URL`, `CARD_STORE_TOKEN`,
+    `CARD_STORE_ACCESS_ID`, `CARD_STORE_ACCESS_SECRET`. Read by
+    `functions/_lib.ts` (`httpCardStore` / `selectCardStore`). The bearer
+    token (`AUTH_TOKEN` / `CARD_STORE_TOKEN`) is checked in addition to
+    Access, not instead of it - defense in depth, and it's also what a bare
+    local `node server.js` (no Access, no tunnel in front) checks on its
+    own.
+  - Cloudflare Access service token `buildaping-pages`: `client_id` /
+    `client_secret`, known only to Cloudflare and to whoever set the two
+    `CARD_STORE_ACCESS_*` Pages secrets.
+- **Docker hardening**: neither container publishes a host port (cloudflared
+  reaches `storage` over the internal compose network only -
+  `netstat -ano | findstr 8787` on the host should show nothing). Both run
+  `read_only: true` root filesystems with a `tmpfs` `/tmp`, `cap_drop: ALL`,
+  `security_opt: no-new-privileges:true`, and memory/CPU/pids limits. The
+  `storage` service also runs as the non-root `node` user (uid/gid 1000).
+- **Rotating `AUTH_TOKEN`**:
+  1. Generate a new one: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
+  2. Update `AUTH_TOKEN=` in `storage/.env`.
+  3. `docker compose up -d` (recreates `storage` with the new value).
+  4. Update the `CARD_STORE_TOKEN` Pages secret for both `production` and
+     `preview` to the same value (`wrangler pages secret put CARD_STORE_TOKEN --project-name buildaping`,
+     piped via stdin - never pasted on the command line or printed).
+- **Rotating the Access service token**: rotate `buildaping-pages` in the
+  Zero Trust dashboard (or via the API's service token rotate endpoint),
+  then update the `CARD_STORE_ACCESS_SECRET` Pages secret (and
+  `CARD_STORE_ACCESS_ID` if the client ID itself changes) the same way.
