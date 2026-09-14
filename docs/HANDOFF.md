@@ -1981,3 +1981,52 @@ earlier; builder "clear all" test flaked once under load, 21/21 on
   sparkler, umbrella, then other parked + retakes.
 - Check the showcase live: share a character, open the /p link logged out
   and in the X composer.
+
+## Nineteenth session, 2026-09-14: trait holes, merged PING, self-hosted storage
+
+Nothing below is pushed. `relaunch/robinhood-chain` is ahead of origin; pushing deploys.
+
+### Shipped (local commits)
+
+- `e3dfc96` + `99893f6` Trait art: 19 traits had keyed-out interiors or fringe that showed
+  auras through them (gameboy, both Hello Kitty items, pirate skull, rocket, calculator, ZYN,
+  cone, popcorn, boombox, piggy, balloon, mohawk, gold bars, skateboard, fridge, drumstick,
+  boxing glove, varsity jacket). Tool: `.trait-work/layer/fillholes.mjs` (component list,
+  `--skip`, `--close`, `--color`, `--debug`). REVIEW AT REAL GEOMETRY: base 1.4x
+  center-cropped, traits 1x (`zoom.mjs`). Full audit: `docs/trait-composition-audit.md`.
+  Render order is fine; no rules needed. Owner call pending: `chill-guy_accessory` white
+  sticker outline (keep or fix).
+- `435b967` Showcase card at native 800px max, card first on mobile. `22b25d4` Copied button
+  no longer turns dark green.
+- Storage (`28d18f0`..`f325b25`): `storage/` zero-dep Node service + cloudflared,
+  compose project `ping-storage`, LIVE on this machine. `selectCardStore(env)` uses it when
+  CARD_STORE_URL/TOKEN/ACCESS_ID/ACCESS_SECRET are set (all 4 set in Pages prod + preview),
+  else KV. Tunnel `ping-card-store` -> `store.buildaping.com`, Cloudflare Access service
+  token `buildaping-pages` only, bearer token too. No host port, read-only, cap_drop ALL.
+  Setup/rotation notes in `storage/README.md`. Docker Desktop AutoStart is OFF (owner to
+  enable or storage dies on reboot). Leftover test card id `smoketest0001`.
+- Merged PING sharing (`5798a54`, proposals `docs/proposals/send-a-ping-link.md`, option C):
+  a PING is a character + optional PRESET message at `/p/<id>`. Id unchanged without a
+  message. Messaged PINGs render a 512 square notification card (`type=notification`),
+  showcase leads with the message, "Send one back" -> `/?sendPing=1#builder`, Send a PING
+  dialog has Get link, gallery badge. vitest 198, e2e 33, storage node --test 15.
+- Email Routing: twitter@buildaping.com -> owner Gmail (MX/SPF/DKIM added).
+
+### Open
+
+1. Secrets were printed in agent transcripts twice; a rotation agent was running at handoff
+   (AUTH_TOKEN + CARD_STORE_TOKEN, tunnel token). Confirm it finished: containers healthy,
+   old bearer 401.
+2. Push + live check: share with and without a message, open /p logged out, X composer
+   preview, store.buildaping.com receives the card.
+3. DexScreener banner: owner picked variant B; pick a character from
+   `.trait-work/banners/characters-16.png` (char-NN.png), then render B with it via
+   `.trait-work/banners/make.mjs`.
+4. shirt.png restricted to unavatar only (owner said yes, not built yet). Rate limit on
+   POST /api/share is an owner dashboard action.
+5. Still from last session: pet-cheese redo, snowball_left_hand, regen list.
+
+### Gotchas
+
+- vitest picks up `.claude/worktrees/**`; run with `--exclude ".claude/**"` (worktrees ignored in git).
+- Agents must never cat .env or pass secrets as CLI args; handle them in a script with redaction.
