@@ -1715,3 +1715,35 @@ Library 265 live. Nothing unpushed.
    commit, push (owner has said push).
 5. Still open: feature-ideas #3 (trait names on card), #5 (homepage
    spotlight). `/brand` kit and `/api/og/header.png` are done.
+
+### Sixteenth session, 2026-09-14
+
+- `13a74f2` (committed, NOT pushed): feature-ideas #3 and #5.
+  - Share cards: `/api/share` renders `custom.png?...&type=banner&caption=1`,
+    which prints the first 3 trait names (+N more) left, character right
+    (`cardGeometry(isBanner, captioned)`, `captionFromTraits` in `_lib.ts`).
+    Open API and legacy `/api/og` stay text-free. Gotcha: satori returns an
+    empty 200 when a div has several text children (`+{n} more`); use one
+    template string.
+  - Hero: rotation lives in `src/data/spotlight.ts` (combo + featured slot),
+    caption "NEW AURA Black Hole" under the art, HOLD_MS 2600.
+    `spotlight.test.ts` fails if a spotlight trait is not in `public/traits`
+    (update the list when parking or shipping).
+  - Fixed `e2e/share.spec.ts` using parked `3d-glasses`.
+  - vitest 163/163, both tsc, e2e site+share pass.
+- Console shows a `drawImage` 0-size canvas error on home load (builder
+  canvas); not investigated, probably pre-existing.
+- **Owner: the OS share sheet button is unused ("kinda shit").** Asked whether
+  to drop it (keep Tweet + Copy link) or replace it (e.g. Telegram link). No
+  answer yet.
+- Gemini: limit reset (3.6 Flash was capped until 00:57). Chat
+  `/app/ee51a0a8c59b4a4c` fell to Flash-Lite: switch the mode picker to 3.6
+  Flash before sending. Its last send (snowball, right-side mirror prompt) got
+  the limit message, so resend it.
+
+### Sixteenth session: start here next time
+
+1. Ask owner: push `13a74f2`? Share-sheet button: remove or replace?
+2. Regen queue exactly as in "Fifteenth session: start here" (40 parked,
+   2 pending retake, 10 retakes, then Robin Hood drop). First: mode picker to
+   3.6 Flash, resend snowball.
