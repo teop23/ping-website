@@ -484,10 +484,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, label, onClick, varia
       variant={variant}
       onClick={onClick}
       size="sm"
-      className={`flex items-center gap-1 sm:gap-2 transition-all duration-300 text-micro sm:text-meta px-2 sm:px-3 ${isCopying
-        ? 'border-positive bg-positive text-ink-inverse hover:bg-positive'
-        : ''
-        }`}
+      className="flex items-center gap-1 sm:gap-2 transition-all duration-300 text-micro sm:text-meta px-2 sm:px-3"
       disabled={disabled}
     >
       <motion.div
