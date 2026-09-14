@@ -1760,3 +1760,51 @@ Then:
 2. Regen queue exactly as in "Fifteenth session: start here" (40 parked,
    2 pending retake, 10 retakes, then Robin Hood drop). First: mode picker to
    3.6 Flash, resend snowball.
+
+### Seventeenth session, 2026-09-14
+
+- Pushed `13a74f2`, `088ae03`, `4458ac0`, then `60db1fe`: one **Share** dialog
+  replaces Copy link + OS Share + Tweet (`src/components/ShareModal.tsx`,
+  modelled on dev-works' ShareDialog): stored card preview, link + Copy,
+  Post on X, Telegram (`t.me/share/url`), native "More..." where supported.
+  vitest 163/163, tsc, eslint, e2e builder+share 16/16. Not checked live.
+- **Owner (end of session): Robinhood Chain gas subsidy ends Sept 29; launch
+  with at least 1-2 weeks of it left, i.e. launch by ~Sept 15-22.**
+- Regen, fresh accessory chat **`/app/137b3022c970b674`** (both refs, 13 sends).
+  Accepted into `.trait-work/fixes/` (backup `../_trait-backup/fixes-2026-09-14`):
+  left_hand snowball, skateboard, thor-hammer, handbag; accessory boombox,
+  campfire, fire-hydrant, nuke, pC-gamer, pet-apu, pet-cheese, plant-pot,
+  rocket. Not vetted, not shipped. Per-take notes in `.trait-work/queue-13.md`.
+- **Why accessories kept clipping:** the builder shows only native x 146-877
+  (layer = native x 1.5682 - 229.4). Items must overlap the penguin's foot.
+  Suffix that works (`__AS3`, define per tab): "It sits on the ground RIGHT
+  AGAINST the penguin's right side, overlapping in front of the penguin's
+  right foot and the lower tip of its right flipper, so the whole object stays
+  within one head-width of the penguin's body. It is SMALL: about one third of
+  the penguin's height. Keep the penguin exactly the same size and position as
+  image 1, with its exact original colors ... Do NOT zoom out, do not move or
+  redraw the penguin, no text or logos."
+- New tools: `.trait-work/amtake.sh <name>` (`MIRROR=1 LEFT=0 TOP=300` for
+  originals that sit bottom-left; right-side originals are pC-gamer, pS5,
+  washing-machine, xbox-gamer), `.trait-work/fitin.mjs` (shrinks an item about
+  its inner-bottom corner to clear a 40px edge margin), `.trait-work/bbox.mjs`.
+- Still to do: shopping-cart is **downloaded, not captured**
+  (`MIRROR=1 LEFT=0 TOP=300 sh .trait-work/amtake.sh shopping-cart`); snowman,
+  stove, treasure-chest, washing-machine, xbox-gamer, arcade-machine, pS5
+  (retake: "not overlapping the flipper"); left_hand sparkler (Gemini re-served
+  the same image; fresh chat) and umbrella (canopy clips; try a small closed
+  umbrella only if owner agrees); then the other parked 23 + 12 retakes.
+- RAM was 1.9 GB free (other sessions' next dev). It held up with one tab.
+
+### Seventeenth session: start here next time
+
+**Ask the owner first:**
+- Launch date: gas subsidy ends Sept 29. Which day, and what is still missing
+  from "Launch blockers" (contract address, chart link, countdown target,
+  `TOKEN_LIVE`)? Does the trait regen continue before launch, or ship the 13
+  new fixes after a quick vet and freeze art?
+- Vet the 13 fixes now (vetting page) so they can ship before launch?
+
+Then: launch prep first (flip `TOKEN_LIVE` path, fill launch config, run
+`scripts/check-launch-config.mjs --reachable`, verify live Share dialog), trait
+regen only in the time left.
