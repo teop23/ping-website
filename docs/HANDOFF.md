@@ -1796,15 +1796,40 @@ Then:
   umbrella only if owner agrees); then the other parked 23 + 12 retakes.
 - RAM was 1.9 GB free (other sessions' next dev). It held up with one tab.
 
+### Seventeenth session: owner answers (end of session)
+
+- **CA exists only after launch** (launchpads mint it at launch). Everything
+  token-dependent must derive from the CA alone: BUY_LINK already is
+  `${LAUNCHPAD_URL}/<address>`; CHART_LINK must be composed the same way.
+  Owner fills in ONE value.
+- **Chart link:** research the most-used DEX / chart site for Robinhood Chain
+  (primary sources; candidates to check: Dexscreener and GeckoTerminal chain
+  support, Axiom, the Pons launchpad's own graduation DEX) and build the chart
+  URL template from the CA.
+- **Launch-day deploy on standby:** owner will ping with the CA; then fill it,
+  run checks, commit, push (auto-deploys), verify live, in minutes. Prepare so
+  it is a one-line change plus `scripts/check-launch-config.mjs --reachable`.
+- **Do NOT freeze art.** Vetting page for the 13 new rebuilds:
+  https://claude.ai/code/artifact/65c7912c-7dca-4749-a176-c1cc32621681
+  (source `.trait-work/fixes-17/`, page `.trait-work/fix/vet-17.html`,
+  storage key vet-2026-09-14). Unmarked = GOOD. Owner verdicts arrive as
+  FIX/REMOVE lines; ship the rest per "Fifteenth session: start here" step 4.
+
 ### Seventeenth session: start here next time
 
-**Ask the owner first:**
-- Launch date: gas subsidy ends Sept 29. Which day, and what is still missing
-  from "Launch blockers" (contract address, chart link, countdown target,
-  `TOKEN_LIVE`)? Does the trait regen continue before launch, or ship the 13
-  new fixes after a quick vet and freeze art?
-- Vet the 13 fixes now (vetting page) so they can ship before launch?
+**RULE (owner, repeated 2026-09-14): ask every open question in your FIRST reply
+of the session, before any work.**
 
-Then: launch prep first (flip `TOKEN_LIVE` path, fill launch config, run
-`scripts/check-launch-config.mjs --reachable`, verify live Share dialog), trait
-regen only in the time left.
+**Ask the owner first:**
+- Launch date (gas subsidy ends Sept 29; owner wants 1-2 weeks of it)?
+- Verdicts from the vetting page above, if not already given?
+- Push `bcb583e` + this handoff commit (docs only, auto-deploys)?
+
+Then, in order:
+1. Research the Robinhood Chain chart DEX, compose CHART_LINK from the CA in
+   `src/utils/constants.ts` / launch config so only the CA is filled at launch;
+   tests + `check-launch-config.mjs`; commit, push after owner OK.
+2. Write a launch-day runbook section here (exact file + line to paste the CA,
+   commands, live checks: buy link, chart link, contract on /brand, OG card).
+3. Apply vetting verdicts and ship the 13 rebuilds.
+4. Trait regen with remaining time (list in "Seventeenth session" above).
