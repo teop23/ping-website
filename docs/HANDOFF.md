@@ -1815,6 +1815,22 @@ Then:
   storage key vet-2026-09-14). Unmarked = GOOD. Owner verdicts arrive as
   FIX/REMOVE lines; ship the rest per "Fifteenth session: start here" step 4.
 
+### Seventeenth session: owner verdicts on the vetting page
+
+Unlisted = GOOD, ship: skateboard, thor-hammer, handbag (left_hand); boombox,
+campfire, fire-hydrant, pC-gamer, plant-pot, rocket (accessory). Source
+`.trait-work/fixes-17/` (9 files).
+
+FIX (rejected rebuilds moved to `.trait-work/retake/*-rebuild17.png`):
+- snowball_left_hand (no reason given; compare to the old art in `parked/`).
+- nuke_accessory: show the BOMB (a cartoon nuke/bomb), not the explosion.
+- pet-apu_accessory: Apu is a popular memecoin character. Redraw THAT
+  character (use the parked original as the reference image) in our art
+  style; do not invent a generic frog.
+- pet-cheese_accessory: same rule, it is a memecoin character; restyle the
+  original from `parked/`. **If a faithful restyle fails, revert to the old
+  art** (copy the parked original back to `public/traits/`).
+
 ### Seventeenth session: start here next time
 
 **RULE (owner, repeated 2026-09-14): ask every open question in your FIRST reply
@@ -1822,7 +1838,6 @@ of the session, before any work.**
 
 **Ask the owner first:**
 - Launch date (gas subsidy ends Sept 29; owner wants 1-2 weeks of it)?
-- Verdicts from the vetting page above, if not already given?
 - Push `bcb583e` + this handoff commit (docs only, auto-deploys)?
 
 Then, in order:
@@ -1831,5 +1846,6 @@ Then, in order:
    tests + `check-launch-config.mjs`; commit, push after owner OK.
 2. Write a launch-day runbook section here (exact file + line to paste the CA,
    commands, live checks: buy link, chart link, contract on /brand, OG card).
-3. Apply vetting verdicts and ship the 13 rebuilds.
+3. Ship the 9 GOOD rebuilds from `.trait-work/fixes-17/`; then the 4 FIXes
+   above (attach the parked original as a third reference for apu/cheese).
 4. Trait regen with remaining time (list in "Seventeenth session" above).
