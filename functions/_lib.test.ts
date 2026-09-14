@@ -568,12 +568,13 @@ describe('selectCardStore', () => {
 });
 
 describe('loadPhoto', () => {
+  const AVATAR = 'https://unavatar.io/x/jack?fallback=false';
   const png = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
   const serve = (body: BodyInit, headers: Record<string, string>, status = 200) =>
     (async () => new Response(body, { status, headers })) as unknown as typeof fetch;
 
   it('returns a data URI for a small image', async () => {
-    const result = await loadPhoto('https://example.com/a.png', serve(png, { 'content-type': 'image/png' }));
+    const result = await loadPhoto(AVATAR, serve(png, { 'content-type': 'image/png' }));
     expect(result).toEqual({ dataUri: `data:image/png;base64,${btoa(String.fromCharCode(...png))}` });
   });
 
@@ -586,20 +587,38 @@ describe('loadPhoto', () => {
     expect(fetched).toBe(false);
   });
 
+  it('prints only X avatars resolved through unavatar, before fetching', async () => {
+    let fetched = false;
+    const spy = (async () => { fetched = true; return new Response(png, { headers: { 'content-type': 'image/png' } }); }) as unknown as typeof fetch;
+    for (const url of [
+      'https://example.com/a.png',
+      'https://unavatar.io.evil.com/x/jack',
+      'https://evil.com/unavatar.io/x/jack',
+      'https://unavatar.io/github/jack',
+      'https://unavatar.io/x/not-a-handle!',
+      'https://unavatar.io/x/jack/extra',
+      'https://user@unavatar.io/x/jack',
+      'https://unavatar.io:8443/x/jack',
+    ]) {
+      expect(await loadPhoto(url, spy)).toMatchObject({ status: 400 });
+    }
+    expect(fetched).toBe(false);
+  });
+
   it('refuses SVG and non-images', async () => {
     for (const type of ['image/svg+xml', 'text/html']) {
-      expect(await loadPhoto('https://example.com/a', serve('<svg/>', { 'content-type': type }))).toMatchObject({ status: 400 });
+      expect(await loadPhoto(AVATAR, serve('<svg/>', { 'content-type': type }))).toMatchObject({ status: 400 });
     }
   });
 
   it('refuses a photo over the size cap even without a content-length', async () => {
     const big = new Uint8Array(MAX_PHOTO_BYTES + 1);
-    expect(await loadPhoto('https://example.com/a.png', serve(big, { 'content-type': 'image/png' }))).toMatchObject({ status: 400 });
+    expect(await loadPhoto(AVATAR, serve(big, { 'content-type': 'image/png' }))).toMatchObject({ status: 400 });
   });
 
   it('reports an upstream failure as 502', async () => {
-    expect(await loadPhoto('https://example.com/a.png', serve('', { 'content-type': 'image/png' }, 404))).toMatchObject({ status: 502 });
+    expect(await loadPhoto(AVATAR, serve('', { 'content-type': 'image/png' }, 404))).toMatchObject({ status: 502 });
     const boom = (async () => { throw new Error('timeout'); }) as unknown as typeof fetch;
-    expect(await loadPhoto('https://example.com/a.png', boom)).toMatchObject({ status: 502 });
+    expect(await loadPhoto(AVATAR, boom)).toMatchObject({ status: 502 });
   });
 });

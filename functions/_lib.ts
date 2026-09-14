@@ -239,6 +239,17 @@ export const UNAVATAR_TTL_SECONDS = 86400;
 export const unavatarUrl = (handle: string): string =>
   `https://unavatar.io/x/${encodeURIComponent(handle)}?fallback=false`;
 
+/**
+ * The shirt prints on an image served from buildaping.com, so it only takes
+ * what shirt_by_x produces: an X avatar via unavatarUrl. Any other https image
+ * would let anyone host arbitrary (offensive) art under the site's domain.
+ */
+const isUnavatarXUrl = (url: URL): boolean => {
+  if (url.hostname !== 'unavatar.io' || url.port || url.username || url.password) return false;
+  const match = /^\/x\/([^/]+)$/.exec(url.pathname);
+  return !!match && isValidXHandle(decodeURIComponent(match[1]));
+};
+
 /** Largest photo /api/image/shirt.png will print. An X avatar is ~50 KB. */
 export const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const PHOTO_TIMEOUT_MS = 5000;
@@ -265,6 +276,7 @@ export const loadPhoto = async (
     return { error: 'photo must be a URL', status: 400 };
   }
   if (url.protocol !== 'https:') return { error: 'photo must be an https URL', status: 400 };
+  if (!isUnavatarXUrl(url)) return { error: 'photo must be an X avatar (use /api/image/shirt_by_x.png)', status: 400 };
 
   let response: Response;
   try {
