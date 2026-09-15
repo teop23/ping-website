@@ -105,7 +105,6 @@ export const setupClipboardHandlers = (canvas: fabric.Canvas, setTool?: (tool: T
               
               // Switch to select tool after pasting image
               if (setTool) {
-                console.log('Switching to select tool after paste');
                 setTool('select');
               }
             });
