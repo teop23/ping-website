@@ -268,7 +268,7 @@ const Label: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 /** GET is the only verb this API has, but a plain word next to a path reads as
  *  prose, not a route - a badge makes every endpoint scannable at a glance. */
 const MethodBadge: React.FC = () => (
-  <span className="inline-flex items-center rounded-md bg-brand-wash px-1.5 py-0.5 text-micro font-bold tracking-wide text-brand">
+  <span className="inline-flex items-center rounded-md bg-brand-wash px-1.5 py-0.5 text-micro font-bold tracking-wide text-accent-ink">
     GET
   </span>
 );
