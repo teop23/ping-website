@@ -22,6 +22,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # traits-manifest.json and the clash list are gitignored build outputs
+      # that the app imports, so they must exist before typechecking.
+      - name: Generate trait data
+        run: node scripts/generate-index.mjs && node scripts/generate-clashes.mjs
+
       # The app and the Pages Functions have separate configs and different
       # JSX runtimes, so linting or building one says nothing about the other.
       - name: Typecheck app
