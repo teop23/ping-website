@@ -2460,6 +2460,5 @@ Still weak but left as is: jack-sparrow-hat grey shape, kite. Mention them only 
   checked when the event fires. Delete is disabled when nothing is selected (Brush/Fill cannot select).
   New shortcuts: Delete/Backspace, Ctrl+Z, Ctrl+Y / Ctrl+Shift+Z. Verified in the browser: brush strokes,
   undo x2, redo x2, keyboard delete, then undo.
-- Test note: plain `npx vitest run` also collects the stale `.claude/worktrees/agent-*` copies (16 failing
-  files). Use `npx vitest run --exclude ".claude/**" --exclude "e2e/**" --exclude "node_modules/**"`
-  (207 pass). Those worktrees can probably be deleted, but ask the owner first.
+- Cleanup (`2c6c58d`): stale `.claude/worktrees/agent-*` copies and their branches deleted (all merged), so
+  plain `npx vitest run` is clean again. `*.tsbuildinfo` and vite timestamp files are gitignored.
