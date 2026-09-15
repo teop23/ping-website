@@ -2223,3 +2223,41 @@ yet placed. Left flipper tip ~ layer (258, 785). Chat `/app/e1ec70366a2cc0f6` (5
   treasure-chest, left_hand snowball, umbrella) with the solo-item method, and any other existing trait
   the owner flags FIX. Parked/pending new traits (e.g. `sparkler_left_hand`) stay parked unless the owner
   says otherwise.
+
+## Twenty-fourth session, 2026-09-15: lime share card, test cards removed, redo queue rebuilt
+
+### Ask the owner first (next session start)
+
+1. Verdicts on https://claude.ai/artifact/CV1QB3TdGbyEBAvicmaUPU (storage key `vet-fixes-2026-09-15`,
+   source `.trait-work/fixes-24/`, 8 traits). Unmarked = good. Then ship the good ones into
+   `public/traits/` (arcade-machine, shopping-cart, snowman, stove, treasure-chest accessories;
+   snowball + umbrella left_hand; sparkler_right_hand replaces the live one) and push.
+2. ~10 more gallery cards look like owner test shares (repeated full Comic Burst character, "Order filled.",
+   "A PING from me to Yes" `0z103mr3opa6`). Delete?
+
+### Done
+
+- `9a0e6fe` (pushed, live): share card with the phone always has a lime background; `CARD_RENDER_VERSION` 5.
+- Removed the 7 approved test cards from the storage box: gallery 29 -> 22. Files + `gallery-before.json`
+  moved to `/data/removed` in the volume (reversible). No delete endpoint: `docker exec ping-card-storage node -e ...`
+  (set `MSYS_NO_PATHCONV=1` in Git Bash).
+- Owner: the 7 queue-13 FIX items count as approved to ship although never live; "too AI-ish" = live
+  `sparkler_right_hand`, not the wand.
+
+### Pair method (replaces the solo-item method)
+
+Solo-on-white takes always came back ~2x too big (Gemini ignores size, repeats the same image on "smaller").
+What works: "Start again from image 1, keep the penguin exactly, add <item> on the viewer's LEFT, clearly
+SEPARATED by a gap, not touching." Gemini keeps the penguin at ref geometry and draws the item at the right
+scale and stroke. Then:
+- `node .trait-work/pair.mjs <pair.png> <cut.png> [--flip] [--region=x0,y0,x1,y1 --nogrey]`: penguin = largest
+  dark blob; keeps the non-penguin blobs on white; prints place.mjs args (usually off-canvas for accessories, so
+  pick left ~15, bottom ~975, scale 0.9-1.3 so the item tucks behind the body).
+- `node .trait-work/place.mjs ... --behind` as before; `look.mjs <out> <layers...>` = builder-geometry preview.
+- `stick.mjs <item layer> <out> x0 y0 x1 y1`: draws a grey stick with black outline under a layer and hides
+  it behind the penguin. Used for the sparkler (Gemini always draws the stick across a raised flipper; kept
+  its burst + stars, flood-removed the soft glow). Right flipper tip ~ layer (850, 710), left ~ (278, 728).
+- Gemini chat `/app/3571be5a662769b5` (ping-on-white attached, 11 sends). `__go(text)` = insert into
+  `.ql-editor` + click Send; `eval(localStorage.__mine)` then `await __dl(keyphrase, 'name')` saves
+  `Downloads/Gemini_Generated_Image_<name>.png`. If the Chrome window is minimized the image never loads:
+  set `img.loading='eager'; await img.decode()` first.
