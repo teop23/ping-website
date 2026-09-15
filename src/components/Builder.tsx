@@ -1,8 +1,6 @@
-import { Type } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import CharacterPreview from '../components/CharacterPreview';
 import RemixBanner from '../components/RemixBanner';
-import TextToolsModal, { TextElement } from '../components/TextToolsModal';
 import TraitSelector from '../components/TraitSelector';
 import { loadClashPairs, makeClashCheck, rollRandomTraits } from '../data/randomCharacter';
 import { traitsFromSearch } from '../data/shareSelection';
@@ -15,9 +13,7 @@ const Builder: React.FC = () => {
   const [traits, setTraits] = useState<Trait[]>([]);
   const [selectedTraits, setSelectedTraits] = useState<Trait[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isTextModalOpen, setIsTextModalOpen] = useState(false);
   const [showRemixBanner, setShowRemixBanner] = useState(false);
 
   useEffect(() => {
@@ -58,7 +54,6 @@ const Builder: React.FC = () => {
     setSelectedTraits([]);
     setShowRemixBanner(false);
   };
-  const handleTextElementsChange = (elements: TextElement[]) => setTextElements(elements);
   const handleSearchChange = (query: string) => setSearchQuery(query);
 
   const handleRandomize = async () => {
@@ -109,8 +104,6 @@ const Builder: React.FC = () => {
           <div className="min-h-0 flex-1">
             <CharacterPreview
               selectedTraits={selectedTraits}
-              textElements={textElements}
-              onTextElementsChange={handleTextElementsChange}
               onRandomize={handleRandomize}
             />
           </div>
@@ -120,18 +113,7 @@ const Builder: React.FC = () => {
           aria-label="Trait picker"
           className="flex h-1/2 min-h-0 w-full flex-col pt-5 lg:h-full lg:w-1/2 lg:pl-5 lg:pt-0"
         >
-          <div className="mb-3 flex shrink-0 items-center justify-between gap-3">
-            <h2 className="font-display text-meta font-semibold text-ink">Traits</h2>
-
-            <button
-              type="button"
-              onClick={() => setIsTextModalOpen(true)}
-              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-hairline px-2.5 text-micro text-ink-muted transition-colors duration-fast ease-out-quart hover:bg-panel hover:text-ink"
-            >
-              <Type size={13} />
-              Text
-            </button>
-          </div>
+          <h2 className="mb-3 shrink-0 font-display text-meta font-semibold text-ink">Traits</h2>
 
           <div className="min-h-0 flex-grow overflow-hidden">
             <TraitSelector
@@ -147,12 +129,6 @@ const Builder: React.FC = () => {
           </div>
         </section>
       </div>
-
-      <TextToolsModal
-        isOpen={isTextModalOpen}
-        onClose={() => setIsTextModalOpen(false)}
-        onTextElementsChange={handleTextElementsChange}
-      />
     </>
   );
 };

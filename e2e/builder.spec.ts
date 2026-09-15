@@ -182,15 +182,4 @@ test.describe('builder', () => {
       .toContain('image/png');
     expect(problems).toEqual([]);
   });
-
-  test('text tool adds a label over the preview', async ({ page }) => {
-    const { picker } = await openBuilder(page);
-    await picker.getByRole('button', { name: 'Text', exact: true }).click();
-    const dialog = page.getByRole('dialog');
-    await expect(dialog).toBeVisible();
-    await dialog.getByPlaceholder('Enter text...').fill('gm pingers');
-    await dialog.getByRole('button', { name: 'Add Text' }).click();
-    await page.keyboard.press('Escape');
-    await expect(page.getByText('gm pingers', { exact: true }).first()).toBeVisible();
-  });
 });

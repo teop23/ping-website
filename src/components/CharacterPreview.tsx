@@ -2,11 +2,10 @@ import { baseCharacterImage } from '@/data/traits';
 import { splitAtBase } from '@/data/traitOrder';
 import { BASE_IMAGE_SCALE_MULTIPLIER } from '@/utils/canvasConstants';
 import { motion } from 'framer-motion';
-import { Check, Copy, Download, Move, Share2, Shuffle } from 'lucide-react';
+import { Check, Copy, Download, Share2, Shuffle } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Trait } from '../types';
 import ShareModal, { type ShareLink } from './ShareModal';
-import { TextElement } from './TextTools';
 import { Button } from './ui/button';
 
 /** POSTs to /api/share before the dialog reports failure. e2e/share.spec.ts counts them. */
@@ -14,15 +13,12 @@ const SHARE_ATTEMPTS = 3;
 
 interface CharacterPreviewProps {
   selectedTraits: Trait[];
-  textElements?: TextElement[];
-  onTextElementsChange?: (elements: TextElement[]) => void;
   onRandomize?: () => void;
 }
 
-const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, textElements = [], onTextElementsChange, onRandomize }) => {
+const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, onRandomize }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -39,8 +35,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
   }, []);
   const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
   const [traitImages, setTraitImages] = useState<Map<string, HTMLImageElement>>(new Map());
-  const [isDragging, setIsDragging] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   // Load base image
   useEffect(() => {
@@ -150,85 +144,10 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     return () => window.removeEventListener('resize', handleResize);
   }, [renderCanvas]);
 
-  // Handle text dragging
-  const handleMouseDown = (e: React.MouseEvent, textId: string) => {
-    e.preventDefault();
-    const rect = overlayRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const textElement = textElements.find(t => t.id === textId);
-    if (!textElement) return;
-
-    const currentX = textElement.x * rect.width;
-    const currentY = textElement.y * rect.height;
-
-    setDragOffset({
-      x: e.clientX - currentX,
-      y: e.clientY - currentY
-    });
-    setIsDragging(textId);
-  };
-
-  // Add global mouse event listeners for dragging
-  useEffect(() => {
-    if (isDragging) {
-      const handleGlobalMouseMove = (e: MouseEvent) => {
-        if (!overlayRef.current || !onTextElementsChange) return;
-
-        const rect = overlayRef.current.getBoundingClientRect();
-        const newX = Math.max(0, Math.min(1, (e.clientX - dragOffset.x) / rect.width));
-        const newY = Math.max(0, Math.min(1, (e.clientY - dragOffset.y) / rect.height));
-
-        const updatedElements = textElements.map(element =>
-          element.id === isDragging
-            ? { ...element, x: newX, y: newY }
-            : element
-        );
-
-        onTextElementsChange(updatedElements);
-      };
-
-      const handleGlobalMouseUp = () => {
-        setIsDragging(null);
-        setDragOffset({ x: 0, y: 0 });
-      };
-
-      document.addEventListener('mousemove', handleGlobalMouseMove);
-      document.addEventListener('mouseup', handleGlobalMouseUp);
-
-      return () => {
-        document.removeEventListener('mousemove', handleGlobalMouseMove);
-        document.removeEventListener('mouseup', handleGlobalMouseUp);
-      };
-    }
-  }, [isDragging, dragOffset, textElements, onTextElementsChange]);
-
-  /** composeCharacter at 1024 plus the draggable text labels, for Download and Copy. */
-  const composeExport = (): HTMLCanvasElement | null => {
-    const canvas = composeCharacter(1024);
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return null;
-
-    textElements.forEach((textElement) => {
-      if (!textElement.text.trim()) return;
-      ctx.font = `${textElement.fontSize * (canvas.width / 500)}px Inter, Arial, sans-serif`;
-      ctx.fillStyle = textElement.color;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      // Add text shadow for better visibility
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-      ctx.shadowBlur = 4;
-      ctx.shadowOffsetX = 2;
-      ctx.shadowOffsetY = 2;
-      ctx.fillText(textElement.text, textElement.x * canvas.width, textElement.y * canvas.height);
-    });
-    return canvas;
-  };
-
   const handleDownload = async () => {
     setIsLoading(true);
     try {
-      const downloadCanvas = composeExport();
+      const downloadCanvas = composeCharacter(1024);
       if (!downloadCanvas) return;
 
       // Convert to blob and download
@@ -253,7 +172,7 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
     setIsCopying(true);
     setIsLoading(true);
     try {
-      const copyCanvas = composeExport();
+      const copyCanvas = composeCharacter(1024);
       if (!copyCanvas) {
         setIsCopying(false);
         return;
@@ -364,46 +283,6 @@ const CharacterPreview: React.FC<CharacterPreviewProps> = ({ selectedTraits, tex
               style={{ imageRendering: 'crisp-edges' }}
             />
           </div>
-        </div>
-
-        {/* Text overlay for draggable text elements */}
-        <div
-          ref={overlayRef}
-          className="absolute inset-0 pointer-events-none z-20"
-        >
-          {textElements.filter(element => element.text.trim()).map((textElement) => (
-            <div
-              key={textElement.id}
-              className={`absolute pointer-events-auto cursor-move select-none group ${isDragging === textElement.id ? 'z-50' : 'z-10'}`}
-              style={{
-                left: `${textElement.x * 100}%`,
-                top: `${textElement.y * 100}%`,
-                transform: 'translate(-50%, -50%)',
-                fontSize: `${textElement.fontSize * (containerRef.current?.clientWidth || 500) / 500}px`,
-                color: textElement.color,
-                fontFamily: 'Inter, Arial, sans-serif',
-                textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
-                fontWeight: '500',
-              }}
-              onMouseDown={(e) => handleMouseDown(e, textElement.id)}
-            >
-              {/* Drag handle - visible on hover */}
-              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-ground/80 text-ink px-2 py-1 rounded text-micro whitespace-nowrap pointer-events-none">
-                <Move size={12} className="inline mr-1" />
-                Drag to move
-              </div>
-
-              {/* Text content */}
-              <span className={`${isDragging === textElement.id ? 'opacity-80' : ''}`}>
-                {textElement.text}
-              </span>
-
-              {/* Selection indicator */}
-              {isDragging === textElement.id && (
-                <div className="absolute inset-0 border-2 border-blue-400 border-dashed rounded animate-pulse pointer-events-none" />
-              )}
-            </div>
-          ))}
         </div>
 
         {/* Action Buttons - Fixed at bottom */}
