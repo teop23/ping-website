@@ -21,6 +21,7 @@ const WatermarkTool: React.FC = () => {
   const [watermarkOpacity, setWatermarkOpacity] = useState(1);
   const [isCopying, setIsCopying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const element = containerRef.current;
@@ -108,19 +109,40 @@ const WatermarkTool: React.FC = () => {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    event.target.value = '';
     if (!file || !canvas) return;
 
+    const rejectFile = () =>
+      setError(`Couldn't open "${file.name}". Choose a PNG, JPG, WebP or GIF image.`);
+
+    // A non-image used to collapse the canvas to 0x0 and wipe the current image.
+    if (!file.type.startsWith('image/')) {
+      rejectFile();
+      return;
+    }
+
     const reader = new FileReader();
+    reader.onerror = rejectFile;
     reader.onload = (e) => {
       const imgSrc = e.target?.result as string;
 
       fabric.Image.fromURL(imgSrc, (img) => {
-        // Remove previous uploaded image if exists
+        // Undecodable (e.g. HEIC in Chrome): fabric hands back an image with no
+        // element. Keep whatever is already on the canvas.
+        const { width: naturalWidth, height: naturalHeight } = img.getElement()
+          ? img.getOriginalSize()
+          : { width: 0, height: 0 };
+
+        if (!naturalWidth || !naturalHeight) {
+          rejectFile();
+          return;
+        }
+        setError(null);
+
         if (uploadedImage) {
           canvas.remove(uploadedImage);
         }
 
-        const { width: naturalWidth, height: naturalHeight } = img.getOriginalSize();
         const aspect = naturalWidth / naturalHeight;
         setImageAspect(aspect);
 
@@ -150,8 +172,6 @@ const WatermarkTool: React.FC = () => {
     };
 
     reader.readAsDataURL(file);
-
-    event.target.value = '';
   };
 
   const addWatermark = () => {
@@ -293,6 +313,11 @@ const WatermarkTool: React.FC = () => {
                 <Upload size={16} className="mr-2" />
                 Choose Image
               </Button>
+              {error && (
+                <p role="alert" className="text-micro text-destructive">
+                  {error}
+                </p>
+              )}
               {!isImageUploaded && (
                 <p className="text-micro text-muted-foreground">
                   Upload an image to add a PING watermark
