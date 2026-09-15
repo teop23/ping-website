@@ -62,8 +62,13 @@ const COVERED_BEAK = {
   'groucho-glasses': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'],
   'hello-kitty-mask': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
   'helm-of-domination': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
+  // Big eyes and low goggles reach the beak: the beard, pacifier and smokes land on them.
+  'googly-eyes': ['beard', 'pacifier'],
   'master-chief-helmet': ['beard', 'fish-in-beak', 'mustache-only', 'pacifier'],
   'mF-dOOM-mask': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'],
+  'minion-eyes': ['beard', 'cigar', 'ciggy', 'joint', 'mustache-only', 'pacifier'],
+  'pit-vipers': ['beard', 'cigar', 'ciggy', 'joint', 'pacifier'],
+  'ski-goggles': ['beard', 'cigar', 'ciggy', 'joint', 'mustache-only', 'pacifier'],
   'ski-mask': ['fish-in-beak', 'mustache-only'],
   'snorkel-mask': ['mustache-only'],
   // The headset's lower rim sits on the beak.

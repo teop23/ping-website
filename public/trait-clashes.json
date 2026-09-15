@@ -180,13 +180,17 @@
   ],
   "beard_mouth": [
    "doom-helmet_face",
+   "googly-eyes_face",
    "gun-hand_right_hand",
    "helm-of-domination_face",
    "mF-dOOM-mask_face",
    "master-chief-helmet_face",
+   "minion-eyes_face",
+   "pit-vipers_face",
    "poobis_left_hand",
    "side-gun-hand_left_hand",
-   "side-gun-hand_right_hand"
+   "side-gun-hand_right_hand",
+   "ski-goggles_face"
   ],
   "beer_left_hand": [
    "birdhouse_accessory",
@@ -610,6 +614,9 @@
    "hello-kitty-mask_face",
    "helm-of-domination_face",
    "mF-dOOM-mask_face",
+   "minion-eyes_face",
+   "pit-vipers_face",
+   "ski-goggles_face",
    "vr-headset_face"
   ],
   "ciggy_mouth": [
@@ -619,6 +626,9 @@
    "hello-kitty-mask_face",
    "helm-of-domination_face",
    "mF-dOOM-mask_face",
+   "minion-eyes_face",
+   "pit-vipers_face",
+   "ski-goggles_face",
    "vr-headset_face"
   ],
   "ciggy_right_hand": [
@@ -1014,6 +1024,7 @@
    "water-balloon_left_hand"
   ],
   "googly-eyes_face": [
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "graduation-cap_head": [
@@ -1286,6 +1297,9 @@
   ],
   "joint_mouth": [
    "mF-dOOM-mask_face",
+   "minion-eyes_face",
+   "pit-vipers_face",
+   "ski-goggles_face",
    "vr-headset_face"
   ],
   "kite_right_hand": [
@@ -1475,6 +1489,8 @@
    "water-balloon_left_hand"
   ],
   "minion-eyes_face": [
+   "mustache-only_mouth",
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "money-bag_left_hand": [
@@ -1536,6 +1552,7 @@
   ],
   "mustache-only_mouth": [
    "side-gun-hand_right_hand",
+   "ski-goggles_face",
    "ski-mask_face",
    "snorkel-mask_face",
    "vr-headset_face"
@@ -1598,6 +1615,8 @@
    "white-monster_right_hand"
   ],
   "pacifier_mouth": [
+   "pit-vipers_face",
+   "ski-goggles_face",
    "vr-headset_face"
   ],
   "paintbrush_left_hand": [
