@@ -27,6 +27,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
   canvas,
   onToggleBaseLayer,
   onUploadImage,
+  canDelete,
   onDeleteSelected,
   onUndo,
   onRedo,
@@ -303,7 +304,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
             Upload Image
           </Button>
           <div className="grid grid-cols-2 gap-1">
-            <Button onClick={onDeleteSelected} variant="outline" size="sm">
+            <Button onClick={onDeleteSelected} variant="outline" size="sm" disabled={!canDelete}>
               <Trash2 size={12} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
               Delete
             </Button>

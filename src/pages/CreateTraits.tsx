@@ -38,6 +38,9 @@ const CreateTraits: React.FC = () => {
   
   // Undo/Redo manager
   const [undoRedoManager, setUndoRedoManager] = useState<UndoRedoManager | null>(null);
+  // Bumped on every history change so the Undo/Redo buttons re-read canUndo()/canRedo().
+  const [, setHistoryVersion] = useState(0);
+  const [hasSelection, setHasSelection] = useState(false);
   
   // Drawing properties
   const [color, setColor] = useState('#000000');
@@ -110,13 +113,37 @@ const CreateTraits: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!undoRedoManager) return;
+    return undoRedoManager.subscribe(() => setHistoryVersion(v => v + 1));
+  }, [undoRedoManager]);
+
+  // Delete acts on the selection, so the button is only live when there is one.
+  useEffect(() => {
+    if (!canvas) return;
+    const sync = () => setHasSelection(canvas.getActiveObjects().length > 0);
+    canvas.on('selection:created', sync);
+    canvas.on('selection:updated', sync);
+    canvas.on('selection:cleared', sync);
+    return () => {
+      canvas.off('selection:created', sync);
+      canvas.off('selection:updated', sync);
+      canvas.off('selection:cleared', sync);
+    };
+  }, [canvas]);
+
   // Setup canvas event handlers for undo/redo
   useEffect(() => {
     if (!canvas || !undoRedoManager) return;
 
     const saveStateDelayed = (description?: string) => {
+      // Events fired while an undo/redo is rebuilding the canvas are the
+      // manager's own work. Check now, not when the timer fires: by then the
+      // restore has finished and the stale event would be recorded as a new
+      // action, wiping the redo stack.
+      if (undoRedoManager.isBusy) return;
       setTimeout(() => {
-        if (undoRedoManager && !undoRedoManager.isBusy) {
+        if (!undoRedoManager.isBusy) {
           undoRedoManager.saveState(description);
         }
       }, 200);
@@ -315,15 +342,54 @@ const CreateTraits: React.FC = () => {
 
   const undo = async () => {
     if (undoRedoManager) {
+      // The restore swaps every object, so a live selection would point at a removed one.
+      canvas?.discardActiveObject();
+      setHasSelection(false);
       await undoRedoManager.undo();
     }
   };
 
   const redo = async () => {
     if (undoRedoManager) {
+      // The restore swaps every object, so a live selection would point at a removed one.
+      canvas?.discardActiveObject();
+      setHasSelection(false);
       await undoRedoManager.redo();
     }
   };
+
+  const handleDeleteSelected = () => {
+    if (!canvas) return;
+    deleteSelected(canvas);
+    setHasSelection(false);
+  };
+
+  // Keyboard shortcuts: Delete/Backspace, Ctrl+Z, Ctrl+Y / Ctrl+Shift+Z.
+  useEffect(() => {
+    if (!canvas) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) return;
+      if ((canvas.getActiveObject() as fabric.IText | undefined)?.isEditing) return;
+
+      const mod = e.ctrlKey || e.metaKey;
+      const key = e.key.toLowerCase();
+      if (mod && key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if (mod && (key === 'y' || (key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        redo();
+      } else if (!mod && (e.key === 'Delete' || e.key === 'Backspace') && canvas.getActiveObjects().length > 0) {
+        e.preventDefault();
+        handleDeleteSelected();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
 
   const handleSaveTrait = () => {
     saveTrait(canvas!, traitName, baseImage, loadedTraits, savedTraits, setSavedTraits, setTraitName);
@@ -371,7 +437,8 @@ const CreateTraits: React.FC = () => {
           canvas={canvas}
           onToggleBaseLayer={() => setShowBaseLayer(!showBaseLayer)}
           onUploadImage={() => uploadImage(canvas!)}
-          onDeleteSelected={() => deleteSelected(canvas!)}
+          canDelete={hasSelection}
+          onDeleteSelected={handleDeleteSelected}
           onUndo={undo}
           onRedo={redo}
           onClearCanvas={() => clearCanvas(canvas!)}

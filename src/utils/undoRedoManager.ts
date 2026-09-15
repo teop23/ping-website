@@ -13,8 +13,25 @@ export class UndoRedoManager {
   private isProcessing: boolean = false;
   private saveTimeout: NodeJS.Timeout | null = null;
   private lastStateHash: string = '';
+  private listeners = new Set<() => void>();
 
   constructor(private canvas: fabric.Canvas) {}
+
+  /**
+   * Called whenever canUndo()/canRedo() may have changed.
+   *
+   * History lives outside React, so the UI has no other way to learn that a
+   * save or restore happened; without this the Undo/Redo buttons keep the
+   * disabled state from whatever render came before the change.
+   */
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  private notify(): void {
+    this.listeners.forEach(listener => listener());
+  }
 
   /**
    * True while an undo or redo is being applied to the canvas.
@@ -119,6 +136,8 @@ export class UndoRedoManager {
         this.currentIndex = this.history.length - 1;
       }
 
+      this.notify();
+
     } catch (error) {
       console.error('Error saving canvas state:', error);
     }
@@ -126,7 +145,7 @@ export class UndoRedoManager {
 
   // Restore a specific state
   private async restoreState(state: CanvasState): Promise<void> {
-    return new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       if (!this.canvas || !state || !Array.isArray(state.objects)) {
         resolve();
         return;
@@ -191,6 +210,7 @@ export class UndoRedoManager {
         resolve();
       }
     });
+    this.notify();
   }
 
   // Undo the last action
@@ -242,6 +262,7 @@ export class UndoRedoManager {
     this.currentIndex = 0;
     this.isProcessing = false;
     this.lastStateHash = this.generateStateHash([]);
+    this.notify();
   }
 
   // Clear all history
@@ -254,6 +275,7 @@ export class UndoRedoManager {
       clearTimeout(this.saveTimeout);
       this.saveTimeout = null;
     }
+    this.notify();
   }
 
   // Get current state info for debugging
