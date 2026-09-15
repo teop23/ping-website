@@ -246,26 +246,27 @@ const WatermarkTool: React.FC = () => {
   };
 
   const handleCopy = async () => {
+    if (typeof ClipboardItem === 'undefined' || !navigator.clipboard?.write) {
+      setError("This browser can't copy images. Use Download Image instead.");
+      return;
+    }
+
     const dataURL = exportDataURL();
     if (!dataURL) return;
 
-    setIsCopying(true);
+    setError(null);
     setIsLoading(true);
     try {
+      // Hand over a promise so Safari still sees the click as the user gesture.
+      const blob = fetch(dataURL).then((response) => response.blob());
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 
-      // Convert data URL to blob
-      const response = await fetch(dataURL);
-      const blob = await response.blob();
-
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob })
-      ]);
-
-      // Keep the animation visible longer to show success
+      // Only show "Copied!" once the clipboard actually has the image.
+      setIsCopying(true);
       setTimeout(() => setIsCopying(false), 1500);
     } catch (err) {
       console.error('Failed to copy image: ', err);
-      setIsCopying(false);
+      setError("Couldn't copy the image. Use Download Image instead.");
     } finally {
       setIsLoading(false);
     }
