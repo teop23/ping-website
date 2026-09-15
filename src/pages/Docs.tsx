@@ -126,10 +126,89 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
-const CodeBlock: React.FC<{ children: string; copyable?: boolean }> = ({ children, copyable }) => (
+/**
+ * A minimal, dependency-free tokenizer instead of pulling in a highlighting
+ * library for six code blocks: JSON strings/keys, JS/Python string literals,
+ * and comments each get their own color; everything else stays plain. Good
+ * enough to make the "In code" examples scannable without shipping Prism.
+ */
+const CODE_TOKEN = /(\/\/.*$|#(?!\d).*$|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/gm;
+const highlightCode = (source: string) =>
+  source.split(CODE_TOKEN).map((chunk, i) => {
+    if (!chunk) return null;
+    const isToken = i % 2 === 1;
+    if (!isToken) return <React.Fragment key={i}>{chunk}</React.Fragment>;
+    const cls = chunk.startsWith('//') || chunk.startsWith('#') ? 'text-ink-faint italic' : 'text-brand';
+    return (
+      <span key={i} className={cls}>
+        {chunk}
+      </span>
+    );
+  });
+
+/** Same idea for a URL: the origin and path read as plain text, `?`/`&`/`=`
+ *  fade back, and it's the param names and the values you'd swap in that
+ *  stand out - the two things worth scanning for in a GET-by-URL API. */
+const highlightUrl = (url: string) => {
+  const [base, query] = url.split(/(?=\?)/, 2);
+  if (!query) return <span className="text-ink">{base}</span>;
+  const pairs = query.slice(1).split('&');
+  return (
+    <>
+      <span className="text-ink">{base}</span>
+      <span className="text-ink-faint">?</span>
+      {pairs.map((pair, i) => {
+        const [key, value] = pair.split('=');
+        return (
+          <React.Fragment key={key + i}>
+            {i > 0 && <span className="text-ink-faint">&amp;</span>}
+            <span className="font-semibold text-ink">{key}</span>
+            {value !== undefined && (
+              <>
+                <span className="text-ink-faint">=</span>
+                <span className="text-brand">{value}</span>
+              </>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
+};
+
+/** JSON's own grammar: quoted keys (followed by a colon) get one color,
+ *  quoted values another, and braces/brackets/the literal "..." this file
+ *  uses for truncated arrays fade back like any other punctuation. */
+const JSON_TOKEN = /("(?:[^"\\]|\\.)*"\s*:)|("(?:[^"\\]|\\.)*")|([[\]{},])/g;
+const highlightJson = (source: string) => {
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let match: RegExpExecArray | null;
+  while ((match = JSON_TOKEN.exec(source))) {
+    if (match.index > last) nodes.push(source.slice(last, match.index));
+    const [full, key, value] = match;
+    if (key) nodes.push(<span key={match.index} className="font-semibold text-ink">{key}</span>);
+    else if (value) nodes.push(<span key={match.index} className="text-brand">{value}</span>);
+    else nodes.push(<span key={match.index} className="text-ink-faint">{full}</span>);
+    last = match.index + full.length;
+  }
+  nodes.push(source.slice(last));
+  return nodes;
+};
+
+const CodeBlock: React.FC<{ children: string; copyable?: boolean; kind?: 'json' | 'url' | 'code' | 'plain' }> = ({
+  children,
+  copyable,
+  kind = 'code',
+}) => (
   <div className="relative">
-    <pre className={`overflow-x-auto rounded-md border border-hairline bg-ground p-4 text-meta text-ink ${copyable ? 'pr-24' : ''}`}>
-      <code>{children}</code>
+    <pre className={`overflow-x-auto rounded-md border border-hairline bg-ground p-4 text-meta text-ink-muted ${copyable ? 'pr-24' : ''}`}>
+      <code>
+        {kind === 'url' && highlightUrl(children)}
+        {kind === 'code' && highlightCode(children)}
+        {kind === 'json' && highlightJson(children)}
+        {kind === 'plain' && children}
+      </code>
     </pre>
     {copyable && <CopyButton text={children} />}
   </div>
@@ -149,6 +228,20 @@ const MethodBadge: React.FC = () => (
 
 const slug = (path: string) => `api-${path.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '')}`;
 
+/** A `[handle]`-style segment is filled in by the caller, not typed
+ *  literally - coloring it like a param value (matches highlightUrl) says
+ *  so at a glance instead of making someone read the prose to find out. */
+const highlightPath = (path: string) =>
+  path.split(/(\[[^\]]+\])/).map((chunk, i) =>
+    chunk.startsWith('[') ? (
+      <span key={i} className="text-brand">
+        {chunk}
+      </span>
+    ) : (
+      <React.Fragment key={i}>{chunk}</React.Fragment>
+    ),
+  );
+
 const EndpointSection: React.FC<{ endpoint: Endpoint }> = ({ endpoint }) => (
   <section aria-labelledby={slug(endpoint.path)} className="scroll-mt-24 border-t border-hairline py-10">
     <h2 id={slug(endpoint.path)} className="type-display text-h3 font-bold text-ink">
@@ -156,33 +249,44 @@ const EndpointSection: React.FC<{ endpoint: Endpoint }> = ({ endpoint }) => (
     </h2>
     <p className="mt-2 flex flex-wrap items-center gap-2 font-mono text-meta text-ink">
       <MethodBadge />
-      {endpoint.path}
+      {highlightPath(endpoint.path)}
     </p>
-    <p className="type-prose mt-3 max-w-2xl text-ink-muted">{endpoint.description}</p>
 
-    <div className="mt-6 space-y-6">
-      {endpoint.params && (
-        <div>
-          <Label>Parameters</Label>
-          <dl className="divide-y divide-hairline rounded-lg border border-hairline bg-raised">
-            {endpoint.params.map((param) => (
-              <div key={param.name} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
-                <dt className="shrink-0 sm:w-36">
-                  <code className="rounded bg-panel px-1.5 py-0.5 font-mono text-meta text-ink">{param.name}</code>
-                </dt>
-                <dd className="text-meta text-ink-muted">{param.description}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      )}
-      <div>
-        <Label>Example</Label>
-        <CodeBlock copyable>{endpoint.example}</CodeBlock>
+    {/* Prose (what it does, what you can pass) on the left; the actual
+        route and its response stay pinned alongside it on the right, the
+        way Stripe/Twilio's reference docs split request from response
+        instead of stacking everything in one column. */}
+    <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="min-w-0 space-y-6">
+        <p className="type-prose max-w-2xl text-ink-muted">{endpoint.description}</p>
+        {endpoint.params && (
+          <div>
+            <Label>Parameters</Label>
+            <dl className="divide-y divide-hairline rounded-lg border border-hairline bg-raised">
+              {endpoint.params.map((param) => (
+                <div key={param.name} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
+                  <dt className="shrink-0 sm:w-36">
+                    <code className="rounded bg-panel px-1.5 py-0.5 font-mono text-meta text-ink">{param.name}</code>
+                  </dt>
+                  <dd className="text-meta text-ink-muted">{param.description}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
       </div>
-      <div>
-        <Label>Returns</Label>
-        <CodeBlock>{endpoint.returns}</CodeBlock>
+
+      <div className="min-w-0 space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <div>
+          <Label>Example</Label>
+          <CodeBlock copyable kind="url">
+            {endpoint.example}
+          </CodeBlock>
+        </div>
+        <div>
+          <Label>Returns</Label>
+          <CodeBlock kind={endpoint.returns.startsWith('{') ? 'json' : 'plain'}>{endpoint.returns}</CodeBlock>
+        </div>
       </div>
     </div>
   </section>
