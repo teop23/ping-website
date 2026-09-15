@@ -179,18 +179,26 @@
    "xbox-gamer_accessory"
   ],
   "beard_mouth": [
+   "dollar-eyes_face",
    "doom-helmet_face",
+   "eye-bags_face",
+   "girl-eyes_face",
    "googly-eyes_face",
    "gun-hand_right_hand",
+   "heart-glasses_face",
    "helm-of-domination_face",
    "mF-dOOM-mask_face",
    "master-chief-helmet_face",
    "minion-eyes_face",
+   "nerd-glasses_face",
    "pit-vipers_face",
    "poobis_left_hand",
+   "round-glasses_face",
+   "shutter-shades_face",
    "side-gun-hand_left_hand",
    "side-gun-hand_right_hand",
-   "ski-goggles_face"
+   "ski-goggles_face",
+   "star-eyes_face"
   ],
   "beer_left_hand": [
    "birdhouse_accessory",
@@ -747,6 +755,7 @@
    "sayian-1_head"
   ],
   "dollar-eyes_face": [
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "donut_left_hand": [
@@ -838,6 +847,7 @@
    "snorkel-mask_face"
   ],
   "eye-bags_face": [
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "eye-patch_face": [
@@ -988,6 +998,7 @@
    "treasure-chest_accessory"
   ],
   "girl-eyes_face": [
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "glock_right_hand": [
@@ -1128,6 +1139,7 @@
    "wheat-stalk_mouth"
   ],
   "heart-glasses_face": [
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "hello-kitty-keychain_right_hand": [
@@ -1558,6 +1570,7 @@
    "vr-headset_face"
   ],
   "nerd-glasses_face": [
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "nuke_accessory": [
@@ -1616,7 +1629,10 @@
   ],
   "pacifier_mouth": [
    "pit-vipers_face",
+   "round-glasses_face",
+   "shutter-shades_face",
    "ski-goggles_face",
+   "star-eyes_face",
    "vr-headset_face"
   ],
   "paintbrush_left_hand": [

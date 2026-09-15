@@ -89,6 +89,9 @@ const NAMED_RULES = [
     'flower-crown', 'graduation-cap', 'hard-hat', 'headphones', 'luffy-strawhat', 'mohawk', 'party-hat', 'ping',
     'pirate-hat', 'propeller-hat', 'sad-pepe', 'santa-hat', 'sayian-1', 'sombrero', 'top-hat', 'traffic-cone',
     'winter-cap'].map((hat) => ({ a: 'link-aura_aura', b: `${hat}_head` })),
+  // The beard and pacifier reach eye level and paint over the lower half of eyes and glasses.
+  ...['dollar-eyes', 'eye-bags', 'girl-eyes', 'heart-glasses', 'nerd-glasses', 'round-glasses', 'shutter-shades', 'star-eyes']
+    .flatMap((face) => ['beard', 'pacifier'].map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))),
   ...Object.entries(COVERED_BEAK).flatMap(([face, mouths]) =>
     mouths.map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))
   ),
