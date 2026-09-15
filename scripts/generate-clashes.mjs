@@ -94,6 +94,8 @@ const NAMED_RULES = [
   // The beard and pacifier reach eye level and paint over the lower half of eyes and glasses.
   ...['dollar-eyes', 'eye-bags', 'girl-eyes', 'heart-glasses', 'nerd-glasses', 'round-glasses', 'shutter-shades', 'star-eyes']
     .flatMap((face) => ['beard', 'pacifier'].map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))),
+  // The fish body crosses the lower rim of big eyes, glasses and goggles.
+  ...['googly-eyes', 'nerd-glasses', 'round-glasses', 'ski-goggles', 'snorkel-mask'].map((face) => ({ a: `${face}_face`, b: 'fish-in-beak_mouth' })),
   ...Object.entries(COVERED_BEAK).flatMap(([face, mouths]) =>
     mouths.map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))
   ),
