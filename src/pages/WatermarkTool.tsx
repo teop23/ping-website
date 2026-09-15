@@ -107,7 +107,15 @@ const WatermarkTool: React.FC = () => {
     safeRenderAll(canvas);
   }, [canvas, canvasSize, uploadedImage, watermarkImage, fillCanvas]);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Stacked layout: the canvas sits below the controls, out of view. Runs after
+  // the render that reveals the controls, so the scroll target has stopped moving.
+  useEffect(() => {
+    if (uploadedImage && window.matchMedia('(max-width: 1023px)').matches) {
+      containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [uploadedImage]);
+
+  const handleImageUpload =(event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file || !canvas) return;
