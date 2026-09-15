@@ -20,7 +20,6 @@ const WatermarkTool: React.FC = () => {
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [watermarkOpacity, setWatermarkOpacity] = useState(1);
   const [isCopying, setIsCopying] = useState(false);
-  //const [isSharing, setIsSharing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -198,19 +197,6 @@ const WatermarkTool: React.FC = () => {
     }
   };
 
-  // const resetWatermarkPosition = () => {
-  //   if (watermarkImage && canvas) {
-  //     watermarkImage.set({
-  //       left: canvas.width! * 0.5,
-  //       top: canvas.height! * 0.5,
-  //       angle: 0,
-  //       scaleX: 0.3,
-  //       scaleY: 0.3
-  //     });
-  //     safeRenderAll(canvas);
-  //   }
-  // };
-
   const downloadImage = () => {
     if (!canvas) return;
 
@@ -225,30 +211,6 @@ const WatermarkTool: React.FC = () => {
     link.href = dataURL;
     link.click();
   };
-
-  // const handleShareOnX = () => {
-  //   setIsSharing(true);
-  //   try {
-  //     const tweetText = "Just created my custom $PING watermark!\nCreate your own at:\n";
-  //     const hashtags = "PING,Solana,Crypto,Watermark";
-  //     const url = `${window.location.origin}/watermark`;
-
-  //     // Construct the Twitter share URL
-  //     const twitterUrl = new URL('https://twitter.com/intent/tweet');
-  //     twitterUrl.searchParams.set('text', tweetText);
-  //     twitterUrl.searchParams.set('hashtags', hashtags);
-  //     twitterUrl.searchParams.set('url', url);
-
-  //     // Open Twitter in a new window
-  //     window.open(twitterUrl.toString(), '_blank');
-
-  //     // Reset sharing state after a delay
-  //     setTimeout(() => setIsSharing(false), 500);
-  //   } catch (error) {
-  //     console.error('Error sharing on X:', error);
-  //     setIsSharing(false);
-  //   }
-  // };
 
   const handleCopy = async () => {
     if (!canvas || !isImageUploaded) return;
@@ -381,15 +343,6 @@ const WatermarkTool: React.FC = () => {
                       <span className="ml-1">{isCopying ? 'Copied!' : 'Copy'}</span>
                     </Button>
 
-                    {/* <Button
-                      onClick={handleShareOnX}
-                      disabled={isLoading || isSharing}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <TwitterIcon size={14} />
-                      <span className="ml-1">{isSharing ? "Sharing..." : "Tweet"}</span>
-                    </Button> */}
                   </div>
                   <Button
                     onClick={downloadImage}
