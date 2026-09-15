@@ -2278,3 +2278,37 @@ Randomized audit, fixing only (still NO new traits): two agents (`model: "sonnet
 PINGs (all categories, builder geometry: `.trait-work/look.mjs` style composite or `/api/image/random.png`
 locally), put them on contact sheets, flag clashes (overlaps, wrong layer order, clipped items, holes,
 mismatched strokes), then fix the flagged existing traits and put them on a vetting page.
+
+## Twenty-fifth session, 2026-09-15: pushes, gallery cleanup, outline defringe, sparkler, random audit started
+
+### Ask the owner first (next session start)
+
+1. Sparkler verdict: C (0.8x) or D (0.7x), `.trait-work/fixes-25/cand-sparkler-rays-C.png` / `-D.png` (sent as
+   `sparkler-rays-3`). Radiating spark lines, stick end on the flipper tip, stick runs up to the spark ball (owner asked
+   for exactly that, "even closer"). Ship the pick as `public/traits/trait-sparkler_right_hand.png` (run
+   `.trait-work/defringe.mjs --inplace` on it), tests, push. If more tweaks: source `solo/cut-sparkler-rays.png`,
+   `solo/nostick.mjs <src> <out> 792 315 <len>` (mirrors the burst over the stick for `len` px), then
+   `CORE=248,188,99 solo/core.mjs <in> <out> 792 316 17`, then `place.mjs` (MIN=200) left 798 bottom 705 scale 0.8.
+2. Random audit is the priority (owner). State in `.trait-work/random-audit/findings.md`.
+
+### Done
+
+- Pushed 5 accessories (`11e4f3a`); snowball + umbrella left_hand now drawn in front of the flipper (owner picked).
+- Gallery 28 -> 12: removed 12 Comic Burst / SPX test cards and 4 cherry-blossom test cards. Old lists at
+  `/data/removed/gallery-before-2.json`, `-3.json`.
+- **Outline defringe** (`f0783f1`, live, owner: "much better"): light grey/white pixels outside the black outline (art
+  cut off white) showed as dotted halos over auras. `.trait-work/defringe.mjs` fades light low-saturation pixels within
+  3px of transparency that have a dark outline pixel within 3px. Ran on ping.png + 244 non-aura traits, then
+  `relace.mjs` restored Adam7 interlacing where HEAD had it (png.test needs clown_head interlaced).
+  CARD_RENDER_VERSION 6. Run defringe on every newly shipped trait.
+- vitest: `npx vitest run --exclude ".claude/**" --exclude "e2e/**"` (stale agent worktrees break the plain run). 203 pass.
+- `unpenguin.mjs`: whitens the reference penguin out of a pair take when Gemini drew the item touching it.
+
+### Random audit, where it stands
+
+- `node .trait-work/random-sheets.mjs .trait-work/random-audit 750 20260915` -> 30 sheets of 25 + `pings.json`.
+  `node .trait-work/tiles.mjs out.png <tile>...` pulls tiles side by side.
+- Two sonnet agents reviewed 1-15 / 16-30. They cannot write findings files (subagent policy), results are text only,
+  copied into `findings.md`. Agent B under-reported and one of its 2 flags was false (m16).
+- Next: verify agent A flags (pS5-(right) accessory vs right_hand items, fish right_hand gap, kite floating), look at
+  sheets 22-30 and 1-15 yourself, then fix flagged traits (fix only, no new traits) and build a vetting page.
