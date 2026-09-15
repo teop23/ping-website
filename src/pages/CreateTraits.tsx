@@ -437,7 +437,7 @@ const CreateTraits: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-56px)] flex-grow bg-transparent w-full min-h-0 flex flex-col lg:flex-row">
+    <div className="lg:h-[calc(100vh-56px)] flex-grow bg-transparent w-full min-h-0 flex flex-col lg:flex-row">
       {/* Left Sidebar - Tools */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -479,7 +479,7 @@ const CreateTraits: React.FC = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.6 }}
-        className="flex-1 flex flex-col min-w-0 order-1 lg:order-none"
+        className="h-[min(100vw,75svh)] min-h-[320px] flex-none lg:h-auto lg:min-h-0 lg:flex-1 flex flex-col min-w-0 order-1 lg:order-none"
       >
         <CanvasArea canvasRef={canvasRef} containerRef={canvasBoxRef} />
       </motion.div>
