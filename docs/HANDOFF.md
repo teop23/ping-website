@@ -2450,3 +2450,7 @@ Still weak but left as is: jack-sparrow-hat grey shape, kite. Mention them only 
 - Owner decides when to push.
 - Optional: another owner pass with a new seed (`random-sheets-4.mjs`, 96 PINGs), sent as sheets. The owner
   said a vetting page makes no sense for this; tile numbers are enough.
+- Done after the handoff: removed the builder's Text overlay tool (`9d4c1b7`). `/create-traits` still has its
+  own Text drawing tool, left in place.
+- **Next task (owner request):** make the API docs page more dev friendly. Start by finding the page in
+  `src/pages` and the API routes in `functions/`.
