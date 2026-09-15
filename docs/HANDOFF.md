@@ -2454,3 +2454,6 @@ Still weak but left as is: jack-sparrow-hat grey shape, kite. Mention them only 
   own Text drawing tool, left in place.
 - **Next task (owner request):** make the API docs page more dev friendly. Start by finding the page in
   `src/pages` and the API routes in `functions/`.
+- **Bug (owner report):** in the trait editor (`/create-traits`), Undo, Redo and Delete all do nothing. Look at
+  `src/pages/CreateTraits.tsx` (the onUndo/onRedo/onDeleteSelected handlers and undoRedoManager) and
+  `src/components/traits_page/ToolsPanel.tsx`. Reproduce it in the browser first.
