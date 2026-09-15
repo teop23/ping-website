@@ -186,6 +186,7 @@
    "googly-eyes_face",
    "gun-hand_right_hand",
    "heart-glasses_face",
+   "hello-kitty-mask_face",
    "helm-of-domination_face",
    "mF-dOOM-mask_face",
    "master-chief-helmet_face",
@@ -200,7 +201,8 @@
    "side-gun-hand_right_hand",
    "ski-goggles_face",
    "snorkel-mask_face",
-   "star-eyes_face"
+   "star-eyes_face",
+   "vr-headset_face"
   ],
   "beer_left_hand": [
    "birdhouse_accessory",
@@ -440,6 +442,7 @@
    "cirno-fumo_right_hand",
    "coffee-mug_right_hand",
    "devil-trident_right_hand",
+   "doom-helmet_face",
    "drumstick_right_hand",
    "dynamite_right_hand",
    "fish_right_hand",
@@ -473,6 +476,7 @@
    "telescope_right_hand",
    "tennis-racket_right_hand",
    "trophy_right_hand",
+   "vr-headset_face",
    "wand_right_hand",
    "whip_right_hand",
    "white-monster_right_hand",
@@ -794,6 +798,7 @@
    "party-blower_mouth",
    "rose_mouth",
    "sayian-1_head",
+   "toothpick_mouth",
    "wheat-stalk_mouth"
   ],
   "drumstick_right_hand": [
@@ -927,8 +932,10 @@
    "magnifying-glass_right_hand",
    "master-chief-helmet_face",
    "microphone_right_hand",
+   "minion-eyes_face",
    "monster_right_hand",
    "pickaxe_right_hand",
+   "pit-vipers_face",
    "reimu-fumo_right_hand",
    "rubber-duck_right_hand",
    "side-gun-hand_left_hand",
@@ -1055,7 +1062,8 @@
    "joint_mouth",
    "mustache-only_mouth",
    "pacifier_mouth",
-   "sayian-1_head"
+   "sayian-1_head",
+   "toothpick_mouth"
   ],
   "guitar_right_hand": [
    "pC-gamer_accessory",
@@ -1505,7 +1513,8 @@
   "minion-eyes_face": [
    "mustache-only_mouth",
    "pacifier_mouth",
-   "sayian-1_head"
+   "sayian-1_head",
+   "toothpick_mouth"
   ],
   "money-bag_left_hand": [
    "nuke_accessory",
@@ -1634,6 +1643,7 @@
    "round-glasses_face",
    "shutter-shades_face",
    "ski-goggles_face",
+   "snorkel-mask_face",
    "star-eyes_face",
    "vr-headset_face"
   ],
@@ -1778,7 +1788,8 @@
    "xbox-gamer_accessory"
   ],
   "pit-vipers_face": [
-   "sayian-1_head"
+   "sayian-1_head",
+   "toothpick_mouth"
   ],
   "pizza-slice_left_hand": [
    "plant-pot_accessory",
@@ -2006,6 +2017,9 @@
    "trading-desk_accessory",
    "treasure-chest_accessory"
   ],
+  "ski-goggles_face": [
+   "toothpick_mouth"
+  ],
   "smartphone_right_hand": [
    "washing-machine_accessory",
    "xbox-gamer_accessory"
@@ -2063,6 +2077,9 @@
   "thor-hammer_left_hand": [
    "trading-desk_accessory",
    "treasure-chest_accessory"
+  ],
+  "toothpick_mouth": [
+   "vr-headset_face"
   ],
   "trading-desk_accessory": [
    "umbrella_left_hand",

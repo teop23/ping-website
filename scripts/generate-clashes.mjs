@@ -57,22 +57,22 @@ const OVERLAP_RULES = [
 
 /** Face gear over the beak: these beak items float on the gear instead of sitting in a mouth. */
 const COVERED_BEAK = {
-  'doom-helmet': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'wheat-stalk'],
+  'doom-helmet': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
   // The fake nose covers the beak: short things in it land on the nose tip.
-  'groucho-glasses': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'],
-  'hello-kitty-mask': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
+  'groucho-glasses': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'toothpick'],
+  'hello-kitty-mask': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
   'helm-of-domination': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
   // Big eyes and low goggles reach the beak: the beard, pacifier and smokes land on them.
   'googly-eyes': ['beard', 'pacifier'],
   'master-chief-helmet': ['beard', 'fish-in-beak', 'mustache-only', 'pacifier'],
   'mF-dOOM-mask': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'],
-  'minion-eyes': ['beard', 'cigar', 'ciggy', 'joint', 'mustache-only', 'pacifier'],
-  'pit-vipers': ['beard', 'cigar', 'ciggy', 'joint', 'pacifier'],
-  'ski-goggles': ['beard', 'cigar', 'ciggy', 'joint', 'mustache-only', 'pacifier'],
+  'minion-eyes': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'toothpick'],
+  'pit-vipers': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'pacifier', 'toothpick'],
+  'ski-goggles': ['beard', 'cigar', 'ciggy', 'joint', 'mustache-only', 'pacifier', 'toothpick'],
   'ski-mask': ['fish-in-beak', 'mustache-only'],
-  'snorkel-mask': ['beard', 'mustache-only'],
+  'snorkel-mask': ['beard', 'mustache-only', 'pacifier'],
   // The headset's lower rim sits on the beak.
-  'vr-headset': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'wheat-stalk'],
+  'vr-headset': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
 };
 
 const NAMED_RULES = [
