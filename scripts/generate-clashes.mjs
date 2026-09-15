@@ -30,10 +30,20 @@ const MIN_PIXELS = 30;
 
 const HANDS = ['right_hand', 'left_hand'];
 
-/** [categoryA, categoryB, test]; `n` is overlap pixels, `a`/`b` each layer's opaque pixels. */
+/** Pixels to grow the second layer by before measuring: objects that touch
+ *  read as stacked even with no overlap. */
+const TOUCH = 6;
+
+/** [categoryA, categoryB, test, grow?]; `n` is overlap pixels, `a`/`b` each layer's opaque pixels,
+ *  `x`/`y` the two trait keys. */
 const OVERLAP_RULES = [
-  // Any real overlap reads as clutter: both sit beside PING at the same height.
-  ...HANDS.map((hand) => ['accessory', hand, () => true]),
+  // Both sit beside PING at the same height, so even touching reads as clutter
+  // (a fumo standing on a pet, a speaker on a fumo's head).
+  ...HANDS.map((hand) => ['accessory', hand, ({ n }) => n >= 10, TOUCH]),
+  // Something in the beak running under headphone cups, ear flaps, a santa
+  // pompom or the clown nose. sayian-1's fringe and a mustache sit fine.
+  ['mouth', 'head', ({ n, a, b, x, y }) =>
+    n / Math.min(a, b) >= 0.1 && !x.startsWith('mustache-only_') && !y.startsWith('sayian-1_')],
   // Something in the beak crossing a held item.
   ...HANDS.map((hand) => ['mouth', hand, ({ n, a, b }) => n / Math.min(a, b) >= 0.2]),
   // Hats and face gear only clash with a held item when it cuts well into them.
@@ -48,9 +58,9 @@ const MASKS = ['mF-dOOM-mask', 'master-chief-helmet', 'helm-of-domination', 'doo
 
 const NAMED_RULES = [
   // The fringe covers the right eye and whatever is on it.
-  { a: 'sayian-1_head', category: 'face', overlapping: true },
+  { a: 'sayian-1_head', category: 'face' },
   // Its spikes poke through every hat.
-  { a: 'helm-of-domination_face', category: 'head', overlapping: true },
+  { a: 'helm-of-domination_face', category: 'head' },
   ...MASKS.flatMap((mask) =>
     ['beard', 'fish-in-beak', 'mustache-only', 'pacifier'].map((mouth) => ({ a: `${mask}_face`, b: `${mouth}_mouth` }))
   ),
@@ -75,16 +85,40 @@ const maskOf = async (key) => {
         bits[p] = 1;
       }
     }
-    masks.set(key, { opaque, bits });
+    masks.set(key, { opaque, bits, grown: new Map() });
   }
   return masks.get(key);
 };
 
-const overlap = async (keyA, keyB) => {
+const grow = (mask, radius) => {
+  if (!mask.grown.has(radius)) {
+    const out = new Uint8Array(RES * RES);
+    for (const p of mask.opaque) {
+      const x = p % RES;
+      const y = (p - x) / RES;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          const X = x + dx;
+          const Y = y + dy;
+          if (X >= 0 && Y >= 0 && X < RES && Y < RES && dx * dx + dy * dy <= radius * radius) out[Y * RES + X] = 1;
+        }
+      }
+    }
+    mask.grown.set(radius, out);
+  }
+  return mask.grown.get(radius);
+};
+
+const overlap = async (keyA, keyB, radius = 0) => {
   const [a, b] = await Promise.all([maskOf(keyA), maskOf(keyB)]);
-  const [small, large] = a.opaque.length <= b.opaque.length ? [a, b] : [b, a];
   let n = 0;
-  for (const p of small.opaque) n += large.bits[p];
+  if (radius > 0) {
+    const bits = grow(b, radius);
+    for (const p of a.opaque) n += bits[p];
+  } else {
+    const [small, large] = a.opaque.length <= b.opaque.length ? [a, b] : [b, a];
+    for (const p of small.opaque) n += large.bits[p];
+  }
   return { n, a: a.opaque.length, b: b.opaque.length };
 };
 
@@ -95,11 +129,11 @@ const exists = (key) => allKeys.has(key);
 const pairs = new Set();
 const add = (x, y) => pairs.add(x < y ? `${x}\n${y}` : `${y}\n${x}`);
 
-for (const [catA, catB, test] of OVERLAP_RULES) {
+for (const [catA, catB, test, radius = 0] of OVERLAP_RULES) {
   for (const x of keysIn(catA)) {
     for (const y of keysIn(catB)) {
-      const o = await overlap(x, y);
-      if (o.n >= MIN_PIXELS && test(o)) add(x, y);
+      const o = await overlap(x, y, radius);
+      if ((radius > 0 || o.n >= MIN_PIXELS) && test({ ...o, x, y })) add(x, y);
     }
   }
 }

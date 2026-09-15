@@ -2,7 +2,9 @@
 // Random PINGs at builder geometry (599 frame, base 1.4x, auras under the base, rest in TRAIT_RENDER_ORDER),
 // 5x5 contact sheets of 400px tiles, tile number top-left. <outDir>/pings.json maps tile number -> traits.
 import sharp from 'sharp';
-import { readdirSync, mkdirSync, writeFileSync } from 'fs';
+import { readdirSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
+const clash = new Set();
+for (const [a, bs] of Object.entries(JSON.parse(readFileSync('public/trait-clashes.json', 'utf8')).pairs)) for (const b of bs) clash.add(a + '|' + b).add(b + '|' + a);
 const [out, countArg, seedArg = '1'] = process.argv.slice(2);
 mkdirSync(out, { recursive: true });
 const ORDER = ['aura', 'body', 'face', 'mouth', 'head', 'accessory', 'right_hand', 'left_hand'];
@@ -21,7 +23,10 @@ for (let sheet = 0; sheet * PER < count; sheet++) {
   const tiles = [];
   for (let j = 0; j < PER && sheet * PER + j < count; j++) {
     const id = sheet * PER + j + 1, pick = {};
-    for (const c of ORDER) if (rnd() < P[c]) pick[c] = byCat[c][Math.floor(rnd() * byCat[c].length)];
+    for (const c of ORDER) if (rnd() < P[c]) {
+      const fits = byCat[c].filter((n) => !Object.entries(pick).some(([pc, pn]) => clash.has(`${pn}_${pc}|${n}_${c}`)));
+      if (fits.length) pick[c] = fits[Math.floor(rnd() * fits.length)];
+    }
     pings[id] = pick;
     const layers = [];
     if (pick.aura) layers.push({ input: await layer('aura', pick.aura) });
