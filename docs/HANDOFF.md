@@ -2347,3 +2347,12 @@ Owner was away ("just go, recommended option, no agents, no parallel"). Every ca
 
 - sharp: `.resize().extract().resize()` in one pipeline fails with "bad extract area"; split into two.
 - Sheet halves for reading: extract rows 1-3 (h 1212) and 4-5 (top 1218, h 806); 5 rows x 406 = 2024 px, not 2030.
+
+### Next autonomous fixing (owner asked to continue, context was full)
+
+- Small overlaps left by `acc-over.mjs`: iceberg 456px, mini-fridge 322, trading-desk 266, campfire 243,
+  mailbox 114 (after its shift). Look at each zoomed; tuck behind with `fixes-26/behind.mjs` only if it visibly
+  covers the flipper/foot.
+- Run the same over-the-base scan for head/face/mouth items that spill past the head outline, and for bodies
+  that leave penguin pixels showing at the edges (holes).
+- Add results to `vet-26` (same page, same storage key), ship as a local commit, log in `decisions.md`.
