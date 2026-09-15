@@ -75,6 +75,18 @@ const COVERED_BEAK = {
   'vr-headset': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
 };
 
+/** Beak items that run across a face item or hide it (checked on a sheet of every face x beak item):
+ *  long items cross lenses, goggles and the snorkel tube; the beard hides small face marks and the groucho nose. */
+const CROSSES_FACE = {
+  beard: ['band-aid', 'blushing', 'cool-glasses', 'glowing-scanner-eye', 'groucho-glasses'],
+  'bubble-pipe': ['band-aid', 'snorkel-mask'],
+  'fish-in-beak': ['googly-eyes', 'nerd-glasses', 'round-glasses', 'ski-goggles', 'snorkel-mask'],
+  pacifier: ['glowing-scanner-eye'],
+  'party-blower': ['minion-eyes', 'nerd-glasses', 'pit-vipers', 'round-glasses', 'ski-goggles', 'snorkel-mask'],
+  rose: ['minion-eyes', 'nerd-glasses', 'round-glasses', 'ski-goggles', 'snorkel-mask'],
+  'wheat-stalk': ['minion-eyes', 'nerd-glasses', 'round-glasses', 'ski-goggles', 'snorkel-mask'],
+};
+
 const NAMED_RULES = [
   // The fringe covers the right eye and whatever is on it.
   { a: 'sayian-1_head', category: 'face' },
@@ -94,8 +106,9 @@ const NAMED_RULES = [
   // The beard and pacifier reach eye level and paint over the lower half of eyes and glasses.
   ...['dollar-eyes', 'eye-bags', 'girl-eyes', 'heart-glasses', 'nerd-glasses', 'round-glasses', 'shutter-shades', 'star-eyes']
     .flatMap((face) => ['beard', 'pacifier'].map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))),
-  // The fish body crosses the lower rim of big eyes, glasses and goggles.
-  ...['googly-eyes', 'nerd-glasses', 'round-glasses', 'ski-goggles', 'snorkel-mask'].map((face) => ({ a: `${face}_face`, b: 'fish-in-beak_mouth' })),
+  ...Object.entries(CROSSES_FACE).flatMap(([mouth, faces]) =>
+    faces.map((face) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))
+  ),
   ...Object.entries(COVERED_BEAK).flatMap(([face, mouths]) =>
     mouths.map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))
   ),

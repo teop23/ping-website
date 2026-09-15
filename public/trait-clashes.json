@@ -168,6 +168,8 @@
    "treasure-chest_accessory"
   ],
   "band-aid_face": [
+   "beard_mouth",
+   "bubble-pipe_mouth",
    "side-gun-hand_right_hand"
   ],
   "basketball_right_hand": [
@@ -179,11 +181,15 @@
    "xbox-gamer_accessory"
   ],
   "beard_mouth": [
+   "blushing_face",
+   "cool-glasses_face",
    "dollar-eyes_face",
    "doom-helmet_face",
    "eye-bags_face",
    "girl-eyes_face",
+   "glowing-scanner-eye_face",
    "googly-eyes_face",
+   "groucho-glasses_face",
    "gun-hand_right_hand",
    "heart-glasses_face",
    "hello-kitty-mask_face",
@@ -472,6 +478,7 @@
    "santa-hat_head",
    "side-gun-hand_right_hand",
    "smartphone_right_hand",
+   "snorkel-mask_face",
    "sparkler_right_hand",
    "telescope_right_hand",
    "tennis-racket_right_hand",
@@ -1025,6 +1032,7 @@
    "xbox-gamer_accessory"
   ],
   "glowing-scanner-eye_face": [
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "gold-bars_accessory": [
@@ -1518,8 +1526,11 @@
   "minion-eyes_face": [
    "mustache-only_mouth",
    "pacifier_mouth",
+   "party-blower_mouth",
+   "rose_mouth",
    "sayian-1_head",
-   "toothpick_mouth"
+   "toothpick_mouth",
+   "wheat-stalk_mouth"
   ],
   "money-bag_left_hand": [
    "nuke_accessory",
@@ -1587,7 +1598,10 @@
   ],
   "nerd-glasses_face": [
    "pacifier_mouth",
-   "sayian-1_head"
+   "party-blower_mouth",
+   "rose_mouth",
+   "sayian-1_head",
+   "wheat-stalk_mouth"
   ],
   "nuke_accessory": [
    "paintbrush_left_hand",
@@ -1667,11 +1681,15 @@
   ],
   "party-blower_mouth": [
    "pickaxe_right_hand",
+   "pit-vipers_face",
    "redbull_right_hand",
    "reimu-fumo_right_hand",
+   "round-glasses_face",
    "rubber-duck_right_hand",
    "santa-hat_head",
    "side-gun-hand_right_hand",
+   "ski-goggles_face",
+   "snorkel-mask_face",
    "sparkler_right_hand",
    "telescope_right_hand",
    "tennis-racket_right_hand",
@@ -1944,9 +1962,12 @@
    "water-balloon_left_hand"
   ],
   "rose_mouth": [
+   "round-glasses_face",
    "rubber-duck_right_hand",
    "santa-hat_head",
    "side-gun-hand_right_hand",
+   "ski-goggles_face",
+   "snorkel-mask_face",
    "sparkler_right_hand",
    "telescope_right_hand",
    "tennis-racket_right_hand",
@@ -1957,7 +1978,8 @@
    "whip_right_hand"
   ],
   "round-glasses_face": [
-   "sayian-1_head"
+   "sayian-1_head",
+   "wheat-stalk_mouth"
   ],
   "rubber-duck_right_hand": [
    "washing-machine_accessory",
@@ -2023,7 +2045,8 @@
    "treasure-chest_accessory"
   ],
   "ski-goggles_face": [
-   "toothpick_mouth"
+   "toothpick_mouth",
+   "wheat-stalk_mouth"
   ],
   "smartphone_right_hand": [
    "washing-machine_accessory",
@@ -2032,7 +2055,8 @@
   "snorkel-mask_face": [
    "soldier-helmet_head",
    "sombrero_head",
-   "ushanka_head"
+   "ushanka_head",
+   "wheat-stalk_mouth"
   ],
   "snowball_left_hand": [
    "snowman_accessory",
