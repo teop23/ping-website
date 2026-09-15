@@ -2454,6 +2454,12 @@ Still weak but left as is: jack-sparrow-hat grey shape, kite. Mention them only 
   own Text drawing tool, left in place.
 - **Next task (owner request):** make the API docs page more dev friendly. Start by finding the page in
   `src/pages` and the API routes in `functions/`.
-- **Bug (owner report):** in the trait editor (`/create-traits`), Undo, Redo and Delete all do nothing. Look at
-  `src/pages/CreateTraits.tsx` (the onUndo/onRedo/onDeleteSelected handlers and undoRedoManager) and
-  `src/components/traits_page/ToolsPanel.tsx`. Reproduce it in the browser first.
+- Fixed (`608852b`): trait editor Undo, Redo and Delete. The buttons read `canUndo()` only on unrelated
+  re-renders, so they stayed disabled after drawing. `UndoRedoManager.subscribe` now triggers a re-render.
+  Events fired during a restore were being saved 200ms later, which wiped the redo stack; `isBusy` is now
+  checked when the event fires. Delete is disabled when nothing is selected (Brush/Fill cannot select).
+  New shortcuts: Delete/Backspace, Ctrl+Z, Ctrl+Y / Ctrl+Shift+Z. Verified in the browser: brush strokes,
+  undo x2, redo x2, keyboard delete, then undo.
+- Test note: plain `npx vitest run` also collects the stale `.claude/worktrees/agent-*` copies (16 failing
+  files). Use `npx vitest run --exclude ".claude/**" --exclude "e2e/**" --exclude "node_modules/**"`
+  (207 pass). Those worktrees can probably be deleted, but ask the owner first.
