@@ -2356,3 +2356,36 @@ Owner was away ("just go, recommended option, no agents, no parallel"). Every ca
 - Run the same over-the-base scan for head/face/mouth items that spill past the head outline, and for bodies
   that leave penguin pixels showing at the edges (holes).
 - Add results to `vet-26` (same page, same storage key), ship as a local commit, log in `decisions.md`.
+
+## Session 27, 2026-09-15: pair clashes for the random roll (owner away, auto mode)
+
+Owner answers at session start: vet-26 page "not looked yet" (still pending, `2166fbd` still NOT pushed);
+pair clashes = "random only". Everything below is LOCAL commits, nothing pushed.
+
+### What exists now
+
+- `scripts/generate-clashes.mjs` (prebuild, after generate-index) writes `public/trait-clashes.json`
+  (`{pairs:{key:[keys]}}`, key `<name>_<category>`). `rollRandomTraits` (src/data/randomCharacter.ts, mirrored
+  in functions/_lib.ts) skips a trait that clashes with one already picked. Builder Randomize and
+  /api/image/random.png use it; the manual builder allows every pair.
+- Overlap rules (256px alpha of traits-512, TOUCH grow 6): accessory x hand and mouth x hand/accessory touching
+  (n >= 10); mouth x head >= 10% of the smaller layer (mustache-only, sayian-1 exempt); head/face x hand >= 35%.
+- Named rules, all picked by eye on pair sheets: sayian-1 x face items and beard; helm-of-domination x hats;
+  snorkel tube x 19 hats; link-aura wordmark x 25 tall heads; beard/pacifier x 8 eye/glasses faces;
+  COVERED_BEAK (face gear over the beak x beak items); CROSSES_FACE (beak items across lenses, goggles, the
+  snorkel tube, or hiding band-aid/blush/groucho nose). 1781 pairs.
+
+### Audits done
+
+- Round 2 (750, `.trait-work/random-audit-2/`) and round 3 (500, seed 7, `random-audit-3/`) fully read. No
+  single-trait bugs; every finding was a pair clash.
+- Full grids read: every face x beak item not already ruled out (208 pairs), every head x beak item that
+  touches (29, all fine), right x left hand (no overlaps at all).
+- Tools in `.trait-work/clash/`: `pairsheet.mjs <out.png> <pairs.txt>` (lines "lowerKey upperKey label"),
+  `touch-list.mjs <catA> <catB> <out.txt>` (unruled pairs that touch), `gap.mjs`, `band-top.mjs`, `hh.mjs`.
+  `.trait-work/random-sheets.mjs <outDir> <count> [seed]` rolls with the current clash file.
+
+### Next
+
+- Owner: vet-26 verdicts, then push.
+- Session 26's "next autonomous fixing" list (acc-over leftovers, head/face spill scan, body holes) still open.
