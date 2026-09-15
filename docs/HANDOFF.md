@@ -2261,3 +2261,20 @@ scale and stroke. Then:
   `.ql-editor` + click Send; `eval(localStorage.__mine)` then `await __dl(keyphrase, 'name')` saves
   `Downloads/Gemini_Generated_Image_<name>.png`. If the Chrome window is minimized the image never loads:
   set `img.loading='eager'; await img.decode()` first.
+
+### Owner verdicts (end of session 24)
+
+- Shipped (local commit, NOT pushed): arcade-machine, shopping-cart, snowman, stove, treasure-chest
+  accessories. Live library will be 285. vitest 203 pass.
+- **FIX sparkler_right_hand**: "doesn't look good" (the drawn-stick + Gemini burst version). Live one stays
+  until a better take lands.
+- **FIX snowball_left_hand**: item must be ABOVE (in front of) PING's hand, not tucked behind the flipper.
+  Place without `--behind` so the flipper tip sits under the item.
+- **FIX umbrella_left_hand**: same as snowball, in front of the hand.
+
+### Next task (owner, after the 3 fixes above)
+
+Randomized audit, fixing only (still NO new traits): two agents (`model: "sonnet"`) render 500-1000 random
+PINGs (all categories, builder geometry: `.trait-work/look.mjs` style composite or `/api/image/random.png`
+locally), put them on contact sheets, flag clashes (overlaps, wrong layer order, clipped items, holes,
+mismatched strokes), then fix the flagged existing traits and put them on a vetting page.
