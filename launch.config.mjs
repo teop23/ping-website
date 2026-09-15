@@ -70,7 +70,7 @@ const launchConfig = {
 
   // --- Social ---
   social: {
-    twitter: "https://x.com/i/communities/1933201526584963118",
+    twitter: "https://x.com/buildaping",
     telegram: "https://t.me/pingtoken",
   },
 

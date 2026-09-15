@@ -135,7 +135,7 @@ const Brand: React.FC = () => {
 
   const links: { label: string; href: string }[] = [
     { label: 'Website', href: SITE_URL },
-    { label: 'X community', href: SOCIAL_LINKS.TWITTER },
+    { label: 'X', href: SOCIAL_LINKS.TWITTER },
     { label: 'Telegram', href: SOCIAL_LINKS.TELEGRAM },
     ...(chartListed ? [{ label: 'Chart', href: CHART_LINK }] : []),
   ];
