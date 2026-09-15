@@ -464,13 +464,16 @@
   ],
   "bucket-hat_head": [
    "helm-of-domination_face",
+   "link-aura_aura",
    "snorkel-mask_face"
   ],
   "bunny-ears_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "link-aura_aura"
   ],
   "burger-king-crown_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "link-aura_aura"
   ],
   "calculator_left_hand": [
    "campfire_accessory",
@@ -684,6 +687,7 @@
   "clown_head": [
    "helm-of-domination_face",
    "joint_mouth",
+   "link-aura_aura",
    "pacifier_mouth",
    "snorkel-mask_face"
   ],
@@ -698,6 +702,7 @@
   ],
   "colonial-hat_head": [
    "helm-of-domination_face",
+   "link-aura_aura",
    "snorkel-mask_face"
   ],
   "cool-glasses_face": [
@@ -705,10 +710,12 @@
   ],
   "cowboy-hat_head": [
    "helm-of-domination_face",
+   "link-aura_aura",
    "snorkel-mask_face"
   ],
   "crown_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "link-aura_aura"
   ],
   "devil-horns_head": [
    "helm-of-domination_face"
@@ -815,6 +822,7 @@
   ],
   "eggshell_head": [
    "helm-of-domination_face",
+   "link-aura_aura",
    "snorkel-mask_face"
   ],
   "eye-bags_face": [
@@ -945,6 +953,7 @@
   ],
   "flower-crown_head": [
    "helm-of-domination_face",
+   "link-aura_aura",
    "snorkel-mask_face"
   ],
   "flower_left_hand": [
@@ -1006,7 +1015,8 @@
    "sayian-1_head"
   ],
   "graduation-cap_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "link-aura_aura"
   ],
   "grenade_right_hand": [
    "pC-gamer_accessory",
@@ -1089,6 +1099,7 @@
   ],
   "hard-hat_head": [
    "helm-of-domination_face",
+   "link-aura_aura",
    "snorkel-mask_face"
   ],
   "head-cloth_head": [
@@ -1096,6 +1107,7 @@
   ],
   "headphones_head": [
    "helm-of-domination_face",
+   "link-aura_aura",
    "party-blower_mouth",
    "rose_mouth",
    "snorkel-mask_face",
@@ -1344,6 +1356,21 @@
    "umbrella_left_hand",
    "wallet_left_hand",
    "water-balloon_left_hand"
+  ],
+  "link-aura_aura": [
+   "luffy-strawhat_head",
+   "mohawk_head",
+   "party-hat_head",
+   "ping_head",
+   "pirate-hat_head",
+   "propeller-hat_head",
+   "sad-pepe_head",
+   "santa-hat_head",
+   "sayian-1_head",
+   "sombrero_head",
+   "top-hat_head",
+   "traffic-cone_head",
+   "winter-cap_head"
   ],
   "luffy-strawhat_head": [
    "snorkel-mask_face"

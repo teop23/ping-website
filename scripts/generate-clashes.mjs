@@ -78,6 +78,11 @@ const NAMED_RULES = [
   ...['backwards-cap', 'beret', 'bucket-hat', 'cap', 'cheese-grate-hat', 'clown', 'colonial-hat', 'cowboy-hat',
     'eggshell', 'flower-crown', 'hard-hat', 'headphones', 'jack-sparrow-hat', 'luffy-strawhat', 'propeller-hat',
     'santa-hat', 'soldier-helmet', 'sombrero', 'ushanka'].map((hat) => ({ a: 'snorkel-mask_face', b: `${hat}_head` })),
+  // The "Chainlink" wordmark sits right above PING's crown; tall hats paint over it.
+  ...['bucket-hat', 'bunny-ears', 'burger-king-crown', 'clown', 'colonial-hat', 'cowboy-hat', 'crown', 'eggshell',
+    'flower-crown', 'graduation-cap', 'hard-hat', 'headphones', 'luffy-strawhat', 'mohawk', 'party-hat', 'ping',
+    'pirate-hat', 'propeller-hat', 'sad-pepe', 'santa-hat', 'sayian-1', 'sombrero', 'top-hat', 'traffic-cone',
+    'winter-cap'].map((hat) => ({ a: 'link-aura_aura', b: `${hat}_head` })),
   ...Object.entries(COVERED_BEAK).flatMap(([face, mouths]) =>
     mouths.map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))
   ),
