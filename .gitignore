@@ -55,3 +55,6 @@ storage/node_modules
 
 # agent worktrees
 .claude/worktrees/
+
+*.tsbuildinfo
+vite.config.ts.timestamp-*
