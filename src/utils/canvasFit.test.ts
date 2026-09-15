@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fitSquare, fitToAspect, insetBy } from './canvasFit';
+import { MAX_EXPORT_PIXELS, exportSize, fitSquare, fitToAspect, insetBy } from './canvasFit';
 
 /**
  * These are the regression tests for two shipped bugs:
@@ -82,6 +82,23 @@ describe('fitSquare', () => {
   it('returns 0 for a collapsed box rather than a negative size', () => {
     expect(fitSquare({ width: 0, height: 500 })).toBe(0);
     expect(fitSquare({ width: -50, height: 500 })).toBe(0);
+  });
+});
+
+describe('exportSize', () => {
+  it('keeps the source resolution when it fits', () => {
+    expect(exportSize({ width: 1600, height: 900 })).toEqual({ width: 1600, height: 900 });
+  });
+
+  it('scales an oversized source under the pixel ceiling, keeping its aspect', () => {
+    const out = exportSize({ width: 9000, height: 6000 });
+    expect(out.width * out.height).toBeLessThanOrEqual(MAX_EXPORT_PIXELS);
+    expect(out.width / out.height).toBeCloseTo(1.5, 2);
+    expect(out.width).toBeGreaterThan(4900);
+  });
+
+  it('collapses on a degenerate source', () => {
+    expect(exportSize({ width: 0, height: 900 })).toEqual({ width: 0, height: 0 });
   });
 });
 

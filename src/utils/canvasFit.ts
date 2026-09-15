@@ -40,6 +40,26 @@ export const fitSquare = (available: Size): number => {
   return size > 0 ? Math.floor(size) : 0;
 };
 
+/**
+ * iOS Safari refuses to create a canvas over 16,777,216 pixels, and the export
+ * is a canvas, so that is the ceiling everywhere.
+ */
+export const MAX_EXPORT_PIXELS = 16_777_216;
+
+/**
+ * Output size for exporting an image: the source's own resolution, scaled down
+ * only when it would exceed `maxPixels`. Exporting at the on-screen size threw
+ * away most of a photo's resolution.
+ */
+export const exportSize = (source: Size, maxPixels = MAX_EXPORT_PIXELS): Size => {
+  if (source.width <= 0 || source.height <= 0) return { width: 0, height: 0 };
+  const shrink = Math.min(1, Math.sqrt(maxPixels / (source.width * source.height)));
+  return {
+    width: Math.max(1, Math.floor(source.width * shrink)),
+    height: Math.max(1, Math.floor(source.height * shrink)),
+  };
+};
+
 /** Subtracts padding from a box, never returning a negative dimension. */
 export const insetBy = (box: Size, inset: number): Size => ({
   width: Math.max(0, box.width - inset),

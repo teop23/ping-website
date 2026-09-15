@@ -6,7 +6,7 @@ import pingIcon from '../assets/ping_transparent_icon.png';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { safeRenderAll } from '../utils/canvasUtils';
-import { fitToAspect, insetBy } from '../utils/canvasFit';
+import { exportSize, fitToAspect, insetBy } from '../utils/canvasFit';
 
 const WatermarkTool: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -197,14 +197,27 @@ const WatermarkTool: React.FC = () => {
     }
   };
 
-  const downloadImage = () => {
-    if (!canvas) return;
+  // Export at the uploaded image's own resolution, not the on-screen canvas size.
+  const exportDataURL = () => {
+    if (!canvas || !uploadedImage) return null;
 
-    const dataURL = canvas.toDataURL({
+    const out = exportSize(uploadedImage.getOriginalSize());
+    const multiplier = out.width / canvas.getWidth();
+
+    // fabric truncates the scaled size, so crop a hair over the target to land on it.
+    return canvas.toDataURL({
       format: 'png',
-      quality: 1,
-      multiplier: 2
+      multiplier,
+      left: 0,
+      top: 0,
+      width: (out.width + 0.25) / multiplier,
+      height: (out.height + 0.25) / multiplier,
     });
+  };
+
+  const downloadImage = () => {
+    const dataURL = exportDataURL();
+    if (!dataURL) return;
 
     const link = document.createElement('a');
     link.download = 'ping-watermarked-image.png';
@@ -213,16 +226,12 @@ const WatermarkTool: React.FC = () => {
   };
 
   const handleCopy = async () => {
-    if (!canvas || !isImageUploaded) return;
+    const dataURL = exportDataURL();
+    if (!dataURL) return;
 
     setIsCopying(true);
     setIsLoading(true);
     try {
-      const dataURL = canvas.toDataURL({
-        format: 'png',
-        quality: 1,
-        multiplier: 2,
-      });
 
       // Convert data URL to blob
       const response = await fetch(dataURL);
