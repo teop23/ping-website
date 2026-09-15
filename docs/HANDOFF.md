@@ -2312,3 +2312,38 @@ mismatched strokes), then fix the flagged existing traits and put them on a vett
   copied into `findings.md`. Agent B under-reported and one of its 2 flags was false (m16).
 - Next: verify agent A flags (pS5-(right) accessory vs right_hand items, fish right_hand gap, kite floating), look at
   sheets 22-30 and 1-15 yourself, then fix flagged traits (fix only, no new traits) and build a vetting page.
+
+## Twenty-sixth session, 2026-09-15: random audit finished, 10 accessories fixed (owner away)
+
+Owner was away ("just go, recommended option, no agents, no parallel"). Every call is logged in
+`.trait-work/random-audit/decisions.md`; findings in `findings.md` next to it.
+
+### Ask the owner first (next session start)
+
+1. Verdicts on https://claude.ai/artifact/6DwZgRLggw2UDbxSFGzEi8 (storage key `vet-fixes-2026-09-15-audit`,
+   source `.trait-work/fixes-26/ship/`). Unmarked = good. Then push `2166fbd` (local, NOT pushed). Revert a
+   single trait with `git checkout 2166fbd~1 -- public/traits/<file>`.
+2. Pair clashes (accessory under a same-side hand item, sayian-1 hair over face/mouth items) cannot be fixed
+   per trait. Want a builder/random exclusion rule for those pairs? Not implemented.
+
+### Done
+
+- Main session reviewed all 30 sheets (agents had done 1-30 text only). Most overlaps are pair clashes.
+- `2166fbd` (local): birdhouse + mailbox were cut by the canvas left edge, shifted 24px and the cut closed with
+  a 12px outline (`fixes-26/close-edge.mjs`). plant-pot, washing-machine, fire-hydrant, boombox, pC-gamer,
+  pS5-(right), xbox-gamer, rocket drew over the flipper/foot, now masked behind the base
+  (`fixes-26/behind.mjs`). Defringed. pet-cheese / pet-apu left in front on purpose. CARD_RENDER_VERSION 7.
+  vitest 203 pass, tsc clean.
+- Checked false: fish_right_hand gap, kite_right_hand floating, link-aura wordmark clip, mini-fridge glow.
+
+### Scans (reusable)
+
+- `random-audit/edges.mjs`: non-aura traits with opaque pixels on the canvas border.
+- `fixes-26/acc-over.mjs`: accessory pixels over the opaque base (after the fix only pet-cheese, pet-apu and
+  small edges of iceberg/mini-fridge/trading-desk/campfire remain).
+- `fixes-26/hand-gap.mjs`: gap between each hand item and the base (all 0 now).
+
+### Gotchas
+
+- sharp: `.resize().extract().resize()` in one pipeline fails with "bad extract area"; split into two.
+- Sheet halves for reading: extract rows 1-3 (h 1212) and 4-5 (top 1218, h 806); 5 rows x 406 = 2024 px, not 2030.
