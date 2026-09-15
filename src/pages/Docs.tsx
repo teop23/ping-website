@@ -127,28 +127,63 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
 };
 
 /**
- * A minimal, dependency-free tokenizer instead of pulling in a highlighting
- * library for six code blocks: JSON strings/keys, JS/Python string literals,
- * and comments each get their own color; everything else stays plain. Good
- * enough to make the "In code" examples scannable without shipping Prism.
+ * A small syntax palette (src/index.css --syntax-*), not --brand: brand is a
+ * fill colour (1.04:1 on cream, see index.css), and a single accent repeated
+ * for every string/value/key just reads as "everything is lime" rather than
+ * as language. Each role below keeps its own hue everywhere it shows up -
+ * keys/attrs/params share a colour, strings/values share another - so the
+ * same kind of thing looks the same whether it's in a URL, JSON, or code.
  */
-const CODE_TOKEN = /(\/\/.*$|#(?!\d).*$|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/gm;
-const highlightCode = (source: string) =>
-  source.split(CODE_TOKEN).map((chunk, i) => {
-    if (!chunk) return null;
-    const isToken = i % 2 === 1;
-    if (!isToken) return <React.Fragment key={i}>{chunk}</React.Fragment>;
-    const cls = chunk.startsWith('//') || chunk.startsWith('#') ? 'text-ink-faint italic' : 'text-brand';
-    return (
-      <span key={i} className={cls}>
-        {chunk}
-      </span>
+const SYNTAX_CLASS = {
+  keyword: 'text-syntax-keyword',
+  string: 'text-syntax-string',
+  number: 'text-syntax-number',
+  func: 'text-syntax-func',
+  comment: 'text-ink-faint italic',
+  punct: 'text-ink-faint',
+} as const;
+
+/** Runs a token regex with named capture groups over `source`, wrapping each
+ *  match in a span classed by whichever group matched and leaving everything
+ *  between matches as plain text. One tokenizer shape, reused per language. */
+const tokenize = (source: string, pattern: RegExp, classes: Partial<Record<string, string>>) => {
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(source))) {
+    if (match.index > last) nodes.push(source.slice(last, match.index));
+    const group = Object.keys(match.groups ?? {}).find((name) => match!.groups![name] !== undefined);
+    const cls = group ? classes[group] : undefined;
+    nodes.push(
+      cls ? (
+        <span key={match.index} className={cls}>
+          {match[0]}
+        </span>
+      ) : (
+        match[0]
+      ),
     );
-  });
+    last = match.index + match[0].length;
+  }
+  nodes.push(source.slice(last));
+  return nodes;
+};
+
+const JS_TOKEN =
+  /(?<comment>\/\/.*$)|(?<string>'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(?<keyword>\b(?:const|let|var|new|function|return|import|from|export|default|class|await|async|if|else|for|while|of|in|typeof|instanceof)\b)|(?<func>\b[a-zA-Z_$][\w$]*(?=\())|(?<number>\b\d+(?:\.\d+)?\b)/gm;
+const highlightJs = (source: string) => tokenize(source, JS_TOKEN, SYNTAX_CLASS);
+
+const PYTHON_TOKEN =
+  /(?<comment>#(?!\d).*$)|(?<string>'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(?<keyword>\b(?:import|from|as|with|def|return|if|else|for|while|in|class|True|False|None)\b)|(?<func>\b[a-zA-Z_]\w*(?=\())|(?<number>\b\d+(?:\.\d+)?\b)/gm;
+const highlightPython = (source: string) => tokenize(source, PYTHON_TOKEN, SYNTAX_CLASS);
+
+const HTML_TOKEN = /(?<keyword><\/?[a-zA-Z][\w-]*|\/?>)|(?<func>\b[a-zA-Z-]+(?==))|(?<string>"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
+const highlightHtml = (source: string) => tokenize(source, HTML_TOKEN, SYNTAX_CLASS);
 
 /** Same idea for a URL: the origin and path read as plain text, `?`/`&`/`=`
- *  fade back, and it's the param names and the values you'd swap in that
- *  stand out - the two things worth scanning for in a GET-by-URL API. */
+ *  fade back, and the param name (func/attr colour) and the value you'd
+ *  swap in (string colour) are the two things worth scanning for in a
+ *  GET-by-URL API - coloured to match the same roles in JSON and HTML. */
 const highlightUrl = (url: string) => {
   const [base, query] = url.split(/(?=\?)/, 2);
   if (!query) return <span className="text-ink">{base}</span>;
@@ -156,17 +191,17 @@ const highlightUrl = (url: string) => {
   return (
     <>
       <span className="text-ink">{base}</span>
-      <span className="text-ink-faint">?</span>
+      <span className={SYNTAX_CLASS.punct}>?</span>
       {pairs.map((pair, i) => {
         const [key, value] = pair.split('=');
         return (
           <React.Fragment key={key + i}>
-            {i > 0 && <span className="text-ink-faint">&amp;</span>}
-            <span className="font-semibold text-ink">{key}</span>
+            {i > 0 && <span className={SYNTAX_CLASS.punct}>&amp;</span>}
+            <span className={`font-semibold ${SYNTAX_CLASS.func}`}>{key}</span>
             {value !== undefined && (
               <>
-                <span className="text-ink-faint">=</span>
-                <span className="text-brand">{value}</span>
+                <span className={SYNTAX_CLASS.punct}>=</span>
+                <span className={SYNTAX_CLASS.string}>{value}</span>
               </>
             )}
           </React.Fragment>
@@ -176,9 +211,9 @@ const highlightUrl = (url: string) => {
   );
 };
 
-/** JSON's own grammar: quoted keys (followed by a colon) get one color,
- *  quoted values another, and braces/brackets/the literal "..." this file
- *  uses for truncated arrays fade back like any other punctuation. */
+/** JSON's own grammar: quoted keys get the same colour as a URL param name
+ *  or an HTML attribute (they're all "the name of a slot"), quoted values
+ *  match string colour everywhere else, and punctuation fades back. */
 const JSON_TOKEN = /("(?:[^"\\]|\\.)*"\s*:)|("(?:[^"\\]|\\.)*")|([[\]{},])/g;
 const highlightJson = (source: string) => {
   const nodes: React.ReactNode[] = [];
@@ -187,20 +222,20 @@ const highlightJson = (source: string) => {
   while ((match = JSON_TOKEN.exec(source))) {
     if (match.index > last) nodes.push(source.slice(last, match.index));
     const [full, key, value] = match;
-    if (key) nodes.push(<span key={match.index} className="font-semibold text-ink">{key}</span>);
-    else if (value) nodes.push(<span key={match.index} className="text-brand">{value}</span>);
-    else nodes.push(<span key={match.index} className="text-ink-faint">{full}</span>);
+    if (key) nodes.push(<span key={match.index} className={`font-semibold ${SYNTAX_CLASS.func}`}>{key}</span>);
+    else if (value) nodes.push(<span key={match.index} className={SYNTAX_CLASS.string}>{value}</span>);
+    else nodes.push(<span key={match.index} className={SYNTAX_CLASS.punct}>{full}</span>);
     last = match.index + full.length;
   }
   nodes.push(source.slice(last));
   return nodes;
 };
 
-const CodeBlock: React.FC<{ children: string; copyable?: boolean; kind?: 'json' | 'url' | 'code' | 'plain' }> = ({
-  children,
-  copyable,
-  kind = 'code',
-}) => (
+const CodeBlock: React.FC<{
+  children: string;
+  copyable?: boolean;
+  kind?: 'json' | 'url' | 'js' | 'python' | 'html' | 'plain';
+}> = ({ children, copyable, kind = 'plain' }) => (
   <div className="overflow-hidden rounded-md border border-hairline bg-ground">
     {/* Its own row, not floated over the code: a long unbroken URL or line
         doesn't wrap, so a button pinned on top of the text just sits wherever
@@ -210,10 +245,15 @@ const CodeBlock: React.FC<{ children: string; copyable?: boolean; kind?: 'json' 
         <CopyButton text={children} />
       </div>
     )}
-    <pre className="overflow-x-auto p-4 text-meta text-ink">
+    {/* Wrap instead of scroll: a URL example is one long unbroken token with
+        nowhere natural to break, and a horizontal scrollbar hides the tail
+        end of it by default - break-all lets it wrap mid-string instead. */}
+    <pre className="overflow-x-auto whitespace-pre-wrap break-all p-4 text-meta text-ink">
       <code>
         {kind === 'url' && highlightUrl(children)}
-        {kind === 'code' && highlightCode(children)}
+        {kind === 'js' && highlightJs(children)}
+        {kind === 'python' && highlightPython(children)}
+        {kind === 'html' && highlightHtml(children)}
         {kind === 'json' && highlightJson(children)}
         {kind === 'plain' && children}
       </code>
@@ -236,12 +276,12 @@ const MethodBadge: React.FC = () => (
 const slug = (path: string) => `api-${path.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '')}`;
 
 /** A `[handle]`-style segment is filled in by the caller, not typed
- *  literally - coloring it like a param value (matches highlightUrl) says
- *  so at a glance instead of making someone read the prose to find out. */
+ *  literally - the string colour (matches a URL/JSON value) says so at a
+ *  glance instead of making someone read the prose to find out. */
 const highlightPath = (path: string) =>
   path.split(/(\[[^\]]+\])/).map((chunk, i) =>
     chunk.startsWith('[') ? (
-      <span key={i} className="text-brand">
+      <span key={i} className={SYNTAX_CLASS.string}>
         {chunk}
       </span>
     ) : (
@@ -334,15 +374,15 @@ const Docs: React.FC = () => (
           <div className="mt-6 space-y-6">
             <div>
               <Label>JavaScript</Label>
-              <CodeBlock copyable>{JS_EXAMPLE}</CodeBlock>
+              <CodeBlock copyable kind="js">{JS_EXAMPLE}</CodeBlock>
             </div>
             <div>
               <Label>HTML</Label>
-              <CodeBlock copyable>{HTML_EXAMPLE}</CodeBlock>
+              <CodeBlock copyable kind="html">{HTML_EXAMPLE}</CodeBlock>
             </div>
             <div>
               <Label>Python</Label>
-              <CodeBlock copyable>{PYTHON_EXAMPLE}</CodeBlock>
+              <CodeBlock copyable kind="python">{PYTHON_EXAMPLE}</CodeBlock>
             </div>
           </div>
         </section>

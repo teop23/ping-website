@@ -50,6 +50,17 @@
     --ink-muted: 44.29% 0.0208 158.43; /* #4A574F -  6.71 worst surface */
     --ink-faint: 51.43% 0.0201 158.62; /* #5E6B63 -  4.94 worst surface */
 
+    /* ---- Syntax. Code examples need more than one colour to read as
+       language, not as "everything important is lime" - brand is a fill,
+       not a text ramp (see above), so it can't do this job. Lightness held
+       near --ink-muted's (44.29%, 6.71:1 on the worst surface) so every hue
+       clears AA on cream regardless of chroma; hue is the only thing that
+       changes between them. ---- */
+    --syntax-keyword: 42% 0.15 25;   /* muted rust - keywords, tags */
+    --syntax-string: 45% 0.12 250;   /* muted blue - strings, attr/query values */
+    --syntax-number: 44% 0.14 320;   /* muted plum - numeric literals */
+    --syntax-func: 43% 0.11 200;     /* muted teal - calls, attrs, keys, params */
+
     /* Text that sits ON the accent rather than on a surface. This was only a
        Tailwind alias, so the palette had no way to check it and the contrast
        test could not see it at all. */

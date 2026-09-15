@@ -77,6 +77,16 @@ describe('text on every surface', () => {
   }
 });
 
+describe('syntax highlighting', () => {
+  for (const syntax of ['syntax-keyword', 'syntax-string', 'syntax-number', 'syntax-func']) {
+    for (const surface of SURFACES) {
+      it(`${syntax} on ${surface}`, () => {
+        expect(contrast(syntax, surface)).toBeGreaterThanOrEqual(AA_BODY);
+      });
+    }
+  }
+});
+
 describe('the accent', () => {
   it('text on a brand fill is readable', () => {
     // The buy button, the category badges and the hero all put text on lime.

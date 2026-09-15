@@ -39,6 +39,12 @@ module.exports = {
         "accent-ink": token("--accent-ink"),
         positive: token("--positive"),
         negative: token("--negative"),
+        syntax: {
+          keyword: token("--syntax-keyword"),
+          string: token("--syntax-string"),
+          number: token("--syntax-number"),
+          func: token("--syntax-func"),
+        },
 
         // --- shadcn/radix aliases, repointed at the palette above ---
         border: token("--border"),
