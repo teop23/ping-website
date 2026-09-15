@@ -2393,3 +2393,15 @@ pair clashes = "random only". Everything below is LOCAL commits, nothing pushed.
 
 - Owner: vet-26 verdicts, then push.
 - Session 26's "next autonomous fixing" list (acc-over leftovers, head/face spill scan, body holes) still open.
+
+### OWNER VERDICT (end of session 27): accessories go IN FRONT, moved outward
+
+Owner: "it doesn't really make sense for accessory traits to be behind ping, they need to be in front but
+further to the side". So the `behind.mjs` masking in `2166fbd` is rejected for plant-pot, washing-machine,
+fire-hydrant, boombox, pC-gamer, pS5-(right), xbox-gamer, rocket. Next session (start here, before push):
+1. Restore those 8 from `2166fbd~1` (`git checkout 2166fbd~1 -- public/traits/trait-<name>_accessory.png`).
+2. Shift each one outward (away from PING, left items left, right items right) until it no longer covers the
+   flipper/foot; if a shift hits the canvas edge, scale the item down slightly instead of cutting it.
+   Check with `fixes-26/acc-over.mjs` (target ~0 over the base) and `random-audit/edges.mjs` (no edge clips).
+3. Birdhouse/mailbox edge fixes in `2166fbd` stay. Defringe, bump CARD_RENDER_VERSION, regenerate
+   trait-clashes.json (accessory x hand overlaps change when items move), vetting page, local commit.
