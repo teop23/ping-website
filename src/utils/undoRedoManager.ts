@@ -48,21 +48,12 @@ export class UndoRedoManager {
     return this.isProcessing;
   }
 
-  // Generate a hash of the current canvas state for comparison
-  private generateStateHash(objects: any[]): string {
+  // Serialised objects double as the change check. The old hash looked only at
+  // geometry and text, so a recolour or font-weight change counted as "no change"
+  // and never reached history.
+  private generateStateHash(serialized: unknown[]): string {
     try {
-      return JSON.stringify(objects.map(obj => ({
-        type: obj.type,
-        left: obj.left,
-        top: obj.top,
-        width: obj.width,
-        height: obj.height,
-        scaleX: obj.scaleX,
-        scaleY: obj.scaleY,
-        angle: obj.angle,
-        text: obj.text,
-        path: obj.path
-      })));
+      return JSON.stringify(serialized);
     } catch (error) {
       return Math.random().toString();
     }
@@ -87,7 +78,6 @@ export class UndoRedoManager {
     if (this.isProcessing || !this.canvas) return;
 
     try {
-      // Get all drawable objects (exclude base image and trait overlays)
       // User-created objects only. Curve anchors are rebuilt from their curve on
       // restore (see afterRestore), since their links to it cannot be serialised.
       const objects = this.canvas.getObjects().filter(obj =>
@@ -97,30 +87,29 @@ export class UndoRedoManager {
         obj.name !== 'curveEndPoint'
       );
       
-      // Generate hash for comparison
-      const currentHash = this.generateStateHash(objects);
-      
+      const serialized = objects.map(obj => {
+        try {
+          // Include all necessary properties for proper restoration
+          return obj.toObject([
+            'name', 'selectable', 'evented', 'visible', 'opacity',
+            'stroke', 'strokeWidth', 'fill', 'fontSize', 'fontFamily',
+            'fontWeight', 'textAlign', 'charSpacing', 'lineHeight',
+            'rx', 'ry', 'radius', 'x1', 'y1', 'x2', 'y2', 'path'
+          ]);
+        } catch (error) {
+          console.warn('Error serializing object:', error);
+          return null;
+        }
+      }).filter(obj => obj !== null);
+
       // Don't save if state hasn't changed
+      const currentHash = this.generateStateHash(serialized);
       if (currentHash === this.lastStateHash) {
         return;
       }
-      
+
       const state: CanvasState = {
-        objects: objects.map(obj => {
-          try {
-            // Include all necessary properties for proper restoration
-            const objData = obj.toObject([
-              'name', 'selectable', 'evented', 'visible', 'opacity',
-              'stroke', 'strokeWidth', 'fill', 'fontSize', 'fontFamily',
-              'fontWeight', 'textAlign', 'charSpacing', 'lineHeight',
-              'rx', 'ry', 'radius', 'x1', 'y1', 'x2', 'y2', 'path'
-            ]);
-            return objData;
-          } catch (error) {
-            console.warn('Error serializing object:', error);
-            return null;
-          }
-        }).filter(obj => obj !== null),
+        objects: serialized,
         timestamp: Date.now(),
         description: description || `Action ${this.history.length + 1}`
       };

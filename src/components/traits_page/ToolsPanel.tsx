@@ -235,6 +235,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
                   if (activeObject && activeObject.type === 'i-text') {
                     (activeObject as any).set({ fontWeight: e.target.value });
                     if(canvas) {
+                      canvas.fire('object:modified', { target: activeObject });
                       canvas.renderAll();
                     }
                   }

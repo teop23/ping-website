@@ -36,6 +36,8 @@ export const addFill = (
       // Direct object filling - change the fill property of the clicked object
       if (objectAtPoint.type === 'rect' || objectAtPoint.type === 'circle' || objectAtPoint.type === 'path' || objectAtPoint.type === 'polygon') {
         objectAtPoint.set({ fill: fillColor });
+        // set() is silent; without this the recolour never reached undo history.
+        canvas.fire('object:modified', { target: objectAtPoint });
         canvas.renderAll();
         return;
       }
