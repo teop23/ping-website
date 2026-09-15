@@ -446,6 +446,7 @@
    "money-stack_right_hand",
    "monster_right_hand",
    "musket_right_hand",
+   "pC-gamer_accessory",
    "pickaxe_right_hand",
    "redbull_right_hand",
    "reimu-fumo_right_hand",
@@ -460,7 +461,8 @@
    "trophy_right_hand",
    "wand_right_hand",
    "whip_right_hand",
-   "white-monster_right_hand"
+   "white-monster_right_hand",
+   "xbox-gamer_accessory"
   ],
   "bucket-hat_head": [
    "helm-of-domination_face",
