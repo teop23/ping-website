@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import sharp from 'sharp';
 import { encodeRgba } from './lib/png.mjs';
 

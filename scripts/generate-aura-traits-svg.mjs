@@ -77,47 +77,6 @@ const mulberry32 = (seed) => () => {
 };
 
 /**
- * An open crown of spikes from `startDeg` to `endDeg` (measured clockwise
- * from straight up). Valleys dip down to a small `innerR` - close to the
- * center point, the way adjacent flame licks in the reference art (fire-aura,
- * sunrise-aura) converge low rather than stopping at a wide, uniform inner
- * radius - and the two open ends close by running straight down to the
- * center point itself rather than to each other.
- *
- * That last part matters and was wrong in an earlier version of this
- * function: closing the two ends of an arc with ONE straight line between
- * them draws a chord across the whole middle, so the shape fills in as a
- * solid wedge over the character's face instead of a hollow crown. It
- * rendered as a perfectly plausible halo in isolation - a jagged edge over a
- * dark fill looks right on its own - and only showed up once actually
- * composited over the base, where the wedge's opaque color replaced the face
- * instead of leaving it visible. Every aura in this file shared the
- * function, so all six had it; it was invisible on the ones whose wedge
- * color was already close to the base's near-black hood, and glaring on the
- * ones where it wasn't. Closing to a single center point, with valleys that
- * already run close to that same point, keeps the shape consistently thin
- * the whole way round instead of ballooning into a wedge at the seam.
- */
-const haloPath = ({ spikes, outerR, innerR, jitter, seed, startDeg = -125, endDeg = 125 }) => {
-  const rand = mulberry32(seed);
-  const toXY = (deg, r) => {
-    const a = ((deg - 90) * Math.PI) / 180;
-    return [CX + Math.cos(a) * r, CY + Math.sin(a) * r * 0.92];
-  };
-  const points = [];
-  const steps = spikes * 2;
-  for (let i = 0; i <= steps; i++) {
-    const deg = startDeg + ((endDeg - startDeg) * i) / steps;
-    const isSpike = i % 2 === 0;
-    let r = isSpike ? outerR : innerR;
-    r *= 1 + (rand() - 0.5) * jitter;
-    points.push(toXY(deg, r));
-  }
-  const d = points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
-  return `${d} L ${CX.toFixed(1)} ${CY.toFixed(1)} Z`;
-};
-
-/**
  * Radius of the zone that must never carry opaque aura content: measured from
  * the base character's own face (eyes at trait-space ~(495,381)/(658,381),
  * beak spanning roughly x 504-672 / y 401-481, all relative to this file's

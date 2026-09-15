@@ -94,7 +94,7 @@ if (postBuild) {
   // Share metadata must stay count-free, derived or not.
   for (const file of FILES_MUST_NOT_MENTION_COUNT) {
     const text = await readFile(path.resolve(file), 'utf8');
-    if (/__TRAIT_COUNT__/.test(text) || /\d{2,4}\s+traits/.test(text) || /\{\s*TRAIT_COUNT\s*\}\s*traits/.test(text)) {
+    if (/__TRAIT_COUNT__/.test(text) || /\d{2,4}\s+traits\b/.test(text) || /\{\s*TRAIT_COUNT\s*\}\s*traits/.test(text)) {
       errors.push(
         `${file}: mentions a trait count. Share copy must not quote it - the card outlives the number.`
       );

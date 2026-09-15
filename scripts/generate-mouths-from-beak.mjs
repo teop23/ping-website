@@ -167,11 +167,6 @@ const CX = Math.round((BEAK.left + BEAK.right) / 2);
 const BB = BEAK.bottom; // beak's bottom outline edge in trait space
 console.log(`beak layer: ${beak.width}x${beak.height} at (${BEAK_X}, ${BEAK_Y}); opaque bbox x${BEAK.left}-${BEAK.right} y${BEAK.top}-${BEAK.bottom}; CX=${CX}`);
 
-// The beak's own orange, sampled from the seed pixel so the lower mandible
-// matches exactly instead of a guessed hex.
-const seedIdx = (427 * pingImg.width + 518) * 4;
-const ORANGE = `rgb(${pingImg.data[seedIdx]},${pingImg.data[seedIdx + 1]},${pingImg.data[seedIdx + 2]})`;
-
 const over = (dst, src, dx, dy) => {
   for (let y = 0; y < src.height; y++) {
     const cy = dy + y;
@@ -201,20 +196,6 @@ const rasterize = async (svgBody) => {
   return decodePng(await sharp(Buffer.from(svg)).png().toBuffer());
 };
 const body = (s) => s;
-
-/**
- * @param {string} under - SVG painted BEFORE the beak (the beak overlaps it:
- *   an open-mouth interior, a lower mandible, a tongue emerging from under)
- * @param {string} [above] - SVG painted AFTER the beak (sits in front: a
- *   bubble, a mustache)
- */
-const build = async (under, above = '') => {
-  const canvas = blankCanvas();
-  if (under.trim()) over(canvas, await rasterize(under), 0, 0);
-  over(canvas, beak, BEAK_X, BEAK_Y);
-  if (above.trim()) over(canvas, await rasterize(above), 0, 0);
-  return canvas;
-};
 
 /**
  * Opens the REAL beak instead of bolting a drawn lower mandible under it.

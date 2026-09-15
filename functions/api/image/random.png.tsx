@@ -35,7 +35,7 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         // Pairs that look broken together (scripts/generate-clashes.mjs). Rolling
         // without them beats failing the image.
         const clashesRes = await fetch(new URL('/trait-clashes.json', request.url).href);
-        const clashPairs: Record<string, string[]> = clashesRes.ok ? (await clashesRes.json()).pairs ?? {} : {};
+        const clashPairs: Record<string, string[]> = clashesRes.ok ? ((await clashesRes.json()) as { pairs?: Record<string, string[]> }).pairs ?? {} : {};
 
         const validCategories = Object.keys(traitsIndex);
         // Output differs every call anyway, so seed the colour off the roll.
