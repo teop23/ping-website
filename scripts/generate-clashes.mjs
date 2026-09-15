@@ -69,6 +69,11 @@ const NAMED_RULES = [
   ...['backwards-cap', 'beret', 'bucket-hat', 'cap', 'cheese-grate-hat', 'clown', 'colonial-hat', 'cowboy-hat',
     'eggshell', 'flower-crown', 'hard-hat', 'headphones', 'jack-sparrow-hat', 'luffy-strawhat', 'propeller-hat',
     'santa-hat', 'soldier-helmet', 'sombrero', 'ushanka'].map((hat) => ({ a: 'snorkel-mask_face', b: `${hat}_head` })),
+  // The fake nose covers the beak: short things in it land on the nose tip.
+  ...['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'].map((mouth) => ({
+    a: 'groucho-glasses_face',
+    b: `${mouth}_mouth`,
+  })),
   ...['hello-kitty-mask', 'ski-mask'].flatMap((mask) =>
     ['fish-in-beak', 'mustache-only'].map((mouth) => ({ a: `${mask}_face`, b: `${mouth}_mouth` }))
   ),

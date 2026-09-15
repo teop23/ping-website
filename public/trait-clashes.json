@@ -598,10 +598,12 @@
    "water-balloon_left_hand"
   ],
   "cigar_mouth": [
-   "clown_head"
+   "clown_head",
+   "groucho-glasses_face"
   ],
   "ciggy_mouth": [
-   "clown_head"
+   "clown_head",
+   "groucho-glasses_face"
   ],
   "ciggy_right_hand": [
    "pC-gamer_accessory",
@@ -865,6 +867,7 @@
   ],
   "fish-in-beak_mouth": [
    "fish_right_hand",
+   "groucho-glasses_face",
    "guitar_right_hand",
    "gun-hand_right_hand",
    "headphones_head",
@@ -997,6 +1000,9 @@
    "xbox-gamer_accessory"
   ],
   "groucho-glasses_face": [
+   "joint_mouth",
+   "mustache-only_mouth",
+   "pacifier_mouth",
    "sayian-1_head"
   ],
   "guitar_right_hand": [
