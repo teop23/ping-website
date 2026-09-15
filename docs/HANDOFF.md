@@ -2494,3 +2494,36 @@ FIXED `<sha>` / BROKEN with repro). Check canvas pixels with `getImageData` when
 6. Copy to clipboard: works in Chrome, shows the check state, sensible error where the Clipboard API is missing.
 7. Loading/disabled states before an image is uploaded.
 8. Dead code: commented-out Share on X handler and button. Ask the owner whether to delete it.
+
+
+## Session 29, 2026-09-15: tool pages audit done (/watermark, /create-traits)
+
+### Start here next time
+
+**Ask the owner first**
+- Site header overflows 5px horizontally at 768px on every page. Out of scope for the audit, not fixed. Fix it?
+- Trait editor on phones: the tools panel sits above the canvas, so every tool change means scrolling up and
+  back down. Keep the order, move the canvas first, or make the tools sticky/compact?
+- Duplicate saved trait names are allowed (separate ids, same download filename). OK, or block/auto-suffix?
+
+**State**
+- Everything pushed to `relaunch/robinhood-chain` (HEAD `4219b86`). vitest 216/216, `vite build` OK.
+- Full results table with every check and SHA: `.trait-work/tools-audit/log.md` (gitignored). Re-runnable
+  headless Playwright scripts beside it (`wm.cjs`, `ct1-4.cjs`, `ct-paste.cjs`, `ct-mobile.cjs`), run with
+  `node .trait-work/tools-audit/<script>` against the dev server on :5173. The Browser pane freezes rAF when
+  hidden, so headless is the reliable way to test canvas pages.
+
+**Watermark fixes:** dead Share on X code deleted (`58b5d20`), download/copy at source resolution capped at
+16.7MP for iOS (`ec625af`), non-image/corrupt upload rejected with message (`bd79aac`), copy waits for the
+clipboard write and reports failure (`7d9af9d`), canvas no longer squashed on mobile/tablet (`6733947`),
+watermark size is 15% of the short side (`3cb82a5`), canvas scrolls into view after upload on mobile (`8e26252`).
+
+**Trait editor fixes:** eraser erases instead of painting white, on its own layer so the base survives
+(`5a8efa5`); flood fill without edge halo, faster (`7d6ce7e`); curve anchors kept out of exports and working
+after undo (`c55e100`); fill-on-shape and font weight undoable (`32640a4`); Text tool selects existing text
+(`fd7a93f`); text paste into inputs works (`7e64ba1`, `c416309`); saved traits stored at 1000px not 2000
+(`02223a4`); saved list starts Hidden after reload (`4086edd`); storage-full save shows a message instead of
+silently losing the trait on reload (`2fd12cc`); curve hint colour (`e20e146`); footer overlapping canvas on
+stacked layouts (`4219b86`).
+
+**Known minor, not fixed:** flood fill samples curve anchors if they are on screen while filling.
