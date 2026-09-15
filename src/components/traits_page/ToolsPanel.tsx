@@ -261,7 +261,7 @@ const ToolsPanel: React.FC<ToolsPanelProps> = ({
               <br />
               2. Control point (orange anchor - curve direction)
               <br />
-              3. End point (red anchor)
+              3. End point (blue anchor)
               <br />
               <span className="text-micro text-ink-muted">
                 After creation, you can drag any anchor point to reshape the curve in real-time!
