@@ -2462,3 +2462,35 @@ Still weak but left as is: jack-sparrow-hat grey shape, kite. Mention them only 
   undo x2, redo x2, keyboard delete, then undo.
 - Cleanup (`2c6c58d`): stale `.claude/worktrees/agent-*` copies and their branches deleted (all merged), so
   plain `npx vitest run` is clean again. `*.tsbuildinfo` and vite timestamp files are gitignored.
+
+### Next task (owner request, 2026-09-15): feature audit of `/create-traits` and `/watermark`
+
+Undo/Redo/Delete were dead and nothing caught it, so every control on both tool pages gets tested by hand in
+the browser (Browser pane, `ping-dev`, 1400x900 and mobile 375x812). Same standard as the builder audit:
+reproduce, fix, re-verify, one local commit per fix, log results in `.trait-work/tools-audit/log.md` (PASS /
+FIXED `<sha>` / BROKEN with repro). Check canvas pixels with `getImageData` when pane screenshots time out.
+
+`/create-traits` (`src/pages/CreateTraits.tsx`, `src/components/traits_page/*`, `src/utils/drawingTools.ts`,
+`canvasEventHandlers.ts`, `traitManager.ts`, `undoRedoManager.ts`):
+1. Tools: Select, Brush (color, size), Eraser (really erases, does not paint white), Fill, Text (size, color,
+   edit in place), Rectangle, Circle, Line, Curve (3-click, control points draggable, delete removes points).
+2. Color pickers open/close, brush size slider changes the stroke.
+3. Hide/Show Base, Upload Image, paste image with Ctrl+V (switches to Select).
+4. Delete (button + key), Undo/Redo (buttons + shortcuts) across every tool, including fill, text edits,
+   moves/scales, uploaded images, Clear All. Undo after Clear All should bring everything back.
+5. Save Trait (name required? duplicate names?), Saved Traits list: toggle on canvas, download one, delete
+   with confirm, survives reload (localStorage `pingTraits`).
+6. Download Trait in both modes (T = trait only, F = full character): 1000x1000, transparent where empty,
+   base excluded in T, loaded saved traits included or not as intended.
+7. Layering: drawn objects above base, `ensureProperLayering` after every add.
+8. Mobile: panels stack, touch drawing maps to the right canvas point after resize.
+
+`/watermark` (`src/pages/WatermarkTool.tsx`):
+1. Upload (button, wrong file type, huge image, portrait/landscape/square aspect).
+2. Watermark placement: added on upload, draggable/scalable, Add Watermark button again (duplicates?).
+3. Opacity slider updates live.
+4. Resize the window: image and watermark keep relative position and scale.
+5. Download Image: full source resolution, not the on-screen size; watermark in the same relative spot.
+6. Copy to clipboard: works in Chrome, shows the check state, sensible error where the Clipboard API is missing.
+7. Loading/disabled states before an image is uploaded.
+8. Dead code: commented-out Share on X handler and button. Ask the owner whether to delete it.
