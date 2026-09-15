@@ -2385,6 +2385,10 @@ pair clashes = "random only". Everything below is LOCAL commits, nothing pushed.
   `touch-list.mjs <catA> <catB> <out.txt>` (unruled pairs that touch), `gap.mjs`, `band-top.mjs`, `hh.mjs`.
   `.trait-work/random-sheets.mjs <outDir> <count> [seed]` rolls with the current clash file.
 
+- Round 4 (250, seed 11, `random-audit-4/`) read after the CROSSES_FACE rules: no new clash type, no
+  single-trait bug. acc-over leftovers (iceberg, trading-desk, campfire, mailbox) checked zoomed with
+  `fixes-26/over-zoom.mjs`: they only touch the outline, left alone.
+
 ### Next
 
 - Owner: vet-26 verdicts, then push.
