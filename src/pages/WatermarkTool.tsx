@@ -277,7 +277,7 @@ const WatermarkTool: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-56px)] flex-grow bg-transparent w-full min-h-0 flex flex-col lg:flex-row">
+    <div className="lg:h-[calc(100vh-56px)] flex-grow bg-transparent w-full min-h-0 flex flex-col lg:flex-row">
       {/* Left Sidebar - Controls */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -419,7 +419,9 @@ const WatermarkTool: React.FC = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.6 }}
-        className="flex-1 flex flex-col min-w-0"
+        // Stacked below lg the page scrolls, so the canvas needs a height of its
+        // own; squeezed under the controls it shrank to a few pixels.
+        className="h-[75svh] min-h-[320px] lg:h-auto lg:min-h-0 flex-none lg:flex-1 flex flex-col min-w-0"
       >
         <div
           className="flex justify-center items-center flex-1 overflow-hidden min-h-0 w-full h-full p-4 lg:p-8"
