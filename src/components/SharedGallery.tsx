@@ -79,13 +79,16 @@ const SharedGallery: React.FC = () => {
                     PING
                   </span>
                 )}
-                <div className={item.message ? 'aspect-square overflow-hidden bg-panel' : 'aspect-[800/420] overflow-hidden bg-panel'}>
+                {/* Every stored card is the same captioned banner shape (functions/api/share.ts),
+                    whether or not it carries a message - branching on item.message here cropped
+                    the message cards into a square and cut off the phone/character. */}
+                <div className="aspect-[800/420] overflow-hidden bg-panel">
                   <img
                     src={item.image}
                     alt={item.title}
                     loading="lazy"
-                    width={item.message ? 512 : 800}
-                    height={item.message ? 512 : 420}
+                    width={800}
+                    height={420}
                     className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                   />
                 </div>

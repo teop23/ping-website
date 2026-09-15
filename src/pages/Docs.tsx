@@ -139,13 +139,24 @@ const Label: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <h4 className="mb-2 text-meta font-semibold text-ink">{children}</h4>
 );
 
+/** GET is the only verb this API has, but a plain word next to a path reads as
+ *  prose, not a route - a badge makes every endpoint scannable at a glance. */
+const MethodBadge: React.FC = () => (
+  <span className="inline-flex items-center rounded-md bg-brand-wash px-1.5 py-0.5 text-micro font-bold tracking-wide text-brand">
+    GET
+  </span>
+);
+
+const slug = (path: string) => `api-${path.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '')}`;
+
 const EndpointSection: React.FC<{ endpoint: Endpoint }> = ({ endpoint }) => (
-  <section aria-labelledby={`api-${endpoint.path}`} className="border-t border-hairline py-10">
-    <h2 id={`api-${endpoint.path}`} className="type-display text-h3 font-bold text-ink">
+  <section aria-labelledby={slug(endpoint.path)} className="scroll-mt-24 border-t border-hairline py-10">
+    <h2 id={slug(endpoint.path)} className="type-display text-h3 font-bold text-ink">
       {endpoint.title}
     </h2>
-    <p className="mt-2 font-mono text-meta text-ink">
-      <span className="text-ink-faint">GET</span> {endpoint.path}
+    <p className="mt-2 flex flex-wrap items-center gap-2 font-mono text-meta text-ink">
+      <MethodBadge />
+      {endpoint.path}
     </p>
     <p className="type-prose mt-3 max-w-2xl text-ink-muted">{endpoint.description}</p>
 
@@ -155,8 +166,10 @@ const EndpointSection: React.FC<{ endpoint: Endpoint }> = ({ endpoint }) => (
           <Label>Parameters</Label>
           <dl className="divide-y divide-hairline rounded-lg border border-hairline bg-raised">
             {endpoint.params.map((param) => (
-              <div key={param.name} className="flex flex-col gap-1 px-4 py-2.5 sm:flex-row sm:gap-4">
-                <dt className="w-32 shrink-0 font-mono text-meta text-ink">{param.name}</dt>
+              <div key={param.name} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
+                <dt className="shrink-0 sm:w-36">
+                  <code className="rounded bg-panel px-1.5 py-0.5 font-mono text-meta text-ink">{param.name}</code>
+                </dt>
                 <dd className="text-meta text-ink-muted">{param.description}</dd>
               </div>
             ))}
@@ -175,6 +188,27 @@ const EndpointSection: React.FC<{ endpoint: Endpoint }> = ({ endpoint }) => (
   </section>
 );
 
+/** Jump nav entries: one per endpoint plus the two hand-written sections
+ *  below. Keeps the sidebar and the anchors it points at from drifting apart. */
+const NAV_SECTIONS = [...ENDPOINTS.map((e) => ({ id: slug(e.path), label: e.title })), { id: 'api-examples', label: 'In code' }, { id: 'api-limits', label: 'Limits' }];
+
+const DocsNav: React.FC = () => (
+  <nav aria-label="API sections" className="sticky top-24 hidden max-h-[calc(100vh-7rem)] w-48 shrink-0 overflow-y-auto lg:block">
+    <ul className="space-y-1 border-l border-hairline">
+      {NAV_SECTIONS.map((s) => (
+        <li key={s.id}>
+          <a
+            href={`#${s.id}`}
+            className="-ml-px block border-l-2 border-transparent py-1 pl-4 text-meta text-ink-muted transition-colors duration-fast ease-out-quart hover:border-hairline hover:text-ink"
+          >
+            {s.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+);
+
 const Docs: React.FC = () => (
   <main className="container max-w-5xl py-12">
     <h1 className="type-display text-h2 font-bold text-ink sm:text-h1">API</h1>
@@ -183,41 +217,44 @@ const Docs: React.FC = () => (
       <code className="font-mono text-ink">{ORIGIN || 'this site'}</code>.
     </p>
 
-    <div className="mt-10">
-      {ENDPOINTS.map((endpoint) => (
-        <EndpointSection key={endpoint.path} endpoint={endpoint} />
-      ))}
-    </div>
+    <div className="mt-10 flex items-start gap-12">
+      <DocsNav />
+      <div className="min-w-0 flex-1">
+        {ENDPOINTS.map((endpoint) => (
+          <EndpointSection key={endpoint.path} endpoint={endpoint} />
+        ))}
 
-    <section aria-labelledby="api-examples" className="border-t border-hairline py-10">
-      <h2 id="api-examples" className="type-display text-h3 font-bold text-ink">
-        In code
-      </h2>
-      <div className="mt-6 space-y-6">
-        <div>
-          <Label>JavaScript</Label>
-          <CodeBlock copyable>{JS_EXAMPLE}</CodeBlock>
-        </div>
-        <div>
-          <Label>HTML</Label>
-          <CodeBlock copyable>{HTML_EXAMPLE}</CodeBlock>
-        </div>
-        <div>
-          <Label>Python</Label>
-          <CodeBlock copyable>{PYTHON_EXAMPLE}</CodeBlock>
-        </div>
+        <section aria-labelledby="api-examples" className="scroll-mt-24 border-t border-hairline py-10">
+          <h2 id="api-examples" className="type-display text-h3 font-bold text-ink">
+            In code
+          </h2>
+          <div className="mt-6 space-y-6">
+            <div>
+              <Label>JavaScript</Label>
+              <CodeBlock copyable>{JS_EXAMPLE}</CodeBlock>
+            </div>
+            <div>
+              <Label>HTML</Label>
+              <CodeBlock copyable>{HTML_EXAMPLE}</CodeBlock>
+            </div>
+            <div>
+              <Label>Python</Label>
+              <CodeBlock copyable>{PYTHON_EXAMPLE}</CodeBlock>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="api-limits" className="scroll-mt-24 border-t border-hairline py-10">
+          <h2 id="api-limits" className="type-display text-h3 font-bold text-ink">
+            Limits
+          </h2>
+          <p className="type-prose mt-3 max-w-2xl text-ink-muted">
+            No hard rate limit. Images are cached, so the same request returns the same image fast. Hammer it and you
+            get throttled.
+          </p>
+        </section>
       </div>
-    </section>
-
-    <section aria-labelledby="api-limits" className="border-t border-hairline py-10">
-      <h2 id="api-limits" className="type-display text-h3 font-bold text-ink">
-        Limits
-      </h2>
-      <p className="type-prose mt-3 max-w-2xl text-ink-muted">
-        No hard rate limit. Images are cached, so the same request returns the same image fast. Hammer it and you get
-        throttled.
-      </p>
-    </section>
+    </div>
   </main>
 );
 
