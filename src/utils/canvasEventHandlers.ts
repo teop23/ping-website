@@ -24,6 +24,9 @@ export const setupCanvasEventHandlers = (
 ) => {
   const handleCanvasClick = (e: fabric.IEvent) => {
     if (tool === 'select' || tool === 'brush') return;
+    // Clicking existing text with the Text tool selects it (so Font Weight etc.
+    // apply to it) instead of stacking a new "Double click to edit" on top.
+    if (tool === 'text' && (e.target?.type === 'i-text' || e.target?.type === 'text')) return;
 
     const pointer = canvas.getPointer(e.e as MouseEvent);
     
