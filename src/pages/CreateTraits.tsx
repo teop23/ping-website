@@ -74,7 +74,11 @@ const CreateTraits: React.FC = () => {
     const saved = localStorage.getItem('pingTraits');
     if (saved) {
       try {
-        setSavedTraits(JSON.parse(saved));
+        // The canvas starts empty, so no saved trait is on it yet. A stored
+        // isVisible: true showed "Visible" for a trait that wasn't drawn, and
+        // the first click only flipped the label to Hidden.
+        const traits: SavedTrait[] = JSON.parse(saved);
+        setSavedTraits(traits.map((t) => ({ ...t, isVisible: false })));
       } catch (error) {
         console.error('Error loading saved traits:', error);
       }
