@@ -44,8 +44,9 @@ const OVERLAP_RULES = [
   // pompom or the clown nose. sayian-1's fringe and a mustache sit fine.
   ['mouth', 'head', ({ n, a, b, x, y }) =>
     n / Math.min(a, b) >= 0.1 && !x.startsWith('mustache-only_') && !y.startsWith('sayian-1_')],
-  // Something in the beak crossing a held item.
-  ...HANDS.map((hand) => ['mouth', hand, ({ n, a, b }) => n / Math.min(a, b) >= 0.2]),
+  // Something in the beak crossing or touching a held item: a pipe over a
+  // grenade, a party blower through a rifle, a wheat stalk on a can.
+  ...HANDS.map((hand) => ['mouth', hand, ({ n }) => n >= 10, TOUCH]),
   // Hats and face gear only clash with a held item when it cuts well into them.
   ...HANDS.flatMap((hand) => [
     ['head', hand, ({ n, a, b }) => n / Math.min(a, b) >= 0.35],

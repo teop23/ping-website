@@ -1,6 +1,7 @@
 {
  "pairs": {
   "APU-token_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "reimu-fumo-(right)_accessory",
@@ -8,6 +9,7 @@
    "xbox-gamer_accessory"
   ],
   "SPX6900-token_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "reimu-fumo-(right)_accessory",
@@ -95,6 +97,7 @@
    "helm-of-domination_face"
   ],
   "baguette_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "party-blower_mouth",
@@ -102,14 +105,19 @@
    "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "balloon-animal_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "balloon_left_hand": [
@@ -162,6 +170,7 @@
    "side-gun-hand_right_hand"
   ],
   "basketball_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "reimu-fumo-(right)_accessory",
@@ -170,9 +179,13 @@
   ],
   "beard_mouth": [
    "doom-helmet_face",
+   "gun-hand_right_hand",
    "helm-of-domination_face",
    "mF-dOOM-mask_face",
-   "master-chief-helmet_face"
+   "master-chief-helmet_face",
+   "poobis_left_hand",
+   "side-gun-hand_left_hand",
+   "side-gun-hand_right_hand"
   ],
   "beer_left_hand": [
    "birdhouse_accessory",
@@ -249,6 +262,7 @@
    "water-balloon_left_hand"
   ],
   "bitcoin_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "reimu-fumo-(right)_accessory",
@@ -256,10 +270,14 @@
    "xbox-gamer_accessory"
   ],
   "blue-sword_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "bong_left_hand": [
@@ -346,6 +364,7 @@
    "water-balloon_left_hand"
   ],
   "boxing-glove_right_hand": [
+   "bubble-pipe_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "pet-ping-(right)_accessory",
@@ -385,32 +404,60 @@
   ],
   "broom_right_hand": [
    "bubble-pipe_mouth",
+   "fish-in-beak_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "pet-ping-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
    "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "bubble-pipe_mouth": [
+   "camera_right_hand",
+   "chainsaw_right_hand",
+   "cheese-token_right_hand",
+   "ciggy_right_hand",
+   "cirno-fumo_right_hand",
+   "coffee-mug_right_hand",
    "devil-trident_right_hand",
+   "drumstick_right_hand",
+   "dynamite_right_hand",
+   "fish_right_hand",
+   "glock_right_hand",
+   "grenade_right_hand",
+   "guitar_right_hand",
    "gun-hand_right_hand",
    "headphones_head",
+   "hello-kitty-keychain_right_hand",
    "ice-cream-cone_right_hand",
+   "infinity-gauntlet_right_hand",
+   "kite_right_hand",
    "m16_right_hand",
    "magnifying-glass_right_hand",
+   "megaphone_right_hand",
    "microphone_right_hand",
+   "money-stack_right_hand",
+   "monster_right_hand",
+   "musket_right_hand",
    "pickaxe_right_hand",
+   "redbull_right_hand",
    "reimu-fumo_right_hand",
    "reisen-fumo_right_hand",
    "rubber-duck_right_hand",
    "santa-hat_head",
    "side-gun-hand_right_hand",
+   "smartphone_right_hand",
    "sparkler_right_hand",
+   "telescope_right_hand",
    "tennis-racket_right_hand",
-   "wand_right_hand"
+   "trophy_right_hand",
+   "wand_right_hand",
+   "whip_right_hand",
+   "white-monster_right_hand"
   ],
   "bucket-hat_head": [
    "helm-of-domination_face"
@@ -501,6 +548,7 @@
    "pS5-(right)_accessory",
    "reimu-fumo-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "cheese-grate-hat_head": [
@@ -553,10 +601,13 @@
   "ciggy_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "pet-ping-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "cirno-fumo_accessory": [
@@ -642,6 +693,7 @@
    "helm-of-domination_face"
   ],
   "devil-trident_right_hand": [
+   "fish-in-beak_mouth",
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "party-blower_mouth",
@@ -728,8 +780,10 @@
   "dynamite_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "pet-ping-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
    "xbox-gamer_accessory"
@@ -801,22 +855,40 @@
    "water-balloon_left_hand"
   ],
   "fish-in-beak_mouth": [
+   "fish_right_hand",
+   "guitar_right_hand",
+   "gun-hand_right_hand",
    "headphones_head",
    "hello-kitty-mask_face",
    "helm-of-domination_face",
+   "ice-cream-cone_right_hand",
+   "infinity-gauntlet_right_hand",
+   "m16_right_hand",
    "mF-dOOM-mask_face",
+   "magnifying-glass_right_hand",
    "master-chief-helmet_face",
+   "microphone_right_hand",
+   "monster_right_hand",
+   "pickaxe_right_hand",
+   "reimu-fumo_right_hand",
+   "rubber-duck_right_hand",
+   "side-gun-hand_left_hand",
    "side-gun-hand_right_hand",
    "ski-mask_face",
+   "sparkler_right_hand",
+   "tennis-racket_right_hand",
    "ushanka_head"
   ],
   "fish_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "pet-ping-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "fishing-rod_left_hand": [
@@ -872,7 +944,9 @@
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "glowing-scanner-eye_face": [
@@ -950,7 +1024,9 @@
   "gun-hand_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
    "wheat-stalk_mouth",
@@ -1120,8 +1196,10 @@
    "pS5-(right)_accessory",
    "pet-ping-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "jBL-speaker_left_hand": [
@@ -1218,7 +1296,9 @@
   "m16_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
    "wheat-stalk_mouth",
@@ -1271,13 +1351,16 @@
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "microphone_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "reimu-fumo-(right)_accessory",
    "rose_mouth",
    "washing-machine_accessory",
@@ -1338,8 +1421,10 @@
    "pS5-(right)_accessory",
    "pet-ping-(right)_accessory",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "mop_left_hand": [
@@ -1358,11 +1443,15 @@
   "musket_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
+   "party-blower_mouth",
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "mustache-only_mouth": [
+   "side-gun-hand_right_hand",
    "ski-mask_face"
   ],
   "nerd-glasses_face": [
@@ -1436,12 +1525,18 @@
    "treasure-chest_accessory"
   ],
   "party-blower_mouth": [
+   "pickaxe_right_hand",
+   "redbull_right_hand",
+   "reimu-fumo_right_hand",
+   "rubber-duck_right_hand",
    "santa-hat_head",
+   "side-gun-hand_right_hand",
    "sparkler_right_hand",
    "telescope_right_hand",
    "tennis-racket_right_hand",
    "ushanka_head",
-   "wand_right_hand"
+   "wand_right_hand",
+   "whip_right_hand"
   ],
   "pet-apu_accessory": [
    "piggy-bank_left_hand",
@@ -1508,6 +1603,7 @@
   ],
   "pickaxe_right_hand": [
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "washing-machine_accessory",
    "wheat-stalk_mouth",
    "xbox-gamer_accessory"
@@ -1620,8 +1716,10 @@
   ],
   "redbull_right_hand": [
    "reimu-fumo-(right)_accessory",
+   "rose_mouth",
    "sad-pepe-(right)_accessory",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "reimu-fumo-(left)_accessory": [
@@ -1659,7 +1757,9 @@
    "treasure-chest_accessory"
   ],
   "reimu-fumo_right_hand": [
+   "rose_mouth",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "reisen-fumo_accessory": [
@@ -1681,7 +1781,9 @@
    "treasure-chest_accessory"
   ],
   "reisen-fumo_right_hand": [
+   "rose_mouth",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "rocket_accessory": [
@@ -1696,12 +1798,16 @@
    "water-balloon_left_hand"
   ],
   "rose_mouth": [
+   "rubber-duck_right_hand",
    "santa-hat_head",
+   "side-gun-hand_right_hand",
    "sparkler_right_hand",
    "telescope_right_hand",
    "tennis-racket_right_hand",
+   "trophy_right_hand",
    "ushanka_head",
-   "wand_right_hand"
+   "wand_right_hand",
+   "whip_right_hand"
   ],
   "round-glasses_face": [
    "sayian-1_head"
@@ -1759,6 +1865,7 @@
   "side-gun-hand_right_hand": [
    "toothpick_mouth",
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "skateboard_left_hand": [
@@ -1808,6 +1915,7 @@
   ],
   "telescope_right_hand": [
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "tennis-racket_right_hand": [
@@ -1831,6 +1939,7 @@
   ],
   "trophy_right_hand": [
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "ushanka_head": [
@@ -1838,11 +1947,15 @@
   ],
   "wand_right_hand": [
    "washing-machine_accessory",
+   "wheat-stalk_mouth",
    "xbox-gamer_accessory"
   ],
   "washing-machine_accessory": [
    "whip_right_hand",
    "white-monster_right_hand"
+  ],
+  "wheat-stalk_mouth": [
+   "whip_right_hand"
   ],
   "whip_right_hand": [
    "xbox-gamer_accessory"
