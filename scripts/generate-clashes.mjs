@@ -69,7 +69,8 @@ const COVERED_BEAK = {
   'minion-eyes': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'toothpick'],
   'pit-vipers': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'pacifier', 'toothpick'],
   'ski-goggles': ['beard', 'cigar', 'ciggy', 'joint', 'mustache-only', 'pacifier', 'toothpick'],
-  'ski-mask': ['fish-in-beak', 'mustache-only'],
+  // No mouth opening: every beak item floats on the knit.
+  'ski-mask': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
   'snorkel-mask': ['beard', 'mustache-only', 'pacifier'],
   // The headset's lower rim sits on the beak.
   'vr-headset': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
@@ -103,6 +104,10 @@ const NAMED_RULES = [
     'flower-crown', 'graduation-cap', 'hard-hat', 'headphones', 'luffy-strawhat', 'mohawk', 'party-hat', 'ping',
     'pirate-hat', 'propeller-hat', 'sad-pepe', 'santa-hat', 'sayian-1', 'sombrero', 'top-hat', 'traffic-cone',
     'winter-cap'].map((hat) => ({ a: 'link-aura_aura', b: `${hat}_head` })),
+  // The soldier-helmet strap hangs over the left eye and cuts eyewear in two.
+  ...['cool-glasses', 'dizzy-eyes', 'dollar-eyes', 'eye-bags', 'girl-eyes', 'glowing-scanner-eye', 'googly-eyes',
+    'groucho-glasses', 'heart-glasses', 'hello-kitty-mask', 'minion-eyes', 'nerd-glasses', 'pit-vipers', 'round-glasses',
+    'shutter-shades', 'ski-goggles', 'star-eyes'].map((face) => ({ a: 'soldier-helmet_head', b: `${face}_face` })),
   // The beard and pacifier reach eye level and paint over the lower half of eyes and glasses.
   ...['dollar-eyes', 'eye-bags', 'girl-eyes', 'heart-glasses', 'nerd-glasses', 'round-glasses', 'shutter-shades', 'star-eyes']
     .flatMap((face) => ['beard', 'pacifier'].map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))),
