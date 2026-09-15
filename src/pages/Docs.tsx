@@ -117,7 +117,7 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
     <button
       type="button"
       onClick={copy}
-      className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-md border border-hairline bg-panel px-2.5 py-1 text-micro text-ink-muted transition-colors duration-fast ease-out-quart hover:text-ink"
+      className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-micro text-ink-muted transition-colors duration-fast ease-out-quart hover:text-ink"
       aria-label={done ? 'Copied' : 'Copy example'}
     >
       {done ? <Check className="size-3.5" aria-hidden="true" /> : <Copy className="size-3.5" aria-hidden="true" />}
@@ -201,8 +201,16 @@ const CodeBlock: React.FC<{ children: string; copyable?: boolean; kind?: 'json' 
   copyable,
   kind = 'code',
 }) => (
-  <div className="relative">
-    <pre className={`overflow-x-auto rounded-md border border-hairline bg-ground p-4 text-meta text-ink-muted ${copyable ? 'pr-24' : ''}`}>
+  <div className="overflow-hidden rounded-md border border-hairline bg-ground">
+    {/* Its own row, not floated over the code: a long unbroken URL or line
+        doesn't wrap, so a button pinned on top of the text just sits wherever
+        the horizontal scroll happens to leave it - on top of real characters. */}
+    {copyable && (
+      <div className="flex justify-end border-b border-hairline px-2 py-1">
+        <CopyButton text={children} />
+      </div>
+    )}
+    <pre className="overflow-x-auto p-4 text-meta text-ink">
       <code>
         {kind === 'url' && highlightUrl(children)}
         {kind === 'code' && highlightCode(children)}
@@ -210,7 +218,6 @@ const CodeBlock: React.FC<{ children: string; copyable?: boolean; kind?: 'json' 
         {kind === 'plain' && children}
       </code>
     </pre>
-    {copyable && <CopyButton text={children} />}
   </div>
 );
 
@@ -252,41 +259,33 @@ const EndpointSection: React.FC<{ endpoint: Endpoint }> = ({ endpoint }) => (
       {highlightPath(endpoint.path)}
     </p>
 
-    {/* Prose (what it does, what you can pass) on the left; the actual
-        route and its response stay pinned alongside it on the right, the
-        way Stripe/Twilio's reference docs split request from response
-        instead of stacking everything in one column. */}
-    <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
-      <div className="min-w-0 space-y-6">
-        <p className="type-prose max-w-2xl text-ink-muted">{endpoint.description}</p>
-        {endpoint.params && (
-          <div>
-            <Label>Parameters</Label>
-            <dl className="divide-y divide-hairline rounded-lg border border-hairline bg-raised">
-              {endpoint.params.map((param) => (
-                <div key={param.name} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
-                  <dt className="shrink-0 sm:w-36">
-                    <code className="rounded bg-panel px-1.5 py-0.5 font-mono text-meta text-ink">{param.name}</code>
-                  </dt>
-                  <dd className="text-meta text-ink-muted">{param.description}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        )}
-      </div>
+    <p className="type-prose mt-3 max-w-2xl text-ink-muted">{endpoint.description}</p>
 
-      <div className="min-w-0 space-y-6 lg:sticky lg:top-24 lg:self-start">
+    <div className="mt-6 space-y-6">
+      {endpoint.params && (
         <div>
-          <Label>Example</Label>
-          <CodeBlock copyable kind="url">
-            {endpoint.example}
-          </CodeBlock>
+          <Label>Parameters</Label>
+          <dl className="divide-y divide-hairline rounded-lg border border-hairline bg-raised">
+            {endpoint.params.map((param) => (
+              <div key={param.name} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
+                <dt className="shrink-0 sm:w-36">
+                  <code className="rounded bg-panel px-1.5 py-0.5 font-mono text-meta text-ink">{param.name}</code>
+                </dt>
+                <dd className="text-meta text-ink-muted">{param.description}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-        <div>
-          <Label>Returns</Label>
-          <CodeBlock kind={endpoint.returns.startsWith('{') ? 'json' : 'plain'}>{endpoint.returns}</CodeBlock>
-        </div>
+      )}
+      <div>
+        <Label>Example</Label>
+        <CodeBlock copyable kind="url">
+          {endpoint.example}
+        </CodeBlock>
+      </div>
+      <div>
+        <Label>Returns</Label>
+        <CodeBlock kind={endpoint.returns.startsWith('{') ? 'json' : 'plain'}>{endpoint.returns}</CodeBlock>
       </div>
     </div>
   </section>
