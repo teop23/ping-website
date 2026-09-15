@@ -2283,7 +2283,7 @@ mismatched strokes), then fix the flagged existing traits and put them on a vett
 
 ### Ask the owner first (next session start)
 
-1. Sparkler verdict: C (0.8x) or D (0.7x), `.trait-work/fixes-25/cand-sparkler-rays-C.png` / `-D.png` (sent as
+1. DONE: sparkler C shipped (owner let me pick). Was: C (0.8x) or D (0.7x), `.trait-work/fixes-25/cand-sparkler-rays-C.png` / `-D.png` (sent as
    `sparkler-rays-3`). Radiating spark lines, stick end on the flipper tip, stick runs up to the spark ball (owner asked
    for exactly that, "even closer"). Ship the pick as `public/traits/trait-sparkler_right_hand.png` (run
    `.trait-work/defringe.mjs --inplace` on it), tests, push. If more tweaks: source `solo/cut-sparkler-rays.png`,
