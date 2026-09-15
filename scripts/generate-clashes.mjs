@@ -70,7 +70,7 @@ const COVERED_BEAK = {
   'pit-vipers': ['beard', 'cigar', 'ciggy', 'joint', 'pacifier'],
   'ski-goggles': ['beard', 'cigar', 'ciggy', 'joint', 'mustache-only', 'pacifier'],
   'ski-mask': ['fish-in-beak', 'mustache-only'],
-  'snorkel-mask': ['mustache-only'],
+  'snorkel-mask': ['beard', 'mustache-only'],
   // The headset's lower rim sits on the beak.
   'vr-headset': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'wheat-stalk'],
 };
