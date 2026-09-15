@@ -353,8 +353,7 @@ export const addCurvedLine = (
   } else if (newPoints.length === 3) {
     // Third point - create the final editable curve
     const [start, control, end] = newPoints;
-    
-    // Create the curve path
+
     const pathString = `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${end.x} ${end.y}`;
     const curvePath = new fabric.Path(pathString, {
       fill: '',
@@ -371,97 +370,74 @@ export const addCurvedLine = (
       objectCaching: false
     });
 
-    // Create control points
-    const startPoint = makeCurveControlPoint(start.x, start.y, curvePath, false);
-    const controlPoint = makeCurveControlPoint(control.x, control.y, curvePath, true);
-    const endPoint = makeCurveControlPoint(end.x, end.y, curvePath, false);
-
-    // Set up the relationships
-    (startPoint as any).isStartPoint = true;
-    (endPoint as any).isEndPoint = true;
-    (controlPoint as any).isControlPoint = true;
-
-    // Store references to all control points in the curve path
-    (curvePath as any).startPoint = startPoint;
-    (curvePath as any).controlPoint = controlPoint;
-    (curvePath as any).endPoint = endPoint;
-
-    // Add all objects to canvas
     canvas.add(curvePath);
-    canvas.add(startPoint);
-    canvas.add(controlPoint);
-    canvas.add(endPoint);
+    const anchors = attachCurveAnchors(canvas, curvePath);
+    anchors.forEach(anchor => anchor.set({ opacity: 1, selectable: true }));
 
-    // Set up event handlers for showing/hiding control points
-    curvePath.on('selected', () => {
-      startPoint.set({ opacity: 1, selectable: true });
-      controlPoint.set({ opacity: 1, selectable: true });
-      endPoint.set({ opacity: 1, selectable: true });
-      safeRenderAll(canvas);
-    });
-
-    curvePath.on('deselected', () => {
-      startPoint.set({ opacity: 0, selectable: false });
-      controlPoint.set({ opacity: 0, selectable: false });
-      endPoint.set({ opacity: 0, selectable: false });
-      safeRenderAll(canvas);
-    });
-
-    // Make the curve path clickable but not movable
-    curvePath.on('mousedown', () => {
-      // Show control points when curve is clicked
-      startPoint.set({ opacity: 1, selectable: true });
-      controlPoint.set({ opacity: 1, selectable: true });
-      endPoint.set({ opacity: 1, selectable: true });
-      safeRenderAll(canvas);
-    });
-
-    // Set up event handlers for control point movement
-    const setupControlPointMovement = (point: fabric.Circle) => {
-      point.on('moving', () => {
-        const curvePath = (point as any).curvePath;
-        const startPoint = (curvePath as any).startPoint;
-        const controlPoint = (curvePath as any).controlPoint;
-        const endPoint = (curvePath as any).endPoint;
-        
-        updateCurvePath(curvePath, startPoint, controlPoint, endPoint);
-        safeRenderAll(canvas);
-      });
-
-      // Hide control points when a control point is deselected
-      point.on('deselected', () => {
-        const curvePath = (point as any).curvePath;
-        const startPoint = (curvePath as any).startPoint;
-        const controlPoint = (curvePath as any).controlPoint;
-        const endPoint = (curvePath as any).endPoint;
-        
-        // Check if any control point is still selected
-        const activeObject = canvas.getActiveObject();
-        if (activeObject !== startPoint && activeObject !== controlPoint && activeObject !== endPoint) {
-          startPoint.set({ opacity: 0, selectable: false });
-          controlPoint.set({ opacity: 0, selectable: false });
-          endPoint.set({ opacity: 0, selectable: false });
-          safeRenderAll(canvas);
-        }
-      });
-    };
-
-    setupControlPointMovement(startPoint);
-    setupControlPointMovement(controlPoint);
-    setupControlPointMovement(endPoint);
-
-    // Show control points initially
-    startPoint.set({ opacity: 1, selectable: true });
-    controlPoint.set({ opacity: 1, selectable: true });
-    endPoint.set({ opacity: 1, selectable: true });
-    
     // Reset curve state
     setCurvePoints([]);
     setTempCurveLine(null);
     setTool('select');
-    
+
     safeRenderAll(canvas);
   }
+};
+
+type QuadraticPath = [['M', number, number], ['Q', number, number, number, number]];
+
+/**
+ * Creates the start/control/end anchors for an editable curve and wires them up.
+ *
+ * Anchors hold live references to their curve, which do not survive
+ * serialisation. Undo history therefore stores only the curve path, and this
+ * runs again for every restored curve; before, restored anchors were plain
+ * circles that no longer reshaped the curve or deleted with it.
+ */
+export const attachCurveAnchors = (canvas: fabric.Canvas, curvePath: fabric.Path): fabric.Circle[] => {
+  const [[, sx, sy], [, cx, cy, ex, ey]] = (curvePath as unknown as { path: QuadraticPath }).path;
+
+  const startPoint = makeCurveControlPoint(sx, sy, curvePath, false);
+  const controlPoint = makeCurveControlPoint(cx, cy, curvePath, true);
+  const endPoint = makeCurveControlPoint(ex, ey, curvePath, false);
+  const anchors = [startPoint, controlPoint, endPoint];
+
+  (startPoint as any).isStartPoint = true;
+  (endPoint as any).isEndPoint = true;
+  (controlPoint as any).isControlPoint = true;
+  (curvePath as any).startPoint = startPoint;
+  (curvePath as any).controlPoint = controlPoint;
+  (curvePath as any).endPoint = endPoint;
+
+  const showAnchors = (visible: boolean) => {
+    anchors.forEach(anchor => anchor.set({ opacity: visible ? 1 : 0, selectable: visible }));
+    safeRenderAll(canvas);
+  };
+
+  // The path is not selectable, so clicking it is how the anchors come back.
+  curvePath.on('mousedown', () => showAnchors(true));
+
+  anchors.forEach(point => {
+    canvas.add(point);
+
+    point.on('moving', () => {
+      updateCurvePath(curvePath, startPoint, controlPoint, endPoint);
+      safeRenderAll(canvas);
+    });
+
+    point.on('deselected', () => {
+      const activeObject = canvas.getActiveObject();
+      if (!anchors.includes(activeObject as fabric.Circle)) showAnchors(false);
+    });
+  });
+
+  return anchors;
+};
+
+/** Re-attaches anchors to every curve on the canvas, e.g. after an undo/redo rebuilt it. */
+export const reattachCurveAnchors = (canvas: fabric.Canvas) => {
+  canvas.getObjects()
+    .filter(obj => obj.name === 'editableCurvePath')
+    .forEach(path => attachCurveAnchors(canvas, path as fabric.Path));
 };
 
 export const uploadImage = (canvas: fabric.Canvas) => {

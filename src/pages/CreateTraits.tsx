@@ -15,7 +15,8 @@ import { UndoRedoManager } from '../utils/undoRedoManager';
 import { 
   uploadImage, 
   deleteSelected, 
-  clearCanvas 
+  clearCanvas,
+  reattachCurveAnchors,
 } from '../utils/drawingTools';
 import { 
   saveTrait, 
@@ -104,7 +105,7 @@ const CreateTraits: React.FC = () => {
       setBaseImage(img);
       
       // Initialize undo/redo manager
-      const manager = new UndoRedoManager(fabricCanvas);
+      const manager = new UndoRedoManager(fabricCanvas, () => reattachCurveAnchors(fabricCanvas));
       manager.initialize();
       setUndoRedoManager(manager);
       

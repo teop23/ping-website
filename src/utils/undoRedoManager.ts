@@ -15,7 +15,11 @@ export class UndoRedoManager {
   private lastStateHash: string = '';
   private listeners = new Set<() => void>();
 
-  constructor(private canvas: fabric.Canvas) {}
+  /**
+   * @param afterRestore runs once a restored state's objects are on the canvas,
+   *   still inside the busy window, so objects it adds are not recorded.
+   */
+  constructor(private canvas: fabric.Canvas, private afterRestore?: () => void) {}
 
   /**
    * Called whenever canUndo()/canRedo() may have changed.
@@ -84,13 +88,14 @@ export class UndoRedoManager {
 
     try {
       // Get all drawable objects (exclude base image and trait overlays)
-      const objects = this.canvas.getObjects().filter(obj => {
-        // Include all user-created objects
-        return obj.name !== 'baseImage' && 
-               !obj.name?.startsWith('trait-') &&
-               obj.type !== 'image' || 
-               (obj.type === 'image' && !obj.name?.includes('baseImage') && !obj.name?.startsWith('trait-'));
-      });
+      // User-created objects only. Curve anchors are rebuilt from their curve on
+      // restore (see afterRestore), since their links to it cannot be serialised.
+      const objects = this.canvas.getObjects().filter(obj =>
+        obj.name !== 'baseImage' &&
+        !obj.name?.startsWith('trait-') &&
+        obj.name !== 'curveControlPoint' &&
+        obj.name !== 'curveEndPoint'
+      );
       
       // Generate hash for comparison
       const currentHash = this.generateStateHash(objects);
@@ -179,6 +184,7 @@ export class UndoRedoManager {
                     this.canvas.add(obj);
                   }
                 });
+                this.afterRestore?.();
                 
                 // Update the state hash
                 this.lastStateHash = this.generateStateHash(validObjects);

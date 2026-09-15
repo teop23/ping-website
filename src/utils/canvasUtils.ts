@@ -145,6 +145,14 @@ export const updateLoadedTraitsScale = (
   });
 };
 
+/** Names of the draggable dots that belong to an editable curve. */
+export const isCurveAnchor = (obj: fabric.Object) =>
+  obj.name === 'curveControlPoint' || obj.name === 'curveEndPoint';
+
+/** Editing aids that are never part of the artwork: curve anchors and the in-progress curve preview. */
+export const isEditorOnly = (obj: fabric.Object) =>
+  isCurveAnchor(obj) || obj.name === 'tempCurvePoint' || obj.name === 'tempCurveGroup';
+
 /** Base character and loaded saved traits: reference layers the user draws over. */
 export const isReferenceLayer = (obj: fabric.Object) =>
   obj.name === 'baseImage' || !!obj.name?.startsWith('trait-');
@@ -156,7 +164,8 @@ export const isReferenceLayer = (obj: fabric.Object) =>
  * The eraser is a `destination-out` path, and on a single shared context that
  * cuts through everything underneath: the base character got a hole in the
  * editor. Drawing the user's objects into a separate buffer confines erasing
- * to them. Exports go through the same renderCanvas, so they match the screen.
+ * to them. Exports go through the same renderCanvas, so they match the screen,
+ * minus editing aids such as curve anchors.
  */
 export const renderUserObjectsOnOwnLayer = (canvas: fabric.Canvas) => {
   let layer: HTMLCanvasElement | null = null;
@@ -167,6 +176,8 @@ export const renderUserObjectsOnOwnLayer = (canvas: fabric.Canvas) => {
     const userObjects: fabric.Object[] = [];
     for (const obj of objects) {
       if (!obj) continue;
+      // fabric turns `interactive` off while exporting: editing aids stay out of the image.
+      if (!canvas.interactive && isEditorOnly(obj)) continue;
       if (isReferenceLayer(obj)) obj.render(ctx);
       else userObjects.push(obj);
     }
@@ -193,7 +204,7 @@ export const renderUserObjectsOnOwnLayer = (canvas: fabric.Canvas) => {
   };
 };
 
-export const ensureProperLayering =(canvas: fabric.Canvas) => {
+export const ensureProperLayering = (canvas: fabric.Canvas) => {
   setTimeout(() => {
     const allObjects = canvas.getObjects();
     allObjects.forEach(obj => {
