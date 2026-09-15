@@ -145,7 +145,55 @@ export const updateLoadedTraitsScale = (
   });
 };
 
-export const ensureProperLayering = (canvas: fabric.Canvas) => {
+/** Base character and loaded saved traits: reference layers the user draws over. */
+export const isReferenceLayer = (obj: fabric.Object) =>
+  obj.name === 'baseImage' || !!obj.name?.startsWith('trait-');
+
+/**
+ * Renders the user's drawing on its own layer, composited over the reference
+ * layers (white background, base character, loaded traits).
+ *
+ * The eraser is a `destination-out` path, and on a single shared context that
+ * cuts through everything underneath: the base character got a hole in the
+ * editor. Drawing the user's objects into a separate buffer confines erasing
+ * to them. Exports go through the same renderCanvas, so they match the screen.
+ */
+export const renderUserObjectsOnOwnLayer = (canvas: fabric.Canvas) => {
+  let layer: HTMLCanvasElement | null = null;
+
+  (canvas as unknown as {
+    _renderObjects: (ctx: CanvasRenderingContext2D, objects: fabric.Object[]) => void;
+  })._renderObjects = (ctx, objects) => {
+    const userObjects: fabric.Object[] = [];
+    for (const obj of objects) {
+      if (!obj) continue;
+      if (isReferenceLayer(obj)) obj.render(ctx);
+      else userObjects.push(obj);
+    }
+    if (userObjects.length === 0) return;
+
+    const { width, height } = ctx.canvas;
+    if (!layer) layer = document.createElement('canvas');
+    if (layer.width !== width || layer.height !== height) {
+      layer.width = width;
+      layer.height = height;
+    }
+    const layerCtx = layer.getContext('2d');
+    if (!layerCtx) return;
+
+    layerCtx.setTransform(1, 0, 0, 1, 0, 0);
+    layerCtx.clearRect(0, 0, width, height);
+    layerCtx.setTransform(ctx.getTransform());
+    userObjects.forEach((obj) => obj.render(layerCtx));
+
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(layer, 0, 0);
+    ctx.restore();
+  };
+};
+
+export const ensureProperLayering =(canvas: fabric.Canvas) => {
   setTimeout(() => {
     const allObjects = canvas.getObjects();
     allObjects.forEach(obj => {

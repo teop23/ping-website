@@ -3,7 +3,13 @@ import { motion } from 'framer-motion';
 import { fabric } from 'fabric';
 import { baseCharacterImage } from '@/data/traits';
 import { ToolType } from '../types/traits';
-import { setupBaseImage, ensureProperLayering, safeRenderAll } from '../utils/canvasUtils';
+import {
+  setupBaseImage,
+  ensureProperLayering,
+  safeRenderAll,
+  renderUserObjectsOnOwnLayer,
+  isReferenceLayer,
+} from '../utils/canvasUtils';
 import { fitSquare } from '../utils/canvasFit';
 import { UndoRedoManager } from '../utils/undoRedoManager';
 import { 
@@ -91,6 +97,7 @@ const CreateTraits: React.FC = () => {
       // authoring resolution, whatever drew it.
       enableRetinaScaling: false,
     });
+    renderUserObjectsOnOwnLayer(fabricCanvas);
 
     // Load base character image
     setupBaseImage(fabricCanvas, baseCharacterImage, (img) => {
@@ -171,7 +178,19 @@ const CreateTraits: React.FC = () => {
       saveStateDelayed('Object modified');
     });
     
-    canvas.on('path:created', () => {
+    canvas.on('path:created', (e) => {
+      // fabric 5's PencilBrush ignores composite settings, so the eraser used
+      // to leave opaque white strokes. Turn the finished stroke into a real cut.
+      const path = (e as fabric.IEvent & { path?: fabric.Path }).path;
+      if (path && tool === 'eraser') {
+        path.set({
+          stroke: '#000000',
+          globalCompositeOperation: 'destination-out',
+          selectable: false,
+          evented: false,
+          name: 'eraserPath',
+        });
+      }
       ensureProperLayering(canvas);
       saveStateDelayed('Path created');
     });
@@ -243,6 +262,11 @@ const CreateTraits: React.FC = () => {
     return () => observer.disconnect();
   }, [canvas]);
 
+  // Objects a tool switch may make selectable. Reference layers never are, and
+  // eraser strokes are invisible cuts, so selecting one would be baffling.
+  const isToolTarget = (obj: fabric.Object) =>
+    !isReferenceLayer(obj) && obj.name !== 'fillLayer' && obj.name !== 'eraserPath';
+
   // Update canvas when tool changes
   useEffect(() => {
     if (!canvas) return;
@@ -268,9 +292,8 @@ const CreateTraits: React.FC = () => {
         // Reset to normal drawing mode
         (canvas.freeDrawingBrush as any).globalCompositeOperation = 'source-over';
       } else if (tool === 'eraser') {
-        // Set eraser to actually erase pixels
-        canvas.freeDrawingBrush.color = 'rgba(255,255,255,1)';
-        (canvas.freeDrawingBrush as any).globalCompositeOperation = 'destination-out';
+        // Preview only; path:created turns the stroke into a destination-out cut.
+        canvas.freeDrawingBrush.color = 'rgba(120,120,120,0.35)';
       }
     }
 
@@ -280,7 +303,7 @@ const CreateTraits: React.FC = () => {
         canvas.defaultCursor = 'default';
         // Enable object selection and interaction
         canvas.forEachObject(obj => {
-          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+          if (isToolTarget(obj)) {
             obj.selectable = true;
             obj.evented = true;
           }
@@ -293,7 +316,7 @@ const CreateTraits: React.FC = () => {
         // Disable object selection and interaction for drawing tools
         canvas.discardActiveObject();
         canvas.forEachObject(obj => {
-          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+          if (isToolTarget(obj)) {
             obj.selectable = false;
             obj.evented = false;
           }
@@ -303,7 +326,7 @@ const CreateTraits: React.FC = () => {
         canvas.defaultCursor = 'text';
         // Enable limited interaction for text tool
         canvas.forEachObject(obj => {
-          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+          if (isToolTarget(obj)) {
             obj.selectable = obj.type === 'i-text' || obj.type === 'text';
             obj.evented = obj.type === 'i-text' || obj.type === 'text';
           }
@@ -313,7 +336,7 @@ const CreateTraits: React.FC = () => {
         canvas.defaultCursor = 'crosshair';
         // Enable object selection for curve tool (to select control points)
         canvas.forEachObject(obj => {
-          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+          if (isToolTarget(obj)) {
             obj.selectable = true;
             obj.evented = true;
           }
@@ -323,7 +346,7 @@ const CreateTraits: React.FC = () => {
         canvas.defaultCursor = 'crosshair';
         // Enable object selection for other tools
         canvas.forEachObject(obj => {
-          if (obj.name !== 'baseImage' && !obj.name?.startsWith('trait-') && obj.name !== 'fillLayer') {
+          if (isToolTarget(obj)) {
             obj.selectable = true;
             obj.evented = true;
           }
