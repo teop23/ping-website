@@ -61,15 +61,19 @@ export const setupCanvasEventHandlers = (
 
 export const setupClipboardHandlers = (canvas: fabric.Canvas, setTool?: (tool: ToolType) => void) => {
   const handlePaste = async (e: ClipboardEvent) => {
-    e.preventDefault();
-    
+    // Pasting into the trait name or a hex field is ordinary text paste. This
+    // handler used to swallow every paste on the page, so those fields ignored it.
+    const target = e.target as HTMLElement | null;
+    if (target && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) return;
+
     const items = e.clipboardData?.items;
     if (!items) return;
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      
+
       if (item.type.indexOf('image') !== -1) {
+        e.preventDefault();
         const file = item.getAsFile();
         if (file) {
           const reader = new FileReader();
