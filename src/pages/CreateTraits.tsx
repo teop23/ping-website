@@ -61,6 +61,7 @@ const CreateTraits: React.FC = () => {
   
   // Delete confirmation state
   const [traitToDelete, setTraitToDelete] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   
   // Download mode toggle
   const [downloadMode, setDownloadMode] = useState<'trait' | 'character'>('trait');
@@ -420,7 +421,7 @@ const CreateTraits: React.FC = () => {
   });
 
   const handleSaveTrait = () => {
-    saveTrait(canvas!, traitName, baseImage, loadedTraits, savedTraits, setSavedTraits, setTraitName);
+    saveTrait(canvas!, traitName, baseImage, loadedTraits, savedTraits, setSavedTraits, setTraitName, setSaveError);
   };
 
   const handleDownloadTrait = () => {
@@ -496,10 +497,11 @@ const CreateTraits: React.FC = () => {
           setTraitToDelete={setTraitToDelete}
           onToggleTrait={handleToggleTrait}
           onDownloadTrait={downloadIndividualTrait}
-          onDeleteTrait={handleDeleteTrait}
+          onDeleteTrait={(id) => { handleDeleteTrait(id); setSaveError(null); }}
         />
-        
+
         <SaveControls
+          saveError={saveError}
           traitName={traitName}
           setTraitName={setTraitName}
           downloadMode={downloadMode}

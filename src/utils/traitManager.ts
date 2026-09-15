@@ -10,6 +10,16 @@ export interface SavedTrait {
   fabricObject?: fabric.Image;
 }
 
+/** Writes the saved traits list. False when the browser refuses (storage full). */
+const persistTraits = (traits: SavedTrait[]) => {
+  try {
+    localStorage.setItem('pingTraits', JSON.stringify(traits));
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const saveTrait = (
   canvas: fabric.Canvas,
   traitName: string,
@@ -17,7 +27,8 @@ export const saveTrait = (
   loadedTraits: Map<string, fabric.Image>,
   savedTraits: SavedTrait[],
   setSavedTraits: (traits: SavedTrait[]) => void,
-  setTraitName: (name: string) => void
+  setTraitName: (name: string) => void,
+  setError: (message: string | null) => void
 ) => {
   if (!canvas || !traitName.trim()) return;
 
@@ -68,8 +79,13 @@ export const saveTrait = (
     };
 
     const updatedTraits = [...savedTraits, newTrait];
+    // Storage first: a trait that only lived in React state vanished on reload.
+    if (!persistTraits(updatedTraits)) {
+      setError("Browser storage is full, so this trait wasn't saved. Download it, or delete some saved traits.");
+      return;
+    }
+    setError(null);
     setSavedTraits(updatedTraits);
-    localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
     setTraitName('');
   });
 };
@@ -169,7 +185,7 @@ export const deleteTrait = (
   
   const updatedTraits = savedTraits.filter(trait => trait.id !== id);
   setSavedTraits(updatedTraits);
-  localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
+  persistTraits(updatedTraits);
 };
 
 export const downloadIndividualTrait = (trait: SavedTrait) => {
@@ -198,8 +214,8 @@ export const toggleTrait = (
       t.id === trait.id ? { ...t, isVisible: newVisibility } : t
     );
     setSavedTraits(updatedTraits);
-    localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
-    
+    persistTraits(updatedTraits);
+
     safeRenderAll(canvas);
   } else {
     fabric.Image.fromURL(trait.data, (img) => {
@@ -247,8 +263,8 @@ export const toggleTrait = (
         t.id === trait.id ? { ...t, isVisible: true } : t
       );
       setSavedTraits(updatedTraits);
-      localStorage.setItem('pingTraits', JSON.stringify(updatedTraits));
-      
+      persistTraits(updatedTraits);
+
       safeRenderAll(canvas);
     });
   }

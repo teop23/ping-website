@@ -10,9 +10,11 @@ interface SaveControlsProps {
   setDownloadMode: (mode: 'trait' | 'character') => void;
   onSaveTrait: () => void;
   onDownloadTrait: () => void;
+  saveError?: string | null;
 }
 
 const SaveControls: React.FC<SaveControlsProps> = ({
+  saveError,
   traitName,
   setTraitName,
   downloadMode,
@@ -45,6 +47,7 @@ const SaveControls: React.FC<SaveControlsProps> = ({
             <Save size={16} className="mr-2" />
             Save Trait
           </Button>
+          {saveError && <p role="alert" className="text-micro text-destructive">{saveError}</p>}
           <div className="flex space-x-2 items-center">
             <Button
               onClick={onDownloadTrait}
