@@ -94,7 +94,8 @@
    "water-balloon_left_hand"
   ],
   "backwards-cap_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "baguette_right_hand": [
    "bubble-pipe_mouth",
@@ -223,7 +224,8 @@
    "xbox-gamer_accessory"
   ],
   "beret_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "birdhouse_accessory": [
    "bong_left_hand",
@@ -460,7 +462,8 @@
    "white-monster_right_hand"
   ],
   "bucket-hat_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "bunny-ears_head": [
    "helm-of-domination_face"
@@ -538,7 +541,8 @@
    "water-balloon_left_hand"
   ],
   "cap_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "cat-ears_head": [
    "helm-of-domination_face"
@@ -552,7 +556,8 @@
    "xbox-gamer_accessory"
   ],
   "cheese-grate-hat_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "cheese-token_right_hand": [
    "pC-gamer_accessory",
@@ -666,7 +671,8 @@
   "clown_head": [
    "helm-of-domination_face",
    "joint_mouth",
-   "pacifier_mouth"
+   "pacifier_mouth",
+   "snorkel-mask_face"
   ],
   "coffee-mug_right_hand": [
    "pC-gamer_accessory",
@@ -678,13 +684,15 @@
    "xbox-gamer_accessory"
   ],
   "colonial-hat_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "cool-glasses_face": [
    "sayian-1_head"
   ],
   "cowboy-hat_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "crown_head": [
    "helm-of-domination_face"
@@ -789,7 +797,8 @@
    "xbox-gamer_accessory"
   ],
   "eggshell_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "eye-bags_face": [
    "sayian-1_head"
@@ -916,7 +925,8 @@
    "treasure-chest_accessory"
   ],
   "flower-crown_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "flower_left_hand": [
    "hello-kitty-pet_accessory",
@@ -1056,7 +1066,8 @@
    "treasure-chest_accessory"
   ],
   "hard-hat_head": [
-   "helm-of-domination_face"
+   "helm-of-domination_face",
+   "snorkel-mask_face"
   ],
   "head-cloth_head": [
    "helm-of-domination_face"
@@ -1065,6 +1076,7 @@
    "helm-of-domination_face",
    "party-blower_mouth",
    "rose_mouth",
+   "snorkel-mask_face",
    "umbrella_left_hand",
    "wheat-stalk_mouth"
   ],
@@ -1222,6 +1234,9 @@
    "trading-desk_accessory",
    "treasure-chest_accessory"
   ],
+  "jack-sparrow-hat_head": [
+   "snorkel-mask_face"
+  ],
   "kite_right_hand": [
    "pC-gamer_accessory",
    "pS5-(right)_accessory",
@@ -1292,6 +1307,9 @@
    "umbrella_left_hand",
    "wallet_left_hand",
    "water-balloon_left_hand"
+  ],
+  "luffy-strawhat_head": [
+   "snorkel-mask_face"
   ],
   "m16_right_hand": [
    "pC-gamer_accessory",
@@ -1703,6 +1721,9 @@
    "trading-desk_accessory",
    "treasure-chest_accessory"
   ],
+  "propeller-hat_head": [
+   "snorkel-mask_face"
+  ],
   "redbull_left_hand": [
    "reimu-fumo-(left)_accessory",
    "reisen-fumo_accessory",
@@ -1834,6 +1855,7 @@
    "white-monster_right_hand"
   ],
   "santa-hat_head": [
+   "snorkel-mask_face",
    "sparkler_right_hand",
    "wheat-stalk_mouth"
   ],
@@ -1877,6 +1899,11 @@
   "smartphone_right_hand": [
    "washing-machine_accessory",
    "xbox-gamer_accessory"
+  ],
+  "snorkel-mask_face": [
+   "soldier-helmet_head",
+   "sombrero_head",
+   "ushanka_head"
   ],
   "snowball_left_hand": [
    "snowman_accessory",
