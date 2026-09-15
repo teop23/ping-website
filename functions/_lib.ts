@@ -640,7 +640,7 @@ export const cleanPingMessage = (raw: string): string | null => {
  * a redesign gets a fresh render instead of the stored old one. Links made
  * before a bump keep resolving to the card they were made with.
  */
-export const CARD_RENDER_VERSION = 6;
+export const CARD_RENDER_VERSION = 7;
 
 /**
  * The string hashed into a share id: the render version, the traits, and the
