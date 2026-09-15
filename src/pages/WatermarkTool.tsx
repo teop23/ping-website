@@ -183,13 +183,17 @@ const WatermarkTool: React.FC = () => {
         canvas.remove(watermarkImage);
       }
 
+      // Size against the canvas, not a fixed 0.3: on a phone-sized canvas the
+      // fixed scale made the watermark three times larger in the exported image.
+      const scale = (Math.min(canvas.getWidth(), canvas.getHeight()) * 0.15) / (img.height || 1);
+
       img.set({
-        left: canvas.width! * 0.5, // Position in bottom right
-        top: canvas.height! * 0.5,
+        left: canvas.getWidth() * 0.5,
+        top: canvas.getHeight() * 0.5,
         originX: 'center',
         originY: 'center',
-        scaleX: 0.3,
-        scaleY: 0.3,
+        scaleX: scale,
+        scaleY: scale,
         opacity: watermarkOpacity,
         selectable: true,
         evented: true,
