@@ -39,10 +39,11 @@ export const saveTrait = (
   canvas.setBackgroundColor('transparent', () => {
     safeRenderAll(canvas);
     
+    // Same 1000px as Download Trait. multiplier 2 stored 2000px PNGs, four
+    // times the localStorage space, for a trait that is only ever shown at 1000.
     const dataURL = canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
       withoutTransform: false
     });
 
