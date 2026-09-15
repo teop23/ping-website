@@ -1,0 +1,1713 @@
+{
+ "pairs": {
+  "APU-token_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "SPX6900-token_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "ZYN_left_hand": [
+   "arcade-machine_accessory",
+   "birdhouse_accessory",
+   "boombox_accessory",
+   "campfire_accessory",
+   "chill-guy_accessory",
+   "cirno-fumo_accessory",
+   "fire-hydrant_accessory",
+   "fish-bucket_accessory",
+   "gold-bars_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "angry_face": [
+   "sayian-1_head"
+  ],
+  "antlers_head": [
+   "helm-of-domination_face"
+  ],
+  "arcade-machine_accessory": [
+   "balloon_left_hand",
+   "banana_left_hand",
+   "beer_left_hand",
+   "bong_left_hand",
+   "book_left_hand",
+   "briefcase_left_hand",
+   "calculator_left_hand",
+   "cirno-fumo_left_hand",
+   "donut_left_hand",
+   "dumbbell_left_hand",
+   "fishing-rod_left_hand",
+   "flower_left_hand",
+   "gun-hand_left_hand",
+   "handbag_left_hand",
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "backwards-cap_head": [
+   "helm-of-domination_face"
+  ],
+  "baguette_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "party-blower_mouth",
+   "reimu-fumo-(right)_accessory",
+   "rose_mouth",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "balloon-animal_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "balloon_left_hand": [
+   "fire-hydrant_accessory",
+   "pet-apu_accessory",
+   "plant-pot_accessory",
+   "rocket_accessory"
+  ],
+  "banana_left_hand": [
+   "birdhouse_accessory",
+   "boombox_accessory",
+   "campfire_accessory",
+   "chill-guy_accessory",
+   "cirno-fumo_accessory",
+   "fire-hydrant_accessory",
+   "fish-bucket_accessory",
+   "gold-bars_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "band-aid_face": [
+   "side-gun-hand_right_hand"
+  ],
+  "basketball_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "beard_mouth": [
+   "doom-helmet_face",
+   "helm-of-domination_face",
+   "mF-dOOM-mask_face",
+   "master-chief-helmet_face"
+  ],
+  "beer_left_hand": [
+   "birdhouse_accessory",
+   "boombox_accessory",
+   "campfire_accessory",
+   "fire-hydrant_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "beer_right_hand": [
+   "bubble-pipe_mouth",
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "beret_head": [
+   "helm-of-domination_face"
+  ],
+  "birdhouse_accessory": [
+   "book_left_hand",
+   "briefcase_left_hand",
+   "calculator_left_hand",
+   "cirno-fumo_left_hand",
+   "donut_left_hand",
+   "dumbbell_left_hand",
+   "fishing-rod_left_hand",
+   "flower_left_hand",
+   "gun-hand_left_hand",
+   "handbag_left_hand",
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "bitcoin_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "blue-sword_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "bong_left_hand": [
+   "boombox_accessory",
+   "fire-hydrant_accessory",
+   "mailbox_accessory",
+   "pet-apu_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory"
+  ],
+  "book_left_hand": [
+   "boombox_accessory",
+   "campfire_accessory",
+   "chill-guy_accessory",
+   "cirno-fumo_accessory",
+   "fire-hydrant_accessory",
+   "fish-bucket_accessory",
+   "gold-bars_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "boombox_accessory": [
+   "briefcase_left_hand",
+   "calculator_left_hand",
+   "cirno-fumo_left_hand",
+   "donut_left_hand",
+   "dumbbell_left_hand",
+   "fishing-rod_left_hand",
+   "flower_left_hand",
+   "gun-hand_left_hand",
+   "handbag_left_hand",
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "boxing-glove_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "pet-ping-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "briefcase_left_hand": [
+   "campfire_accessory",
+   "chill-guy_accessory",
+   "cirno-fumo_accessory",
+   "fire-hydrant_accessory",
+   "fish-bucket_accessory",
+   "gold-bars_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "broom_right_hand": [
+   "bubble-pipe_mouth",
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "pet-ping-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "bubble-pipe_mouth": [
+   "devil-trident_right_hand",
+   "gun-hand_right_hand",
+   "ice-cream-cone_right_hand",
+   "m16_right_hand",
+   "magnifying-glass_right_hand",
+   "microphone_right_hand",
+   "pickaxe_right_hand",
+   "reimu-fumo_right_hand",
+   "reisen-fumo_right_hand",
+   "rubber-duck_right_hand",
+   "side-gun-hand_right_hand",
+   "sparkler_right_hand",
+   "tennis-racket_right_hand",
+   "wand_right_hand"
+  ],
+  "bucket-hat_head": [
+   "helm-of-domination_face"
+  ],
+  "bunny-ears_head": [
+   "helm-of-domination_face"
+  ],
+  "burger-king-crown_head": [
+   "helm-of-domination_face"
+  ],
+  "calculator_left_hand": [
+   "campfire_accessory",
+   "chill-guy_accessory",
+   "cirno-fumo_accessory",
+   "fire-hydrant_accessory",
+   "fish-bucket_accessory",
+   "gold-bars_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "camera_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "campfire_accessory": [
+   "donut_left_hand",
+   "dumbbell_left_hand",
+   "fishing-rod_left_hand",
+   "flower_left_hand",
+   "gun-hand_left_hand",
+   "handbag_left_hand",
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "cap_head": [
+   "helm-of-domination_face"
+  ],
+  "cat-ears_head": [
+   "helm-of-domination_face"
+  ],
+  "chainsaw_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "cheese-grate-hat_head": [
+   "helm-of-domination_face"
+  ],
+  "cheese-token_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "chill-guy_accessory": [
+   "donut_left_hand",
+   "dumbbell_left_hand",
+   "fishing-rod_left_hand",
+   "gun-hand_left_hand",
+   "handbag_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "ciggy_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "cirno-fumo_accessory": [
+   "donut_left_hand",
+   "dumbbell_left_hand",
+   "fishing-rod_left_hand",
+   "handbag_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "cirno-fumo_left_hand": [
+   "fire-hydrant_accessory",
+   "iceberg_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory"
+  ],
+  "cirno-fumo_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "clown_head": [
+   "helm-of-domination_face"
+  ],
+  "coffee-mug_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "colonial-hat_head": [
+   "helm-of-domination_face"
+  ],
+  "cool-glasses_face": [
+   "sayian-1_head"
+  ],
+  "cowboy-hat_head": [
+   "helm-of-domination_face"
+  ],
+  "crown_head": [
+   "helm-of-domination_face"
+  ],
+  "devil-horns_head": [
+   "helm-of-domination_face"
+  ],
+  "devil-trident_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "party-blower_mouth",
+   "reimu-fumo-(right)_accessory",
+   "rose_mouth",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "dizzy-eyes_face": [
+   "sayian-1_head"
+  ],
+  "dollar-eyes_face": [
+   "sayian-1_head"
+  ],
+  "donut_left_hand": [
+   "fire-hydrant_accessory",
+   "fish-bucket_accessory",
+   "gold-bars_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "doom-helmet_face": [
+   "fish-in-beak_mouth",
+   "mustache-only_mouth",
+   "pacifier_mouth",
+   "sayian-1_head"
+  ],
+  "drumstick_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "party-blower_mouth",
+   "reimu-fumo-(right)_accessory",
+   "rose_mouth",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "dumbbell_left_hand": [
+   "fire-hydrant_accessory",
+   "fish-bucket_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "dynamite_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "eggshell_head": [
+   "helm-of-domination_face"
+  ],
+  "eye-bags_face": [
+   "sayian-1_head"
+  ],
+  "eye-patch_face": [
+   "sayian-1_head"
+  ],
+  "fire-hydrant_accessory": [
+   "fishing-rod_left_hand",
+   "flower_left_hand",
+   "gun-hand_left_hand",
+   "handbag_left_hand",
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "fish-bucket_accessory": [
+   "fishing-rod_left_hand",
+   "gun-hand_left_hand",
+   "handbag_left_hand",
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "fish-in-beak_mouth": [
+   "hello-kitty-mask_face",
+   "helm-of-domination_face",
+   "mF-dOOM-mask_face",
+   "master-chief-helmet_face",
+   "side-gun-hand_right_hand",
+   "ski-mask_face"
+  ],
+  "fish_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "pet-ping-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "fishing-rod_left_hand": [
+   "gold-bars_accessory",
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "flower-crown_head": [
+   "helm-of-domination_face"
+  ],
+  "flower_left_hand": [
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "girl-eyes_face": [
+   "sayian-1_head"
+  ],
+  "glock_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "glowing-scanner-eye_face": [
+   "sayian-1_head"
+  ],
+  "gold-bars_accessory": [
+   "handbag_left_hand",
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "googly-eyes_face": [
+   "sayian-1_head"
+  ],
+  "graduation-cap_head": [
+   "helm-of-domination_face"
+  ],
+  "grenade_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "groucho-glasses_face": [
+   "sayian-1_head"
+  ],
+  "guitar_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "pet-ping-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "gun-hand_left_hand": [
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "gun-hand_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "handbag_left_hand": [
+   "hello-kitty-pet_accessory",
+   "iceberg_accessory",
+   "igloo_accessory",
+   "lawn-flamingo_accessory",
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "hard-hat_head": [
+   "helm-of-domination_face"
+  ],
+  "head-cloth_head": [
+   "helm-of-domination_face"
+  ],
+  "headphones_head": [
+   "helm-of-domination_face",
+   "umbrella_left_hand"
+  ],
+  "heart-glasses_face": [
+   "sayian-1_head"
+  ],
+  "hello-kitty-keychain_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "pet-ping-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "hello-kitty-mask_face": [
+   "mustache-only_mouth",
+   "sayian-1_head"
+  ],
+  "hello-kitty-pet_accessory": [
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "redbull_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "helm-of-domination_face": [
+   "jack-sparrow-hat_head",
+   "konoha-headband_head",
+   "luffy-strawhat_head",
+   "mohawk_head",
+   "mustache-only_mouth",
+   "pacifier_mouth",
+   "party-hat_head",
+   "ping_head",
+   "pirate-hat_head",
+   "propeller-hat_head",
+   "ribbon_head",
+   "sad-pepe_head",
+   "santa-hat_head",
+   "sayian-1_head",
+   "soldier-helmet_head",
+   "sombrero_head",
+   "top-hat_head",
+   "traffic-cone_head",
+   "ushanka_head",
+   "winter-cap_head"
+  ],
+  "ice-cream-cone_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "party-blower_mouth",
+   "reimu-fumo-(right)_accessory",
+   "rose_mouth",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "iceberg_accessory": [
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "igloo_accessory": [
+   "jBL-speaker_left_hand",
+   "lantern_left_hand",
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "infinity-gauntlet_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "pet-ping-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "jBL-speaker_left_hand": [
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "kite_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "lantern_left_hand": [
+   "lily_accessory",
+   "mailbox_accessory",
+   "mini-fridge_accessory",
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "lawn-flamingo_accessory": [
+   "money-bag_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "lily_accessory": [
+   "money-bag_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "m16_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "mF-dOOM-mask_face": [
+   "mustache-only_mouth",
+   "pacifier_mouth",
+   "sayian-1_head"
+  ],
+  "magnifying-glass_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "party-blower_mouth",
+   "reimu-fumo-(right)_accessory",
+   "rose_mouth",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "mailbox_accessory": [
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "master-chief-helmet_face": [
+   "mustache-only_mouth",
+   "pacifier_mouth",
+   "sayian-1_head"
+  ],
+  "megaphone_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "microphone_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "rose_mouth",
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "mini-fridge_accessory": [
+   "money-bag_left_hand",
+   "mop_left_hand",
+   "paintbrush_left_hand",
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "minion-eyes_face": [
+   "sayian-1_head"
+  ],
+  "money-bag_left_hand": [
+   "nuke_accessory",
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "pet-ping-(left)_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "money-stack_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "monster_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "mop_left_hand": [
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "musket_right_hand": [
+   "pC-gamer_accessory",
+   "pS5-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "mustache-only_mouth": [
+   "ski-mask_face"
+  ],
+  "nerd-glasses_face": [
+   "sayian-1_head"
+  ],
+  "nuke_accessory": [
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "pC-gamer_accessory": [
+   "pickaxe_right_hand",
+   "pistol_right_hand",
+   "redbull_right_hand",
+   "reimu-fumo_right_hand",
+   "reisen-fumo_right_hand",
+   "rubber-duck_right_hand",
+   "side-gun-hand_right_hand",
+   "smartphone_right_hand",
+   "telescope_right_hand",
+   "tennis-racket_right_hand",
+   "trophy_right_hand",
+   "wand_right_hand",
+   "whip_right_hand",
+   "white-monster_right_hand"
+  ],
+  "pS5-(right)_accessory": [
+   "pickaxe_right_hand",
+   "pistol_right_hand",
+   "redbull_right_hand",
+   "reimu-fumo_right_hand",
+   "reisen-fumo_right_hand",
+   "rubber-duck_right_hand",
+   "side-gun-hand_right_hand",
+   "smartphone_right_hand",
+   "telescope_right_hand",
+   "tennis-racket_right_hand",
+   "trophy_right_hand",
+   "wand_right_hand",
+   "whip_right_hand",
+   "white-monster_right_hand"
+  ],
+  "paintbrush_left_hand": [
+   "pet-apu_accessory",
+   "pet-cheese_accessory",
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "party-blower_mouth": [
+   "sparkler_right_hand",
+   "telescope_right_hand",
+   "tennis-racket_right_hand",
+   "wand_right_hand"
+  ],
+  "pet-apu_accessory": [
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "pet-cheese_accessory": [
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "pet-ping-(left)_accessory": [
+   "piggy-bank_left_hand",
+   "ping-gameboy(Pink)_left_hand",
+   "ping-gameboy_left_hand",
+   "pizza-slice_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "pet-ping-(right)_accessory": [
+   "pistol_right_hand",
+   "redbull_right_hand",
+   "smartphone_right_hand",
+   "trophy_right_hand",
+   "whip_right_hand"
+  ],
+  "pickaxe_right_hand": [
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "piggy-bank_left_hand": [
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "ping-gameboy(Pink)_left_hand": [
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "ping-gameboy_left_hand": [
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "pistol_right_hand": [
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "pit-vipers_face": [
+   "sayian-1_head"
+  ],
+  "pizza-slice_left_hand": [
+   "plant-pot_accessory",
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "plant-pot_accessory": [
+   "poobis_left_hand",
+   "popcorn_left_hand",
+   "redbull_left_hand",
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "poobis_left_hand": [
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "popcorn_left_hand": [
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "redbull_left_hand": [
+   "reimu-fumo-(left)_accessory",
+   "reisen-fumo_accessory",
+   "rocket_accessory",
+   "sad-pepe-(left)_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "redbull_right_hand": [
+   "reimu-fumo-(right)_accessory",
+   "sad-pepe-(right)_accessory",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "reimu-fumo-(left)_accessory": [
+   "reimu-fumo_left_hand",
+   "reisen-fumo_left_hand",
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "reimu-fumo-(right)_accessory": [
+   "reimu-fumo_right_hand",
+   "reisen-fumo_right_hand",
+   "side-gun-hand_right_hand",
+   "smartphone_right_hand",
+   "telescope_right_hand",
+   "trophy_right_hand",
+   "whip_right_hand",
+   "white-monster_right_hand"
+  ],
+  "reimu-fumo_left_hand": [
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "reimu-fumo_right_hand": [
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "reisen-fumo_accessory": [
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "reisen-fumo_left_hand": [
+   "rocket_accessory",
+   "shopping-cart_accessory",
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "reisen-fumo_right_hand": [
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "rocket_accessory": [
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "rose_mouth": [
+   "sparkler_right_hand",
+   "telescope_right_hand",
+   "tennis-racket_right_hand",
+   "wand_right_hand"
+  ],
+  "round-glasses_face": [
+   "sayian-1_head"
+  ],
+  "rubber-duck_right_hand": [
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "sad-pepe-(left)_accessory": [
+   "skateboard_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "sad-pepe-(right)_accessory": [
+   "smartphone_right_hand",
+   "trophy_right_hand",
+   "whip_right_hand",
+   "white-monster_right_hand"
+  ],
+  "santa-hat_head": [
+   "sparkler_right_hand"
+  ],
+  "sayian-1_head": [
+   "shutter-shades_face",
+   "ski-goggles_face",
+   "ski-mask_face",
+   "snorkel-mask_face",
+   "star-eyes_face",
+   "vr-headset_face"
+  ],
+  "shopping-cart_accessory": [
+   "side-gun-hand_left_hand",
+   "skateboard_left_hand",
+   "snowball_left_hand",
+   "soul-reaper-sword_left_hand",
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "side-gun-hand_left_hand": [
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "side-gun-hand_right_hand": [
+   "toothpick_mouth",
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "skateboard_left_hand": [
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "smartphone_right_hand": [
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "snowball_left_hand": [
+   "snowman_accessory",
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "snowman_accessory": [
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "soul-reaper-sword_left_hand": [
+   "stove_accessory",
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "sparkler_right_hand": [
+   "wheat-stalk_mouth"
+  ],
+  "stove_accessory": [
+   "teddy-bear_left_hand",
+   "thor-hammer_left_hand",
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "teddy-bear_left_hand": [
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "telescope_right_hand": [
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "tennis-racket_right_hand": [
+   "washing-machine_accessory",
+   "wheat-stalk_mouth",
+   "xbox-gamer_accessory"
+  ],
+  "thor-hammer_left_hand": [
+   "trading-desk_accessory",
+   "treasure-chest_accessory"
+  ],
+  "trading-desk_accessory": [
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "treasure-chest_accessory": [
+   "umbrella_left_hand",
+   "wallet_left_hand",
+   "water-balloon_left_hand"
+  ],
+  "trophy_right_hand": [
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "wand_right_hand": [
+   "washing-machine_accessory",
+   "xbox-gamer_accessory"
+  ],
+  "washing-machine_accessory": [
+   "whip_right_hand",
+   "white-monster_right_hand"
+  ],
+  "whip_right_hand": [
+   "xbox-gamer_accessory"
+  ],
+  "white-monster_right_hand": [
+   "xbox-gamer_accessory"
+  ]
+ }
+}

@@ -4,7 +4,7 @@ import CharacterPreview from '../components/CharacterPreview';
 import RemixBanner from '../components/RemixBanner';
 import TextToolsModal, { TextElement } from '../components/TextToolsModal';
 import TraitSelector from '../components/TraitSelector';
-import { rollRandomTraits } from '../data/randomCharacter';
+import { loadClashPairs, makeClashCheck, rollRandomTraits } from '../data/randomCharacter';
 import { traitsFromSearch } from '../data/shareSelection';
 import { initializeTraits } from '../data/traits';
 import { CategoryOption, Trait } from '../types';
@@ -23,6 +23,7 @@ const Builder: React.FC = () => {
   useEffect(() => {
     const loadTraits = async () => {
       setIsLoading(true);
+      void loadClashPairs();
       try {
         const { traits: loadedTraits, categories: loadedCategories } = await initializeTraits();
         setTraits(loadedTraits);
@@ -60,11 +61,13 @@ const Builder: React.FC = () => {
   const handleTextElementsChange = (elements: TextElement[]) => setTextElements(elements);
   const handleSearchChange = (query: string) => setSearchQuery(query);
 
-  const handleRandomize = () => {
+  const handleRandomize = async () => {
     const pools = categories.map((category) =>
       traits.filter((trait) => trait.category === category.id)
     );
-    setSelectedTraits(rollRandomTraits(pools, EMPTY_TRAIT_CHANCE));
+    // Fetched once at load; awaiting here only matters for a very early click.
+    const clashes = makeClashCheck(await loadClashPairs(), (trait: Trait) => trait.id);
+    setSelectedTraits(rollRandomTraits(pools, EMPTY_TRAIT_CHANCE, Math.random, clashes));
     setShowRemixBanner(false);
   };
 

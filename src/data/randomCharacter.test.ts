@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import launchConfig from '../../launch.config.mjs';
-import { rollRandomTraits } from './randomCharacter';
+import { readFileSync } from 'fs';
+import { makeClashCheck, rollRandomTraits } from './randomCharacter';
 
 /** Deterministic rng (mulberry32) so a failing roll can be replayed. */
 const seeded = (seed: number) => () => {
@@ -56,5 +57,39 @@ describe('rollRandomTraits', () => {
     expect(rollRandomTraits([[], ['a']], 0)).toEqual(['a']);
     expect(rollRandomTraits([['a'], ['b']], 1)).toEqual([]);
     expect(rollRandomTraits([['a', 'b']], 0, () => 0.9999999999)).toEqual(['b']);
+  });
+});
+
+describe('clash pairs', () => {
+  it('never rolls two traits that clash, in either order', () => {
+    const pairs = { 'head-0': ['face-0', 'face-1'], 'accessory-3': ['left_hand-0'] };
+    const clashes = makeClashCheck(pairs, (t: { id: string }) => t.id);
+    const rng = seeded(4);
+    let sawHead0 = false;
+    for (let i = 0; i < 3000; i++) {
+      const ids = rollRandomTraits(pools, 0.3, rng, clashes).map((t) => t.id);
+      sawHead0 ||= ids.includes('head-0');
+      if (ids.includes('head-0')) {
+        expect(ids).not.toContain('face-0');
+        expect(ids).not.toContain('face-1');
+      }
+      if (ids.includes('accessory-3')) expect(ids).not.toContain('left_hand-0');
+    }
+    expect(sawHead0).toBe(true);
+  });
+
+  it('leaves a category empty when every trait in it clashes', () => {
+    const pairs = { a: ['x', 'y'] };
+    const clashes = makeClashCheck(pairs, (t: string) => t);
+    expect(rollRandomTraits([['a'], ['x', 'y'], ['z']], 0, () => 0.5, clashes)).toEqual(['a', 'z']);
+  });
+
+  it('the shipped clash file only names traits that exist', () => {
+    const index: Record<string, string[]> = JSON.parse(readFileSync('public/traits-index.json', 'utf8'));
+    const keys = new Set(Object.entries(index).flatMap(([c, names]) => names.map((n) => `${n}_${c}`)));
+    const { pairs } = JSON.parse(readFileSync('public/trait-clashes.json', 'utf8'));
+    const named = Object.entries(pairs as Record<string, string[]>).flatMap(([a, bs]) => [a, ...bs]);
+    expect(named.length).toBeGreaterThan(0);
+    expect(named.filter((k) => !keys.has(k))).toEqual([]);
   });
 });

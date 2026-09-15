@@ -7,6 +7,7 @@ import {
   renderArt,
   noStore,
   pickBgColor,
+  makeClashCheck,
   rollRandomTraits,
   splitAtBase,
 } from '../../_lib';
@@ -31,6 +32,10 @@ export const onRequestGet: APIRoute = async ({ request }) => {
         const traitsIndexUrl = new URL('/traits-index.json', request.url);
         const traitsIndexRes = await fetch(traitsIndexUrl.href);
         const traitsIndex: Record<string, string[]> = await traitsIndexRes.json();
+        // Pairs that look broken together (scripts/generate-clashes.mjs). Rolling
+        // without them beats failing the image.
+        const clashesRes = await fetch(new URL('/trait-clashes.json', request.url).href);
+        const clashPairs: Record<string, string[]> = clashesRes.ok ? (await clashesRes.json()).pairs ?? {} : {};
 
         const validCategories = Object.keys(traitsIndex);
         // Output differs every call anyway, so seed the colour off the roll.
@@ -49,7 +54,9 @@ export const onRequestGet: APIRoute = async ({ request }) => {
             validCategories.map((category) =>
                 traitsIndex[category].map((trait) => ({ category, trait }))
             ),
-            EMPTY_TRAIT_CHANCE
+            EMPTY_TRAIT_CHANCE,
+            Math.random,
+            makeClashCheck(clashPairs, ({ category, trait }: { category: string; trait: string }) => `${trait}_${category}`)
         );
 
         // Auras go behind the penguin, the rest in front of it, both in paint order.

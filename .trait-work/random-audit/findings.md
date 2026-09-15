@@ -11,3 +11,12 @@ Agent flags, unverified unless marked:
 Main session, sheets 16-21:
 - plant-pot_accessory sits in front of the left flipper tip, not tucked behind (tiles 420, 465, 470) [med]
 - kite_right_hand over washing-machine_accessory (tile 517), pair clash
+
+Session 26 (all sheets reviewed by the main session, see decisions.md):
+- FIXED (local 2166fbd): birdhouse, mailbox (edge clip); plant-pot, washing-machine, fire-hydrant, boombox,
+  pC-gamer, pS5-(right), xbox-gamer, rocket (tucked behind PING).
+- FALSE: fish_right_hand gap, kite_right_hand floating, link-aura text clip (tile label), mini-fridge glow.
+- PAIR clashes, no trait fix: left accessories under left_hand items (cart, chest, snowman, boombox + lantern,
+  dumbbell, banana...), right accessories under right_hand items (pS5, PC, washing machine), sayian-1_head over
+  face/mouth items, fish-in-beak over mask faces, cat-ears/antler heads through helm-of-domination.
+- Minor, left: helm-of-domination_face and soul-reaper-sword_left_hand tips touch the top edge by 8-9px.

@@ -379,21 +379,35 @@ export const cardGeometry = (isBanner: boolean, captioned = false) => {
  *  kept in sync by hand. */
 export const EMPTY_TRAIT_CHANCE = launchConfig.emptyTraitChance;
 
-/** At most one trait per category, each category empty with `emptyChance`.
- *  App-side authority is src/data/randomCharacter.ts; its test asserts the
+/** At most one trait per category, each category empty with `emptyChance`,
+ *  never two traits that `clashes` says clash (public/trait-clashes.json).
+ *  App-side authority is src/data/randomCharacter.ts; _lib.test.ts asserts the
  *  two pick identically for the same rng. */
 export const rollRandomTraits = <T>(
   pools: ReadonlyArray<ReadonlyArray<T>>,
   emptyChance: number,
-  rng: () => number = Math.random
+  rng: () => number = Math.random,
+  clashes: (a: T, b: T) => boolean = () => false
 ): T[] => {
   const picked: T[] = [];
   for (const pool of pools) {
     if (pool.length === 0) continue;
     if (rng() < emptyChance) continue;
-    picked.push(pool[Math.min(pool.length - 1, Math.floor(rng() * pool.length))]);
+    const fits = pool.filter((trait) => !picked.some((other) => clashes(other, trait)));
+    if (fits.length === 0) continue;
+    picked.push(fits[Math.min(fits.length - 1, Math.floor(rng() * fits.length))]);
   }
   return picked;
+};
+
+/** Mirror of makeClashCheck in src/data/randomCharacter.ts. */
+export const makeClashCheck = <T>(
+  pairs: Record<string, ReadonlyArray<string>>,
+  keyOf: (trait: T) => string
+) => {
+  const set = new Set<string>();
+  for (const [a, others] of Object.entries(pairs)) for (const b of others) set.add(`${a}\n${b}`).add(`${b}\n${a}`);
+  return (a: T, b: T): boolean => set.has(`${keyOf(a)}\n${keyOf(b)}`);
 };
 
 /* ------------------------------------------------------------------ *

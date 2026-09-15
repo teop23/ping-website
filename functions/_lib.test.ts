@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rollRandomTraits as rollInBuilder } from '../src/data/randomCharacter';
+import { makeClashCheck as makeBuilderClashCheck, rollRandomTraits as rollInBuilder } from '../src/data/randomCharacter';
 import {
   TRAIT_ORDER,
   escapeHtml,
@@ -8,6 +8,7 @@ import {
   cardGeometry,
   noStore,
   pickBgColor,
+  makeClashCheck,
   rollRandomTraits,
   seedFromParams,
   canonicalTraits,
@@ -331,6 +332,19 @@ describe('rollRandomTraits', () => {
     );
     for (let seed = 1; seed <= 50; seed++) {
       expect(rollRandomTraits(pools, 0.45, lcg(seed))).toEqual(rollInBuilder(pools, 0.45, lcg(seed)));
+    }
+  });
+
+  it('picks identically to the builder copy with clash pairs', () => {
+    const lcg = (seed: number) => () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+    const pools = ['face', 'head', 'accessory', 'left_hand'].map((c) =>
+      Array.from({ length: 5 }, (_, i) => `${i}_${c}`)
+    );
+    const pairs = { '0_face': ['0_head', '1_head'], '1_accessory': ['0_left_hand', '1_left_hand', '2_left_hand'] };
+    const ours = makeClashCheck(pairs, (k: string) => k);
+    const theirs = makeBuilderClashCheck(pairs, (k: string) => k);
+    for (let seed = 1; seed <= 50; seed++) {
+      expect(rollRandomTraits(pools, 0.2, lcg(seed), ours)).toEqual(rollInBuilder(pools, 0.2, lcg(seed), theirs));
     }
   });
 });
