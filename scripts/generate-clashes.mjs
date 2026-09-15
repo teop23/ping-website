@@ -54,28 +54,32 @@ const OVERLAP_RULES = [
   ]),
 ];
 
-/** Full-face gear: anything drawn in the beak floats on top of the mask. */
-const MASKS = ['mF-dOOM-mask', 'master-chief-helmet', 'helm-of-domination', 'doom-helmet'];
+/** Face gear over the beak: these beak items float on the gear instead of sitting in a mouth. */
+const COVERED_BEAK = {
+  'doom-helmet': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'wheat-stalk'],
+  // The fake nose covers the beak: short things in it land on the nose tip.
+  'groucho-glasses': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'],
+  'hello-kitty-mask': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
+  'helm-of-domination': ['beard', 'bubble-pipe', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'toothpick', 'wheat-stalk'],
+  'master-chief-helmet': ['beard', 'fish-in-beak', 'mustache-only', 'pacifier'],
+  'mF-dOOM-mask': ['beard', 'cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'],
+  'ski-mask': ['fish-in-beak', 'mustache-only'],
+  'snorkel-mask': ['mustache-only'],
+  // The headset's lower rim sits on the beak.
+  'vr-headset': ['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier', 'party-blower', 'rose', 'wheat-stalk'],
+};
 
 const NAMED_RULES = [
   // The fringe covers the right eye and whatever is on it.
   { a: 'sayian-1_head', category: 'face' },
   // Its spikes poke through every hat.
   { a: 'helm-of-domination_face', category: 'head' },
-  ...MASKS.flatMap((mask) =>
-    ['beard', 'fish-in-beak', 'mustache-only', 'pacifier'].map((mouth) => ({ a: `${mask}_face`, b: `${mouth}_mouth` }))
-  ),
   // The snorkel tube rises past the crown, so a hat or headphones cut it in two.
   ...['backwards-cap', 'beret', 'bucket-hat', 'cap', 'cheese-grate-hat', 'clown', 'colonial-hat', 'cowboy-hat',
     'eggshell', 'flower-crown', 'hard-hat', 'headphones', 'jack-sparrow-hat', 'luffy-strawhat', 'propeller-hat',
     'santa-hat', 'soldier-helmet', 'sombrero', 'ushanka'].map((hat) => ({ a: 'snorkel-mask_face', b: `${hat}_head` })),
-  // The fake nose covers the beak: short things in it land on the nose tip.
-  ...['cigar', 'ciggy', 'fish-in-beak', 'joint', 'mustache-only', 'pacifier'].map((mouth) => ({
-    a: 'groucho-glasses_face',
-    b: `${mouth}_mouth`,
-  })),
-  ...['hello-kitty-mask', 'ski-mask'].flatMap((mask) =>
-    ['fish-in-beak', 'mustache-only'].map((mouth) => ({ a: `${mask}_face`, b: `${mouth}_mouth` }))
+  ...Object.entries(COVERED_BEAK).flatMap(([face, mouths]) =>
+    mouths.map((mouth) => ({ a: `${face}_face`, b: `${mouth}_mouth` }))
   ),
 ];
 

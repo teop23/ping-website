@@ -435,6 +435,7 @@
    "gun-hand_right_hand",
    "headphones_head",
    "hello-kitty-keychain_right_hand",
+   "helm-of-domination_face",
    "ice-cream-cone_right_hand",
    "infinity-gauntlet_right_hand",
    "kite_right_hand",
@@ -599,11 +600,21 @@
   ],
   "cigar_mouth": [
    "clown_head",
-   "groucho-glasses_face"
+   "doom-helmet_face",
+   "groucho-glasses_face",
+   "hello-kitty-mask_face",
+   "helm-of-domination_face",
+   "mF-dOOM-mask_face",
+   "vr-headset_face"
   ],
   "ciggy_mouth": [
    "clown_head",
-   "groucho-glasses_face"
+   "doom-helmet_face",
+   "groucho-glasses_face",
+   "hello-kitty-mask_face",
+   "helm-of-domination_face",
+   "mF-dOOM-mask_face",
+   "vr-headset_face"
   ],
   "ciggy_right_hand": [
    "pC-gamer_accessory",
@@ -747,9 +758,13 @@
   ],
   "doom-helmet_face": [
    "fish-in-beak_mouth",
+   "joint_mouth",
    "mustache-only_mouth",
    "pacifier_mouth",
-   "sayian-1_head"
+   "party-blower_mouth",
+   "rose_mouth",
+   "sayian-1_head",
+   "wheat-stalk_mouth"
   ],
   "drumstick_right_hand": [
    "pC-gamer_accessory",
@@ -889,7 +904,8 @@
    "ski-mask_face",
    "sparkler_right_hand",
    "tennis-racket_right_hand",
-   "ushanka_head"
+   "ushanka_head",
+   "vr-headset_face"
   ],
   "fish_right_hand": [
    "pC-gamer_accessory",
@@ -1099,8 +1115,14 @@
    "xbox-gamer_accessory"
   ],
   "hello-kitty-mask_face": [
+   "joint_mouth",
    "mustache-only_mouth",
-   "sayian-1_head"
+   "pacifier_mouth",
+   "party-blower_mouth",
+   "rose_mouth",
+   "sayian-1_head",
+   "toothpick_mouth",
+   "wheat-stalk_mouth"
   ],
   "hello-kitty-pet_accessory": [
    "jBL-speaker_left_hand",
@@ -1129,24 +1151,29 @@
   ],
   "helm-of-domination_face": [
    "jack-sparrow-hat_head",
+   "joint_mouth",
    "konoha-headband_head",
    "luffy-strawhat_head",
    "mohawk_head",
    "mustache-only_mouth",
    "pacifier_mouth",
+   "party-blower_mouth",
    "party-hat_head",
    "ping_head",
    "pirate-hat_head",
    "propeller-hat_head",
    "ribbon_head",
+   "rose_mouth",
    "sad-pepe_head",
    "santa-hat_head",
    "sayian-1_head",
    "soldier-helmet_head",
    "sombrero_head",
+   "toothpick_mouth",
    "top-hat_head",
    "traffic-cone_head",
    "ushanka_head",
+   "wheat-stalk_mouth",
    "winter-cap_head"
   ],
   "ice-cream-cone_right_hand": [
@@ -1242,6 +1269,10 @@
   ],
   "jack-sparrow-hat_head": [
    "snorkel-mask_face"
+  ],
+  "joint_mouth": [
+   "mF-dOOM-mask_face",
+   "vr-headset_face"
   ],
   "kite_right_hand": [
    "pC-gamer_accessory",
@@ -1476,7 +1507,9 @@
   ],
   "mustache-only_mouth": [
    "side-gun-hand_right_hand",
-   "ski-mask_face"
+   "ski-mask_face",
+   "snorkel-mask_face",
+   "vr-headset_face"
   ],
   "nerd-glasses_face": [
    "sayian-1_head"
@@ -1535,6 +1568,9 @@
    "whip_right_hand",
    "white-monster_right_hand"
   ],
+  "pacifier_mouth": [
+   "vr-headset_face"
+  ],
   "paintbrush_left_hand": [
    "pet-apu_accessory",
    "pet-cheese_accessory",
@@ -1559,6 +1595,7 @@
    "telescope_right_hand",
    "tennis-racket_right_hand",
    "ushanka_head",
+   "vr-headset_face",
    "wand_right_hand",
    "whip_right_hand"
   ],
@@ -1833,6 +1870,7 @@
    "tennis-racket_right_hand",
    "trophy_right_hand",
    "ushanka_head",
+   "vr-headset_face",
    "wand_right_hand",
    "whip_right_hand"
   ],
@@ -1976,6 +2014,9 @@
    "xbox-gamer_accessory"
   ],
   "ushanka_head": [
+   "wheat-stalk_mouth"
+  ],
+  "vr-headset_face": [
    "wheat-stalk_mouth"
   ],
   "wand_right_hand": [
