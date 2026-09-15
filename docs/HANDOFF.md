@@ -2400,8 +2400,10 @@ Owner: "it doesn't really make sense for accessory traits to be behind ping, the
 further to the side". So the `behind.mjs` masking in `2166fbd` is rejected for plant-pot, washing-machine,
 fire-hydrant, boombox, pC-gamer, pS5-(right), xbox-gamer, rocket. Next session (start here, before push):
 1. Restore those 8 from `2166fbd~1` (`git checkout 2166fbd~1 -- public/traits/trait-<name>_accessory.png`).
-2. Shift each one outward (away from PING, left items left, right items right) until it no longer covers the
-   flipper/foot; if a shift hits the canvas edge, scale the item down slightly instead of cutting it.
+2. Shift each one outward (away from PING, left items left, right items right) FAR enough to clear both the
+   flipper/foot AND the hand-item zone (owner: "maybe even further out since it might collide with hand
+   accessories"). Measure against the union of all left_hand/right_hand alpha on that side, aim for few
+   accessory x hand clashes in trait-clashes.json; if a shift hits the canvas edge, scale the item down slightly instead of cutting it.
    Check with `fixes-26/acc-over.mjs` (target ~0 over the base) and `random-audit/edges.mjs` (no edge clips).
 3. Birdhouse/mailbox edge fixes in `2166fbd` stay. Defringe, bump CARD_RENDER_VERSION, regenerate
    trait-clashes.json (accessory x hand overlaps change when items move), vetting page, local commit.
