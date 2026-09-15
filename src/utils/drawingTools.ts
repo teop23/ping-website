@@ -1,108 +1,8 @@
 import { fabric } from 'fabric';
 import { safeRenderAll } from './canvasUtils';
+import { floodFill, hexToRgba } from './floodFill';
 
 type ToolType = 'select' | 'brush' | 'text' | 'rectangle' | 'circle' | 'line' | 'curve' | 'fill';
-
-// FloodFill implementation based on the provided code
-const FloodFill = {
-  // Compare subsection of array1's values to array2's values, with an optional tolerance
-  withinTolerance: function(array1: Uint8ClampedArray, offset: number, array2: number[], tolerance: number) {
-    let length = array2.length;
-    let start = offset + length;
-    tolerance = tolerance || 0;
-
-    // Iterate (in reverse) the items being compared in each array, checking their values are
-    // within tolerance of each other
-    while(start-- && length--) {
-      if(Math.abs(array1[start] - array2[length]) > tolerance) {
-        return false;
-      }
-    }
-
-    return true;
-  },
-
-  // The actual flood fill implementation
-  fill: function(imageData: Uint8ClampedArray, getPointOffsetFn: (x: number, y: number) => number, point: {x: number, y: number}, color: number[], target: number[], tolerance: number, width: number, height: number) {
-    const directions = [[1, 0], [0, 1], [0, -1], [-1, 0]];
-    const coords = new Uint8ClampedArray(imageData.length);
-    const points = [point];
-    const seen: {[key: string]: boolean} = {};
-    let key: string;
-    let x: number, y: number, offset: number, i: number, x2: number, y2: number;
-    let minX = -1, maxX = -1, minY = -1, maxY = -1;
-
-    // Keep going while we have points to walk. Testing the popped value for
-    // truthiness would also end the loop on a legitimately falsy point, so the
-    // emptiness of the stack is what drives it.
-    let currentPoint;
-    while (points.length > 0) {
-      currentPoint = points.pop()!;
-      x = currentPoint.x;
-      y = currentPoint.y;
-      offset = getPointOffsetFn(x, y);
-
-      // Move to next point if this pixel isn't within tolerance of the color being filled
-      if (!FloodFill.withinTolerance(imageData, offset, target, tolerance)) {
-        continue;
-      }
-
-      if (x > maxX) { maxX = x; }
-      if (y > maxY) { maxY = y; }
-      if (x < minX || minX == -1) { minX = x; }
-      if (y < minY || minY == -1) { minY = y; }
-
-      // Update the pixel to the fill color and add neighbours onto stack to traverse
-      // the fill area
-      i = directions.length;
-      while (i--) {
-        // Use the same loop for setting RGBA as for checking the neighbouring pixels
-        if (i < 4) {
-          imageData[offset + i] = color[i];
-          coords[offset + i] = color[i];
-        }
-
-        // Get the new coordinate by adjusting x and y based on current step
-        x2 = x + directions[i][0];
-        y2 = y + directions[i][1];
-        key = x2 + ',' + y2;
-
-        // If new coordinate is out of bounds, or we've already added it, then skip to
-        // trying the next neighbour without adding this one
-        if (x2 < 0 || y2 < 0 || x2 >= width || y2 >= height || seen[key]) {
-          continue;
-        }
-
-        // Push neighbour onto points array to be processed, and tag as seen
-        points.push({ x: x2, y: y2 });
-        seen[key] = true;
-      }
-    }
-
-    return {
-      x: minX,
-      y: minY,
-      width: maxX - minX,
-      height: maxY - minY,
-      coords: coords
-    };
-  }
-};
-
-// Helper function to convert hex color to RGBA array
-function hexToRgba(hex: string, opacity: number = 1): number[] {
-  opacity = Math.round(opacity * 255) || 255;
-  hex = hex.replace('#', '');
-  const rgb: number[] = [];
-  const re = new RegExp('(.{' + hex.length/3 + '})', 'g');
-  const matches = hex.match(re);
-  if (matches) {
-    matches.map(function(l) {
-      rgb.push(parseInt(hex.length % 2 ? l+l : l, 16));
-    });
-  }
-  return rgb.concat(opacity);
-}
 
 // Fill tool implementation using the proper flood fill algorithm
 export const addFill = (
@@ -156,68 +56,23 @@ function performFloodFill(mouseX: number, mouseY: number, canvas: fabric.Canvas,
     const context = canvasElement.getContext('2d');
     if (!context) return;
 
-    const parsedColor = hexToRgba(fillColor);
-    const imageData = context.getImageData(0, 0, canvasElement.width, canvasElement.height);
-    
-    const getPointOffset = function(x: number, y: number) {
-      return 4 * (y * imageData.width + x);
-    };
-    
-    const targetOffset = getPointOffset(mouseX, mouseY);
-    const target = Array.from(imageData.data.slice(targetOffset, targetOffset + 4)) as number[];
+    const { width, height } = canvasElement;
+    const imageData = context.getImageData(0, 0, width, height);
+    const region = floodFill(imageData.data, width, height, mouseX, mouseY, hexToRgba(fillColor));
+    if (!region) return;
 
-    // Check if we're trying to fill with the same color
-    if (FloodFill.withinTolerance(imageData.data, targetOffset, parsedColor, 2)) {
-      console.log('Ignore... same color');
-      return;
-    }
-
-    // Perform flood fill
-    const data = FloodFill.fill(
-      new Uint8ClampedArray(Array.from(imageData.data)),
-      getPointOffset,
-      { x: mouseX, y: mouseY },
-      parsedColor,
-      target,
-      2, // tolerance
-      imageData.width,
-      imageData.height
-    );
-
-    if (data.width === 0 || data.height === 0) {
-      return;
-    }
-
-    // Create temporary canvas for the fill area
-    const tmpCanvas = document.createElement('canvas');
-    const tmpCtx = tmpCanvas.getContext('2d');
-    if (!tmpCtx) return;
-
-    tmpCanvas.width = canvasElement.width;
-    tmpCanvas.height = canvasElement.height;
-
-    const palette = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height);
-    palette.data.set(new Uint8ClampedArray(data.coords));
-    tmpCtx.putImageData(palette, 0, 0);
-    
-    // Get cropped image of just the filled area
-    const imgData = tmpCtx.getImageData(data.x, data.y, data.width, data.height);
-
-    // Create a new canvas with just the filled area
     const fillCanvas = document.createElement('canvas');
     const fillCtx = fillCanvas.getContext('2d');
     if (!fillCtx) return;
 
-    fillCanvas.width = data.width;
-    fillCanvas.height = data.height;
-    fillCtx.putImageData(imgData, 0, 0);
+    fillCanvas.width = region.width;
+    fillCanvas.height = region.height;
+    fillCtx.putImageData(new ImageData(region.pixels, region.width, region.height), 0, 0);
 
-    // Convert canvas to fabric image and add to main canvas
-    const dataURL = fillCanvas.toDataURL('image/png');
-    fabric.Image.fromURL(dataURL, (img) => {
+    fabric.Image.fromURL(fillCanvas.toDataURL('image/png'), (img) => {
       img.set({
-        left: data.x,
-        top: data.y,
+        left: region.x,
+        top: region.y,
         selectable: true,
         evented: true,
         name: 'fillArea',
