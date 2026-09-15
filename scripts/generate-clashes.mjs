@@ -78,6 +78,8 @@ const COVERED_BEAK = {
 const NAMED_RULES = [
   // The fringe covers the right eye and whatever is on it.
   { a: 'sayian-1_head', category: 'face' },
+  // The beard paints over the fringe.
+  { a: 'sayian-1_head', b: 'beard_mouth' },
   // Its spikes poke through every hat.
   { a: 'helm-of-domination_face', category: 'head' },
   // The snorkel tube rises past the crown, so a hat or headphones cut it in two.
