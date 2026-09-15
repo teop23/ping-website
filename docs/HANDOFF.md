@@ -2407,3 +2407,46 @@ fire-hydrant, boombox, pC-gamer, pS5-(right), xbox-gamer, rocket. Next session (
    Check with `fixes-26/acc-over.mjs` (target ~0 over the base) and `random-audit/edges.mjs` (no edge clips).
 3. Birdhouse/mailbox edge fixes in `2166fbd` stay. Defringe, bump CARD_RENDER_VERSION, regenerate
    trait-clashes.json (accessory x hand overlaps change when items move), vetting page, local commit.
+
+## Session 28, 2026-09-15: accessories in front, round-5 audit, owner pass 1
+
+Three local commits, none pushed (branch is now 26 ahead of origin):
+
+- `06925a1`: the 8 masked accessories are restored and moved in front, as the owner asked. Each one sits
+  24px from the canvas edge and is scaled down only as much as needed to keep a 10px gap from the base:
+  plant-pot .91, washing-machine .86, fire-hydrant .93, boombox .82, pC .89, pS5/xbox/rocket 1. Sides that
+  were cut where the flipper hid them are rebuilt (`fixes-28/repair.mjs`). Birdhouse is .97 and mailbox
+  .92. Hand items cover both sides of PING all the way to the floor, so accessory x hand pairs are left to
+  the clash file.
+- `932e3c5`: fixes from round 5 (240 PINGs, seed 13, `.trait-work/random-audit-5/`, log in `fixes.md`):
+  - band-aid moved from the chin to the right cheek.
+  - googly-eyes rebuilt with closed rings (`fixes-28/googly.mjs`).
+  - hello-kitty-mask and the 3 kitty shirts had their holes filled.
+  - winter-cap refit (scale 1.4) so it sits on the head.
+  - New clash rules: ski-mask x every beak item; soldier-helmet x 17 eyewear/eye faces (the strap hangs over
+    the left eye). Moving the helmet up to clear the strap made it look like it was floating, so that was
+    rejected.
+- `eefc23a`: owner pass 1 (96 PINGs, seed 29, `.trait-work/owner-pass-1/`). The owner flagged 14, 21, 29,
+  62, 70 and 89; everything else is GOOD.
+  - Kitty mask is fully opaque, the ring eyes became oval eyes, and the outline is closed.
+  - lab-coat panels had PING's belly cut out of them; they are filled white now.
+  - bubble-pipe has an even outline. The owner questioned it at first, then said it is OK.
+  - dumbbell's near plates are solid.
+  - Script: `fixes-28/owner1.mjs`. Owner before/after renders: `owner-pass-1/fixed-a.png`, `fixed-b.png`.
+
+State: CARD_RENDER_VERSION 10, 1782 clash pairs, 207 tests pass, tsc clean.
+
+Tools in `.trait-work/fixes-28/`:
+- `one.mjs <auditDir> <out> <id | "name:cat,...">...` renders PINGs at builder geometry.
+- `zoom.mjs <layer.png> <out> x0 y0 x1 y1 [k]` shows a region on a grid.
+- `holes.mjs` lists enclosed holes; `--fill <key> <out> [min]` fills them.
+- `refit.mjs`, `outward.mjs`, `look.mjs`.
+- `.trait-work/random-sheets-4.mjs <outDir> <count> [seed]` makes 4x4 sheets.
+
+Still weak but left as is: jack-sparrow-hat grey shape, kite. Mention them only if the owner brings them up.
+
+### Next
+
+- Owner decides when to push.
+- Optional: another owner pass with a new seed (`random-sheets-4.mjs`, 96 PINGs), sent as sheets. The owner
+  said a vetting page makes no sense for this; tile numbers are enough.
